@@ -17,7 +17,7 @@ h1 { font-size: 17px; font-weight: 500; color: #fff; margin-bottom: 10px; }
 .qlabel { font-size: 14px; color: #999; letter-spacing: 0.1em; margin-right: 4px; white-space: nowrap; flex-shrink: 0; width: 36px; display: inline-block; }
 .qtag { cursor: pointer; font-size: 14px; padding: 3px 9px; border: 1px solid #333; border-radius: 1px; color: #ccc; white-space: nowrap; -webkit-tap-highlight-color: transparent; margin: 2px; }
 .qtag:active { background: #181818; }
-.qtag.active { border-color: #29c4e0; color: #29c4e0; }
+.qtag.active { border-color: #0fe8e8; color: #0fe8e8; }
 #filters { display: flex; flex-wrap: nowrap; gap: 8px; align-items: center; padding-top: 4px; }
 input[type=date] { background: #181818; border: 1px solid #333; color: #e8e8e8; padding: 7px 10px; font-size: 14px; font-weight: 500; color-scheme: dark; border-radius: 2px; -webkit-appearance: none; }
 #reset { background: none; border: none; color: #f0a050; cursor: pointer; font-size: 13px; padding: 0; display: none; }
@@ -64,13 +64,13 @@ input[type=date] { background: #181818; border: 1px solid #333; color: #e8e8e8; 
   50% { opacity: 0.1; }
 }
 body.party * { animation: party 0.3s ease-in-out infinite !important; }
-body.party #search-clear, body.party #search-clear * { animation: none !important; opacity: 1 !important; color: #29c4e0 !important; }
+body.party #search-clear, body.party #search-clear * { animation: none !important; opacity: 1 !important; color: #0fe8e8 !important; }
 
 input[type=date]::-webkit-calendar-picker-indicator { filter: invert(0.8) brightness(1.5); cursor: pointer; opacity: 0.9; }
 
 .sz-opt { padding: 8px 16px; color: #ccc; cursor: pointer; font-size: 14px; }
-.sz-opt:hover { background: #181818; color: #29c4e0; }
-.sz-opt.active { color: #29c4e0; }
+.sz-opt:hover { background: #181818; color: #0fe8e8; }
+.sz-opt.active { color: #0fe8e8; }
 
 #list::-webkit-scrollbar { width: 5px; }
 #list::-webkit-scrollbar-track { background: #181818; }
@@ -82,7 +82,7 @@ input[type=date]::-webkit-calendar-picker-indicator { filter: invert(0.8) bright
 </head>
 <body>
 <div id="header">
-  <h1 id="main-h1" style="white-space:nowrap;width:100%;display:flex;align-items:baseline"><span onclick="document.getElementById('info-modal').style.display='flex'" style="cursor:pointer;color:#29c4e0">SPIELPLAN</span><span onclick="document.getElementById('info-modal').style.display='flex'" style="display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border:1px solid #bbb;border-radius:50%;font-size:10px;color:#bbb;cursor:pointer;margin-left:12px;font-style:italic;font-family:Georgia,serif;position:relative;top:-3px">i</span><span id="ohz-label" style="font-size:13px;font-weight:400;color:#29c4e0;letter-spacing:0.15em;text-transform:uppercase;margin-left:auto;padding-right:0;cursor:pointer" onclick="window.open('https://www.opernhaus.ch/spielplan/kalendarium/','_blank')">Opernhaus Zürich</span></h1>
+  <h1 id="main-h1" style="white-space:nowrap;width:100%;display:flex;align-items:baseline"><span onclick="document.getElementById('info-modal').style.display='flex'" style="cursor:pointer;color:#0fe8e8">SPIELPLAN</span><span onclick="document.getElementById('info-modal').style.display='flex'" style="display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border:1px solid #bbb;border-radius:50%;font-size:10px;color:#bbb;cursor:pointer;margin-left:12px;font-style:italic;font-family:Georgia,serif;position:relative;top:-3px">i</span><span id="ohz-label" style="font-size:13px;font-weight:400;color:#0fe8e8;letter-spacing:0.15em;text-transform:uppercase;margin-left:auto;padding-right:0;cursor:pointer" onclick="window.open('https://www.opernhaus.ch/spielplan/kalendarium/','_blank')">Opernhaus Zürich</span></h1>
   <div style="display:block;width:100%;">
   <div style="position:relative;display:flex;align-items:center;">
     <input type="text" id="search" placeholder="Produktion, Person, Funktion ..." style="padding-right:36px;margin-bottom:8px;width:100%;">
@@ -101,7 +101,7 @@ input[type=date]::-webkit-calendar-picker-indicator { filter: invert(0.8) bright
 <div class="qbar" style="flex-wrap:nowrap;align-items:flex-start;width:100%">
   <span class="qlabel" style="padding-top:3px">SZ</span>
   <div style="display:flex;flex-wrap:wrap;gap:4px;flex:1">
-  <button id="aktuell-btn" onclick="filterAktuell()" style="background:none;border:1px solid #333;color:#ccc;font-size:14px;padding:3px 9px;border-radius:1px;cursor:pointer;margin-right:4px;-webkit-tap-highlight-color:transparent;">Aktuell</button><button id="sz-btn" onclick="toggleSzDropdown()" style="background:none;border:1px solid #333;color:#ccc;font-size:14px;padding:3px 9px;border-radius:1px;cursor:pointer;">25/26 &#9660;</button><a href="https://drive.google.com/drive/folders/1WM9YPpCGen3EHeY3C5c_k_9tL9kMRel_" target="_blank" style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:#2e3e40;color:#d0d0d0;font-size:12px;font-weight:bold;text-decoration:none;margin-left:auto;margin-right:4px;flex-shrink:0;position:relative;top:2px"">D</a><a href="https://keep.google.com/#LIST/1_K2fuuC7XY9k2Cd6eg8oLcLuF_pSCmvaM8uw_XeN6IxMYh6WARY2lbzFqiDPzA" target="_blank" style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:#2e3e40;color:#d0d0d0;font-size:12px;font-weight:bold;text-decoration:none;margin-left:4px;flex-shrink:0;position:relative;top:2px">P</a>
+  <button id="aktuell-btn" onclick="filterAktuell()" style="background:none;border:1px solid #333;color:#ccc;font-size:14px;padding:3px 9px;border-radius:1px;cursor:pointer;margin-right:4px;-webkit-tap-highlight-color:transparent;">Aktuell</button><button id="sz-btn" onclick="toggleSzDropdown()" style="background:none;border:1px solid #333;color:#ccc;font-size:14px;padding:3px 9px;border-radius:1px;cursor:pointer;">25/26 &#9660;</button><a href="https://drive.google.com/drive/folders/1WM9YPpCGen3EHeY3C5c_k_9tL9kMRel_" target="_blank" style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:#1f3f3f;color:#d0d0d0;font-size:12px;font-weight:bold;text-decoration:none;margin-left:auto;margin-right:4px;flex-shrink:0;position:relative;top:2px"">D</a><a href="https://keep.google.com/#LIST/1_K2fuuC7XY9k2Cd6eg8oLcLuF_pSCmvaM8uw_XeN6IxMYh6WARY2lbzFqiDPzA" target="_blank" style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:#1f3f3f;color:#d0d0d0;font-size:12px;font-weight:bold;text-decoration:none;margin-left:4px;flex-shrink:0;position:relative;top:2px">P</a>
   <div id="sz-dropdown" style="display:none;position:fixed;background:#181818;border:1px solid #444;border-radius:2px;z-index:100;min-width:100px;">
     <div class="sz-opt" onclick="filterSaison('alle')">Alle</div>
     <div class="sz-opt" onclick="filterSaison('26/27')">26/27</div>
@@ -418,9 +418,9 @@ function applyDateSaison() {
   var bis = document.getElementById("bis").value;
   var vonEl = document.getElementById("von");
   var bisEl = document.getElementById("bis");
-  vonEl.style.borderColor = von ? "#29c4e0" : "#333";
+  vonEl.style.borderColor = von ? "#0fe8e8" : "#333";
   vonEl.style.color = von ? "#f0a050" : "#ddd";
-  bisEl.style.borderColor = bis ? "#29c4e0" : "#333";
+  bisEl.style.borderColor = bis ? "#0fe8e8" : "#333";
   bisEl.style.color = bis ? "#f0a050" : "#ddd";
   var date = von || bis;
   if (date) {
@@ -625,7 +625,7 @@ function render() {
         var db = b.prem ? new Date(b.prem) : new Date(0);
         return da - db;
       });
-      html += "<div style='padding:6px 20px 4px;font-size:11px;color:#29c4e0;letter-spacing:0.1em;text-transform:uppercase;border-bottom:1px solid #222'>Heute</div>";
+      html += "<div style='padding:6px 20px 4px;font-size:11px;color:#0fe8e8;letter-spacing:0.1em;text-transform:uppercase;border-bottom:1px solid #222'>Heute</div>";
       for (var ti = 0; ti < todayProds.length; ti++) {
         var tp = todayProds[ti];
         var tidx = P.indexOf(tp);
@@ -634,7 +634,7 @@ function render() {
         html += "<span class=\"row-title\">" + tp.titel + "</span>";
         html += "</div>";
       }
-      html += "<div style='padding:6px 20px 4px;font-size:11px;color:#29c4e0;letter-spacing:0.1em;text-transform:uppercase;border-bottom:1px solid #222'>Aktuell</div>";
+      html += "<div style='padding:6px 20px 4px;font-size:11px;color:#0fe8e8;letter-spacing:0.1em;text-transform:uppercase;border-bottom:1px solid #222'>Aktuell</div>";
     }
   }
   for (var i = 0; i < results.length; i++) {
@@ -828,7 +828,7 @@ function filterAktuell() {
   var szbtn = document.getElementById("sz-btn");
   if (szbtn) { szbtn.innerHTML = saison + " &#9660;"; szbtn.style.borderColor = "#333"; szbtn.style.color = "#bbb"; }
   var btn = document.getElementById("aktuell-btn");
-  if (btn) { btn.style.borderColor = "#29c4e0"; btn.style.color = "#29c4e0"; }
+  if (btn) { btn.style.borderColor = "#0fe8e8"; btn.style.color = "#0fe8e8"; }
   applyDateSaison();
 }
 function toggleSzDropdown() {
@@ -861,8 +861,8 @@ function filterSaison(s) {
   var btn = document.getElementById("sz-btn");
   if (btn) {
     btn.innerHTML = (s === "alle" ? "Alle" : s) + " &#9660;";
-    btn.style.borderColor = "#29c4e0";
-    btn.style.color = "#29c4e0";
+    btn.style.borderColor = "#0fe8e8";
+    btn.style.color = "#0fe8e8";
   }
   var opts = document.querySelectorAll(".sz-opt");
   for (var i = 0; i < opts.length; i++) opts[i].classList.remove("active");
@@ -968,7 +968,7 @@ function resetFilters() {
   var abtn = document.getElementById("aktuell-btn");
   if (abtn) { abtn.style.borderColor = "#333"; abtn.style.color = "#bbb"; }
   var szbtn = document.getElementById("sz-btn");
-  if (szbtn) { szbtn.style.borderColor = "#29c4e0"; szbtn.style.color = "#29c4e0"; }
+  if (szbtn) { szbtn.style.borderColor = "#0fe8e8"; szbtn.style.color = "#0fe8e8"; }
   document.getElementById("reset").style.display = "none";
   document.getElementById("von").style.borderColor = "#333";
   document.getElementById("von").style.color = "#ddd";
@@ -1030,7 +1030,7 @@ document.getElementById("search").addEventListener("input", function() {
   if (q === "party") {
     document.body.classList.add("party");
     document.getElementById("search-clear").style.display = "block";
-    var partyColors = ["#29c4e0","#ff8c00","#4ab87a","#e05050","#ffd700"];
+    var partyColors = ["#0fe8e8","#ff8c00","#4ab87a","#e05050","#ffd700"];
     var partyHtml = "";
     for (var pi = 0; pi < 10; pi++) {
       var col = partyColors[pi % partyColors.length];
