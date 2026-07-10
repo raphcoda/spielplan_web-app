@@ -50,6 +50,9 @@ input[type=date] { background: #181818; border: 1px solid #333; color: #e8e8e8; 
 .tag:active { background: #2a2a2a; }
 #empty { padding: 40px 20px; color: #999; font-size: 13px; }
 
+scrollbar-width: thin;
+scrollbar-color: #247d8f #141414;
+
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: #2a2a2a; }
 ::-webkit-scrollbar-thumb { background: #555; border-radius: 4px; }
@@ -72,13 +75,19 @@ input[type=date]::-webkit-calendar-picker-indicator { filter: invert(0.8) bright
 .sz-opt:hover { background: #181818; color: #0fe8e8; }
 .sz-opt.active { color: #0fe8e8; }
 
-#list::-webkit-scrollbar { width: 5px; }
+#listscrollbar-width: thin;
+scrollbar-color: #247d8f #141414;
+
+::-webkit-scrollbar { width: 5px; }
 #list::-webkit-scrollbar-track { background: #181818; }
 #list::-webkit-scrollbar-thumb { background: #247d8f; border-radius: 2px; }
-#detail::-webkit-scrollbar { width: 5px; }
+#detailscrollbar-width: thin;
+scrollbar-color: #247d8f #141414;
+
+::-webkit-scrollbar { width: 5px; }
 #detail::-webkit-scrollbar-track { background: #181818; }
 #detail::-webkit-scrollbar-thumb { background: #247d8f; border-radius: 2px; }
-@keyframes spielplan-glow { 0%,88%,100%{text-shadow:none} 92%,96%{text-shadow:0 0 10px #0fe8e8, 0 0 20px #0fe8e8aa} }
+@keyframes spielplan-glow { 0%,88%,100%{text-shadow:none} 93%,97%{text-shadow:0 0 10px #0fe8e8, 0 0 20px #0fe8e8aa} }
 @keyframes spielplan-color {
   0%, 100% { color: #0fe8e8; }
   50% { color: #f0a050; }
@@ -87,7 +96,7 @@ input[type=date]::-webkit-calendar-picker-indicator { filter: invert(0.8) bright
 </head>
 <body>
 <div id="header">
-  <h1 id="main-h1" style="white-space:nowrap;width:100%;display:flex;align-items:baseline"><span onclick="document.getElementById('info-modal').style.display='flex'" style="cursor:pointer;color:#0fe8e8;font-style:italic;animation:spielplan-glow 30s ease-in-out infinite">SPIELPLAN</span><span onclick="document.getElementById('info-modal').style.display='flex'" style="display:none;align-items:center;justify-content:center;width:15px;height:15px;border:1px solid #bbb;border-radius:50%;font-size:10px;color:#bbb;cursor:pointer;margin-left:12px;font-style:italic;font-family:Georgia,serif;position:relative;top:-3px">i</span><a href="https://drive.google.com/drive/folders/1WM9YPpCGen3EHeY3C5c_k_9tL9kMRel_" target="_blank" style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#1f3f3f;color:#d0d0d0;font-size:11px;font-weight:bold;text-decoration:none;margin-left:auto;margin-right:7px;flex-shrink:0;align-self:center">D</a><a href="https://keep.google.com/#LIST/1_K2fuuC7XY9k2Cd6eg8oLcLuF_pSCmvaM8uw_XeN6IxMYh6WARY2lbzFqiDPzA" target="_blank" style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#1f3f3f;color:#d0d0d0;font-size:11px;font-weight:bold;text-decoration:none;margin-right:80px;flex-shrink:0;align-self:center">P</a><span id="ohz-label" style="font-size:1em;font-weight:700;color:#0fe8e8;letter-spacing:0.15em;text-transform:uppercase;margin-left:0;padding-right:0;cursor:pointer" onclick="window.open('https://www.opernhaus.ch/spielplan/kalendarium/','_blank')">OHZ</span></h1>
+  <h1 id="main-h1" style="white-space:nowrap;width:100%;display:flex;align-items:baseline"><span onclick="document.getElementById('info-modal').style.display='flex'" style="cursor:pointer;color:#0fe8e8;font-style:italic;animation:spielplan-glow 15s ease-in-out infinite">SPIELPLAN</span><span onclick="document.getElementById('info-modal').style.display='flex'" style="display:none;align-items:center;justify-content:center;width:15px;height:15px;border:1px solid #bbb;border-radius:50%;font-size:10px;color:#bbb;cursor:pointer;margin-left:12px;font-style:italic;font-family:Georgia,serif;position:relative;top:-3px">i</span><a href="https://drive.google.com/drive/folders/1WM9YPpCGen3EHeY3C5c_k_9tL9kMRel_" target="_blank" style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#0d5555;color:#d0d0d0;font-size:11px;font-weight:bold;text-decoration:none;border:1px solid #555;margin-left:auto;margin-right:7px;flex-shrink:0;align-self:center">D</a><a href="https://keep.google.com/#LIST/1_K2fuuC7XY9k2Cd6eg8oLcLuF_pSCmvaM8uw_XeN6IxMYh6WARY2lbzFqiDPzA" target="_blank" style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#0d5555;color:#d0d0d0;font-size:11px;font-weight:bold;text-decoration:none;border:1px solid #555;margin-right:80px;flex-shrink:0;align-self:center">P</a><span id="ohz-label" style="font-size:1em;font-weight:700;color:#0fe8e8;letter-spacing:0.15em;text-transform:uppercase;margin-left:0;padding-right:0;cursor:pointer" onclick="window.open('https://www.opernhaus.ch/spielplan/kalendarium/','_blank')">OHZ</span></h1>
   <div style="display:block;width:100%;">
   <div style="position:relative;display:flex;align-items:center;">
     <input type="text" id="search" placeholder="Produktion, Person, Funktion ..." style="padding-right:36px;margin-bottom:8px;width:100%;">
@@ -234,7 +243,7 @@ var P = [
   {saison:"25/26",vorstellungen:["2026-06-14","2026-06-19","2026-07-01","2026-07-04","2026-07-10"],titel:"Werther",typ:"WA",kat:"Oper",prem:"2026-06-14",lv:"2026-07-10",prob:"2026-05-26",ete:"2026-06-08",khp:"2026-06-12",gp:"",ohp:"2026-06-12",bm:"Rasche",licht:"Roller",ton:"Schilling",insp:"Warthmann",reasist:"Blersch",projleit:"Noll",graben:"gross",regie:"Guerbaca",dirig:"Armiliato",komp:"Massenet (1892)",dauer:"2:35h",team:["Jonathan Tetelman (Werther)","Anna Goryachova (Charlotte)","Chelsea Zurfluh (Sophie)","Aksel Daveyan (Albert)"]},
   {saison:"25/26",vorstellungen:["2026-06-20","2026-06-25","2026-06-28","2026-06-30","2026-07-04"],titel:"Nachttraeume",typ:"WA",kat:"Ballett",prem:"2026-06-20",lv:"2026-07-04",prob:"2026-06-01",ete:"2026-06-01",khp:"",gp:"2026-06-19",ohp:"",bm:"Landolt",licht:"Ostfalk",ton:"Paciorek",insp:"Bierich",reasist:"",projleit:"Klimmer",graben:"",regie:"",dirig:"Capuano",komp:"",dauer:"",team:[]},
   {saison:"25/26",vorstellungen:["2026-06-21","2026-06-24","2026-06-27","2026-07-02","2026-07-05","2026-07-08","2026-07-11"],titel:"Tannhaeuser",typ:"Premiere",kat:"Oper",prem:"2026-06-21",lv:"2026-07-11",prob:"2026-05-04",ete:"2026-05-26",khp:"2026-06-09",gp:"2026-06-18",ohp:"2026-06-16",bm:"Huerlimann",licht:"Gebhardt",ton:"Surgutschow",insp:"Kuehnel",reasist:"Gama",projleit:"Noll",graben:"gross",regie:"Arnarsson",dirig:"Sokhiev",komp:"Wagner (1845)",dauer:"ca. 4:15h",team:["Eric Cutler (Tannhaeuser)","Christian Gerhaher (Wolfram)","Christina Nilsson (Elisabeth)","Rachael Wilson (Venus)","Christof Fischesser (Herrmann)"]},
-  {saison:"25/26",vorstellungen:["2026-07-03","2026-07-07","2026-07-09","2026-07-12"],titel:"Cosi fan tutte",typ:"WA",kat:"Oper",prem:"2026-07-03",lv:"2026-07-12",prob:"2026-06-08",ete:"2026-06-22",khp:"2026-07-01",gp:"",ohp:"2026-07-01",bm:"Rasche",licht:"Strucken",ton:"Paciorek",insp:"Warthmann",reasist:"Senn",projleit:"",graben:"gross / hoch",regie:"Serebrennikov",dirig:"Gonzalez-Monjas",komp:"Mozart (1790)",dauer:"3:30h",team:[]},
+  {saison:"25/26",vorstellungen:["2026-07-03","2026-07-07","2026-07-09","2026-07-12"],titel:"Cosi fan tutte",typ:"WA",kat:"Oper",prem:"2026-07-03",lv:"2026-07-12",prob:"2026-06-08",ete:"2026-06-22",khp:"2026-07-01",gp:"",ohp:"2026-07-01",bm:"Rasche",licht:"Strucken",ton:"Paciorek",insp:"Warthmann",reasist:"Senn",projleit:"",graben:"gross / hoch",regie:"Serebrennikov",dirig:"Gonzalez-Monjas",komp:"Mozart (1790)",dauer:"3:30h",team:["Elbenita Kajtazi (Fiordiligi)","Siena Licht Miller (Dorabella)","Yannick Debus (Guglielmo)","Bogdan Volkov (Ferrando)","Rebeca Olvera (Despina)","Luca Pisaroni (Don Alfonso)"]},
   {saison:"25/26",vorstellungen:["2026-07-01","2026-07-03","2026-07-04"],titel:"Next Generation - Studiobuhne",typ:"WA",kat:"Ballett",prem:"2026-07-01",lv:"2026-07-04",prob:"2026-06-19",ete:"2026-06-18",khp:"",gp:"2026-06-30",ohp:"",bm:"Humbel",licht:"",ton:"Zdravkovic",insp:"Tschannen",reasist:"",projleit:"Bujnoch",graben:"",regie:"",dirig:"Capuano",komp:"div. Komponisten",dauer:"",team:[]},
   {saison:"25/26",vorstellungen:["2026-07-06"],titel:"Galakonzert IOS 2526",typ:"KZT",kat:"Extra",prem:"2026-07-06",lv:"2026-07-06",prob:"",ete:"",khp:"",gp:"",ohp:"",bm:"Rasche",licht:"Strucken",ton:"",insp:"Tschannen",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[]},
   {saison:"25/26",vorstellungen:["2026-06-26"],titel:"Opernhaus fuer alle - Romeo und Julia",typ:"SF",kat:"Extra",prem:"2026-06-26",lv:"2026-06-26",prob:"",ete:"2026-06-26",khp:"",gp:"",ohp:"",bm:"Willi",licht:"",ton:"Surgutschow",insp:"",reasist:"",projleit:"Bujnoch",graben:"",regie:"",dirig:"",komp:"Prokofjew (1938)",dauer:"",team:[]},
