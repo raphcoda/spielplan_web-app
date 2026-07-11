@@ -8,16 +8,16 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html { overflow: hidden; height: 100dvh; }
 body { font-family: -apple-system, 'Helvetica Neue', Arial, sans-serif; background: #181818; color: #f5f5f5; min-height: 100vh; }
-#header { padding: 12px 16px 8px; border-bottom: 2px solid #0a2020; background:linear-gradient(180deg,#253535,#0e1a1a); box-shadow:0 4px 12px rgba(0,0,0,0.8),inset 0 1px 0 rgba(15,232,232,0.08); flex-shrink: 0; }
+#header { padding: 12px 16px 8px; border-bottom: 2px solid #0a2020; background:linear-gradient(180deg,#112828,#060f0f); box-shadow:0 4px 12px rgba(0,0,0,0.8),inset 0 1px 0 rgba(15,232,232,0.08); flex-shrink: 0; }
 .eyebrow { font-size: 11px; letter-spacing: 0.15em; color: #bbb; text-transform: uppercase; margin-bottom: 4px; }
 h1 { font-size: 17px; font-weight: 500; color: #fff; margin-bottom: 10px; }
 #search { font-weight:400; color:#e0e0e0 !important; width: 100%; background: #181818; border: 1px solid #333; color: #f0a050; padding: 6px 14px; font-size: 15px; font-weight: 500; outline: none; border-radius: 2px; margin-bottom: 10px; -webkit-appearance: none; }
 #search::placeholder { color: #999; }
-.qbar { display: flex; gap: 4px; flex-wrap: nowrap; padding: 8px 20px; border-bottom: 1px solid #1a3030; align-items: center; background:linear-gradient(180deg,#1e2828,#111); }
+.qbar { display: flex; gap: 4px; flex-wrap: nowrap; padding: 8px 20px; border-bottom: 1px solid #1a3030; align-items: center; background:linear-gradient(180deg,#0e2020,#060f0f); }
 .qlabel { font-weight:500; font-size: 14px; color: #999; letter-spacing: 0.1em; margin-right: 4px; white-space: nowrap; flex-shrink: 0; width: 36px; display: inline-block; }
-.qtag { cursor: pointer; font-size: 14px; padding: 3px 9px; border-top: 1px solid #2a4444; border-left: 1px solid #1a3333; border-right: 1px solid #080f0f; border-bottom: 1px solid #080f0f; border-radius: 2px; color: #ccc; white-space: nowrap; -webkit-tap-highlight-color: transparent; margin: 2px; background: linear-gradient(145deg, #1a2e2e, #0e1a1a); box-shadow: 1px 2px 3px rgba(0,0,0,0.5); }
-.qtag:active { background: linear-gradient(145deg, #1a2e2e, #0e1a1a); }
-.qtag.active { border-top-color: #0fe8e8; border-left-color: #0fe8e8; border-right-color: #083030; border-bottom-color: #083030; color: #0fe8e8; background: linear-gradient(145deg, #1a3535, #0a2020); box-shadow: 1px 2px 3px rgba(0,0,0,0.5); }
+.qtag { cursor: pointer; font-size: 14px; padding: 3px 9px; border-top: 1px solid #2a4444; border-left: 1px solid #1a3333; border-right: 1px solid #080f0f; border-bottom: 1px solid #080f0f; border-radius: 2px; color: #ccc; white-space: nowrap; -webkit-tap-highlight-color: transparent; margin: 2px; background: linear-gradient(145deg, #112828, #060f0f); box-shadow: 1px 2px 3px rgba(0,0,0,0.5); }
+.qtag:active { background: linear-gradient(145deg, #112828, #060f0f); }
+.qtag.active { border-top-color: #0fe8e8; border-left-color: #0fe8e8; border-right-color: #083030; border-bottom-color: #083030; color: #0fe8e8; background: linear-gradient(145deg, #112828, #060f0f); box-shadow: 1px 2px 3px rgba(0,0,0,0.5); }
 #filters { display: flex; flex-wrap: nowrap; gap: 8px; align-items: center; padding-top: 4px; }
 input[type=date] { background: #181818; border: 1px solid #333; color: #e8e8e8; padding: 7px 10px; font-size: 14px; font-weight: 500; color-scheme: dark; border-radius: 2px; -webkit-appearance: none; }
 #reset { background: none; border: none; color: #f0a050; cursor: pointer; font-size: 13px; padding: 0; display: none; }
@@ -72,8 +72,8 @@ body.party #search-clear, body.party #search-clear * { animation: none !importan
 input[type=date]::-webkit-calendar-picker-indicator { filter: invert(0.8) brightness(1.5); cursor: pointer; opacity: 0.9; }
 
 .sz-opt { padding: 8px 16px; color: #ccc; cursor: pointer; font-size: 14px; }
-.sz-opt:hover { background: linear-gradient(145deg, #1a3535, #0a2020); color: #0fe8e8; }
-.sz-opt.active { color: #0fe8e8; background: linear-gradient(145deg, #1a3535, #0a2020); box-shadow: inset 1px 1px 3px rgba(0,0,0,0.5); }
+.sz-opt:hover { background: linear-gradient(145deg, #112828, #060f0f); color: #0fe8e8; }
+.sz-opt.active { color: #0fe8e8; background: linear-gradient(145deg, #112828, #060f0f); box-shadow: inset 1px 1px 3px rgba(0,0,0,0.5); }
 
 #list { scrollbar-width: thin; scrollbar-color: #0a9090 #141414; }
 #list::-webkit-scrollbar { width: 5px; }
@@ -92,8 +92,8 @@ input[type=date]::-webkit-calendar-picker-indicator { filter: invert(0.8) bright
 </head>
 <body>
 <div id="header">
-  <h1 id="main-h1" style="white-space:nowrap;width:100%;display:flex;align-items:baseline"><span onclick="document.getElementById('info-modal').style.display='flex'" style="cursor:pointer;color:#0fe8e8;font-style:italic;animation:spielplan-glow 15s ease-in-out infinite">SPIELPLAN</span><span onclick="document.getElementById('info-modal').style.display='flex'" style="display:none;align-items:center;justify-content:center;width:15px;height:15px;border:1px solid #bbb;border-radius:50%;font-size:10px;color:#bbb;cursor:pointer;margin-left:12px;font-style:italic;font-family:Georgia,serif;position:relative;top:-3px">i</span><a href="https://drive.google.com/drive/folders/1WM9YPpCGen3EHeY3C5c_k_9tL9kMRel_" target="_blank" style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:linear-gradient(145deg, #176060, #082828);color:#d0d0d0;font-size:11px;font-weight:bold;text-decoration:none;border-top:1px solid #2a8080;border-left:1px solid #1a6060;border-right:1px solid #040f0f;border-bottom:1px solid #040f0f;box-shadow:2px 3px 6px rgba(0,0,0,0.8);margin-left:auto;margin-right:7px;flex-shrink:0;align-self:center">D</a><a href="https://keep.google.com/#LIST/1_K2fuuC7XY9k2Cd6eg8oLcLuF_pSCmvaM8uw_XeN6IxMYh6WARY2lbzFqiDPzA" target="_blank" style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:linear-gradient(145deg, #176060, #082828);color:#d0d0d0;font-size:11px;font-weight:bold;text-decoration:none;border-top:1px solid #2a8080;border-left:1px solid #1a6060;border-right:1px solid #040f0f;border-bottom:1px solid #040f0f;box-shadow:2px 3px 6px rgba(0,0,0,0.8);margin-right:80px;flex-shrink:0;align-self:center">P</a><span id="ohz-label" style="font-size:1em;font-weight:700;color:#0fe8e8;letter-spacing:0.15em;text-transform:uppercase;margin-left:0;padding-right:0;cursor:pointer" onclick="window.open('https://www.opernhaus.ch/spielplan/kalendarium/','_blank')">OHZ</span></h1>
-  <div style="display:block;width:100%;background:linear-gradient(180deg,#1e2828,#111);border-bottom:1px solid #1a3030;">
+  <h1 id="main-h1" style="white-space:nowrap;width:100%;display:flex;align-items:baseline"><span onclick="document.getElementById('info-modal').style.display='flex'" style="cursor:pointer;color:#0fe8e8;font-style:italic;animation:spielplan-glow 15s ease-in-out infinite">SPIELPLAN</span><span onclick="document.getElementById('info-modal').style.display='flex'" style="display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border:1px solid #bbb;border-radius:50%;font-size:10px;color:#bbb;cursor:pointer;margin-left:12px;font-style:italic;font-family:Georgia,serif;position:relative;top:-3px">i</span><a href="https://drive.google.com/drive/folders/1WM9YPpCGen3EHeY3C5c_k_9tL9kMRel_" target="_blank" style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:linear-gradient(145deg, #176060, #082828);color:#d0d0d0;font-size:11px;font-weight:bold;text-decoration:none;border-top:1px solid #2a8080;border-left:1px solid #1a6060;border-right:1px solid #040f0f;border-bottom:1px solid #040f0f;box-shadow:2px 3px 6px rgba(0,0,0,0.8);margin-left:auto;margin-right:7px;flex-shrink:0;align-self:center">D</a><a href="https://keep.google.com/#LIST/1_K2fuuC7XY9k2Cd6eg8oLcLuF_pSCmvaM8uw_XeN6IxMYh6WARY2lbzFqiDPzA" target="_blank" style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:linear-gradient(145deg, #176060, #082828);color:#d0d0d0;font-size:11px;font-weight:bold;text-decoration:none;border-top:1px solid #2a8080;border-left:1px solid #1a6060;border-right:1px solid #040f0f;border-bottom:1px solid #040f0f;box-shadow:2px 3px 6px rgba(0,0,0,0.8);margin-right:80px;flex-shrink:0;align-self:center">P</a><span id="ohz-label" style="font-size:1em;font-weight:700;color:#0fe8e8;letter-spacing:0.15em;text-transform:uppercase;margin-left:0;padding-right:0;cursor:pointer" onclick="window.open('https://www.opernhaus.ch/spielplan/kalendarium/','_blank')">OHZ</span></h1>
+  <div style="display:block;width:100%;background:linear-gradient(180deg,#0e2020,#060f0f);border-bottom:1px solid #1a3030;">
   <div style="position:relative;display:flex;align-items:center;">
     <input type="text" id="search" placeholder="Produktion, Person, Funktion ..." style="padding-right:36px;margin-bottom:8px;width:100%;">
     <span id="search-clear" onclick="clearSearch()" style="position:absolute;right:10px;top:5px;cursor:pointer;color:#f0a050;font-size:18px;line-height:1;display:none;">&#x2715;</span>
@@ -111,7 +111,7 @@ input[type=date]::-webkit-calendar-picker-indicator { filter: invert(0.8) bright
 <div class="qbar" style="flex-wrap:nowrap;align-items:flex-start;width:100%">
   <span class="qlabel" style="padding-top:3px">SZ</span>
   <div style="display:flex;flex-wrap:wrap;gap:4px;flex:1">
-  <button id="aktuell-btn" onclick="filterAktuell()" style="background:linear-gradient(145deg, #1a2e2e, #0e1a1a);border-top:1px solid #2a4444;border-left:1px solid #1a3333;border-right:1px solid #080f0f;border-bottom:1px solid #080f0f;color:#ccc;font-size:14px;padding:3px 9px;border-radius:2px;cursor:pointer;margin-right:4px;-webkit-tap-highlight-color:transparent;box-shadow:1px 2px 3px rgba(0,0,0,0.5);transition:all 0.2s;">Aktuell</button><button id="sz-btn" onclick="toggleSzDropdown()" style="background:linear-gradient(145deg, #1a2e2e, #0e1a1a);border-top:1px solid #2a4444;border-left:1px solid #1a3333;border-right:1px solid #080f0f;border-bottom:1px solid #080f0f;color:#ccc;font-size:14px;padding:3px 9px;border-radius:2px;cursor:pointer;box-shadow:1px 2px 3px rgba(0,0,0,0.5);transition:all 0.2s;">25/26 &#9660;</button>
+  <button id="aktuell-btn" onclick="filterAktuell()" style="background:linear-gradient(145deg, #112828, #060f0f);border-top:1px solid #2a4444;border-left:1px solid #1a3333;border-right:1px solid #080f0f;border-bottom:1px solid #080f0f;color:#ccc;font-size:14px;padding:3px 9px;border-radius:2px;cursor:pointer;margin-right:4px;-webkit-tap-highlight-color:transparent;box-shadow:1px 2px 3px rgba(0,0,0,0.5);transition:all 0.2s;">Aktuell</button><button id="sz-btn" onclick="toggleSzDropdown()" style="background:linear-gradient(145deg, #112828, #060f0f);border-top:1px solid #2a4444;border-left:1px solid #1a3333;border-right:1px solid #080f0f;border-bottom:1px solid #080f0f;color:#ccc;font-size:14px;padding:3px 9px;border-radius:2px;cursor:pointer;box-shadow:1px 2px 3px rgba(0,0,0,0.5);transition:all 0.2s;">25/26 &#9660;</button>
   <div id="sz-dropdown" style="display:none;position:fixed;background:linear-gradient(180deg,#1a2828,#111);border:1px solid #1a3535;box-shadow:2px 4px 12px rgba(0,0,0,0.8);border-radius:2px;z-index:100;min-width:100px;">
     <div class="sz-opt" onclick="filterSaison('alle')">Alle</div>
     <div class="sz-opt" onclick="filterSaison('26/27')">26/27</div>
@@ -836,9 +836,9 @@ function filterAktuell() {
   var saison = month >= 8 ? (String(year).slice(2) + "/" + String(year+1).slice(2)) : (String(year-1).slice(2) + "/" + String(year).slice(2));
   saisonFilter = saison;
   var szbtn = document.getElementById("sz-btn");
-  if (szbtn) { szbtn.innerHTML = saison + " &#9660;"; szbtn.style.backgroundImage = "linear-gradient(145deg, #1a2e2e, #0e1a1a)"; szbtn.style.backgroundColor = ""; szbtn.style.borderTopColor = "#2a4444"; szbtn.style.borderLeftColor = "#1a3333"; szbtn.style.borderRightColor = "#080f0f"; szbtn.style.borderBottomColor = "#080f0f"; szbtn.style.color = "#bbb"; szbtn.style.boxShadow = "1px 2px 3px rgba(0,0,0,0.5)"; }
+  if (szbtn) { szbtn.innerHTML = saison + " &#9660;"; szbtn.style.backgroundImage = "linear-gradient(145deg, #112828, #060f0f)"; szbtn.style.backgroundColor = ""; szbtn.style.borderTopColor = "#2a4444"; szbtn.style.borderLeftColor = "#1a3333"; szbtn.style.borderRightColor = "#080f0f"; szbtn.style.borderBottomColor = "#080f0f"; szbtn.style.color = "#bbb"; szbtn.style.boxShadow = "1px 2px 3px rgba(0,0,0,0.5)"; }
   var btn = document.getElementById("aktuell-btn");
-  if (btn) { btn.style.borderColor = "#0fe8e8"; btn.style.color = "#0fe8e8"; btn.style.background = ""; btn.style.backgroundImage = "linear-gradient(145deg, #1a3535, #0a2020)"; btn.style.backgroundColor = "#0a2020"; btn.style.boxShadow = "1px 2px 3px rgba(0,0,0,0.5)"; btn.style.borderTopColor = "#0fe8e8"; btn.style.borderLeftColor = "#0fe8e8"; btn.style.borderRightColor = "#083030"; btn.style.borderBottomColor = "#083030"; }
+  if (btn) { btn.style.borderColor = "#0fe8e8"; btn.style.color = "#0fe8e8"; btn.style.background = ""; btn.style.backgroundImage = "linear-gradient(145deg, #112828, #060f0f)"; btn.style.backgroundColor = "#0a2020"; btn.style.boxShadow = "1px 2px 3px rgba(0,0,0,0.5)"; btn.style.borderTopColor = "#0fe8e8"; btn.style.borderLeftColor = "#0fe8e8"; btn.style.borderRightColor = "#083030"; btn.style.borderBottomColor = "#083030"; }
   applyDateSaison();
 }
 function toggleSzDropdown() {
@@ -859,7 +859,7 @@ function closeSzDropdown() {
 function filterSaison(s) {
   closeSzDropdown();
   var abtn = document.getElementById("aktuell-btn");
-  if (abtn) { abtn.style.borderColor = "#333"; abtn.style.color = "#bbb"; abtn.style.backgroundImage = "linear-gradient(145deg, #1a2e2e, #0e1a1a)"; abtn.style.backgroundColor = ""; abtn.style.boxShadow = "1px 2px 3px rgba(0,0,0,0.5)"; abtn.style.borderTopColor = "#2a4444"; abtn.style.borderLeftColor = "#1a3333"; abtn.style.borderRightColor = "#080f0f"; abtn.style.borderBottomColor = "#080f0f"; abtn.style.color = "#ccc"; }
+  if (abtn) { abtn.style.borderColor = "#333"; abtn.style.color = "#bbb"; abtn.style.backgroundImage = "linear-gradient(145deg, #112828, #060f0f)"; abtn.style.backgroundColor = ""; abtn.style.boxShadow = "1px 2px 3px rgba(0,0,0,0.5)"; abtn.style.borderTopColor = "#2a4444"; abtn.style.borderLeftColor = "#1a3333"; abtn.style.borderRightColor = "#080f0f"; abtn.style.borderBottomColor = "#080f0f"; abtn.style.color = "#ccc"; }
   document.getElementById("von").value = "";
   document.getElementById("von").style.color = "#999";
   document.getElementById("von").style.borderColor = "#333";
@@ -871,7 +871,7 @@ function filterSaison(s) {
   var btn = document.getElementById("sz-btn");
   if (btn) {
     btn.innerHTML = (s === "alle" ? "Alle" : s) + " &#9660;";
-    btn.style.backgroundImage = "linear-gradient(145deg, #1a3535, #0a2020)";
+    btn.style.backgroundImage = "linear-gradient(145deg, #112828, #060f0f)";
     btn.style.backgroundColor = "";
     btn.style.borderTopColor = "#0fe8e8";
     btn.style.borderLeftColor = "#0fe8e8";
@@ -982,9 +982,9 @@ function goBack() {
 
 function resetFilters() {
   var abtn = document.getElementById("aktuell-btn");
-  if (abtn) { abtn.style.borderColor = "#333"; abtn.style.color = "#bbb"; abtn.style.backgroundImage = "linear-gradient(145deg, #1a2e2e, #0e1a1a)"; abtn.style.backgroundColor = ""; abtn.style.boxShadow = "1px 2px 3px rgba(0,0,0,0.5)"; abtn.style.borderTopColor = "#2a4444"; abtn.style.borderLeftColor = "#1a3333"; abtn.style.borderRightColor = "#080f0f"; abtn.style.borderBottomColor = "#080f0f"; abtn.style.color = "#ccc"; }
+  if (abtn) { abtn.style.borderColor = "#333"; abtn.style.color = "#bbb"; abtn.style.backgroundImage = "linear-gradient(145deg, #112828, #060f0f)"; abtn.style.backgroundColor = ""; abtn.style.boxShadow = "1px 2px 3px rgba(0,0,0,0.5)"; abtn.style.borderTopColor = "#2a4444"; abtn.style.borderLeftColor = "#1a3333"; abtn.style.borderRightColor = "#080f0f"; abtn.style.borderBottomColor = "#080f0f"; abtn.style.color = "#ccc"; }
   var szbtn = document.getElementById("sz-btn");
-  if (szbtn) { szbtn.style.backgroundImage = "linear-gradient(145deg, #1a3535, #0a2020)"; szbtn.style.backgroundColor = ""; szbtn.style.borderTopColor = "#0fe8e8"; szbtn.style.borderLeftColor = "#0fe8e8"; szbtn.style.borderRightColor = "#083030"; szbtn.style.borderBottomColor = "#083030"; szbtn.style.color = "#0fe8e8"; szbtn.style.boxShadow = "1px 2px 3px rgba(0,0,0,0.5)"; }
+  if (szbtn) { szbtn.style.backgroundImage = "linear-gradient(145deg, #112828, #060f0f)"; szbtn.style.backgroundColor = ""; szbtn.style.borderTopColor = "#0fe8e8"; szbtn.style.borderLeftColor = "#0fe8e8"; szbtn.style.borderRightColor = "#083030"; szbtn.style.borderBottomColor = "#083030"; szbtn.style.color = "#0fe8e8"; szbtn.style.boxShadow = "1px 2px 3px rgba(0,0,0,0.5)"; }
   document.getElementById("reset").style.display = "none";
   document.getElementById("von").style.borderColor = "#333";
   document.getElementById("von").style.color = "#ddd";
@@ -1109,7 +1109,7 @@ filterAktuell();
       <p style="margin-top:12px"><strong><em>Aktuell</em></strong> zeigt alle ab heute noch laufenden Produktionen und ggf. heutige Vorstellungen.<br><u>Als Produktionszeitraum gilt jeweils die 1.&nbsp;TE bis zur letzten Vorstellung.</u></p>
       <p style="margin-top:12px"><strong style="color:#fff">Panel:</strong> Ein Klick auf eine Produktion in der Liste &ouml;ffnet das Detailpanel mit detaillierten Angaben. Namen im Panel sind anklickbar und aktivieren einen Filter.</p>
       <p style="margin-top:12px">&laquo;<strong>OHZ</strong>&raquo; oben rechts &ouml;ffnet den aktuellen Spielplan auf der Website des Opernhauses.</p>
-      <p style="margin-top:12px">In der Titelzeile: <strong>Button D</strong> &ouml;ffnet einen freigegebenen Google-Drive-Ordner f&uuml;r flexiblen Datei-Upload/-Zugriff und <strong>Button P</strong> eine Google-Keep-Checkliste f&uuml;r schnelle Pendenz-Eintr&auml;ge. &Auml;nderungen sind f&uuml;r alle sofort einsehbar und bearbeitbar.</p>
+      <p style="margin-top:12px">In der Titelzeile: <strong>Button D</strong> &ouml;ffnet einen freigegebenen Google-Drive-Ordner f&uuml;r flexiblen Datei-Upload/-Zugriff und <strong>Button P</strong> eine Google-Keep-Checkliste f&uuml;r schnelle Pendenz-Eintr&auml;ge. &Auml;nderungen sind f&uuml;r alle sofort einsehbar und bearbeitbar. Voraussetzung: Login im Google-Tonabteilung-Account. Funktion am praktischsten mit der Google-Drive-App und Google Keep/Notizen-App.</p>
       <p style="margin-top:12px">Die <strong>WebApp</strong> besteht aus einer einzigen HTML-Datei (inkl. JS und CSS) ohne externe Abh&auml;ngigkeiten (kein Datenaustausch mit externen Servern oder Diensten &ndash; ausser die Links in der Titelzeile) und wird &uuml;ber GitHub gehostet (https://...). Sie l&auml;uft auf allen g&auml;ngigen Browsern auf Mac, Windows, Android und iPhone.</p>
       <p>Die Daten basieren auf den Spielplanunterlagen der Technischen Direktion und des KBB sowie der Website des Opernhauses Z&uuml;rich. &Auml;nderungen w&auml;hrend laufender Spielzeit sind m&ouml;glicherweise nicht ber&uuml;cksichtigt.</p>
       <p>Diese WebApp ist als Hilfsmittel f&uuml;r den Produktionsalltag gedacht. F&uuml;r die Richtigkeit, Vollst&auml;ndigkeit und Aktualit&auml;t der Inhalte wird keine Gew&auml;hr &uuml;bernommen.</p>
