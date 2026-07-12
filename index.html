@@ -787,7 +787,7 @@ function showDetail(p) {
     }
   }
   // ZEITGLEICH (1. TE – letzte Vst)
-  if (!p.ete || !p.lv) { return ""; }
+  if (p.ete && p.lv) {
   var eteDate = new Date(p.ete);
   var lvDate = new Date(p.lv);
   var overlaps = P.filter(function(o) {
@@ -832,6 +832,7 @@ function showDetail(p) {
       html += "</div>";
     }
   }
+  } // end ZEITGLEICH
   html += "<div style='height:200px'></div>";
   document.getElementById("detail-content").innerHTML = html;
 }
@@ -1733,7 +1734,7 @@ function showDetail(p) {
     }
   }
   // ZEITGLEICH (1. TE – letzte Vst)
-  if (!p.ete || !p.lv) { return ""; }
+  if (p.ete && p.lv) {
   var eteDate = new Date(p.ete);
   var lvDate = new Date(p.lv);
   var overlaps = P.filter(function(o) {
@@ -1778,6 +1779,7 @@ function showDetail(p) {
       html += "</div>";
     }
   }
+  } // end ZEITGLEICH
   html += "<div style='height:200px'></div>";
   document.getElementById("detail-content").innerHTML = html;
 }
