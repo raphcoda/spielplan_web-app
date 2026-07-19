@@ -1,0 +1,1437 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SPiELPLAN_iNFO_OHZ</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { overflow: hidden; height: 100dvh; }
+body { overflow-x: hidden; font-family: -apple-system, 'Helvetica Neue', Arial, sans-serif; background: #181818; color: #f5f5f5; min-height: 100vh; }
+#header { padding: 12px 16px 8px; border-bottom: 1px solid #333; background: #1c1c1c; flex-shrink: 0; }
+.eyebrow { font-size: 11px; letter-spacing: 0.15em; color: #bbb; text-transform: uppercase; margin-bottom: 4px; }
+h1 { font-size: 17px; font-weight: 500; color: #fff; margin-bottom: 10px; }
+#search { font-weight:400; color:#e0e0e0 !important; width: 100%; background: #181818; border: 1px solid #333; color: #f0a050; padding: 6px 14px; font-size: 15px; font-weight: 500; outline: none; border-radius: 2px; margin-bottom: 10px; -webkit-appearance: none; }
+#search::placeholder { color: #999; }
+.qbar { display: flex; gap: 4px; flex-wrap: nowrap; padding: 8px 20px; border-bottom: 1px solid #222; align-items: center; background:#1c1c1c; }
+.qlabel { font-weight:500; font-size: 14px; color: #999; letter-spacing: 0.1em; margin-right: 4px; white-space: nowrap; flex-shrink: 0; width: 36px; display: inline-block; }
+.qtag { cursor: pointer; font-size: 14px; padding: 3px 9px; border: 1px solid #333; border-radius: 1px; color: #ccc; white-space: nowrap; -webkit-tap-highlight-color: transparent; margin: 2px; }
+.qtag:active { background: #181818; }
+.qtag.active { border-color: #0fe8e8; color: #0fe8e8; }
+#filters { display: flex; flex-wrap: nowrap; gap: 8px; align-items: center; padding-top: 4px; }
+input[type=date] { background: #181818; border: 1px solid #333; color: #e8e8e8; padding: 7px 10px; font-size: 14px; font-weight: 500; color-scheme: dark; border-radius: 2px; -webkit-appearance: none; }
+#reset { background: none; border: none; color: #f0a050; cursor: pointer; font-size: 13px; padding: 0; display: none; }
+#count { margin-left: auto; color: #ccc; font-size: 13px; }
+#main { display: flex; overflow: hidden; flex: 1; min-height: 0; }
+#list { flex: 1; overflow-y: scroll; overflow-x: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; height: 100%; padding-top: 12px; padding-bottom: max(220px, calc(200px + env(safe-area-inset-bottom))); box-sizing: border-box; background: #131313; }
+.row { padding: 12px 20px; cursor: pointer; border-bottom: 1px solid #1c1c1c; display: flex; align-items: baseline; gap: 8px; white-space: nowrap; min-width: max-content; -webkit-tap-highlight-color: transparent; }
+.row:active { background: #161616; }
+.row.active { background: #2a2a2a; }
+.row-title { font-size: 17px; color: #fff; }
+.row-date { font-size: 17px; color: #bbb; white-space: nowrap; }
+.badge { font-size: 10px; padding: 2px 5px; border-radius: 1px; white-space: nowrap; }
+.badge-P { background: #ccc; color: #000; }
+.badge-W { background: #555; color: #fff; }
+.badge-L { background: #555; color: #fff; }
+.badge-S { background: #555; color: #fff; }
+.badge-E { background: #555; color: #fff; }
+.kal-row:hover { background:#1c1c1c; }
+#detail { width: min(885px, 100vw); border-left: 1px solid #222; overflow-y: scroll; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; touch-action: pan-y; padding: 20px 20px 120px 8px; display: none; flex-shrink: 0; background: #131313; }
+#detail.open { display: block; }
+#detail-close { background: none; border: none; color: #f0a050; cursor: pointer; font-size: 15px; line-height: 1; padding: 0; position: sticky; top: 0; float: right; z-index: 10; }
+.det-type { font-size: 16px; color: #bbb; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
+.det-title { font-size: 24px; font-weight: 500; color: #fff; margin-bottom: 18px; clear: both; }
+.drow { display: flex; gap: 10px; padding: 6px 0; border-bottom: 1px solid #1a1a1a; flex-wrap: wrap; }
+.dlabel { font-size: 16px; color: #bbb; width: 130px; flex-shrink: 0; }
+.dval { font-size: 16px; color: #e8e8e8; }
+.dlink { font-size: 16px; color: #e8e8e8; cursor: pointer; text-decoration: underline; text-decoration-color: #999; -webkit-tap-highlight-color: transparent; }
+.divider { margin: 14px 0; border-top: 1px solid #1e1e1e; }
+.sec-label { font-size: 16px; color: #bbb; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag { font-size: 15px; padding: 3px 8px; background: #1e1e1e; border: 1px solid #2a2a2a; border-radius: 2px; color: #e8e8e8; cursor: pointer; -webkit-tap-highlight-color: transparent; white-space: normal; margin: 2px; }
+.tag:active { background: #2a2a2a; }
+#empty { padding: 40px 20px; color: #999; font-size: 13px; }
+
+scrollbar-width: thin;
+scrollbar-color: #0a9090 #141414;
+
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #2a2a2a; }
+::-webkit-scrollbar-thumb { background: #555; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #666; }
+@keyframes pulse {
+  0%, 100% { opacity: 0.75; }
+  50% { opacity: 0.4; }
+}
+#ohz-label { opacity: 0.95; }
+@keyframes party {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.1; }
+}
+body.party * { animation: party 0.3s ease-in-out infinite !important; }
+body.party #search-clear, body.party #search-clear * { animation: none !important; opacity: 1 !important; color: #0fe8e8 !important; }
+
+input[type=date]::-webkit-calendar-picker-indicator { filter: invert(0.8) brightness(1.5); cursor: pointer; opacity: 0.9; }
+
+.sz-opt { padding: 8px 16px; color: #ccc; cursor: pointer; font-size: 14px; }
+.sz-opt:hover { background: #181818; color: #29c4e0; }
+.sz-opt.active { color: #29c4e0; }
+
+#list { scrollbar-width: thin; scrollbar-color: #0a9090 #141414; }
+#list::-webkit-scrollbar { width: 5px; }
+#list::-webkit-scrollbar-track { background: #181818; }
+#list::-webkit-scrollbar-thumb { background: #0a9090; border-radius: 2px; }
+#detail { scrollbar-width: thin; scrollbar-color: #0a9090 #141414; }
+#detail::-webkit-scrollbar { width: 5px; }
+#detail::-webkit-scrollbar-track { background: #181818; }
+#detail::-webkit-scrollbar-thumb { background: #0a9090; border-radius: 2px; }
+@keyframes spielplan-glow { 0%,88%,100%{text-shadow:none} 93%,97%{text-shadow:0 0 10px #0fe8e8, 0 0 20px #0fe8e8aa} }
+@keyframes spielplan-color {
+  0%, 100% { color: #0fe8e8; }
+  50% { color: #f0a050; }
+}
+</style>
+</head>
+<body>
+<div id="header">
+  <h1 id="main-h1" style="white-space:nowrap;width:100%;display:flex;align-items:baseline"><span onclick="window.open('https://www.opernhaus.ch/spielplan/kalendarium/','_blank')" style="cursor:pointer;color:#e8e8e8;font-style:italic;font-size:18px;text-shadow:0 0 8px rgba(255,255,255,0.5)">SPIELPLAN</span><span onclick="window.open('https://www.opernhaus.ch/spielplan/kalendarium/','_blank')" style="cursor:pointer;color:#e8e8e8;font-weight:700;font-style:italic;margin-left:8px;font-size:18px;text-shadow:0 0 8px rgba(255,255,255,0.5)">OHZ</span><span onclick="document.getElementById('info-modal').style.display='flex'" style="display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border:1px solid #bbb;border-radius:50%;font-size:10px;color:#bbb;cursor:pointer;margin-left:12px;font-style:italic;font-family:Georgia,serif;position:relative;top:-3px">i</span><a href="https://drive.google.com/drive/folders/1WM9YPpCGen3EHeY3C5c_k_9tL9kMRel_" target="_blank" style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:linear-gradient(180deg,#1e3535,#0d2020);color:#0fe8e8;font-size:11px;font-weight:bold;text-decoration:none;border-top:1px solid #2a5555;border-bottom:1px solid #080f0f;border-left:1px solid #1a4040;border-right:1px solid #080f0f;box-shadow:none;margin-left:auto;margin-right:7px;flex-shrink:0;align-self:center">D</a><a href="https://keep.google.com/#LIST/1_K2fuuC7XY9k2Cd6eg8oLcLuF_pSCmvaM8uw_XeN6IxMYh6WARY2lbzFqiDPzA" target="_blank" style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:linear-gradient(180deg,#1e3535,#0d2020);color:#0fe8e8;font-size:11px;font-weight:bold;text-decoration:none;border-top:1px solid #2a5555;border-bottom:1px solid #080f0f;border-left:1px solid #1a4040;border-right:1px solid #080f0f;box-shadow:none;margin-right:10px;flex-shrink:0;align-self:center">P</a><button onclick="openKalender()" title="Produktionskalender 26/27" style="background:linear-gradient(180deg,#1e3535,#0d2020);color:#0fe8e8;border-top:1px solid #2a5555;border-bottom:1px solid #080f0f;border-left:1px solid #1a4040;border-right:1px solid #080f0f;border-radius:3px;font-size:13px;font-weight:bold;padding:2px 9px;cursor:pointer;flex-shrink:0;align-self:center">KALENDER</button></h1>
+  <div style="display:block;width:100%;">
+  <div style="position:relative;display:flex;align-items:center;">
+    <input type="text" id="search" placeholder="Produktion, Person, Funktion ..." style="padding-right:36px;margin-bottom:8px;width:100%;">
+    <span id="search-clear" onclick="clearSearch()" style="position:absolute;right:10px;top:5px;cursor:pointer;color:#f0a050;font-size:18px;line-height:1;display:none;">&#x2715;</span>
+  </div>
+  <div id="filters" style="display:flex;flex-wrap:nowrap;gap:8px;align-items:center;">
+    <input type="date" id="von" onchange="applyDateSaison()" style="background:#181818;border:1px solid #333;color:#e8e8e8;padding:4px 10px;font-size:14px;font-weight:500;border-radius:2px;outline:none;-webkit-appearance:none;">
+    <span style="color:#999;font-size:14px">bis</span>
+    <input type="date" id="bis" onchange="applyDateSaison()" style="background:#181818;border:1px solid #333;color:#e8e8e8;padding:4px 10px;font-size:14px;font-weight:500;border-radius:2px;outline:none;-webkit-appearance:none;">
+    <button id="reset" onclick="resetFilters()">X RESET</button>
+    <span id="count"></span>
+  </div>
+  </div>
+</div>
+
+<div class="qbar" style="flex-wrap:nowrap;align-items:flex-start;width:100%">
+  <span class="qlabel" style="padding-top:3px">SZ</span>
+  <div style="display:flex;flex-wrap:wrap;gap:4px;flex:1">
+  <button id="aktuell-btn" onclick="filterAktuell()" style="background:none;border:1px solid #333;color:#ccc;font-size:14px;padding:3px 9px;border-radius:1px;cursor:pointer;margin-right:4px;-webkit-tap-highlight-color:transparent;">Aktuell</button><button id="sz-btn" onclick="toggleSzDropdown()" style="background:none;border:1px solid #333;color:#ccc;font-size:14px;padding:3px 9px;border-radius:1px;cursor:pointer;">25/26 &#9660;</button>
+  <div id="sz-dropdown" style="display:none;position:fixed;background:#181818;border:1px solid #444;border-radius:2px;z-index:100;min-width:100px;">
+    <div class="sz-opt" onclick="filterSaison('alle')">Alle</div>
+    <div class="sz-opt" onclick="filterSaison('26/27')">26/27</div>
+    <div class="sz-opt" onclick="filterSaison('25/26')">25/26</div>
+    <div class="sz-opt" onclick="filterSaison('24/25')">24/25</div>
+    <div class="sz-opt" onclick="filterSaison('23/24')">23/24</div>
+    <div class="sz-opt" onclick="filterSaison('22/23')">22/23</div>
+  </div></div>
+</div>
+<div class="qbar" style="flex-wrap:nowrap;align-items:flex-start">
+  <span class="qlabel" style="padding-top:3px">Art</span>
+  <div style="display:flex;flex-wrap:wrap;gap:4px">
+    <span class="qtag art-tag active" id="tag-alle" onclick="filterTyp('alle')">Alle</span>
+    <span class="qtag art-tag" id="tag-Premiere" onclick="filterTyp('Premiere')">PREM</span>
+    <span class="qtag art-tag" id="tag-WA" onclick="filterTyp('WA')">WA</span>
+    <span class="qtag art-tag" id="tag-Oper" onclick="filterTyp('Oper')">Oper</span>
+    <span class="qtag art-tag" id="tag-Ballett" onclick="filterTyp('Ballett')">BAL</span>
+    <span class="qtag art-tag" id="tag-KZT" onclick="filterTyp('KZT')">Kzt</span>
+    <span class="qtag" id="tag-Extra" onclick="filterTyp('Extra')">SF</span>
+    <span class="qtag art-tag" id="tag-Labor" onclick="filterTyp('Labor')">Lab</span>
+    <span class="qtag art-tag" id="tag-Event" onclick="filterTyp('Event')">Event</span>
+  </div>
+</div>
+
+<div class="qbar" style="flex-wrap:nowrap;align-items:flex-start">
+  <span class="qlabel" style="padding-top:3px">Ton</span>
+  <div style="display:flex;flex-wrap:wrap;gap:3px;font-size:13px">
+    <span class="qtag active" id="ton-alle" onclick="filterTon('')">Alle</span>
+    <span class="qtag" id="ton-beck" onclick="filterTon('Beck')">Dominik</span>
+    <span class="qtag" id="ton-granda" onclick="filterTon('Granda')">Felipe</span>
+    <span class="qtag" id="ton-paciorek" onclick="filterTon('Paciorek')">Raphael</span>
+    <span class="qtag" id="ton-schilling" onclick="filterTon('Schilling')">Thorsten</span>
+    <span class="qtag" id="ton-surgutschow" onclick="filterTon('Surgutschow')">Oleg</span>
+    <span class="qtag" id="ton-winter" onclick="filterTon('Winter')">Milena</span>
+    <span class="qtag" id="ton-zdravkovic" onclick="filterTon('Zdravkovic')">Vasilije</span>
+  </div>
+</div>
+<div style="height:6px;background:linear-gradient(180deg,rgba(0,0,0,0.6),transparent);"></div>
+<div id="main">
+  <div id="list"></div>
+  <div id="detail">
+    <div id="detail-content"></div>
+  </div>
+</div>
+
+<script>
+var P = [
+  {saison:"26/27",vorstellungen:["2026-09-20","2026-09-25","2026-10-06","2026-10-18","2026-10-21","2026-10-24","2026-10-30","2027-04-02","2027-04-08","2027-04-18","2027-04-20","2027-04-23"],titel:"Die Zauberflote",typ:"Premiere",kat:"Oper",prem:"2026-09-20",lv:"2027-04-23",prob:"2026-08-10",ete:"2026-08-29",khp:"2026-09-10",gp:"2026-09-17",ohp:"2026-09-16",bm:"Landolt",licht:"Ostfalk",ton:"Paciorek",insp:"",graben:"gross",reasist:"Vettore",projleit:"Klimmer",regie:"Finzi Pasca",dirig:"Peltokoski",dauer:"ca. 3 Std.",komp:"Mozart (1791)",team:["Magnus Dietrich (Tamino)","Tobias Kehrer (Sarastro)","Regula Muehlemann (Pamina)","Jasmin Delfs (Koenigin der Nacht)","Johan Krogius (Papageno)","Brent Michael Smith (Sprecher)"],pause:["2026-10-30","2027-04-02"]},
+  {saison:"26/27",vorstellungen:["2026-09-11","2026-09-13","2026-09-16","2026-09-18","2026-09-20","2026-09-27"],titel:"Ballett - Des Oiseaux Rebelles",typ:"WA",kat:"Ballett",prem:"2026-09-16",lv:"2026-09-27",prob:"2026-09-04",ete:"2026-09-03",khp:"2026-09-10",gp:"",ohp:"",bm:"Willi",licht:"Gebhardt/ Grosse",ton:"Zdravkovic",insp:"Warthmann",graben:"gross",reasist:"",projleit:"",regie:"",dirig:"",dauer:"2:06h",komp:"",team:[]},
+  {saison:"26/27",vorstellungen:["2026-09-24","2026-09-27","2026-10-01","2026-10-10","2026-10-15"],titel:"La Rondine",typ:"WA",kat:"Oper",prem:"2026-09-24",lv:"2026-10-15",prob:"2026-09-01",ete:"2026-09-05",khp:"2026-09-22",gp:"2026-09-22",ohp:"2026-09-23",bm:"Huerlimann",licht:"Roller/ Grosse",ton:"Beck",insp:"Warthmann",graben:"gross",reasist:"Whiting",projleit:"",regie:"Loy",dirig:"Armiliato",dauer:"2:32h",komp:"Puccini (1917)",team:["Ermonela Jaho (Magda)","Benjamin Bernheim (Ruggero)","Sandra Hamaoui (Lisette)","Vladimir Stoyanov (Rambaldo)","Juan Francisco Gatell (Prunier)"]},
+  {saison:"26/27",vorstellungen:["2026-09-26","2026-10-04","2026-10-09","2026-10-13"],titel:"Tannhauser",typ:"WA",kat:"Oper",prem:"2026-09-26",lv:"2026-10-13",prob:"2026-09-16",ete:"2026-09-22",khp:"2026-09-23",gp:"2026-09-23",ohp:"2026-09-24",bm:"Huerlimann",licht:"Gebhardt/ Grosse",ton:"Surgutschow",insp:"Kuehnel",graben:"gross",reasist:"Gama",projleit:"",regie:"Arnarsson",dirig:"Poschner",dauer:"ca. 4 Std. 15 Min.",komp:"Wagner (1845)",team:["Eric Cutler (Tannhaeuser)","Christina Nilsson (Elisabeth)","Rachael Wilson (Venus)","Andre Schuen (Wolfram)","Christof Fischesser (Hermann)"]},
+  {saison:"26/27",vorstellungen:["2026-09-29","2026-10-08","2026-10-17","2026-10-23","2026-10-25"],titel:"Die Fledermaus",typ:"WA",kat:"Oper",prem:"2026-09-29",lv:"2026-10-25",prob:"2026-09-07",ete:"2026-09-09",khp:"2026-09-25",gp:"2026-09-25",ohp:"2026-09-26",bm:"Huerlimann",licht:"Strucken/ Grosse",ton:"Zdravkovic",insp:"Pointet",graben:"gross",reasist:"Lenzen",projleit:"",regie:"Bernreitner",dirig:"Viotti",dauer:"3:06h",komp:"J. Strauss (1874)",team:["Bo Skovhus (Eisenstein)","Camilla Nylund (Rosalinde)","Siena Licht Miller (Adele)","Johan Krogius (Alfred)","Kathrin Zukowski (Prinz Orlofsky)"]},
+  {saison:"26/27",vorstellungen:["2026-10-03","2026-10-04"],titel:"ZFF - Zuercher Filmfestival",typ:"SF",kat:"Extra",prem:"2026-10-03",lv:"2026-10-03",prob:"",ete:"",khp:"",gp:"",ohp:"",bm:"Studer / Rasche",licht:"Gebhardt/ Strucken",ton:"",insp:"Bierich",graben:"",reasist:"",projleit:"",regie:"",dirig:"",dauer:"",komp:"",team:[]},
+  {saison:"26/27",vorstellungen:["2026-10-11","2026-10-14","2026-10-17","2026-10-20","2026-10-24","2026-10-28","2026-11-01","2026-11-04","2026-11-07","2027-07-03"],titel:"Ballett 1 - Sommernachtstraum",typ:"Premiere",kat:"Ballett",prem:"2026-10-11",lv:"2027-07-03",prob:"2026-09-21",ete:"2026-08-27",khp:"2026-10-02",gp:"2026-10-10",ohp:"2026-10-08",bm:"Landolt",licht:"Gebhardt",ton:"Granda",insp:"Warthmann",graben:"gross",reasist:"",projleit:"Moreno",regie:"Marston",dirig:"",dauer:"ca. 2 Std. 30 Min.",komp:"Mendelssohn / Britten / Ligeti",team:[],pause:["2026-11-07","2027-07-03"]},
+  {saison:"26/27",vorstellungen:["2026-11-01","2026-11-04","2026-11-08","2026-11-15","2026-11-18","2026-11-21","2026-11-28"],titel:"Rachmaninov - die 3 Opern",typ:"Premiere",kat:"Oper",prem:"2026-11-01",lv:"2026-11-28",prob:"2026-09-21",ete:"2026-10-12",khp:"2026-10-22",gp:"2026-10-29",ohp:"2026-10-28",bm:"Willi",licht:"Ostfalk",ton:"Surgutschow",insp:"Bierich",graben:"gross",reasist:"Senn",projleit:"Noll",regie:"Tcherniakov",dirig:"Noseda",dauer:"ca. 3 Std.",komp:"Rachmaninow (1904/05/06)",team:["Elena Stikhina","Vladislav Sulimsky","Bekhzod Davronov","Ain Anger","Dmytro Popov"]},
+  {saison:"26/27",vorstellungen:["2026-11-08","2026-11-15","2026-11-19","2026-11-21","2026-11-26","2026-11-28","2026-12-06","2027-01-02","2027-01-07","2027-01-08","2027-01-10","2027-01-17"],titel:"Alice im Wunderland",typ:"WA",kat:"Oper",prem:"2026-11-08",lv:"2027-01-17",prob:"2026-10-06",ete:"2026-10-26",khp:"2026-11-06",gp:"2026-11-06",ohp:"2026-11-05",bm:"Landolt",licht:"Roller/ Grosse",ton:"Schilling",insp:"Tschannen",graben:"gross",reasist:"Gama",projleit:"",regie:"Homoki",dirig:"Richter",dauer:"2:06h",komp:"Unsuk Chin (2007)",team:["Marie Maidowski (Alice)","Ruben Drole","Christian Tintori","Thalia Cook-Hansen","Gary Martin","Salvador Villanueva"],pause:["2026-12-06","2027-01-02"]},
+  {saison:"26/27",vorstellungen:["2026-11-20","2026-11-27","2026-12-04","2026-12-11","2026-12-18","2026-12-21","2026-12-27"],titel:"Ballett - Romeo und Julia",typ:"WA",kat:"Ballett",prem:"2026-11-20",lv:"2026-12-27",prob:"2026-11-16",ete:"2026-11-16",khp:"2026-11-19",gp:"",ohp:"2026-11-18",bm:"Willi",licht:"Gebhardt/ Grosse",ton:"Granda",insp:"Warthmann",graben:"gross",reasist:"",projleit:"",regie:"",dirig:"Poschner",dauer:"",komp:"Prokofjew (1938)",team:[]},
+  {saison:"26/27",vorstellungen:["2026-11-22","2026-11-26","2026-12-02","2026-12-05","2026-12-10","2026-12-13","2026-12-16"],titel:"Elektra",typ:"Premiere",kat:"Oper",prem:"2026-11-22",lv:"2026-12-16",prob:"2026-10-12",ete:"2026-11-02",khp:"2026-11-12",gp:"2026-11-20",ohp:"2026-11-18",bm:"Huerlimann",licht:"Strucken",ton:"Winter",insp:"Kuehnel",graben:"gross",reasist:"Whiting",projleit:"Bujnoch",regie:"Steier",dirig:"Viotti",dauer:"ca. 1 Std. 45 Min.",komp:"R. Strauss (1909)",team:["Tanja Ariane Baumgartner (Elektra)","Miina-Liisa Vaerela (Chrysothemis)","Gabor Bretz (Orest)","Sara Jakubiak (Klytaemnestra)","John Daszak (Aegisth)"]},
+  {saison:"26/27",vorstellungen:["2026-11-29","2026-12-04","2026-12-12","2026-12-17"],titel:"Rheingold",typ:"WA",kat:"Oper",prem:"2026-11-29",lv:"2026-12-17",prob:"2026-11-09",ete:"2026-11-23",khp:"2026-11-27",gp:"2026-11-27",ohp:"2026-11-26",bm:"Studer",licht:"Ostfalk",ton:"Surgutschow",insp:"Bierich",graben:"gross",reasist:"Doering",projleit:"",regie:"Homoki",dirig:"Noseda",dauer:"2:41h",komp:"Wagner (1869)",team:["Michael Volle (Wotan)","Christopher Purves (Alberich)","Johan Krogius (Loge)","Claudia Mahnke (Fricka)"]},
+  {saison:"26/27",vorstellungen:["2026-12-11","2026-12-15","2026-12-18","2026-12-22","2026-12-26"],titel:"Manon Lescaut",typ:"WA",kat:"Oper",prem:"2026-12-11",lv:"2026-12-26",prob:"2026-11-18",ete:"2026-11-23",khp:"2026-12-08",gp:"2026-12-08",ohp:"2026-12-09",bm:"Studer",licht:"Roller/ Grosse",ton:"Schilling",insp:"Tschannen",graben:"gross",reasist:"Schweizer",projleit:"",regie:"Hermanis",dirig:"Frizza",dauer:"2:38h",komp:"Puccini (1893)",team:[]},
+  {saison:"26/27",vorstellungen:["2026-12-20","2026-12-23","2026-12-29","2027-01-01","2027-01-03","2027-01-06","2027-01-09","2027-01-12","2027-01-15","2027-01-19","2027-01-23"],titel:"la Traviata",typ:"Premiere",kat:"Oper",prem:"2026-12-20",lv:"2027-01-23",prob:"2026-11-09",ete:"2026-11-30",khp:"2026-12-10",gp:"2026-12-17",ohp:"2026-12-16",bm:"Huerlimann",licht:"Strucken",ton:"Granda",insp:"Pointet",graben:"gross",reasist:"Blersch",projleit:"",regie:"Loy",dirig:"Mallwitz",dauer:"ca. 2 Std. 30 Min.",komp:"Verdi (1853)",team:["Marina Monzo (Violetta)","Bekhzod Davronov (Alfredo)","Roman Burdenko (Germont)"]},
+  {saison:"26/27",vorstellungen:["2026-12-27","2026-12-31","2027-01-03","2027-01-07","2027-01-10","2027-01-13"],titel:"Die lustige Witwe",typ:"WA",kat:"Oper",prem:"2026-12-27",lv:"2027-01-13",prob:"2026-12-07",ete:"2026-12-18",khp:"2026-12-23",gp:"2026-12-23",ohp:"2026-12-22",bm:"Studer",licht:"Ostfalk",ton:"Winter",insp:"Tschannen",graben:"gross",reasist:"Whiting",projleit:"",regie:"Kosky",dirig:"Hahn",dauer:"2:47h",komp:"Lehar (1905)",team:[]},
+  {saison:"26/27",vorstellungen:["2027-01-16","2027-01-17","2027-01-18","2027-01-22","2027-01-25","2027-01-30","2027-02-01","2027-02-04","2027-02-06","2027-02-08","2027-02-11","2027-02-12"],titel:"Ballett 2 - Slow Rush",typ:"Premiere",kat:"Ballett",prem:"2027-01-16",lv:"2027-06-03",prob:"2026-12-01",ete:"2026-12-28",khp:"2027-01-09",gp:"2027-01-15",ohp:"2027-01-14",bm:"Rasche",licht:"Gebhardt",ton:"Paciorek",insp:"Warthmann",graben:"",reasist:"",projleit:"Klimmer",regie:"",dirig:"Poschner",dauer:"ca. 2 Std.",komp:"",team:[]},
+  {saison:"26/27",vorstellungen:["2027-01-24","2027-01-31","2027-02-03","2027-02-06"],titel:"Die Walkuere",typ:"WA",kat:"Oper",prem:"2027-01-24",lv:"2027-02-06",prob:"2026-12-28",ete:"2027-01-11",khp:"2027-01-21",gp:"2027-01-21",ohp:"2027-01-22",bm:"Huerlimann",licht:"Strucken",ton:"Surgutschow",insp:"Kuehnel",graben:"gross",reasist:"Lenzen",projleit:"",regie:"Homoki",dirig:"Noseda",dauer:"ca. 5:10h",komp:"Wagner (1870)",team:["Eric Cutler (Siegmund)","Christof Fischesser (Hunding)","Michael Volle (Wotan)","Claudia Mahnke (Fricka)","Camilla Nylund (Bruennhilde)"]},
+  {saison:"26/27",vorstellungen:["2027-02-07","2027-02-11","2027-02-14","2027-02-20","2027-02-24","2027-02-28"],titel:"Doctor Atomic",typ:"Premiere",kat:"Oper",prem:"2027-02-07",lv:"2027-02-28",prob:"2026-12-28",ete:"2027-01-18",khp:"2027-01-28",gp:"2027-02-04",ohp:"2027-02-02",bm:"Willi",licht:"Gebhardt",ton:"Surgutschow",insp:"Pointet",graben:"gross",reasist:"Gama",projleit:"Moreno",regie:"Beecroft",dirig:"Chan",dauer:"",komp:"Adams (2005)",team:["Leigh Melrose (Oppenheimer)","Xiaomeng Zhang","Matthew Rose","Mauro Peter"]},
+  {saison:"26/27",vorstellungen:["2027-02-12","2027-02-19","2027-02-21","2027-03-02","2027-03-05"],titel:"Romeo et Juliette",typ:"WA",kat:"Oper",prem:"2027-02-12",lv:"2027-03-05",prob:"2027-01-20",ete:"2027-02-02",khp:"2027-02-09",gp:"2027-02-09",ohp:"2027-02-10",bm:"Studer",licht:"Grosse",ton:"Paciorek",insp:"Warthmann",graben:"gross / hoch",reasist:"Whiting",projleit:"",regie:"Michieletto",dirig:"Noseda",dauer:"2:53h",komp:"Gounod (1867)",team:["Julie Fuchs (Juliette)","Benjamin Bernheim (Romeo)"]},
+  {saison:"26/27",vorstellungen:["2027-02-19","2027-02-20","2027-02-25"],titel:"Art Matters - Junior Ballett THW",typ:"Premiere",kat:"Ballett",prem:"2027-02-19",lv:"2027-02-25",prob:"2027-02-09",ete:"2027-02-08",khp:"2027-02-13",gp:"2027-02-18",ohp:"",bm:"Klug",licht:"Gebhardt",ton:"Zdravkovic",insp:"",graben:"",reasist:"",projleit:"Bujnoch",regie:"",dirig:"Poschner",dauer:"2:08h",komp:"",team:[]},
+  {saison:"26/27",vorstellungen:["2027-02-25","2027-02-28","2027-03-03","2027-03-07","2027-04-04","2027-04-07","2027-04-10","2027-04-16"],titel:"la Fanciulla del West",typ:"Premiere",kat:"Oper",prem:"2027-02-25",lv:"2027-04-16",prob:"2027-01-25",ete:"2027-02-01",khp:"2027-02-17",gp:"2027-02-23",ohp:"2027-02-19",bm:"Landolt",licht:"Ostfalk",ton:"Schilling",insp:"Bierich",graben:"gross",reasist:"Doering",projleit:"Noll",regie:"Steier",dirig:"Armiliato",dauer:"",komp:"Puccini (1910)",team:["Anja Kampe (Minnie)","Jonas Kaufmann (Dick Johnson)","Tomasz Konieczny (Rance)"],pause:["2027-03-07","2027-04-04"]},
+  {saison:"26/27",vorstellungen:["2027-02-27","2027-03-01","2027-03-06","2027-03-08","2027-05-01"],titel:"Ballett - Timeframed",typ:"WA",kat:"Ballett",prem:"2027-02-27",lv:"2027-05-01",prob:"2027-02-22",ete:"2027-02-22",khp:"2027-02-24",gp:"",ohp:"2027-02-24",bm:"Studer",licht:"Gebhardt",ton:"Paciorek",insp:"Warthmann",graben:"",reasist:"",projleit:"",regie:"",dirig:"Poschner",dauer:"",komp:"",team:[],pause:["2027-03-08","2027-05-01"]},
+  {saison:"26/27",vorstellungen:["2027-03-07","2027-03-10","2027-03-12","2027-03-16","2027-03-18","2027-03-21"],titel:"La Clemenza di Tito",typ:"WA",kat:"Oper",prem:"2027-03-07",lv:"2027-03-21",prob:"2027-02-15",ete:"2027-02-20",khp:"2027-03-05",gp:"2027-03-05",ohp:"2027-03-04",bm:"Studer",licht:"Grosse",ton:"Granda",insp:"Tschannen",graben:"gross / hoch",reasist:"Whiting",projleit:"",regie:"Michieletto",dirig:"Capuano",dauer:"",komp:"Mozart (1791)",team:["Giovanni Sala (Tito)","Alexandra Marcellier (Vitellia)","Cecilia Bartoli (Sesto)","Anna Tetruashvili (Annio)","Yewon Han (Servilia)","Andrew Moore (Publio)"]},
+  {saison:"26/27",vorstellungen:["2027-03-14","2027-03-17","2027-03-19","2027-03-22","2027-03-25","2027-03-27","2027-03-29"],titel:"Rinaldo",typ:"Premiere",kat:"Oper",prem:"2027-03-14",lv:"2027-03-29",prob:"2027-02-22",ete:"2027-03-04",khp:"2027-03-09",gp:"2027-03-12",ohp:"2027-03-11",bm:"Huerlimann",licht:"Roller",ton:"Winter",insp:"Pointet",graben:"mittel / hoch",reasist:"Gama",projleit:"Bujnoch",regie:"",dirig:"Jaroussky",dauer:"",komp:"Haendel (1711)",team:["Cecilia Bartoli (Rinaldo)"]},
+  {saison:"26/27",vorstellungen:["2027-03-29","2027-04-06","2027-04-11"],titel:"Junior Ballett OHZ",typ:"Premiere",kat:"Ballett",prem:"2027-03-29",lv:"2027-04-11",prob:"2027-03-22",ete:"2027-03-22",khp:"2027-03-25",gp:"",ohp:"",bm:"Klug",licht:"Grosse",ton:"Beck",insp:"",graben:"",reasist:"",projleit:"",regie:"",dirig:"Capuano",dauer:"2:08h",komp:"",team:[]},
+  {saison:"26/27",vorstellungen:["2027-04-11","2027-04-14","2027-04-17","2027-04-21","2027-04-24","2027-05-13","2027-05-17"],titel:"Tosca",typ:"WA",kat:"Oper",prem:"2027-04-11",lv:"2027-05-17",prob:"2027-03-24",ete:"2027-04-03",khp:"",gp:"2027-04-08",ohp:"2027-04-08",bm:"Huerlimann",licht:"Strucken",ton:"Winter",insp:"Tschannen",graben:"gross",reasist:"Doering",projleit:"",regie:"Carsen",dirig:"Noseda",dauer:"2:32h",komp:"Puccini (1900)",team:["Sonya Yoncheva (Tosca)","Charles Castronovo (Cavaradossi)","Ludovic Tezier (Scarpia)"]},
+  {saison:"26/27",vorstellungen:["2027-04-25","2027-04-27","2027-04-29","2027-05-02","2027-05-06","2027-05-09","2027-05-12","2027-05-14","2027-05-17","2027-05-21"],titel:"Elisir d amore",typ:"Premiere",kat:"Oper",prem:"2027-04-25",lv:"2027-05-21",prob:"2027-03-08",ete:"2027-04-05",khp:"2027-04-15",gp:"2027-04-23",ohp:"2027-04-22",bm:"Willi",licht:"Roller",ton:"Beck",insp:"Kuehnel",graben:"gross",reasist:"Russi",projleit:"Moreno",regie:"Michieletto",dirig:"Spotti",dauer:"",komp:"Donizetti (1832)",team:[]},
+  {saison:"26/27",vorstellungen:["2027-05-02","2027-05-06","2027-05-08","2027-05-15","2027-05-19"],titel:"Le nozze di Figaro",typ:"Premiere",kat:"Oper",prem:"2027-05-02",lv:"2027-05-19",prob:"2027-04-12",ete:"2027-04-24",khp:"2027-04-29",gp:"2027-04-29",ohp:"2027-04-28",bm:"Studer",licht:"Grosse",ton:"Granda",insp:"Warthmann",graben:"gross / hoch",reasist:"Blersch",projleit:"",regie:"Gloger",dirig:"Noseda",dauer:"3:33h",komp:"Mozart (1786)",team:["Sandra Hamaoui (Susanna)","Ruben Drole (Figaro)","Regula Muehlemann (Cherubino)"]},
+  {saison:"26/27",vorstellungen:["2027-05-07","2027-05-09","2027-05-19","2027-05-21","2027-05-23"],titel:"IOS Angels in America - Theater Winterthur",typ:"Premiere",kat:"Oper",prem:"2027-05-07",lv:"2027-05-23",prob:"2027-03-15",ete:"2027-04-26",khp:"2027-04-30",gp:"2027-05-05",ohp:"2027-05-04",bm:"Huerlimann",licht:"Strucken",ton:"Schilling",insp:"A.Bierich",graben:"",reasist:"",projleit:"Klimmer",regie:"",dirig:"",dauer:"",komp:"",team:[]},
+  {saison:"26/27",vorstellungen:["2027-05-22","2027-05-28","2027-06-06","2027-06-10","2027-06-12","2027-06-15","2027-06-25","2027-06-26","2027-06-27"],titel:"Ballett 3 - See the Music",typ:"Premiere",kat:"Ballett",prem:"2027-05-22",lv:"2027-06-27",prob:"2027-05-04",ete:"2027-05-03",khp:"2027-05-12",gp:"2027-05-21",ohp:"2027-05-20",bm:"Studer",licht:"Gebhardt",ton:"Paciorek",insp:"Warthmann",graben:"gross",reasist:"",projleit:"",regie:"",dirig:"Capuano",dauer:"",komp:"Tschaikowski / Britten / Glass",team:[]},
+  {saison:"26/27",vorstellungen:["2027-05-23","2027-05-27","2027-05-30","2027-06-04","2027-06-06","2027-06-11"],titel:"Don Pasquale",typ:"WA",kat:"Oper",prem:"2027-05-23",lv:"2027-06-11",prob:"2027-05-03",ete:"2027-05-18",khp:"2027-05-20",gp:"2027-05-20",ohp:"2027-05-19",bm:"Willi",licht:"Ostfalk",ton:"Beck",insp:"Bierich",graben:"mittel",reasist:"Senn",projleit:"",regie:"Michieletto",dirig:"Viotti",dauer:"2:05h",komp:"Donizetti (1843)",team:[]},
+  {saison:"26/27",vorstellungen:["2027-05-25"],titel:"Kinder Opernorchester",typ:"SF",kat:"Extra",prem:"2027-05-23",lv:"2027-05-23",prob:"2027-05-15",ete:"",khp:"",gp:"",ohp:"",bm:"Rasche",licht:"",ton:"",insp:"Bierich",graben:"",reasist:"",projleit:"",regie:"",dirig:"",dauer:"",komp:"",team:[]},
+  {saison:"26/27",vorstellungen:["2027-06-05"],titel:"A Night at the Opera",typ:"SF",kat:"Extra",prem:"2027-06-05",lv:"2027-06-05",prob:"",ete:"",khp:"",gp:"",ohp:"",bm:"Studer / Rasche",licht:"Strucken",ton:"",insp:"",graben:"",reasist:"",projleit:"",regie:"",dirig:"",dauer:"",komp:"",team:[]},
+  {saison:"26/27",vorstellungen:["2027-06-13","2027-06-17","2027-06-20","2027-06-24","2027-06-27","2027-06-30","2027-07-02","2027-07-09"],titel:"Samson et Dalila",typ:"Premiere",kat:"Oper",prem:"2027-06-13",lv:"2027-07-09",prob:"2027-04-28",ete:"2027-05-24",khp:"2027-06-03",gp:"2027-06-10",ohp:"2027-06-09",bm:"Landolt",licht:"Gebhardt",ton:"Zdravkovic",insp:"Tschannen",graben:"gross",reasist:"Whiting",projleit:"Noll",regie:"Titov",dirig:"Noseda",dauer:"",komp:"Saint-Saens (1877)",team:["Lise Davidsen (Dalila)","Benjamin Bernheim (Samson)"]},
+  {saison:"26/27",vorstellungen:["2027-06-16","2027-06-18","2027-06-23","2027-07-04","2027-07-07","2027-07-10"],titel:"La Boheme",typ:"WA",kat:"Oper",prem:"2027-06-16",lv:"2027-07-10",prob:"2027-05-24",ete:"2027-06-09",khp:"2027-06-12",gp:"2027-06-12",ohp:"2027-06-11",bm:"Willi",licht:"Roller",ton:"Schilling",insp:"Kuehnel",graben:"gross",reasist:"Lenzen",projleit:"",regie:"Michieletto",dirig:"Viotti",dauer:"2:23h",komp:"Puccini (1896)",team:["Ermonela Jaho (Mimi)","Jonas Kaufmann (Rodolfo)"]},
+  {saison:"26/27",vorstellungen:["2027-07-19"],titel:"Ballettschule OHZ",typ:"SF",kat:"Ballett",prem:"2027-06-19",lv:"2027-06-19",prob:"",ete:"",khp:"",gp:"",ohp:"",bm:"Huerlimann",licht:"Kunz/ Grosse",ton:"Granda",insp:"Kuehnel",graben:"",reasist:"",projleit:"",regie:"",dirig:"Capuano",dauer:"",komp:"",team:[]},
+  {saison:"26/27",vorstellungen:["2027-07-01","2027-07-06","2027-07-08","2027-07-11"],titel:"Don Carlo",typ:"WA",kat:"Oper",prem:"2027-07-01",lv:"2027-07-11",prob:"2027-06-07",ete:"2027-06-21",khp:"2027-06-26",gp:"2027-06-26",ohp:"2027-06-25",bm:"Rasche",licht:"Strucken",ton:"Winter",insp:"Bierich",graben:"gross",reasist:"Russi",projleit:"",regie:"Homoki",dirig:"Noseda",dauer:"3:31h",komp:"Verdi (1867)",team:[]},
+  {saison:"26/27",vorstellungen:["2027-07-03"],titel:"TAZ",typ:"SF",kat:"Ballett",prem:"2027-07-03",lv:"2027-07-03",prob:"2027-06-30",ete:"",khp:"",gp:"",ohp:"",bm:"Willi",licht:"Kunz/ Grosse",ton:"Zdravkovic",insp:"",graben:"",reasist:"",projleit:"",regie:"",dirig:"Capuano",dauer:"",komp:"",team:[]},
+  {saison:"26/27",vorstellungen:["2027-07-05"],titel:"IOS Galakonzert",typ:"KZT",kat:"Konzert",prem:"2027-07-05",lv:"2027-07-05",prob:"",ete:"",khp:"",gp:"",ohp:"",bm:"",licht:"",ton:"",insp:"Tschannen",graben:"",reasist:"",projleit:"",regie:"",dirig:"",dauer:"",komp:"",team:[]},
+  {saison:"26/27",vorstellungen:["2027-07-02"],titel:"Oper fuer alle - Samson et Dalila",typ:"SF",kat:"Extra",prem:"2027-07-02",lv:"2027-07-02",prob:"",ete:"",khp:"",gp:"",ohp:"",bm:"",licht:"",ton:"",insp:"",graben:"",reasist:"",projleit:"",regie:"",dirig:"",dauer:"",komp:"Saint-Saens (1877)",team:["Nila Chea","Meret Roth","Tosca Stocker","Claudia Puppato"]},
+  {saison:"26/27",vorstellungen:["2027-07-03"],titel:"Ballett fuer alle - Sommernachtstraum",typ:"SF",kat:"Extra",prem:"2027-07-03",lv:"2027-07-03",prob:"",ete:"",khp:"",gp:"",ohp:"",bm:"",licht:"",ton:"",insp:"",graben:"",reasist:"",projleit:"",regie:"",dirig:"",dauer:"",komp:"",team:["Nila Chea","Meret Roth","Tosca Stocker","Claudia Puppato"]},
+  {saison:"26/27",vorstellungen:["2027-07-04"],titel:"Open-Air Konzert",typ:"SF",kat:"Extra",prem:"2027-07-04",lv:"2027-07-04",prob:"",ete:"",khp:"",gp:"",ohp:"",bm:"",licht:"",ton:"",insp:"",graben:"",reasist:"",projleit:"",regie:"",dirig:"",dauer:"",komp:"",team:["Nila Chea","Meret Roth","Tosca Stocker","Claudia Puppato"]},
+  {saison:"26/27",vorstellungen:["2026-09-18","2026-09-19"],titel:"Eroeffnungsfest",typ:"SF",kat:"Extra",prem:"2026-09-18",lv:"2026-09-19",prob:"",ete:"2026-09-18",khp:"",gp:"",ohp:"",bm:"",licht:"Strucken/ Gebhardt",ton:"",insp:"",graben:"",reasist:"",projleit:"",regie:"",dirig:"",dauer:"",komp:"",team:[]},
+  {saison:"26/27",vorstellungen:[],titel:"Herr der Diebe - Oerlikon",typ:"Premiere",kat:"Labor",prem:"2028-02-27",lv:"",prob:"",ete:"",khp:"",gp:"",ohp:"",bm:"N.N.",licht:"",ton:"",insp:"",graben:"",reasist:"",projleit:"",regie:"",dirig:"",dauer:"",komp:"",team:[]},
+  {saison:"26/27",vorstellungen:[],titel:"Werckmeister - Oerlikon",typ:"Premiere",kat:"Labor",prem:"2027-04-22",lv:"2027-05-02",prob:"2027-04-01",ete:"",khp:"",gp:"",ohp:"",bm:"P. Janicke",licht:"",ton:"",insp:"",graben:"",reasist:"",projleit:"",regie:"",dirig:"",dauer:"",komp:"Thom Luz (2027 UA)",team:[]},
+  {saison:"25/26",vorstellungen:[],titel:"Ballett - Countertime",typ:"WA",kat:"Ballett",prem:"2025-09-05",lv:"2025-09-14",prob:"2025-08-29",ete:"2025-08-29",khp:"",gp:"2025-09-04",ohp:"2025-09-04",bm:"Studer",licht:"Ostfalk",ton:"Schilling",insp:"Warthmann",reasist:"",projleit:"Klimmer",graben:"gross",regie:"",dirig:"Capuano",komp:"",dauer:"",team:[]},
+  {saison:"25/26",vorstellungen:[],titel:"Wie du warst! Wie du bist!",typ:"WA",kat:"Labor",prem:"2025-09-20",lv:"2026-07-11",prob:"2025-08-25",ete:"2025-09-15",khp:"",gp:"2025-09-19",ohp:"",bm:"BT Technik",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"Capuano",komp:"Steen-Andersen (2025 UA)",dauer:"",team:[]},
+  {saison:"25/26",vorstellungen:["2025-09-21","2025-09-26","2025-10-01","2025-10-05","2025-10-14","2025-10-17","2025-10-21","2025-10-26"],titel:"Der Rosenkavalier",typ:"Premiere",kat:"Oper",prem:"2025-09-21",lv:"2025-10-26",prob:"2025-08-11",ete:"2025-08-26",khp:"2025-09-11",gp:"2025-09-18",ohp:"2025-09-16",bm:"Landolt",licht:"Kunz",ton:"Schilling",insp:"Kuehnel",reasist:"Doering",projleit:"Bujnoch",graben:"gross",regie:"Steier",dirig:"Mallwitz",komp:"R. Strauss (1911)",dauer:"",team:["Diana Damrau (Marschallin)","Klaus Florian Vogt (Octavian)","Regula Muehlemann (Sophie)"]},
+  {saison:"25/26",vorstellungen:["2025-09-24","2025-09-27","2025-10-03","2025-10-07","2025-10-10"],titel:"Manon",typ:"WA",kat:"Oper",prem:"2025-09-24",lv:"2025-10-10",prob:"2025-08-25",ete:"2025-09-08",khp:"2025-09-20",gp:"",ohp:"2025-09-20",bm:"Studer",licht:"Strucken",ton:"Peng",insp:"Bierich",reasist:"Lenzen",projleit:"",graben:"gross",regie:"Homoki",dirig:"Armiliato",komp:"Massenet (1884)",dauer:"3:35h",team:[]},
+  {saison:"25/26",vorstellungen:["2025-09-25","2025-09-28","2025-10-19","2025-10-24"],titel:"La Scala di Seta",typ:"WA",kat:"Oper",prem:"2025-09-25",lv:"2025-10-24",prob:"2025-09-01",ete:"2025-09-05",khp:"2025-09-19",gp:"",ohp:"2025-09-19",bm:"Willi",licht:"Ostfalk",ton:"Granda",insp:"Pointet",reasist:"Blersch",projleit:"Klimmer",graben:"mittel",regie:"Michieletto",dirig:"Sini",komp:"Rossini (1812)",dauer:"",team:[]},
+  {saison:"25/26",vorstellungen:["2025-09-28","2025-10-02","2025-10-08","2025-10-11","2025-10-15","2025-10-19"],titel:"Tosca",typ:"WA",kat:"Oper",prem:"2025-09-28",lv:"2025-10-19",prob:"2025-09-16",ete:"2025-09-22",khp:"2025-09-25",gp:"2025-10-19",ohp:"2025-09-25",bm:"Huerlimann",licht:"Kunz",ton:"Schneider",insp:"Tschannen",reasist:"Senn",projleit:"",graben:"gross",regie:"Carsen",dirig:"Noseda",komp:"Puccini (1900)",dauer:"2:33h",team:[]},
+  {saison:"25/26",vorstellungen:["2025-10-04"],titel:"ZFF - Zuercher Filmfestival",typ:"SF",kat:"Extra",prem:"2025-10-04",lv:"2025-10-04",prob:"",ete:"2025-10-04",khp:"",gp:"",ohp:"",bm:"Studer/Willi",licht:"Strucken",ton:"",insp:"Bierich",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[]},
+  {saison:"25/26",vorstellungen:["2025-10-12","2025-10-18","2025-10-23","2025-10-25","2025-10-31","2025-11-01","2025-11-09","2025-11-13","2025-12-02","2025-12-05","2025-12-06","2025-12-09"],titel:"Ballett - Des Oiseaux Rebelles",typ:"Premiere",kat:"Ballett",prem:"2025-10-12",lv:"2025-12-09",prob:"2025-09-23",ete:"2025-09-01",khp:"2025-10-03",gp:"2025-10-11",ohp:"2025-10-10",bm:"Willi",licht:"Gebhardt",ton:"Zdravkovic",insp:"Warthmann",reasist:"",projleit:"Klimmer/ Moreno",graben:"gross",regie:"",dirig:"Capuano",komp:"",dauer:"2:06h",team:[]},
+  {saison:"25/26",vorstellungen:["2025-11-02","2025-11-07","2025-11-12","2025-11-15","2025-11-18","2025-11-21","2025-11-26","2025-11-29","2025-12-17","2025-12-21"],titel:"La Forza del Destino",typ:"Premiere",kat:"Oper",prem:"2025-11-02",lv:"2025-12-21",prob:"2025-09-22",ete:"2025-10-13",khp:"2025-10-23",gp:"2025-10-30",ohp:"2025-10-29",bm:"Studer",licht:"Ostfalk",ton:"Paciorek",insp:"Bierich",reasist:"Gama",projleit:"Noll",graben:"gross",regie:"Carrasco",dirig:"Noseda",komp:"Verdi (1862)",dauer:"",team:["Anna Netrebko (Leonora)","Yusif Eyvazov (Alvaro)","George Petean (Carlo)"]},
+  {saison:"25/26",vorstellungen:["2025-11-08","2025-11-11","2025-11-14","2025-11-19","2025-11-22","2025-11-30"],titel:"Macbeth",typ:"WA",kat:"Oper",prem:"2025-11-08",lv:"2025-11-30",prob:"2025-10-13",ete:"2025-10-29",khp:"2025-11-05",gp:"",ohp:"2025-11-05",bm:"Willi",licht:"Kunz",ton:"Peng",insp:"Warthmann",reasist:"Doering",projleit:"Noll",graben:"gross",regie:"Kosky",dirig:"Noseda",komp:"Verdi (1847)",dauer:"2:59h",team:["Roman Burdenko (Macbeth)","Ekaterina Semenchuk (Lady Macbeth)"]},
+  {saison:"25/26",vorstellungen:["2025-11-16","2025-11-20","2025-11-23","2025-11-28","2025-11-30","2025-12-02","2025-12-04","2025-12-11","2025-12-16","2025-12-18","2025-12-21","2026-01-02","2026-01-24","2026-01-25","2026-01-31"],titel:"Haensel und Gretel",typ:"Premiere",kat:"Oper",prem:"2025-11-16",lv:"2026-01-31",prob:"2025-09-22",ete:"2025-10-27",khp:"2025-11-06",gp:"2025-11-14",ohp:"2025-11-13",bm:"Landolt",licht:"Roller",ton:"Schilling",insp:"Tschannen",reasist:"Blersch",projleit:"Klimmer",graben:"gross",regie:"Thom Luz",dirig:"Slekyte",komp:"Humperdinck (1893)",dauer:"",team:["Emily Pogorelc (Gretel)","Thalia Cook-Hansen (Haensel)"]},
+  {saison:"25/26",vorstellungen:["2025-12-07","2025-12-10","2025-12-12","2025-12-14","2025-12-18","2025-12-26","2025-12-28","2025-12-31","2026-01-02","2026-01-04","2026-01-06","2026-01-10"],titel:"Die Fledermaus",typ:"Premiere",kat:"Oper",prem:"2025-12-07",lv:"2026-01-10",prob:"2025-10-27",ete:"2025-11-17",khp:"2025-11-27",gp:"2025-12-05",ohp:"2025-12-04",bm:"Huerlimann",licht:"Gebhardt",ton:"Peng",insp:"Pointet",reasist:"Lenzen",projleit:"",graben:"gross",regie:"Bernreitner",dirig:"Bloxham",komp:"J. Strauss (1874)",dauer:"3:06h",team:["Camilla Nylund (Rosalinde)","Ruben Drole (Eisenstein)","Regula Muehlemann (Adele)","Johan Krogius (Alfred)"]},
+  {saison:"25/26",vorstellungen:["2025-12-13","2025-12-14","2025-12-19","2025-12-20","2025-12-26","2025-12-28","2026-04-11","2026-04-12","2026-04-17","2026-04-19","2026-04-24"],titel:"Ballett - Clara",typ:"WA",kat:"Ballett",prem:"2025-12-13",lv:"2026-04-24",prob:"2025-12-09",ete:"2025-12-08",khp:"2025-12-11",gp:"",ohp:"2025-12-11",bm:"Huerlimann",licht:"Gebhardt/ Ostfalk",ton:"Zdravkovic",insp:"Warthmann",reasist:"",projleit:"",graben:"gross",regie:"",dirig:"Capuano",komp:"",dauer:"2:47h",team:[]},
+  {saison:"25/26",vorstellungen:["2025-12-20","2025-12-23","2025-12-27","2026-01-01","2026-01-04"],titel:"Rigoletto",typ:"WA",kat:"Oper",prem:"2025-12-20",lv:"2026-01-04",prob:"2025-12-01",ete:"2025-12-12",khp:"2025-12-18",gp:"",ohp:"2025-12-18",bm:"Willi",licht:"Roller",ton:"Granda",insp:"Kuehnel",reasist:"Senn",projleit:"",graben:"gross",regie:"Guerbaca",dirig:"Ciampa",komp:"Verdi (1851)",dauer:"2:40h",team:["Kristine Avetisyan (Gilda)","Vladimir Salsi (Rigoletto)"]},
+  {saison:"25/26",vorstellungen:["2025-12-30","2026-01-03","2026-01-09","2026-01-11","2026-01-13","2026-01-16"],titel:"Madama Butterfly",typ:"WA",kat:"Oper",prem:"2025-12-30",lv:"2026-01-16",prob:"2025-12-08",ete:"2025-12-15",khp:"2025-12-27",gp:"",ohp:"2025-12-27",bm:"Landolt",licht:"Kunz",ton:"Schneider",insp:"Bierich",reasist:"Gama",projleit:"",graben:"gross",regie:"Lehnhoff",dirig:"Rogister",komp:"Puccini (1904)",dauer:"2:54h",team:["Maria Guseva (Butterfly)","Pene Pati (Pinkerton)"]},
+  {saison:"25/26",vorstellungen:["2026-01-17","2026-01-18","2026-01-22","2026-01-25","2026-01-30","2026-02-01","2026-02-04","2026-02-06","2026-02-08","2026-02-11","2026-02-12"],titel:"Ballett - Timeframed",typ:"Premiere",kat:"Ballett",prem:"2026-01-17",lv:"2026-02-12",prob:"2025-12-30",ete:"2025-12-23",khp:"2026-01-09",gp:"2026-01-16",ohp:"2026-01-15",bm:"Studer",licht:"Gebhardt",ton:"Paciorek",insp:"Warthmann",reasist:"",projleit:"Bujnoch",graben:"",regie:"",dirig:"Capuano",komp:"",dauer:"",team:[]},
+  {saison:"25/26",vorstellungen:["2026-01-18","2026-01-21","2026-01-23","2026-01-27","2026-01-31"],titel:"Carmen",typ:"WA",kat:"Oper",prem:"2026-01-18",lv:"2026-01-31",prob:"2025-12-29",ete:"2026-01-12",khp:"2026-01-15",gp:"",ohp:"2026-01-15",bm:"Huerlimann",licht:"Strucken",ton:"Zdravkovic",insp:"Tschannen",reasist:"Lenzen",projleit:"",graben:"gross",regie:"Homoki",dirig:"Noseda",komp:"Bizet (1875)",dauer:"",team:["Elina Garanca (Carmen)","Ludovic Tezier (Escamillo)"]},
+  {saison:"25/26",vorstellungen:["2026-01-24","2026-01-29","2026-02-01","2026-02-05","2026-02-07","2026-02-10","2026-02-14"],titel:"Le Nozze di Figaro 2526",typ:"WA",kat:"Oper",prem:"2026-01-24",lv:"2026-02-14",prob:"2026-01-05",ete:"2026-01-19",khp:"2026-01-22",gp:"",ohp:"2026-01-22",bm:"Studer",licht:"Ostfalk",ton:"Granda",insp:"Warthmann",reasist:"",projleit:"Noll",graben:"gross / hoch",regie:"Homoki",dirig:"Noseda",komp:"Mozart (1786)",dauer:"3:40h",team:[]},
+  {saison:"25/26",vorstellungen:["2026-02-05","2026-02-06","2026-02-07"],titel:"Sillons de Memoires",typ:"Premiere",kat:"Labor",prem:"2026-02-05",lv:"2026-02-07",prob:"",ete:"2026-02-05",khp:"",gp:"",ohp:"",bm:"N.N.",licht:"",ton:"Paciorek",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"Capuano",komp:"Rosenberger / Mikirditsian (2026 UA)",dauer:"",team:["Winter"]},
+  {saison:"25/26",vorstellungen:["2026-02-15","2026-02-18","2026-02-21","2026-02-25","2026-03-01","2026-03-06","2026-03-10"],titel:"Cardillac",typ:"Premiere",kat:"Oper",prem:"2026-02-15",lv:"2026-03-10",prob:"2026-01-05",ete:"2026-01-26",khp:"2026-02-04",gp:"2026-02-12",ohp:"2026-02-11",bm:"Willi",licht:"Roller",ton:"Schilling",insp:"Bierich",reasist:"Doering",projleit:"Moreno",graben:"gross",regie:"Mundruczo",dirig:"Luisi",komp:"Hindemith (1926)",dauer:"",team:["Gabor Bretz (Cardillac)","Nina Stemme (Tochter)"]},
+  {saison:"25/26",vorstellungen:["2026-02-20","2026-02-22","2026-02-28","2026-03-01","2026-03-05","2026-03-07","2026-04-06"],titel:"Messa da Requiem",typ:"WA",kat:"Ballett",prem:"2026-02-20",lv:"2026-04-06",prob:"2026-01-26",ete:"2026-02-13",khp:"2026-02-18",gp:"",ohp:"2026-02-18",bm:"Willi",licht:"Gebhardt/ Ostfalk",ton:"Peng",insp:"Pointet",reasist:"Lenzen",projleit:"",graben:"gross",regie:"",dirig:"Capuano",komp:"Verdi (1874)",dauer:"",team:[]},
+  {saison:"25/26",vorstellungen:["2026-03-08","2026-03-14","2026-03-18","2026-04-10","2026-04-12"],titel:"Monsters Paradise",typ:"Premiere",kat:"Oper",prem:"2026-03-08",lv:"2026-04-12",prob:"2026-02-24",ete:"2026-02-26",khp:"2026-03-05",gp:"2026-03-06",ohp:"2026-03-05",bm:"Huerlimann",licht:"Ostfalk",ton:"Surgutschow",insp:"Kuehnel",reasist:"Senn",projleit:"",graben:"gross",regie:"Kratzer",dirig:"Engel",komp:"Neuwirth (2026 UA)",dauer:"",team:["Christina Aristidou","Erin Morley","Georg Nigl","Rowan Pierce"]},
+  {saison:"25/26",vorstellungen:["2026-03-11","2026-03-13","2026-03-15","2026-03-17","2026-03-21","2026-03-25","2026-03-28"],titel:"Giulio Cesare",typ:"Premiere",kat:"Oper",prem:"2026-03-11",lv:"2026-03-28",prob:"2026-02-16",ete:"2026-02-16",khp:"2026-03-04",gp:"2026-03-07",ohp:"2026-03-04",bm:"Studer",licht:"Strucken",ton:"Zdravkovic",insp:"Tschannen",reasist:"Blersch",projleit:"Klimmer",graben:"gross / hoch",regie:"Livermore",dirig:"Capuano",komp:"Haendel (1724)",dauer:"",team:["Cecilia Bartoli (Cesare)","Philippe Jaroussky (Tolomeo)","Anne Sofie von Otter (Cornelia)"]},
+  {saison:"25/26",vorstellungen:["2026-03-27","2026-03-29","2026-03-31","2026-04-02","2026-04-06","2026-04-30","2026-05-02"],titel:"Scylla et Glaucus",typ:"Premiere",kat:"Oper",prem:"2026-03-27",lv:"2026-05-02",prob:"2026-02-16",ete:"2026-03-09",khp:"2026-03-20",gp:"2026-03-25",ohp:"2026-03-24",bm:"Landolt",licht:"Gebhardt",ton:"Paciorek",insp:"Bierich",reasist:"",projleit:"Noll",graben:"gross / hoch",regie:"Guth",dirig:"Haim",komp:"Leclair (1746)",dauer:"",team:["Reinoud Van Mechelen (Glaucus)","Perrine Devillers (Scylla)"]},
+  {saison:"25/26",vorstellungen:["2026-04-04","2026-04-13","2026-04-23"],titel:"Junior Ballett - The Butterfly Effect",typ:"WA",kat:"Ballett",prem:"2026-04-04",lv:"2026-04-23",prob:"2026-03-28",ete:"2026-03-28",khp:"",gp:"2026-04-04",ohp:"",bm:"Rasche",licht:"Ostfalk/ Gebhardt",ton:"Granda",insp:"Warthmann",reasist:"",projleit:"",graben:"",regie:"",dirig:"Capuano",komp:"",dauer:"2:08h",team:[]},
+  {saison:"25/26",vorstellungen:["2026-04-14","2026-04-18","2026-04-22","2026-04-25","2026-04-28"],titel:"Arabella",typ:"WA",kat:"Oper",prem:"2026-04-14",lv:"2026-04-28",prob:"2026-03-17",ete:"2026-04-09",khp:"2026-04-11",gp:"",ohp:"2026-04-11",bm:"Rasche",licht:"Ostfalk",ton:"Schilling",insp:"Kuehnel",reasist:"Blersch",projleit:"Noll",graben:"gross",regie:"Lehnhoff",dirig:"Viotti",komp:"R. Strauss (1933)",dauer:"",team:["Diana Damrau (Arabella)","Michael Volle (Mandryka)","Pavol Breslik (Matteo)"]},
+  {saison:"25/26",vorstellungen:["2026-04-26","2026-04-29","2026-05-03","2026-05-08","2026-05-15","2026-05-17","2026-05-20","2026-05-25"],titel:"La Clemenza di Tito",typ:"Premiere",kat:"Oper",prem:"2026-04-26",lv:"2026-05-25",prob:"2026-03-10",ete:"2026-04-01",khp:"2026-04-16",gp:"2026-04-24",ohp:"2026-04-23",bm:"Studer",licht:"Roller",ton:"Granda",insp:"Tschannen",reasist:"Whiting",projleit:"Bujnoch",graben:"gross / hoch",regie:"Michieletto",dirig:"Minkowski",komp:"Mozart (1791)",dauer:"",team:["Pene Pati (Tito)","Jeanine De Bique (Vitellia)","Lea Desandre (Sesto)","Siena Licht Miller (Annio)","Yewon Han (Servilia)","Andrew Moore (Publio)"]},
+  {saison:"25/26",vorstellungen:["2026-05-02","2026-05-06","2026-05-08","2026-05-10","2026-05-13"],titel:"Gianni Schicchi - Theater Winterthur",typ:"Premiere",kat:"Oper",prem:"2026-05-02",lv:"2026-05-13",prob:"2026-03-09",ete:"2026-04-20",khp:"2026-04-25",gp:"2026-04-30",ohp:"2026-04-29",bm:"Landolt",licht:"Strucken",ton:"Schneider",insp:"Pointet",reasist:"",projleit:"Klimmer",graben:"mittel",regie:"",dirig:"",komp:"Puccini (1918)",dauer:"",team:[]},
+  {saison:"25/26",vorstellungen:["2026-05-03","2026-05-06","2026-05-10","2026-05-14","2026-05-16"],titel:"Fidelio",typ:"WA",kat:"Oper",prem:"2026-05-03",lv:"2026-05-16",prob:"2026-04-09",ete:"2026-04-20",khp:"2026-04-30",gp:"",ohp:"2026-04-30",bm:"Landolt",licht:"Kunz",ton:"Zdravkovic",insp:"Kuehnel",reasist:"Senn",projleit:"Noll",graben:"gross",regie:"Homoki",dirig:"Kober",komp:"Beethoven (1805)",dauer:"1:54h",team:["Klaus Florian Vogt (Florestan)","Johanni van Oostrum (Leonore)","Christof Fischesser (Rocco)"]},
+  {saison:"25/26",vorstellungen:["2026-05-10","2026-05-14","2026-05-17"],titel:"La Damnation de Faust",typ:"WA",kat:"Oper",prem:"2026-05-10",lv:"2026-05-17",prob:"2026-05-08",ete:"2026-05-08",khp:"",gp:"2026-05-08",ohp:"",bm:"",licht:"",ton:"",insp:"Bierich",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"Berlioz (1846)",dauer:"2:58h",team:[]},
+  {saison:"25/26",vorstellungen:["2026-05-22","2026-05-28","2026-05-31","2026-06-07","2026-06-13"],titel:"Un Ballo in Maschera",typ:"WA",kat:"Oper",prem:"2026-05-22",lv:"2026-06-13",prob:"2026-05-04",ete:"2026-05-02",khp:"2026-05-20",gp:"",ohp:"2026-05-20",bm:"Huerlimann",licht:"Kunz",ton:"Schneider",insp:"Kuehnel",reasist:"Whiting",projleit:"Noll",graben:"gross",regie:"Carrasco",dirig:"Noseda",komp:"Verdi (1859)",dauer:"2:56h",team:["Ermonela Jaho (Amelia)","Jonas Kaufmann (Gustavo)","Ludovic Tezier (Renato)","Elina Garanca (Ulrica)"]},
+  {saison:"25/26",vorstellungen:["2026-05-23","2026-05-29","2026-05-30","2026-06-02","2026-06-04","2026-06-06","2026-06-07","2026-06-10","2026-06-12","2026-06-14","2026-06-23","2026-06-26"],titel:"Ballett - Romeo und Julia 2526",typ:"Premiere",kat:"Ballett",prem:"2026-05-23",lv:"2026-06-26",prob:"2026-05-05",ete:"2026-05-04",khp:"2026-05-13",gp:"2026-05-22",ohp:"2026-05-21",bm:"Willi",licht:"Gebhardt",ton:"Granda",insp:"Warthmann",reasist:"",projleit:"Moreno",graben:"gross",regie:"",dirig:"Capuano",komp:"Prokofjew (1938)",dauer:"",team:[]},
+  {saison:"25/26",vorstellungen:["2026-05-25","2026-06-28"],titel:"Kinderopernorchester 2526",typ:"KZT",kat:"Konzert",prem:"2026-05-25",lv:"2026-06-28",prob:"",ete:"2026-05-21",khp:"",gp:"2026-05-21",ohp:"",bm:"",licht:"",ton:"",insp:"Bierich",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[]},
+  {saison:"25/26",vorstellungen:[],titel:"Werckmeister Harmonien - Oerlikon",typ:"WA",kat:"Labor",prem:"2026-06-13",lv:"2026-06-27",prob:"2026-06-01",ete:"2026-06-01",khp:"",gp:"",ohp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"Capuano",komp:"Thom Luz (2026 UA)",dauer:"",team:[]},
+  {saison:"25/26",vorstellungen:["2026-06-14","2026-06-19","2026-07-01","2026-07-04","2026-07-10"],titel:"Werther",typ:"WA",kat:"Oper",prem:"2026-06-14",lv:"2026-07-10",prob:"2026-05-26",ete:"2026-06-08",khp:"2026-06-12",gp:"",ohp:"2026-06-12",bm:"Rasche",licht:"Roller",ton:"Schilling",insp:"Warthmann",reasist:"Blersch",projleit:"Noll",graben:"gross",regie:"Guerbaca",dirig:"Armiliato",komp:"Massenet (1892)",dauer:"2:35h",team:["Jonathan Tetelman (Werther)","Anna Goryachova (Charlotte)","Chelsea Zurfluh (Sophie)","Aksel Daveyan (Albert)"]},
+  {saison:"25/26",vorstellungen:["2026-06-20","2026-06-25","2026-06-28","2026-06-30","2026-07-04"],titel:"Nachttraeume",typ:"WA",kat:"Ballett",prem:"2026-06-20",lv:"2026-07-04",prob:"2026-06-01",ete:"2026-06-01",khp:"",gp:"2026-06-19",ohp:"",bm:"Landolt",licht:"Ostfalk",ton:"Paciorek",insp:"Bierich",reasist:"",projleit:"Klimmer",graben:"",regie:"",dirig:"Capuano",komp:"",dauer:"",team:[]},
+  {saison:"25/26",vorstellungen:["2026-06-21","2026-06-24","2026-06-27","2026-07-02","2026-07-05","2026-07-08","2026-07-11"],titel:"Tannhaeuser",typ:"Premiere",kat:"Oper",prem:"2026-06-21",lv:"2026-07-11",prob:"2026-05-04",ete:"2026-05-26",khp:"2026-06-09",gp:"2026-06-18",ohp:"2026-06-16",bm:"Huerlimann",licht:"Gebhardt",ton:"Surgutschow",insp:"Kuehnel",reasist:"Gama",projleit:"Noll",graben:"gross",regie:"Arnarsson",dirig:"Sokhiev",komp:"Wagner (1845)",dauer:"ca. 4:15h",team:["Eric Cutler (Tannhaeuser)","Christian Gerhaher (Wolfram)","Christina Nilsson (Elisabeth)","Rachael Wilson (Venus)","Christof Fischesser (Herrmann)"]},
+  {saison:"25/26",vorstellungen:["2026-07-03","2026-07-07","2026-07-09","2026-07-12"],titel:"Cosi fan tutte",typ:"WA",kat:"Oper",prem:"2026-07-03",lv:"2026-07-12",prob:"2026-06-08",ete:"2026-06-22",khp:"2026-07-01",gp:"",ohp:"2026-07-01",bm:"Rasche",licht:"Strucken",ton:"Paciorek",insp:"Warthmann",reasist:"Senn",projleit:"",graben:"gross / hoch",regie:"Serebrennikov",dirig:"Gonzalez-Monjas",komp:"Mozart (1790)",dauer:"3:30h",team:["Elbenita Kajtazi (Fiordiligi)","Siena Licht Miller (Dorabella)","Yannick Debus (Guglielmo)","Bogdan Volkov (Ferrando)","Rebeca Olvera (Despina)","Luca Pisaroni (Don Alfonso)"]},
+  {saison:"25/26",vorstellungen:["2026-07-01","2026-07-03","2026-07-04"],titel:"Next Generation - Studiobuhne",typ:"WA",kat:"Ballett",prem:"2026-07-01",lv:"2026-07-04",prob:"2026-06-19",ete:"2026-06-18",khp:"",gp:"2026-06-30",ohp:"",bm:"Humbel",licht:"",ton:"Zdravkovic",insp:"Tschannen",reasist:"",projleit:"Bujnoch",graben:"",regie:"",dirig:"Capuano",komp:"div. Komponisten",dauer:"",team:[]},
+  {saison:"25/26",vorstellungen:["2026-07-06"],titel:"Galakonzert IOS 2526",typ:"KZT",kat:"Konzert",prem:"2026-07-06",lv:"2026-07-06",prob:"",ete:"",khp:"",gp:"",ohp:"",bm:"Rasche",licht:"Strucken",ton:"",insp:"Tschannen",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[]},
+  {saison:"25/26",vorstellungen:["2026-06-26"],titel:"Opernhaus fuer alle - Romeo und Julia",typ:"SF",kat:"Extra",prem:"2026-06-26",lv:"2026-06-26",prob:"",ete:"2026-06-26",khp:"",gp:"",ohp:"",bm:"Willi",licht:"",ton:"Surgutschow",insp:"",reasist:"",projleit:"Bujnoch",graben:"",regie:"",dirig:"",komp:"Prokofjew (1938)",dauer:"",team:[]},
+  {saison:"25/26",vorstellungen:["2026-06-27"],titel:"Opernhaus fuer alle - Tannhaeuser",typ:"SF",kat:"Extra",prem:"2026-06-27",lv:"2026-06-27",prob:"",ete:"2026-06-27",khp:"",gp:"",ohp:"",bm:"Huerlimann",licht:"",ton:"Surgutschow",insp:"",reasist:"",projleit:"Bujnoch",graben:"",regie:"",dirig:"",komp:"Wagner (1845)",dauer:"",team:[]},
+  {saison:"25/26",vorstellungen:["2026-06-28"],titel:"Open-Air-Konzert Opernhaus fuer alle",typ:"SF",kat:"Extra",prem:"2026-06-28",lv:"2026-06-28",prob:"",ete:"2026-06-28",khp:"",gp:"",ohp:"",bm:"",licht:"",ton:"Surgutschow",insp:"",reasist:"",projleit:"Bujnoch",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[]},
+  {saison:"25/26",vorstellungen:["2026-07-11"],titel:"Ballettschule OHZ 2526",typ:"WA",kat:"Ballett",prem:"2026-07-11",lv:"2026-07-11",prob:"",ete:"",khp:"",gp:"",ohp:"",bm:"",licht:"Kunz",ton:"Granda",insp:"Kuehnel",reasist:"",projleit:"",graben:"",regie:"",dirig:"Capuano",komp:"",dauer:"",team:[]},
+  {saison:"25/26",vorstellungen:["2026-07-05"],titel:"TAZ - Curtain Up!",typ:"SF",kat:"Ballett",prem:"2026-07-05",lv:"2026-07-05",prob:"2026-07-03",ete:"",khp:"",gp:"2026-07-03",ohp:"",bm:"",licht:"Kunz",ton:"Zdravkovic",insp:"Warthmann",reasist:"",projleit:"Bujnoch",graben:"",regie:"",dirig:"Capuano",komp:"",dauer:"",team:[]}
+,
+  {saison:"23/24",vorstellungen:[],titel:"Eroeffnungsfest 2324",typ:"SF",kat:"Extra",prem:"2023-09-16",lv:"2023-09-16",prob:"",ete:"2023-09-16",khp:"",gp:"",ohp:"",bm:"alle BM",licht:"Giesbert",ton:"",insp:"",graben:"",reasist:"Whiting",projleit:"Noll",regie:"",dirig:"Capuano",dauer:"ca. 5:10h",komp:"",team:[]},
+  {saison:"23/24",vorstellungen:["2023-09-17","2023-09-21","2023-09-26","2023-09-29","2023-10-03","2023-10-06","2023-10-09","2023-10-14","2023-10-18","2023-10-21","2023-10-25","2023-10-28"],titel:"La Rondine",typ:"Premiere",kat:"Oper",prem:"2023-09-17",lv:"2023-10-28",prob:"2023-08-07",ete:"2023-08-26",khp:"2023-09-06",gp:"2023-09-14",ohp:"2023-09-13",bm:"Huerlimann",licht:"Ostfalk",ton:"Schneider",insp:"Warthmann",graben:"gross",reasist:"Whiting",projleit:"",regie:"Loy",dirig:"Armiliato",dauer:"2:32h",komp:"Puccini (1917)",team:[]},
+  {saison:"23/24",vorstellungen:[],titel:"Turco in Italia",typ:"WA",kat:"Oper",prem:"2023-09-19",lv:"2023-10-03",prob:"2023-08-28",ete:"2023-09-02",khp:"2023-09-16",gp:"",ohp:"2023-09-16",bm:"Studer",licht:"Gebhardt",ton:"Wurster",insp:"Kuehnel",graben:"mittel",reasist:"Blersch",projleit:"",regie:"Michieletto",dirig:"Sini",dauer:"3:07h",komp:"Rossini (1814)",team:[]},
+  {saison:"23/24",vorstellungen:[],titel:"Don Giovanni",typ:"WA",kat:"Oper",prem:"2023-09-23",lv:"2023-10-14",prob:"2023-08-30",ete:"2023-09-11",khp:"2023-09-21",gp:"",ohp:"2023-09-21",bm:"Willi /Rasche",licht:"Roller",ton:"Peng",insp:"Kuehnel",graben:"gross / hoch",reasist:"Doering",projleit:"",regie:"Homoki",dirig:"Noseda",dauer:"3:21h",komp:"Mozart (1787)",team:[]},
+  {saison:"23/24",vorstellungen:[],titel:"Iphigenie en Tauride",typ:"WA",kat:"Oper",prem:"2023-09-24",lv:"2023-10-15",prob:"2023-09-04",ete:"2023-08-23",khp:"2023-09-22",gp:"",ohp:"2023-09-22",bm:"Landolt",licht:"Kunz",ton:"Granda",insp:"Botthof",graben:"gross",reasist:"",projleit:"",regie:"Homoki",dirig:"Haim",dauer:"1:49h",komp:"Gluck (1779)",team:[]},
+  {saison:"23/24",vorstellungen:[],titel:"Hexe Hilary - Studiobuhne",typ:"WA",kat:"Oper",prem:"2023-09-30",lv:"2023-12-20",prob:"2023-09-22",ete:"2023-09-22",khp:"2023-09-29",gp:"2023-09-29",ohp:"",bm:"xx",licht:"Strucken",ton:"Peng",insp:"A.Bierich",graben:"",reasist:"",projleit:"Bujnoch",regie:"",dirig:"Capuano",dauer:"",komp:"",team:[]},
+  {saison:"23/24",vorstellungen:[],titel:"Ballett 1 - Walkways",typ:"Premiere",kat:"Ballett",prem:"2023-10-06",lv:"2024-01-02",prob:"2023-09-18",ete:"2023-08-21",khp:"2023-09-29",gp:"2023-10-05",ohp:"2023-10-04",bm:"Studer",licht:"Ostfalk/ Gebhardt",ton:"Schilling",insp:"Tschannen",graben:"gross",reasist:"",projleit:"Noll",regie:"",dirig:"Capuano",dauer:"",komp:"",team:[]},
+  {saison:"23/24",vorstellungen:[],titel:"ZFF 2324",typ:"SF",kat:"Extra",prem:"2023-10-07",lv:"2023-10-07",prob:"2023-10-07",ete:"2023-10-07",khp:"",gp:"",ohp:"",bm:"Willi",licht:"Strucken/ Ostfalk/ Gebhardt",ton:"",insp:"",graben:"",reasist:"",projleit:"",regie:"",dirig:"",dauer:"",komp:"",team:[]},
+  {saison:"23/24",vorstellungen:[],titel:"Nachttraeume",typ:"WA",kat:"Ballett",prem:"2023-11-04",lv:"2023-12-02",prob:"2023-11-01",ete:"2023-11-01",khp:"2023-11-03",gp:"",ohp:"2023-11-03",bm:"Landolt",licht:"Gebhardt",ton:"Paciorek",insp:"F.Bierich",graben:"",reasist:"",projleit:"Klimmer",regie:"",dirig:"Capuano",dauer:"",komp:"",team:[]},
+  {saison:"23/24",vorstellungen:["2023-11-05","2023-11-08","2023-11-12","2023-11-22","2023-11-26","2023-12-03","2024-05-09","2024-05-12","2024-05-17","2024-05-26"],titel:"Goetterdaemmerung",typ:"WA",kat:"Oper",prem:"2023-11-05",lv:"2024-05-26",prob:"2024-04-30",ete:"2024-05-08",khp:"2023-10-24",gp:"2023-11-02",ohp:"2023-10-31",bm:"Landolt/ Rasche",licht:"Ostfalk",ton:"Surgutschow",insp:"F.Bierich/ Tschannen",graben:"gross",reasist:"Gama",projleit:"",regie:"Homoki",dirig:"Noseda",dauer:"",komp:"Wagner (1876)",team:[]},
+  {saison:"23/24",vorstellungen:[],titel:"Macbeth",typ:"WA",kat:"Oper",prem:"2023-11-17",lv:"2023-12-01",prob:"2023-10-30",ete:"2023-11-13",khp:"2023-11-15",gp:"",ohp:"2023-11-15",bm:"Huerlimann",licht:"Strucken",ton:"Peng",insp:"Warthmann",graben:"gross",reasist:"Doering",projleit:"Noll",regie:"Kosky",dirig:"Noseda",dauer:"2:59h",komp:"Verdi (1847)",team:[]},
+  {saison:"23/24",vorstellungen:[],titel:"Jim Knopf",typ:"Premiere",kat:"Oper",prem:"2023-11-19",lv:"2024-01-28",prob:"2023-10-09",ete:"2023-10-23",khp:"2023-11-08",gp:"2023-11-17",ohp:"2023-11-16",bm:"Willi",licht:"Evin/ Roller",ton:"Schilling/ Peng",insp:"Warthmann",graben:"gross / hoch",reasist:"Senn/ Whiting",projleit:"Klimmer",regie:"Homoki",dirig:"Viotti",dauer:"",komp:"Minchev (2023 UA)",team:[]},
+  {saison:"23/24",vorstellungen:[],titel:"Platee",typ:"Premiere",kat:"Oper",prem:"2023-12-10",lv:"2024-01-16",prob:"2023-10-30",ete:"2023-11-20",khp:"2023-11-30",gp:"2023-12-08",ohp:"2023-12-07",bm:"Huerlimann",licht:"Strucken",ton:"Wurster",insp:"Kuehnel",graben:"gross",reasist:"Russi/ Blersch",projleit:"",regie:"Mijnssen",dirig:"Haim",dauer:"",komp:"Rameau (1745)",team:[]},
+  {saison:"23/24",vorstellungen:[],titel:"Barkouf",typ:"WA",kat:"Oper",prem:"2023-12-16",lv:"2023-12-26",prob:"2023-11-27",ete:"2023-12-04",khp:"2023-12-14",gp:"",ohp:"2023-12-14",bm:"Studer",licht:"Kunz",ton:"Schneider",insp:"Botthof",graben:"gross",reasist:"Senn",projleit:"",regie:"Michieletto",dirig:"Fasolis",dauer:"",komp:"Offenbach (1860)",team:[]},
+  {saison:"23/24",vorstellungen:[],titel:"Sweeney Todd",typ:"WA",kat:"Oper",prem:"2023-12-22",lv:"2024-01-13",prob:"2023-11-29",ete:"2023-12-11",khp:"2023-12-20",gp:"",ohp:"2023-12-20",bm:"Willi /Rasche",licht:"Strucken",ton:"Surgutschow/ Utz",insp:"Bierich/ Tschannen",graben:"gross",reasist:"Gama",projleit:"Klimmer",regie:"Homoki",dirig:"Abell",dauer:"2:45h",komp:"Sondheim (1979)",team:[]},
+  {saison:"23/24",vorstellungen:[],titel:"Italiana in Algeri",typ:"WA",kat:"Oper",prem:"2023-12-31",lv:"2024-01-09",prob:"2023-12-12",ete:"2023-12-23",khp:"2023-12-29",gp:"",ohp:"2023-12-29",bm:"Landolt",licht:"Ostfalk",ton:"Wurster",insp:"F.Bierich",graben:"gross / hoch",reasist:"Blersch",projleit:"",regie:"Michieletto",dirig:"Sini",dauer:"3:09h",komp:"Rossini (1813)",team:[]},
+  {saison:"23/24",vorstellungen:[],titel:"Werther",typ:"WA",kat:"Oper",prem:"2024-01-19",lv:"2024-02-04",prob:"2023-12-27",ete:"2024-01-11",khp:"2024-01-17",gp:"",ohp:"2024-01-17",bm:"Rasche",licht:"Roller",ton:"Schneider",insp:"Warthmann",graben:"gross",reasist:"Russi",projleit:"Noll",regie:"Loy",dirig:"Armiliato",dauer:"2:35h",komp:"Massenet (1892)",team:[]},
+  {saison:"23/24",vorstellungen:[],titel:"Ballett 2 - Timekeepers",typ:"Premiere",kat:"Ballett",prem:"2024-01-20",lv:"2024-02-23",prob:"2023-12-21",ete:"2023-12-18",khp:"2024-01-12",gp:"2024-01-19",ohp:"2024-01-18",bm:"Willi",licht:"Gebhardt",ton:"Paciorek/ Peng",insp:"Kuehnel",graben:"",reasist:"",projleit:"",regie:"",dirig:"Capuano",dauer:"",komp:"",team:[]},
+  {saison:"23/24",vorstellungen:[],titel:"Cosi fan tutte",typ:"WA",kat:"Oper",prem:"2024-01-28",lv:"2024-02-10",prob:"2024-01-03",ete:"2024-01-24",khp:"2024-01-26",gp:"",ohp:"2024-01-26",bm:"Huerlimann /Rasche",licht:"Kunz",ton:"Paciorek",insp:"Warthmann",graben:"gross / hoch",reasist:"Senn",projleit:"",regie:"Pelly",dirig:"Haim",dauer:"3:30h",komp:"Mozart (1790)",team:[]},
+  {saison:"23/24",vorstellungen:[],titel:"Die lustige Witwe",typ:"Premiere",kat:"Oper",prem:"2024-02-11",lv:"2024-03-14",prob:"2024-01-03",ete:"2024-01-22",khp:"2024-02-02",gp:"2024-02-09",ohp:"2024-02-08",bm:"Studer",licht:"Ostfalk",ton:"Schneider",insp:"Tschannen",graben:"gross",reasist:"Whiting/ Lenzen",projleit:"Noll",regie:"Kosky",dirig:"Viotti",dauer:"2:52h",komp:"Lehar (1905)",team:[]},
+  {saison:"23/24",vorstellungen:[],titel:"Ballett Verdi Requiem",typ:"WA",kat:"Ballett",prem:"2024-02-24",lv:"2024-04-01",prob:"2024-02-10",ete:"2024-02-10",khp:"2024-02-22",gp:"",ohp:"2024-02-22",bm:"Willi",licht:"Gebhardt",ton:"Peng",insp:"Pointet",graben:"gross",reasist:"Doering",projleit:"",regie:"",dirig:"Capuano",dauer:"",komp:"Verdi (1874)",team:[]},
+  {saison:"23/24",vorstellungen:[],titel:"Amerika",typ:"Premiere",kat:"Oper",prem:"2024-03-03",lv:"2024-04-13",prob:"2024-01-22",ete:"2024-02-12",khp:"2024-02-23",gp:"2024-03-01",ohp:"2024-02-29",bm:"Landolt",licht:"Roller",ton:"Surgutschow/ Paciorek",insp:"F.Bierich",graben:"gross",reasist:"Blersch",projleit:"",regie:"Baumgarten",dirig:"Feltz",dauer:"",komp:"Haubenstock-Ramati (1966)",team:[]},
+  {saison:"23/24",vorstellungen:[],titel:"Junior Ballett Horizonte",typ:"WA",kat:"Ballett",prem:"2024-03-09",lv:"2024-03-19",prob:"2024-03-07",ete:"2024-03-02",khp:"2024-03-08",gp:"2024-03-08",ohp:"",bm:"Huerlimann",licht:"Strucken",ton:"Wurster",insp:"Tschannen",graben:"",reasist:"",projleit:"",regie:"",dirig:"Feltz",dauer:"1:36h",komp:"",team:[]},
+  {saison:"23/24",vorstellungen:[],titel:"Csardas Fuerstin",typ:"WA",kat:"Oper",prem:"2024-03-10",lv:"2024-04-01",prob:"2024-02-19",ete:"2024-03-04",khp:"2024-03-06",gp:"",ohp:"2024-03-06",bm:"Landolt",licht:"Ostfalk",ton:"Schilling",insp:"Warthmann",graben:"gross",reasist:"Doering",projleit:"",regie:"Kosky",dirig:"Viotti",dauer:"2:00h",komp:"Kalman (1915)",team:[]},
+  {saison:"23/24",vorstellungen:[],titel:"Ballett - The Cellist",typ:"WA",kat:"Ballett",prem:"2024-03-17",lv:"2024-06-27",prob:"2024-03-12",ete:"2024-03-11",khp:"2024-03-15",gp:"",ohp:"2024-03-15",bm:"Willi",licht:"Gebhardt",ton:"Granda",insp:"Warthmann",graben:"gross",reasist:"",projleit:"",regie:"",dirig:"Feltz",dauer:"",komp:"",team:[]},
+  {saison:"23/24",vorstellungen:[],titel:"Carmen",typ:"Premiere",kat:"Oper",prem:"2024-04-07",lv:"2024-06-15",prob:"2024-02-21",ete:"2024-03-18",khp:"2024-03-27",gp:"2024-04-05",ohp:"2024-04-04",bm:"Huerlimann",licht:"Evin/ Roller",ton:"Wurster",insp:"Tschannen",graben:"gross",reasist:"Gama/ Lenzen",projleit:"",regie:"Homoki",dirig:"Noseda",dauer:"",komp:"Bizet (1875)",team:[]},
+  {saison:"23/24",vorstellungen:[],titel:"Rheingold",typ:"WA",kat:"Oper",prem:"2024-04-20",lv:"2024-05-18",prob:"2024-04-02",ete:"2024-04-16",khp:"2024-04-18",gp:"",ohp:"2024-04-18",bm:"Studer / Rasche",licht:"Roller",ton:"Surgutschow",insp:"Bierich/ Tschannen",graben:"gross",reasist:"Doering",projleit:"",regie:"Homoki",dirig:"Noseda",dauer:"2:41h",komp:"Wagner (1869)",team:[]},
+  {saison:"23/24",vorstellungen:[],titel:"Ballett 3 - Atonement",typ:"Premiere",kat:"Ballett",prem:"2024-04-28",lv:"2024-06-07",prob:"2024-04-09",ete:"2024-03-25",khp:"2024-04-19",gp:"2024-04-27",ohp:"2024-04-25",bm:"Willi",licht:"Gebhardt",ton:"Schilling/ Peng",insp:"",graben:"gross",reasist:"",projleit:"",regie:"",dirig:"Feltz",dauer:"",komp:"",team:[]},
+  {saison:"23/24",vorstellungen:[],titel:"A Midsummer Night Dream - IOS THW",typ:"Premiere",kat:"Oper",prem:"2024-05-04",lv:"2024-05-17",prob:"2024-03-18",ete:"2024-04-16",khp:"2024-04-27",gp:"2024-05-02",ohp:"2024-04-30",bm:"Landolt",licht:"Kunz",ton:"Schneider",insp:"Botthof",graben:"",reasist:"Senn",projleit:"Klimmer",regie:"Holzapfel",dirig:"Abell",dauer:"",komp:"Britten (1960)",team:[]},
+  {saison:"23/24",vorstellungen:[],titel:"Die Walkuere",typ:"WA",kat:"Oper",prem:"2024-05-05",lv:"2024-05-20",prob:"2024-04-09",ete:"2024-04-25",khp:"2024-04-26",gp:"",ohp:"2024-04-26",bm:"Huerlimann",licht:"Strucken/ Ostfalk",ton:"Surgutschow",insp:"Kuehnel",graben:"gross",reasist:"Lenzen",projleit:"",regie:"Homoki",dirig:"Noseda",dauer:"ca. 5:10h",komp:"Wagner (1870)",team:[]},
+  {saison:"23/24",vorstellungen:[],titel:"Siegfried 2324",typ:"WA",kat:"Oper",prem:"2024-05-07",lv:"2024-05-24",prob:"2024-04-24",ete:"2024-04-29",khp:"2024-04-30",gp:"",ohp:"2024-04-30",bm:"Willi/ Rasche",licht:"Roller",ton:"Surgutschow",insp:"Kuehnel/ Tschannen",graben:"gross",reasist:"Doering",projleit:"",regie:"Homoki",dirig:"Noseda",dauer:"5:33h",komp:"Wagner (1876)",team:[]},
+  {saison:"23/24",vorstellungen:[],titel:"L Orfeo 2324",typ:"Premiere",kat:"Oper",prem:"2024-05-17",lv:"2024-06-16",prob:"2024-03-25",ete:"2024-04-08",khp:"2024-05-08",gp:"2024-05-15",ohp:"2024-05-14",bm:"Studer",licht:"Gebhardt",ton:"Wurster",insp:"Warthmann",graben:"gross/  hoch",reasist:"Whiting",projleit:"",regie:"Titov",dirig:"Dantone",dauer:"2:09h",komp:"Monteverdi (1607)",team:[]},
+  {saison:"23/24",vorstellungen:[],titel:"Vespri Siciliani",typ:"Premiere",kat:"Oper",prem:"2024-06-09",lv:"2024-07-13",prob:"2024-04-24",ete:"2024-05-21",khp:"2024-05-30",gp:"2024-06-06",ohp:"2024-06-05",bm:"Huerlimann",licht:"Evin/ Strucken",ton:"Paciorek",insp:"Tschannen",graben:"gross",reasist:"Russi/ Blersch",projleit:"Noll",regie:"Bieito",dirig:"Repusic",dauer:"",komp:"Verdi (1855)",team:[]},
+  {saison:"23/24",vorstellungen:[],titel:"Ballett - Nijinsky",typ:"WA",kat:"Ballett",prem:"2024-06-14",lv:"2024-06-23",prob:"2024-06-10",ete:"2024-06-10",khp:"2024-06-13",gp:"",ohp:"2024-06-13",bm:"Studer",licht:"Kunz",ton:"Schneider",insp:"Bierich",graben:"gross",reasist:"",projleit:"Bujnoch",regie:"",dirig:"Feltz",dauer:"1:30h",komp:"",team:[]},
+  {saison:"23/24",vorstellungen:[],titel:"Land des Laechelns",typ:"WA",kat:"Oper",prem:"2024-06-21",lv:"2024-07-05",prob:"2024-05-28",ete:"2024-06-14",khp:"2024-06-19",gp:"",ohp:"2024-06-19",bm:"Huerlimann/Rasche",licht:"Roller",ton:"Peng",insp:"Kuehnel",graben:"gross",reasist:"Gama",projleit:"",regie:"Homoki",dirig:"Viotti",dauer:"2:13h",komp:"Lehar (1929)",team:[]},
+  {saison:"23/24",vorstellungen:[],titel:"Next Generation 2324",typ:"WA",kat:"Ballett",prem:"2024-06-25",lv:"2024-06-30",prob:"2024-06-11",ete:"2024-06-10",khp:"",gp:"",ohp:"",bm:"xx",licht:"Ostfalk",ton:"Granda",insp:"Warthmann",graben:"",reasist:"",projleit:"Bujnoch",regie:"",dirig:"Feltz",dauer:"",komp:"",team:[]},
+  {saison:"23/24",vorstellungen:[],titel:"Turandot",typ:"WA",kat:"Oper",prem:"2024-06-30",lv:"2024-07-12",prob:"2024-06-10",ete:"2024-06-20",khp:"2024-06-27",gp:"",ohp:"2024-06-27",bm:"Studer/ Landolt",licht:"Strucken",ton:"Schilling",insp:"Kuehnel",graben:"gross",reasist:"Lenzen",projleit:"Noll",regie:"Homoki",dirig:"Noseda",dauer:"",komp:"Puccini (1926)",team:[]},
+  {saison:"23/24",vorstellungen:[],titel:"Andrea Chenier konzertant",typ:"Premiere",kat:"Oper",prem:"2024-07-07",lv:"2024-07-14",prob:"2024-07-01",ete:"2024-07-05",khp:"2024-07-05",gp:"2024-07-05",ohp:"",bm:"alle BM",licht:"Strucken",ton:"Zdravkovic",insp:"F.Bierich",graben:"gross",reasist:"Doering",projleit:"",regie:"",dirig:"Noseda",dauer:"",komp:"Giordano (1896)",team:[]},
+  {saison:"23/24",vorstellungen:[],titel:"Oper fuer alle 2324",typ:"SF",kat:"Extra",prem:"2024-06-15",lv:"2024-06-15",prob:"",ete:"",khp:"",gp:"",ohp:"",bm:"",licht:"",ton:"",insp:"",graben:"",reasist:"",projleit:"Noll",regie:"",dirig:"",dauer:"",komp:"",team:[]},
+  {saison:"23/24",vorstellungen:[],titel:"Ballettschule OHZ 2324",typ:"WA",kat:"Ballett",prem:"2024-06-30",lv:"2024-06-30",prob:"2024-06-28",ete:"2024-06-22",khp:"2024-06-29",gp:"2024-06-29",ohp:"",bm:"Landolt",licht:"Kunz",ton:"Granda",insp:"",graben:"",reasist:"",projleit:"",regie:"",dirig:"Feltz",dauer:"",komp:"",team:[]},
+  {saison:"23/24",vorstellungen:[],titel:"IOS Galakonzert 2324",typ:"KZT",kat:"Konzert",prem:"2024-07-08",lv:"2024-07-08",prob:"2024-06-10",ete:"2024-07-08",khp:"",gp:"2024-07-08",ohp:"",bm:"alle BM",licht:"Strucken",ton:"",insp:"",graben:"",reasist:"",projleit:"",regie:"",dirig:"",dauer:"",komp:"",team:[]},
+  {saison:"23/24",vorstellungen:[],titel:"TAZ 2324",typ:"SF",kat:"Ballett",prem:"2024-07-06",lv:"2024-07-06",prob:"2024-07-03",ete:"2024-07-02",khp:"2024-07-04",gp:"2024-07-04",ohp:"",bm:"Studer",licht:"Kunz",ton:"Wurster",insp:"",graben:"",reasist:"",projleit:"",regie:"",dirig:"Feltz",dauer:"",komp:"",team:[]},
+  {saison:"23/24",vorstellungen:[],titel:"Takeoff 2324",typ:"WA",kat:"Labor",prem:"2024-07-09",lv:"2024-07-11",prob:"2024-07-01",ete:"2024-07-08",khp:"",gp:"2024-07-08",ohp:"",bm:"",licht:"",ton:"",insp:"",graben:"",reasist:"",projleit:"Bujnoch",regie:"",dirig:"Feltz",dauer:"",komp:"",team:[]}
+,
+  {saison:"24/25",vorstellungen:[],titel:"Eroeffnungsfest 2425",typ:"SF",kat:"Extra",prem:"2024-09-14",lv:"",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"Gebhardt/ Strucken",ton:"",insp:"Kuehnel, Bierich, Tschannen",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"ca. 5:10h",team:[]},
+  {saison:"24/25",vorstellungen:[],titel:"Gurkenkonig - Studiobuhne",typ:"Premiere",kat:"Oper",prem:"",lv:"2025-02-05",prob:"2024-08-12",ete:"2024-08-31",khp:"2024-09-06",ohp:"2024-09-11",gp:"2024-09-12",bm:"",licht:"Strucken",ton:"Zdravkovic",insp:"A.Bierich",reasist:"",projleit:"Noll",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[]},
+  {saison:"24/25",vorstellungen:[],titel:"Lucia di Lammermoor",typ:"WA",kat:"Oper",prem:"2024-09-20",lv:"2024-10-26",prob:"2024-09-02",ete:"2024-09-10",khp:"",ohp:"2024-09-14",gp:"",bm:"Huerlimann",licht:"Strucken",ton:"Wurster",insp:"Pointet",reasist:"Lenzen",projleit:"",graben:"gross",regie:"Homoki",dirig:"Sini",komp:"Donizetti (1835)",dauer:"2:55h",team:["Boris Pinkhasovich (Enrico)","Nina Minasyan (Lucia)","Piotr Buszewski (Edgardo)"]},
+  {saison:"24/25",vorstellungen:[],titel:"Ariadne auf Naxos",typ:"Premiere",kat:"Oper",prem:"2024-09-22",lv:"2024-10-22",prob:"2024-08-12",ete:"2024-08-27",khp:"2024-09-12",ohp:"2024-09-18",gp:"2024-09-19",bm:"Willi",licht:"Evin/ Ostfalk",ton:"Peng",insp:"Kuehnel",reasist:"Whiting/ Doering",projleit:"Bujnoch",graben:"gross",regie:"Homoki",dirig:"Poschner",komp:"R. Strauss (1916)",dauer:"",team:["Daniela Koehler (Ariadne)","Brandon Jovanovich (Bacchus)","Martin Gantner (Musiklehrer)","Ziyi Dai (Zerbinetta)","Lauren Fagan (Komponist)"]},
+  {saison:"24/25",vorstellungen:[],titel:"Simon Boccanegra",typ:"WA",kat:"Oper",prem:"2024-09-27",lv:"2024-10-25",prob:"2024-09-02",ete:"2024-09-16",khp:"",ohp:"2024-09-25",gp:"",bm:"Rasche /Landolt",licht:"Kunz",ton:"Surgutschow",insp:"Bierich",reasist:"",projleit:"",graben:"gross",regie:"Homoki",dirig:"Arrivabeni",komp:"Verdi (1881)",dauer:"2:49h",team:["Christian Gerhaher (Boccanegra)","Jennifer Rowley (Amelia)","Christof Fischesser (Fiesco)"]},
+  {saison:"24/25",vorstellungen:[],titel:"Serse",typ:"WA",kat:"Oper",prem:"2024-09-29",lv:"2024-10-17",prob:"2024-09-04",ete:"2024-08-31",khp:"",ohp:"2024-09-27",gp:"",bm:"Landolt",licht:"Kunz",ton:"Schneider",insp:"Tschannen",reasist:"Russi",projleit:"Klimmer",graben:"gross / hoch",regie:"Russi",dirig:"Onofri",komp:"Haendel (1738)",dauer:"2:50h",team:["Raffaele Pe (Serse)","Christophe Dumaux (Arsamene)","Noa Beinart (Romilda)"]},
+  {saison:"24/25",vorstellungen:[],titel:"Ballett 1 - Clara",typ:"Premiere",kat:"Ballett",prem:"2024-10-11",lv:"2024-11-15",prob:"2024-08-13",ete:"2024-08-26",khp:"2024-10-03",ohp:"2024-10-09",gp:"2024-10-10",bm:"Huerlimann",licht:"Gebhardt",ton:"Schilling",insp:"Warthmann",reasist:"",projleit:"Klimmer",graben:"gross",regie:"",dirig:"",komp:"",dauer:"",team:[]},
+  {saison:"24/25",vorstellungen:[],titel:"ZFF 2425",typ:"SF",kat:"Extra",prem:"2024-10-12",lv:"2024-10-12",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"Willi",licht:"Gebhardt/ Strucken",ton:"",insp:"Bierich",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[]},
+  {saison:"24/25",vorstellungen:[],titel:"Leben mit einem Idioten",typ:"Premiere",kat:"Oper",prem:"2024-11-03",lv:"2024-12-01",prob:"2024-09-23",ete:"2024-10-14",khp:"2024-10-24",ohp:"2024-10-31",gp:"2024-11-01",bm:"Studer",licht:"Evin/ Roller",ton:"Paciorek",insp:"Pointet",reasist:"Gama/ Senn",projleit:"",graben:"gross",regie:"Serebrennikov",dirig:"Stockhammer",komp:"",dauer:"",team:["Bo Skovhus","Susanne Elmark","Matthew Newlin"]},
+  {saison:"24/25",vorstellungen:[],titel:"In 80 Tagen um die Welt",typ:"Premiere",kat:"Oper",prem:"2024-11-17",lv:"2025-01-14",prob:"2024-10-07",ete:"2024-10-28",khp:"2024-11-08",ohp:"2024-11-13",gp:"2024-11-14",bm:"Landolt",licht:"Evin/ Strucken",ton:"Schilling/ Peng",insp:"Tschannen",reasist:"Blersch/ Lenzen",projleit:"Klimmer",graben:"",regie:"Lund",dirig:"Richter",komp:"",dauer:"",team:[]},
+  {saison:"24/25",vorstellungen:[],titel:"Der fliegende Hollaender",typ:"WA",kat:"Oper",prem:"2024-11-21",lv:"2024-12-10",prob:"2024-10-28",ete:"2024-11-11",khp:"",ohp:"2024-11-19",gp:"",bm:"Willi",licht:"Kunz",ton:"Surgutschow",insp:"Bierich",reasist:"",projleit:"",graben:"gross",regie:"Homoki",dirig:"Noseda",komp:"Wagner (1843)",dauer:"2:19h",team:["Camilla Nylund (Senta)","Tomasz Konieczny (Hollaender)"]},
+  {saison:"24/25",vorstellungen:[],titel:"Ballett - Giselle",typ:"WA",kat:"Ballett",prem:"2024-12-07",lv:"2025-03-09",prob:"2024-12-02",ete:"2024-11-25",khp:"",ohp:"2024-12-06",gp:"",bm:"Rasche",licht:"Gebhardt/ Ostfalk",ton:"Zdravkovic",insp:"Warthmann",reasist:"",projleit:"",graben:"gross",regie:"",dirig:"",komp:"",dauer:"2:17h",team:[]},
+  {saison:"24/25",vorstellungen:[],titel:"Un Ballo in Maschera 2425",typ:"Premiere",kat:"Oper",prem:"2024-12-08",lv:"2025-01-19",prob:"2024-10-28",ete:"2024-11-18",khp:"2024-11-28",ohp:"2024-12-04",gp:"2024-12-05",bm:"Huerlimann",licht:"Evin/ Kunz",ton:"Schneider",insp:"Kuehnel",reasist:"Whiting",projleit:"Noll",graben:"gross",regie:"Homoki",dirig:"Noseda",komp:"Verdi (1859)",dauer:"2:56h",team:[]},
+  {saison:"24/25",vorstellungen:[],titel:"Le Nozze di Figaro 2425",typ:"WA",kat:"Oper",prem:"2024-12-15",lv:"2025-01-02",prob:"2024-11-25",ete:"2024-12-09",khp:"",ohp:"2024-12-12",gp:"",bm:"Studer",licht:"Gebhardt",ton:"Granda",insp:"Warthmann",reasist:"Blersch",projleit:"Noll",graben:"gross / hoch",regie:"Homoki",dirig:"Manacorda",komp:"Mozart (1786)",dauer:"3:40h",team:["Andre Schuen (Figaro)","Elbenita Kajtazi (Susanna)","Andrew Moore (Bartolo)","Nikola Hillebrand (Barbarina)"]},
+  {saison:"24/25",vorstellungen:[],titel:"Madama Butterfly 2425",typ:"WA",kat:"Oper",prem:"2024-12-22",lv:"2025-01-04",prob:"2024-12-02",ete:"2024-12-16",khp:"",ohp:"2024-12-19",gp:"",bm:"Landolt",licht:"Roller",ton:"Schneider",insp:"Bierich",reasist:"Gama",projleit:"",graben:"gross",regie:"Lehnhoff",dirig:"Sanguineti",komp:"Puccini (1904)",dauer:"2:54h",team:[]},
+  {saison:"24/25",vorstellungen:[],titel:"Romeo et Juliette 2425",typ:"WA",kat:"Oper",prem:"2024-12-31",lv:"2025-01-26",prob:"2024-12-09",ete:"2024-12-23",khp:"",ohp:"2024-12-28",gp:"",bm:"Studer",licht:"Strucken",ton:"Paciorek",insp:"Warthmann",reasist:"Whiting",projleit:"",graben:"gross",regie:"Homoki",dirig:"Armiliato",komp:"Gounod (1867)",dauer:"2:53h",team:[]},
+  {saison:"24/25",vorstellungen:[],titel:"Ballett 2 - Of Light Wind and Waters",typ:"Premiere",kat:"Ballett",prem:"2025-01-18",lv:"2025-03-20",prob:"2024-12-31",ete:"2024-12-30",khp:"2025-01-10",ohp:"2025-01-15",gp:"2025-01-16",bm:"Willi",licht:"Gebhardt",ton:"Paciorek",insp:"Warthmann",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[]},
+  {saison:"24/25",vorstellungen:[],titel:"Fidelio 2425",typ:"WA",kat:"Oper",prem:"2025-01-21",lv:"2025-02-15",prob:"2024-12-27",ete:"2025-01-13",khp:"",ohp:"2025-01-17",gp:"",bm:"Huerlimann",licht:"Roller",ton:"Zdravkovic",insp:"Kuehnel",reasist:"Senn",projleit:"Noll",graben:"",regie:"Homoki",dirig:"Kober",komp:"Beethoven (1814)",dauer:"1:54h",team:[]},
+  {saison:"24/25",vorstellungen:[],titel:"Manon Lescaut 2425",typ:"Premiere",kat:"Oper",prem:"2025-02-09",lv:"2025-03-22",prob:"2024-12-16",ete:"2025-01-20",khp:"2025-01-30",ohp:"2025-02-05",gp:"2025-02-06",bm:"Studer",licht:"Ostfalk",ton:"Schneider",insp:"Tschannen",reasist:"Lenzen",projleit:"",graben:"gross",regie:"Hermanis",dirig:"Sanguineti",komp:"Puccini (1893)",dauer:"2:38h",team:[]},
+  {saison:"24/25",vorstellungen:[],titel:"Junior Ballett - The Butterfly Effect 2425",typ:"Premiere",kat:"Ballett",prem:"2025-02-16",lv:"2025-02-23",prob:"2025-02-03",ete:"2025-01-27",khp:"",ohp:"",gp:"2025-02-15",bm:"Rasche",licht:"Gebhardt",ton:"Granda",insp:"Pointet",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"2:08h",team:[]},
+  {saison:"24/25",vorstellungen:[],titel:"Il Viaggio a Reims konzertant",typ:"KZT",kat:"Konzert",prem:"2025-02-28",lv:"2025-03-02",prob:"2025-02-18",ete:"",khp:"",ohp:"",gp:"2025-02-26",bm:"Rasche",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[]},
+  {saison:"24/25",vorstellungen:[],titel:"Agrippina",typ:"Premiere",kat:"Oper",prem:"2025-03-02",lv:"2025-03-30",prob:"2025-01-20",ete:"2025-02-10",khp:"2025-02-22",ohp:"2025-02-27",gp:"2025-02-28",bm:"Landolt",licht:"Strucken",ton:"Wurster",insp:"Bierich",reasist:"Blersch/ Russi",projleit:"Noll",graben:"gross / hoch",regie:"Homoki",dirig:"Minkowski",komp:"Haendel (1709)",dauer:"",team:[]},
+  {saison:"24/25",vorstellungen:[],titel:"Die lustige Witwe 2425",typ:"WA",kat:"Oper",prem:"2025-03-04",lv:"2025-03-26",prob:"2025-02-10",ete:"2025-02-24",khp:"",ohp:"2025-03-01",gp:"",bm:"Studer",licht:"Ostfalk",ton:"Schneider",insp:"Tschannen",reasist:"Whiting",projleit:"",graben:"gross",regie:"Kosky",dirig:"Viotti",komp:"Lehar (1905)",dauer:"2:52h",team:[]},
+  {saison:"24/25",vorstellungen:[],titel:"Das grosse Feuer UA",typ:"Premiere",kat:"Oper",prem:"2025-03-23",lv:"2025-04-11",prob:"2025-02-10",ete:"2025-03-03",khp:"2025-03-13",ohp:"2025-03-20",gp:"2025-03-21",bm:"Willi",licht:"Roller",ton:"Paciorek",insp:"Warthmann",reasist:"Gama/ Senn",projleit:"Bujnoch",graben:"gross",regie:"Guerbaca",dirig:"Noseda",komp:"",dauer:"",team:[]},
+  {saison:"24/25",vorstellungen:[],titel:"Autographs",typ:"WA",kat:"Ballett",prem:"2025-03-29",lv:"2025-06-11",prob:"2025-03-22",ete:"2025-03-17",khp:"",ohp:"2025-03-28",gp:"",bm:"Huerlimann",licht:"Gebhardt/ Ostfalk",ton:"Peng",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[]},
+  {saison:"24/25",vorstellungen:[],titel:"Lohengrin",typ:"WA",kat:"Oper",prem:"2025-04-13",lv:"2025-05-04",prob:"2025-03-17",ete:"2025-03-24",khp:"",ohp:"2025-04-09",gp:"",bm:"Rasche",licht:"Kunz",ton:"Surgutschow",insp:"Kuehnel",reasist:"Lenzen",projleit:"",graben:"",regie:"Homoki",dirig:"Kober",komp:"Wagner (1850)",dauer:"4:41h",team:["Piotr Beczala (Lohengrin)","Simone Schneider (Elsa)","Martin Gantner","Christof Fischesser"]},
+  {saison:"24/25",vorstellungen:[],titel:"Die tote Stadt",typ:"Premiere",kat:"Oper",prem:"2025-04-21",lv:"2025-06-01",prob:"2025-03-10",ete:"2025-03-31",khp:"2025-04-11",ohp:"2025-04-17",gp:"2025-04-19",bm:"Huerlimann",licht:"Ostfalk",ton:"Surgutschow",insp:"Bierich",reasist:"Doering/ Whiting",projleit:"",graben:"gross",regie:"Homoki",dirig:"Noseda",komp:"Korngold (1920)",dauer:"",team:[]},
+  {saison:"24/25",vorstellungen:[],titel:"Rigoletto 2425",typ:"WA",kat:"Oper",prem:"2025-04-26",lv:"2025-05-15",prob:"2025-04-01",ete:"2025-04-16",khp:"",ohp:"2025-04-23",gp:"",bm:"Willi",licht:"Roller",ton:"Zdravkovic",insp:"Kuehnel",reasist:"Russi",projleit:"",graben:"mittel",regie:"Guerbaca",dirig:"Sanguineti",komp:"Verdi (1851)",dauer:"2:40h",team:["Liparit Avetisyan (Duca)","Quinn Kelsey (Rigoletto)","Brenda Rae (Gilda)"]},
+  {saison:"24/25",vorstellungen:[],titel:"Jakob Lenz - Winterthur",typ:"WA",kat:"Oper",prem:"2025-05-06",lv:"2025-05-16",prob:"2025-04-14",ete:"2025-04-22",khp:"",ohp:"2025-05-02",gp:"2025-05-03",bm:"Rasche",licht:"Strucken",ton:"Asja/ Wurster",insp:"Tschannen",reasist:"",projleit:"",graben:"",regie:"Homoki",dirig:"Kelly",komp:"",dauer:"1:12h",team:["Yannick Debus (Lenz)","Maximilian Lawrie"]},
+  {saison:"24/25",vorstellungen:[],titel:"Ballett 3 - Countertime 2425",typ:"Premiere",kat:"Ballett",prem:"2025-05-10",lv:"2025-06-27",prob:"2025-04-23",ete:"2025-04-22",khp:"2025-05-03",ohp:"2025-05-08",gp:"2025-05-09",bm:"Studer",licht:"Gebhardt",ton:"Schilling",insp:"Warthmann",reasist:"",projleit:"Klimmer",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[]},
+  {saison:"24/25",vorstellungen:[],titel:"Don Pasquale 2425",typ:"WA",kat:"Oper",prem:"2025-05-18",lv:"2025-06-03",prob:"2025-04-29",ete:"2025-05-12",khp:"",ohp:"2025-05-15",gp:"",bm:"Wlli",licht:"Roller",ton:"Schneider",insp:"",reasist:"Senn",projleit:"Klimmer",graben:"mittel",regie:"Michieletto",dirig:"Lopez-Reynoso",komp:"Donizetti (1843)",dauer:"2:37h",team:["Pietro Spagnoli (Don Pasquale)","Florian Sempey","Olga Peretyatko"]},
+  {saison:"24/25",vorstellungen:[],titel:"Salome",typ:"WA",kat:"Oper",prem:"2025-05-29",lv:"2025-06-15",prob:"2025-05-05",ete:"2025-05-16",khp:"",ohp:"2025-05-24",gp:"",bm:"Huerlimann",licht:"Ostfalk",ton:"Peng",insp:"Kuehnel",reasist:"",projleit:"Noll",graben:"gross",regie:"Homoki",dirig:"Young",komp:"R. Strauss (1905)",dauer:"1:47h",team:["Elena Stikhina (Salome)","John Daszak (Herodes)","Michaela Schuster (Herodias)"]},
+  {saison:"24/25",vorstellungen:[],titel:"Elias konzertant",typ:"KZT",kat:"Konzert",prem:"2025-06-09",lv:"2025-07-06",prob:"2025-05-02",ete:"2025-05-19",khp:"2025-05-30",ohp:"2025-06-06",gp:"2025-06-07",bm:"Landolt",licht:"Evin/ Kunz",ton:"Schneider",insp:"Tschannen",reasist:"Blersch/ Lenzen",projleit:"Noll",graben:"gross",regie:"",dirig:"",komp:"",dauer:"",team:[]},
+  {saison:"24/25",vorstellungen:[],titel:"Ballett - Atonement 2425",typ:"WA",kat:"Ballett",prem:"2025-06-14",lv:"2025-06-22",prob:"2025-06-10",ete:"2025-06-10",khp:"",ohp:"2025-06-13",gp:"",bm:"Willi",licht:"Gebhardt",ton:"Schilling",insp:"Bierich",reasist:"",projleit:"",graben:"gross",regie:"",dirig:"",komp:"",dauer:"2:35h",team:[]},
+  {saison:"24/25",vorstellungen:[],titel:"Benefizkonzert IOS",typ:"KZT",kat:"Konzert",prem:"2025-06-15",lv:"2025-06-15",prob:"2025-06-11",ete:"",khp:"",ohp:"",gp:"2025-06-14",bm:"",licht:"",ton:"",insp:"Tschannen",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[]},
+  {saison:"24/25",vorstellungen:[],titel:"Les Contes d Hoffmann",typ:"WA",kat:"Oper",prem:"2025-06-28",lv:"2025-07-12",prob:"2025-05-26",ete:"2025-06-16",khp:"",ohp:"2025-06-25",gp:"",bm:"Landolt",licht:"Strucken",ton:"Surgutschow",insp:"Kuehnel",reasist:"Gama",projleit:"",graben:"gross",regie:"Homoki",dirig:"Viotti",komp:"Offenbach (1881)",dauer:"3:30h",team:[]},
+  {saison:"24/25",vorstellungen:[],titel:"L Orfeo 2425",typ:"WA",kat:"Oper",prem:"2025-06-29",lv:"2025-07-11",prob:"2025-06-10",ete:"2025-06-23",khp:"",ohp:"2025-06-26",gp:"",bm:"Studer",licht:"Gebhardt/ Ostfalk",ton:"Wurster",insp:"Warthmann",reasist:"Whiting",projleit:"Bujnoch",graben:"",regie:"Homoki",dirig:"Dantone",komp:"Monteverdi (1607)",dauer:"2:09h",team:[]},
+  {saison:"24/25",vorstellungen:[],titel:"Galakonzert mit Stars",typ:"KZT",kat:"Konzert",prem:"2025-07-05",lv:"2025-07-10",prob:"",ete:"2025-07-04",khp:"",ohp:"",gp:"2025-07-04",bm:"Rasche",licht:"",ton:"Granda",insp:"Kuehnel",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[]},
+  {saison:"24/25",vorstellungen:[],titel:"Oper fuer alle - Hoffmann",typ:"SF",kat:"Extra",prem:"2025-07-12",lv:"2025-07-11",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"Studer",licht:"Gebhardt",ton:"Wurster",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[]},
+  {saison:"24/25",vorstellungen:[],titel:"Ballettschule OHZ 2425",typ:"WA",kat:"Ballett",prem:"2025-06-28",lv:"2025-06-28",prob:"2025-06-19",ete:"2025-06-11",khp:"",ohp:"",gp:"2025-06-27",bm:"",licht:"Kunz",ton:"Zdravkovic",insp:"Kuehnel",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[]},
+  {saison:"24/25",vorstellungen:[],titel:"IOS Galakonzert 2425",typ:"KZT",kat:"Konzert",prem:"2025-07-07",lv:"2025-07-07",prob:"2025-06-02",ete:"2025-07-07",khp:"",ohp:"",gp:"2025-07-07",bm:"Rasche",licht:"",ton:"",insp:"Bierich",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[]},
+  {saison:"24/25",vorstellungen:[],titel:"TAZ 2425",typ:"SF",kat:"Ballett",prem:"2025-07-05",lv:"2025-07-05",prob:"2025-07-02",ete:"2025-07-01",khp:"2025-07-03",ohp:"",gp:"2025-07-03",bm:"",licht:"Kunz",ton:"Wurster",insp:"Warthmann",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[]},
+  {saison:"24/25",vorstellungen:[],titel:"Entscheide Dich",typ:"SF",kat:"Extra",prem:"2025-07-04",lv:"2025-07-09",prob:"2025-06-02",ete:"2025-05-28",khp:"",ohp:"",gp:"2025-07-03",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[]},
+  {saison:"22/23",vorstellungen:[],titel:"Nabucco",typ:"WA",kat:"Oper",prem:"2022-09-11",lv:"2022-10-09",prob:"2022-08-22",ete:"2022-09-01",khp:"",ohp:"",gp:"",bm:"Huerlimann (Landolt)",licht:"Strucken",ton:"Niziol",insp:"Kuehnel/ V.Bierich",reasist:"Blersch",projleit:"",graben:"gross",regie:"Homoki",dirig:"Renzetti",komp:"Verdi (1842)",dauer:"2:33h",team:["Lucio Gallo (Nabucco)","Anna Pirozzi (Abigaille)"]},
+  {saison:"22/23",vorstellungen:[],titel:"Trovatore",typ:"WA",kat:"Oper",prem:"2022-09-17",lv:"2022-10-16",prob:"2022-09-01",ete:"2022-09-08",khp:"",ohp:"",gp:"",bm:"Willi (Studer)",licht:"Strucken",ton:"Paciorek",insp:"Bierich",reasist:"",projleit:"Klimmer",graben:"gross",regie:"Thomas",dirig:"Carignani",komp:"Verdi (1853)",dauer:"2:47h",team:["Anja Harteros (Leonora)","Stefano La Colla (Manrico)","Artur Rucinski (Luna)","Yulia Matochkina (Azucena)"]},
+  {saison:"22/23",vorstellungen:[],titel:"Walkuere",typ:"Premiere",kat:"Oper",prem:"2022-09-18",lv:"2022-10-18",prob:"2022-08-08",ete:"2022-08-22",khp:"",ohp:"",gp:"",bm:"Rasche (Huerlimann)",licht:"Evin/ Kunz",ton:"Surgutschow",insp:"Kuehnel/ Tschannen",reasist:"",projleit:"",graben:"",regie:"Homoki",dirig:"Noseda",komp:"Wagner (1870)",dauer:"ca. 5:10h",team:["Eric Cutler (Siegmund)","Tomasz Konieczny (Wotan)","Camilla Nylund (Bruennhilde)","Katie van Kooten (Sieglinde)"]},
+  {saison:"22/23",vorstellungen:[],titel:"Le Nozze di Figaro",typ:"WA",kat:"Oper",prem:"2022-09-23",lv:"2022-10-22",prob:"2022-09-05",ete:"2022-09-14",khp:"",ohp:"",gp:"",bm:"Studer",licht:"Kunz",ton:"Schneider",insp:"Warthmann",reasist:"",projleit:"Noll",graben:"gross / hoch",regie:"Homoki",dirig:"Montanari",komp:"Mozart (1786)",dauer:"3:40h",team:[]},
+  {saison:"22/23",vorstellungen:[],titel:"Hexe Hilary geht in die Oper (Studio)",typ:"WA",kat:"Oper",prem:"2022-09-24",lv:"2022-12-31",prob:"2022-09-13",ete:"2022-09-19",khp:"",ohp:"",gp:"",bm:"Studiob.",licht:"Strucken",ton:"Peng",insp:"",reasist:"Gama",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[]},
+  {saison:"22/23",vorstellungen:[],titel:"Ballett 1 - Nachttraeume o.O.",typ:"Premiere",kat:"Ballett",prem:"2022-09-30",lv:"2022-11-15",prob:"2022-08-05",ete:"2022-08-31",khp:"",ohp:"",gp:"",bm:"Landolt",licht:"Gebhardt",ton:"Paciorek/ Pauli",insp:"Bierich/ V.Bierich",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[]},
+  {saison:"22/23",vorstellungen:[],titel:"ZFF",typ:"SF",kat:"Extra",prem:"2022-10-01",lv:"2022-10-01",prob:"2022-10-01",ete:"2022-10-01",khp:"",ohp:"",gp:"",bm:"",licht:"Gebhardt/ Strucken",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[]},
+  {saison:"22/23",vorstellungen:[],titel:"Junior Ballett Horizonte 22/23 THW",typ:"Premiere",kat:"Ballett",prem:"2022-10-22",lv:"2022-10-26",prob:"2022-10-15",ete:"2022-10-14",khp:"",ohp:"",gp:"",bm:"Haenggli",licht:"Gebhardt",ton:"Pauli/ Niziol",insp:"Warthmann/ Tschannen",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"2:08h",team:[]},
+  {saison:"22/23",vorstellungen:[],titel:"Barkouf ( Offenbach)",typ:"Premiere",kat:"Oper",prem:"2022-10-23",lv:"2022-11-22",prob:"2022-09-06",ete:"2022-10-03",khp:"",ohp:"",gp:"",bm:"Studer",licht:"Evin/ Strucken",ton:"Schneider",insp:"Botthof",reasist:"Senn/ Whiting",projleit:"",graben:"gross",regie:"Hopp",dirig:"Rhorer",komp:"Offenbach (1860)",dauer:"",team:["Brenda Rae (Maima)"]},
+  {saison:"22/23",vorstellungen:[],titel:"Faust",typ:"WA",kat:"Oper",prem:"2022-10-29",lv:"2022-11-16",prob:"2022-10-11",ete:"2022-10-19",khp:"",ohp:"",gp:"",bm:"Huerlimann",licht:"Kunz",ton:"Peng",insp:"Kuehnel",reasist:"Blersch",projleit:"",graben:"gross",regie:"Homoki",dirig:"McAdams",komp:"Gounod (1859)",dauer:"2:58h",team:[]},
+  {saison:"22/23",vorstellungen:[],titel:"Entfuehrung aus dem Serail",typ:"WA",kat:"Oper",prem:"2022-11-05",lv:"2022-12-01",prob:"2022-10-19",ete:"2022-10-31",khp:"",ohp:"",gp:"",bm:"Willi",licht:"Kunz",ton:"Paciorek",insp:"Bierich",reasist:"",projleit:"",graben:"",regie:"Homoki",dirig:"Minasi",komp:"Mozart (1782)",dauer:"2:51h",team:[]},
+  {saison:"22/23",vorstellungen:[],titel:"Alice im Wunderland",typ:"Premiere",kat:"Oper",prem:"2022-11-12",lv:"2023-01-22",prob:"2022-10-10",ete:"2022-10-24",khp:"",ohp:"",gp:"",bm:"Landolt",licht:"Evin/ Roller",ton:"Schilling",insp:"Warthmann",reasist:"Gama",projleit:"Klimmer",graben:"gross",regie:"Loschk",dirig:"Richter",komp:"Unsuk Chin (2007)",dauer:"2:06h",team:["Sandra Hamaoui (Alice)","Ruben Drole","Gary Martin"]},
+  {saison:"22/23",vorstellungen:[],titel:"Jakob Lenz ZKO",typ:"Premiere",kat:"Oper",prem:"2022-11-19",lv:"2022-11-28",prob:"2022-10-17",ete:"2022-11-09",khp:"",ohp:"",gp:"",bm:"",licht:"Strucken",ton:"Niziol",insp:"Tschannen",reasist:"",projleit:"",graben:"",regie:"Homoki",dirig:"Fasolis",komp:"Rihm (1979)",dauer:"",team:[]},
+  {saison:"22/23",vorstellungen:[],titel:"Ballett Nussknacker und Mausekoenig",typ:"WA",kat:"Ballett",prem:"2022-11-20",lv:"2022-12-10",prob:"2022-11-16",ete:"2022-11-11",khp:"",ohp:"",gp:"",bm:"Huerlimann (Studer)",licht:"Gebhardt",ton:"Pauli",insp:"Mathes",reasist:"",projleit:"",graben:"gross",regie:"",dirig:"",komp:"",dauer:"2:18h",team:[]},
+  {saison:"22/23",vorstellungen:[],titel:"Eliogabalo ( Cavalli)",typ:"Premiere",kat:"Oper",prem:"2022-12-04",lv:"2023-01-07",prob:"2022-10-24",ete:"2022-11-14",khp:"",ohp:"",gp:"",bm:"Studer",licht:"Evin/ Kunz",ton:"Schneider",insp:"Botthof",reasist:"Russi/ Senn",projleit:"Klimmer",graben:"mittel",regie:"Bieito",dirig:"Sinkovsky",komp:"Cavalli (1668)",dauer:"",team:["Yuriy Mynenko (Eliogabalo)"]},
+  {saison:"22/23",vorstellungen:[],titel:"La Boheme",typ:"WA",kat:"Oper",prem:"2022-12-09",lv:"2022-12-28",prob:"2022-11-21",ete:"2022-11-28",khp:"",ohp:"",gp:"",bm:"Willi (Rasche)",licht:"Strucken",ton:"Peng",insp:"Warthmann",reasist:"Lenzen/ Whiting",projleit:"",graben:"",regie:"Homoki",dirig:"Armiliato",komp:"Puccini (1896)",dauer:"2:24h",team:[]},
+  {saison:"22/23",vorstellungen:[],titel:"Tosca",typ:"WA",kat:"Oper",prem:"2022-12-15",lv:"2023-01-04",prob:"2022-11-28",ete:"2022-12-05",khp:"",ohp:"",gp:"",bm:"Huerlimann (Rasche)",licht:"Roller",ton:"Paciorek",insp:"Mathes",reasist:"Doering",projleit:"",graben:"gross",regie:"Carsen",dirig:"Armiliato",komp:"Puccini (1900)",dauer:"2:33h",team:[]},
+  {saison:"22/23",vorstellungen:[],titel:"La Traviata",typ:"WA",kat:"Oper",prem:"2022-12-23",lv:"2023-01-15",prob:"2022-12-07",ete:"2022-12-14",khp:"",ohp:"",gp:"",bm:"Willi (Rasche)",licht:"Kunz",ton:"Niziol",insp:"Bierich/ Tschannen",reasist:"Blersch",projleit:"",graben:"gross",regie:"Homoki",dirig:"Noseda",komp:"Verdi (1853)",dauer:"2:54h",team:[]},
+  {saison:"22/23",vorstellungen:[],titel:"Salome",typ:"WA",kat:"Oper",prem:"2022-01-13",lv:"2023-02-03",prob:"2022-12-19",ete:"2023-01-09",khp:"",ohp:"",gp:"",bm:"Huerlimann (Landolt)",licht:"Kunz",ton:"Peng",insp:"Kuehnel",reasist:"",projleit:"Noll",graben:"gross",regie:"Homoki",dirig:"Young",komp:"R. Strauss (1905)",dauer:"1:46h",team:[]},
+  {saison:"22/23",vorstellungen:[],titel:"Ballett 2-On the Move",typ:"WA",kat:"Ballett",prem:"2022-01-14",lv:"2023-02-11",prob:"2022-12-19",ete:"2022-12-12",khp:"",ohp:"",gp:"",bm:"Landolt",licht:"Gebhardt",ton:"",insp:"Warthmann",reasist:"",projleit:"",graben:"gross",regie:"",dirig:"",komp:"",dauer:"",team:[]},
+  {saison:"22/23",vorstellungen:[],titel:"Roberto Devereux",typ:"Premiere",kat:"Oper",prem:"2023-02-05",lv:"2023-03-17",prob:"2022-12-27",ete:"2023-01-16",khp:"",ohp:"",gp:"",bm:"Studer",licht:"Roller",ton:"Niziol",insp:"Botthof",reasist:"Gama/ Whiting",projleit:"",graben:"mittel",regie:"Homoki",dirig:"Fasolis",komp:"Donizetti (1837)",dauer:"",team:[]},
+  {saison:"22/23",vorstellungen:[],titel:"Jewgeni Onegin",typ:"WA",kat:"Oper",prem:"2023-02-10",lv:"2023-03-01",prob:"2023-01-20",ete:"2023-01-30",khp:"",ohp:"",gp:"",bm:"Huerlimann (Rasche)",licht:"Strucken",ton:"Paciorek",insp:"Bierich",reasist:"Blersch",projleit:"",graben:"gross",regie:"Kosky",dirig:"Noseda",komp:"Tschaikowski (1879)",dauer:"3:09h",team:["Anita Harteros (Tatjana)","Igor Golovatenko (Onegin)","Benjamin Bernheim (Lenski)"]},
+  {saison:"22/23",vorstellungen:[],titel:"Ballett Angels Atlas",typ:"WA",kat:"Ballett",prem:"2023-02-18",lv:"2023-03-31",prob:"2023-02-15",ete:"2023-02-15",khp:"",ohp:"",gp:"",bm:"Landolt",licht:"Gebhardt",ton:"Pauli/ Schilling",insp:"Botthof",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"2:29h",team:[]},
+  {saison:"22/23",vorstellungen:[],titel:"Siegfried",typ:"Premiere",kat:"Oper",prem:"2023-03-05",lv:"2023-03-26",prob:"2023-01-16",ete:"2023-02-06",khp:"",ohp:"",gp:"",bm:"Rasche (Willi)",licht:"Evin/ Roller",ton:"Surgutschow",insp:"Kuehnel/ Tschannen",reasist:"Lenzen/ Doering",projleit:"",graben:"gross",regie:"Homoki",dirig:"Noseda",komp:"Wagner (1876)",dauer:"5:33h",team:[]},
+  {saison:"22/23",vorstellungen:[],titel:"La Cenerentola",typ:"WA",kat:"Oper",prem:"2023-03-08",lv:"2023-03-24",prob:"2023-02-20",ete:"2023-03-01",khp:"",ohp:"",gp:"",bm:"Huerlimann/ Studer",licht:"Kunz",ton:"Schneider",insp:"Bierich",reasist:"Blersch",projleit:"",graben:"mittel",regie:"Homoki",dirig:"Fasolis",komp:"Rossini (1817)",dauer:"3:16h",team:["Cecilia Bartoli (Angelina)"]},
+  {saison:"22/23",vorstellungen:[],titel:"Junior Ballett Horizonte 22/23",typ:"WA",kat:"Ballett",prem:"2023-03-12",lv:"2023-03-25",prob:"2023-03-07",ete:"2023-03-06",khp:"",ohp:"",gp:"",bm:"Landolt/ Haenggli",licht:"Gebhardt/ Roller",ton:"Pauli/ Niziol",insp:"Tschannen",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"1:36h",team:[]},
+  {saison:"22/23",vorstellungen:[],titel:"Ballett Anna Karenina",typ:"WA",kat:"Ballett",prem:"2023-03-19",lv:"2023-04-06",prob:"2023-03-15",ete:"2023-03-13",khp:"",ohp:"",gp:"",bm:"Willi(Studer)",licht:"Gebhardt",ton:"Pauli",insp:"Bierich",reasist:"",projleit:"",graben:"gross",regie:"",dirig:"",komp:"",dauer:"2:12h",team:[]},
+  {saison:"22/23",vorstellungen:[],titel:"Lakme (konzert.)",typ:"Premiere",kat:"Oper",prem:"2023-04-02",lv:"2023-04-15",prob:"2023-03-29",ete:"2023-03-31",khp:"",ohp:"",gp:"",bm:"Huerlimann/ Willi",licht:"Roller",ton:"Schilling",insp:"Kuehnel",reasist:"",projleit:"",graben:"",regie:"",dirig:"Noseda",komp:"Delibes (1883)",dauer:"",team:[]},
+  {saison:"22/23",vorstellungen:[],titel:"Romeo et Juliette",typ:"Premiere",kat:"Oper",prem:"2023-04-10",lv:"2023-05-18",prob:"2023-02-20",ete:"2023-03-20",khp:"",ohp:"",gp:"",bm:"Studer",licht:"Evin/ Strucken",ton:"Paciorek",insp:"Warthmann",reasist:"Senn/ Whiting",projleit:"",graben:"gross",regie:"Homoki",dirig:"Armiliato",komp:"Gounod (1867)",dauer:"2:53h",team:[]},
+  {saison:"22/23",vorstellungen:[],titel:"Viva la Mamma",typ:"WA",kat:"Oper",prem:"2023-04-14",lv:"2023-04-23",prob:"2023-03-20",ete:"2023-04-03",khp:"",ohp:"",gp:"",bm:"Landolt",licht:"Kunz",ton:"Schneider",insp:"Botthof",reasist:"",projleit:"Klimmer",graben:"",regie:"Homoki",dirig:"Fasolis",komp:"Donizetti (1831)",dauer:"1:48h",team:[]},
+  {saison:"22/23",vorstellungen:[],titel:"Die Zauberfloete",typ:"WA",kat:"Oper",prem:"2023-04-29",lv:"2023-05-17",prob:"2023-04-03",ete:"2023-04-24",khp:"",ohp:"",gp:"",bm:"Huerlimann",licht:"Roller",ton:"Niziol",insp:"Kuehnel",reasist:"",projleit:"",graben:"",regie:"Homoki",dirig:"Noseda",komp:"Mozart (1791)",dauer:"",team:[]},
+  {saison:"22/23",vorstellungen:[],titel:"Ballett 3 - The Cellist ( Feeney)",typ:"WA",kat:"Ballett",prem:"2023-04-30",lv:"2023-06-22",prob:"2023-04-12",ete:"2023-04-12",khp:"",ohp:"",gp:"",bm:"Willi (Landolt)",licht:"Gebhardt",ton:"",insp:"Warthmann",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[]},
+  {saison:"22/23",vorstellungen:[],titel:"Serse (IOS ThW) ( Haendel)",typ:"Premiere",kat:"Oper",prem:"2023-05-06",lv:"2023-05-17",prob:"2023-03-20",ete:"2023-04-21",khp:"",ohp:"",gp:"",bm:"Landolt",licht:"Kunz",ton:"Schneider/ Peng",insp:"Tschannen",reasist:"",projleit:"",graben:"",regie:"Russi",dirig:"Chryssicos",komp:"Haendel (1738)",dauer:"2:50h",team:[]},
+  {saison:"22/23",vorstellungen:[],titel:"Orphee et Euridice",typ:"WA",kat:"Oper",prem:"2023-05-07",lv:"2023-05-23",prob:"2023-04-19",ete:"2023-05-03",khp:"",ohp:"",gp:"",bm:"Landolt (Studer)",licht:"Roller",ton:"Niziol",insp:"Botthof",reasist:"",projleit:"",graben:"",regie:"Homoki",dirig:"Minasi",komp:"Gluck (1762)",dauer:"1:36h",team:[]},
+  {saison:"22/23",vorstellungen:[],titel:"Lessons in Love and Violence (G.Benjamin)",typ:"Premiere",kat:"Oper",prem:"2023-05-21",lv:"2023-06-11",prob:"2023-04-03",ete:"2023-05-02",khp:"",ohp:"",gp:"",bm:"Huerlimann (Studer)",licht:"Gebhardt",ton:"Paciorek",insp:"Bierich",reasist:"Blersch",projleit:"",graben:"gross",regie:"Homoki",dirig:"Noseda",komp:"Benjamin (2018)",dauer:"",team:[]},
+  {saison:"22/23",vorstellungen:[],titel:"Ballett Monteverdi",typ:"WA",kat:"Ballett",prem:"2023-05-26",lv:"2023-06-25",prob:"2023-05-22",ete:"2023-05-22",khp:"",ohp:"",gp:"",bm:"Studer",licht:"Strucken",ton:"Pauli",insp:"Warthmann",reasist:"",projleit:"",graben:"gross / hoch",regie:"",dirig:"",komp:"",dauer:"2:29h",team:[]},
+  {saison:"22/23",vorstellungen:[],titel:"Don Pasquale",typ:"WA",kat:"Oper",prem:"2023-05-29",lv:"2023-06-17",prob:"2023-05-08",ete:"2023-05-22",khp:"",ohp:"",gp:"",bm:"Willi (Rasche)",licht:"Kunz",ton:"Schneider",insp:"Botthof",reasist:"Senn",projleit:"Klimmer",graben:"mittel",regie:"Homoki",dirig:"Fasolis",komp:"Donizetti (1843)",dauer:"2:39h",team:[]},
+  {saison:"22/23",vorstellungen:[],titel:"Turandot",typ:"Premiere",kat:"Oper",prem:"2023-06-18",lv:"2023-07-08",prob:"2023-05-03",ete:"2023-05-30",khp:"",ohp:"",gp:"",bm:"Studer o. Landolt",licht:"Roller",ton:"Schilling",insp:"Kuehnel",reasist:"Lenzen/ Whiting",projleit:"Noll",graben:"gross",regie:"Homoki",dirig:"Noseda",komp:"Puccini (1926)",dauer:"",team:[]},
+  {saison:"22/23",vorstellungen:[],titel:"Die Perlenfischer",typ:"WA",kat:"Oper",prem:"2023-06-23",lv:"2022-07-09",prob:"2023-06-05",ete:"2023-06-12",khp:"",ohp:"",gp:"",bm:"Huerlimann /Willi",licht:"Strucken",ton:"Pauli",insp:"Bierich",reasist:"Senn",projleit:"",graben:"gross",regie:"Homoki",dirig:"Noseda",komp:"Bizet (1863)",dauer:"2:37h",team:[]},
+  {saison:"22/23",vorstellungen:[],titel:"Der Freischuetz",typ:"WA",kat:"Oper",prem:"2023-06-28",lv:"2023-07-09",prob:"2023-06-05",ete:"2023-06-19",khp:"",ohp:"",gp:"",bm:"Willi (Rasche)",licht:"Strucken",ton:"Schneider",insp:"Bierich/ Tschannen",reasist:"",projleit:"",graben:"",regie:"Homoki",dirig:"Noseda",komp:"Weber (1821)",dauer:"2:56h",team:[]},
+  {saison:"22/23",vorstellungen:[],titel:"Bal Masquee ( Maskenball)",typ:"WA",kat:"Oper",prem:"2023-03-11",lv:"",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"Studer",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"Homoki",dirig:"Noseda",komp:"Verdi (1859)",dauer:"",team:[]},
+  {saison:"22/23",vorstellungen:[],titel:"Oper fuer Alle Don Pasquale",typ:"SF",kat:"Extra",prem:"2023-06-17",lv:"",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"Willi (Rasche)",licht:"Kunz",ton:"Schneider",insp:"",reasist:"",projleit:"Klimmer",graben:"",regie:"",dirig:"",komp:"",dauer:"2:39h",team:[]},
+  {saison:"22/23",vorstellungen:[],titel:"Ballettschule OHZ",typ:"WA",kat:"Ballett",prem:"2023-07-02",lv:"2023-07-02",prob:"2023-06-29",ete:"2023-06-28",khp:"",ohp:"",gp:"",bm:"Huerlimann",licht:"Kunz",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[]},
+  {saison:"22/23",vorstellungen:[],titel:"IOS Galakonzert",typ:"KZT",kat:"Konzert",prem:"2023-07-03",lv:"2023-07-03",prob:"2023-07-03",ete:"2023-07-03",khp:"",ohp:"",gp:"",bm:"",licht:"Roller",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[]},
+  {saison:"22/23",vorstellungen:[],titel:"#Mirror",typ:"WA",kat:"Labor",prem:"2023-07-04",lv:"",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[]},
+  {saison:"22/23",vorstellungen:[],titel:"TAZ",typ:"SF",kat:"Ballett",prem:"2023-07-08",lv:"2023-07-08",prob:"2023-07-06",ete:"2023-07-05",khp:"",ohp:"",gp:"",bm:"Willi / Landolt",licht:"Kunz",ton:"Schilling",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[]},
+  {saison:"26/27",vorstellungen:[],titel:"Ascanio in Alba",typ:"Premiere",kat:"Oper",prem:"2027-03-13",lv:"2027-03-19",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"gross",regie:"",dirig:"",komp:"Mozart (1791)",dauer:"",team:[]}
+,
+  {saison:"26/27",vorstellungen:["2026-08-26","2026-08-27","2026-08-29","2026-08-30"],titel:"Gastspiel - Un Ballo in Maschera Edinburgh",typ:"WA",kat:"Oper",prem:"2026-08-26",lv:"2026-08-30",prob:"",ete:"2026-08-26",khp:"",ohp:"",gp:"",bm:"Huerlimann",licht:"Kunz",ton:"",insp:"Kuehnel",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"Verdi (1859)",dauer:"",team:[]}
+,
+  {saison:"26/27",vorstellungen:["2027-03-11"],titel:"Brueckenschlagkonzert Festival Barock",typ:"KZT",kat:"Konzert",prem:"2027-03-11",lv:"2027-03-11",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"Kuehnel",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[]},
+  {saison:"26/27",vorstellungen:["2027-03-12"],titel:"Festival Barock - Baroque, Baroque",typ:"KZT",kat:"Konzert",prem:"2027-03-12",lv:"2027-03-12",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"Kuehnel",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[]},
+  {saison:"26/27",vorstellungen:["2027-03-15"],titel:"Festival Barock - Liederabend Jakub Jozef Orlinski",typ:"KZT",kat:"Konzert",prem:"2027-03-15",lv:"2027-03-15",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"Kuehnel",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[]},
+  {saison:"26/27",vorstellungen:["2027-03-17"],titel:"Festival Barock - c-Moll-Messe",typ:"KZT",kat:"Konzert",prem:"2027-03-17",lv:"2027-03-17",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"Kuehnel",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"Mozart",dauer:"",team:[]},
+  {saison:"26/27",vorstellungen:["2027-03-18"],titel:"Festival Barock - BRISK",typ:"KZT",kat:"Konzert",prem:"2027-03-18",lv:"2027-03-18",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"Kuehnel",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[]},
+  {saison:"26/27",vorstellungen:["2027-03-13"],titel:"Festival Barock - Rezital Jean Rondeau",typ:"KZT",kat:"Konzert",prem:"2027-03-13",lv:"2027-03-13",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"Kuehnel",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[]},
+  {saison:"26/27",vorstellungen:["2027-03-13","2027-03-14"],titel:"Festival Barock - Familienkonzert Klanghotel",typ:"KZT",kat:"Konzert",prem:"2027-03-13",lv:"2027-03-14",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"Kuehnel",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[]},
+  {saison:"26/27",vorstellungen:["2027-03-19"],titel:"Festival Barock - The Divine",typ:"KZT",kat:"Konzert",prem:"2027-03-19",lv:"2027-03-19",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"Kuehnel",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[]}
+,
+  {saison:"26/27",vorstellungen:["2026-10-02"],titel:"Benefiz amiamusica",typ:"KZT",kat:"Konzert",prem:"2026-10-02",lv:"2026-10-02",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[]},
+  {saison:"26/27",vorstellungen:["2026-10-03"],titel:"Mutter & Gonzalez-Granados",typ:"KZT",kat:"Konzert",prem:"2026-10-03",lv:"2026-10-03",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[]},
+  {saison:"26/27",vorstellungen:["2027-01-01","2027-01-02"],titel:"Fuchs & Jordan",typ:"KZT",kat:"Konzert",prem:"2027-01-01",lv:"2027-01-02",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[]},
+  {saison:"26/27",vorstellungen:["2027-01-16"],titel:"Trifonov & Jaervi",typ:"KZT",kat:"Konzert",prem:"2027-01-16",lv:"2027-01-16",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[]},
+  {saison:"26/27",vorstellungen:["2027-02-14"],titel:"Sorita & Lyniv",typ:"KZT",kat:"Konzert",prem:"2027-02-14",lv:"2027-02-14",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[]},
+  {saison:"26/27",vorstellungen:["2027-04-18"],titel:"Balanas & Peltokoski",typ:"KZT",kat:"Konzert",prem:"2027-04-18",lv:"2027-04-18",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[]},
+  {saison:"26/27",vorstellungen:["2027-05-04","2027-05-07","2027-05-09"],titel:"Requiem pour Ophelie",typ:"KZT",kat:"Konzert",prem:"2027-05-04",lv:"2027-05-09",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[]},
+  {saison:"26/27",vorstellungen:["2027-05-29"],titel:"Philharmonisches Konzert - Viotti",typ:"KZT",kat:"Konzert",prem:"2027-05-29",lv:"2027-05-29",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[]}
+,
+  {saison:"26/27",vorstellungen:["2027-06-20"],titel:"Zurich Talks Dance",typ:"SF",kat:"Extra",prem:"2027-06-20",lv:"2027-06-20",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[]}
+,
+  {saison:"26/27",vorstellungen:["2026-11-07"],titel:"Philharmonisches Konzert - Gabetta & Noseda",typ:"KZT",kat:"Konzert",prem:"2026-11-07",lv:"2026-11-07",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"Noseda",komp:"",dauer:"",team:[]}
+,
+  {saison:"25/26",vorstellungen:["2026-07-12"],titel:"Philharmonisches Konzert - Sokhiev",typ:"KZT",kat:"Konzert",prem:"2026-07-12",lv:"2026-07-12",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"Sokhiev",komp:"Faure/ Gliere/ Ravel/ Debussy",dauer:"",team:[]}
+
+
+,
+  {saison:"26/27",vorstellungen:[],titel:"Gastspiel Edinburgh International Festival",typ:"Event",kat:"Event",prem:"2026-08-26",lv:"2026-08-26",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Reception: Embassy of Switzerland in the UK & Edinburgh International Festival & Opernhaus Zuerich",produktion:"Un ballo in maschera",tickets:"",location:"Festival Theatre, 13-29 Nicolson Street, Edinburgh EH8 9FT",chef:"Katherine Waldvogel"},
+  {saison:"26/27",vorstellungen:[],titel:"Freunde des Balletts Zuerich",typ:"Event",kat:"Event",prem:"2026-08-26",lv:"2026-08-26",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Season Opening Party",produktion:"",tickets:"",location:"Fischers Fritz, Seestrasse 557, 8038 Zuerich",chef:"Corinne Amsler"},
+  {saison:"26/27",vorstellungen:[],titel:"Freunde der Oper Zuerich",typ:"Event",kat:"Event",prem:"2026-09-06",lv:"2026-09-06",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Einladung der Serge Rachmaninoff Foundation - Konzert in Villa Senar - fuer hohe Kategorien FZO",produktion:"",tickets:"",location:"Villa Senar, Zinnenstrasse 6, 6353 Weggis",chef:"Katherine Waldvogel"},
+  {saison:"26/27",vorstellungen:[],titel:"OHZ Events",typ:"Event",kat:"Event",prem:"2026-09-07",lv:"2026-09-07",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Ballettstunde (Einloesung Preis von stiller Auktion)",produktion:"",tickets:"",location:"Ballettsaal",chef:"Fabienne Nydegger (Meret Roth)"},
+  {saison:"26/27",vorstellungen:[],titel:"Musiksommer am Zuerichsee",typ:"Event",kat:"Event",prem:"2026-09-09",lv:"2026-09-09",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Konzert des Internationalen Opernstudios",produktion:"",tickets:"",location:"Kirche Feusisberg",chef:"Cornelia Tschirky-Mueller"},
+  {saison:"26/27",vorstellungen:[],titel:"IMD-Anlass",typ:"Event",kat:"Event",prem:"2026-09-12",lv:"2026-09-12",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Anlass (tbc)",produktion:"",tickets:"",location:"Spiegelsaal, Eingangsfoyer",chef:"Schu-Han Yang, Manuela Wyder (Orga)"},
+  {saison:"26/27",vorstellungen:[],titel:"Atto primo",typ:"Event",kat:"Event",prem:"2026-09-20",lv:"2026-09-20",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Atto primo-Premierenbesuch inkl. Rahmenprogramm",produktion:"Die Zauberfloete",tickets:"22",location:"Spiegelsaal, Parkettumgang",chef:"Schu-Han Yang"},
+  {saison:"26/27",vorstellungen:[],titel:"OHZ intern",typ:"Event",kat:"Event",prem:"2026-09-22",lv:"2026-09-22",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Intendantenanlass, Probenbesuch",produktion:"La rondine",tickets:"",location:"Eingangsfoyer, Lulu (Restaurant oder Terrasse)",chef:"Nila Chea (Orga), Sponsoring (Gaestemanagement)"},
+  {saison:"26/27",vorstellungen:[],titel:"AMAG Family Business Award",typ:"Event",kat:"Event",prem:"2026-09-23",lv:"2026-09-23",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"IOS-Auftritt im Rahmen der Preisverleihung",produktion:"",tickets:"",location:"Kursaal Bern",chef:"Cornelia Tschirky-Mueller, Manuela Wyder (Orga)"},
+  {saison:"26/27",vorstellungen:[],titel:"Eisen, Maximilian",typ:"Event",kat:"Event",prem:"2026-09-24",lv:"2026-09-24",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Tickets plus Begruessung MS",produktion:"La rondine",tickets:"2",location:"",chef:"Cornelia Tschirky-Mueller"},
+  {saison:"26/27",vorstellungen:[],titel:"Freunde des Balletts Zuerich",typ:"Event",kat:"Event",prem:"2026-10-07",lv:"2026-10-07",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Mitgliederversammlung FBZ im Spiegelsaal",produktion:"",tickets:"",location:"Spiegelsaal und Foyer Opernhaus",chef:"Corinne Amsler"},
+  {saison:"26/27",vorstellungen:[],titel:"Freunde des Balletts Zuerich",typ:"Event",kat:"Event",prem:"2026-10-07",lv:"2026-10-07",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Probenbesuch BO3 fuer Mitglieder",produktion:"Ein Sommernachtstraum",tickets:"",location:"Opernhaus und Spiegelsaal",chef:"Corinne Amsler"},
+  {saison:"26/27",vorstellungen:[],titel:"Freunde der Oper Zuerich",typ:"Event",kat:"Event",prem:"2026-10-27",lv:"2026-10-27",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Probenbesuch fuer Mitglieder + Special Guests der Serge Rachmaninoff Foundation",produktion:"Rachmaninow Die drei Opern",tickets:"",location:"Opernhaus und Spiegelsaal",chef:"Katherine Waldvogel"},
+  {saison:"26/27",vorstellungen:[],titel:"Swiss Re",typ:"Event",kat:"Event",prem:"2026-10-28",lv:"2026-10-28",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Mitarbeitendenanlass",produktion:"Ein Sommernachtstraum",tickets:"50",location:"Spiegelsaal + ev. Parkettumgang",chef:"Meret Roth, Tosca Stocker, (Marina Andreatta)"},
+  {saison:"26/27",vorstellungen:[],titel:"Freunde des Balletts Zuerich",typ:"Event",kat:"Event",prem:"2026-10-31",lv:"2026-10-31",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Training, Probe, Lunch I",produktion:"",tickets:"",location:"Ballettsaal und Lulu Cafe",chef:"Corinne Amsler"},
+  {saison:"26/27",vorstellungen:[],titel:"Freunde der Oper Zuerich",typ:"Event",kat:"Event",prem:"2026-10-31",lv:"2026-10-31",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Veranstaltung der Freunde der Oper Zuerich in der Villa Senar",produktion:"Rachmaninow Die drei Opern",tickets:"",location:"Villa Senar, Zinnenstrasse 6, 6353 Weggis",chef:"Katherine Waldvogel"},
+  {saison:"26/27",vorstellungen:[],titel:"UBS",typ:"Event",kat:"Event",prem:"2026-11-01",lv:"2026-11-01",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Sponsorenanlass",produktion:"Rachmaninow Die drei Opern",tickets:"50",location:"Spiegelsaal + Parkettumgang",chef:"Nila Chea, Tosca Stocker, Schu-Han Yang"},
+  {saison:"26/27",vorstellungen:[],titel:"American Swiss Foundation",typ:"Event",kat:"Event",prem:"2026-11-11",lv:"2026-11-11",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Young Leaders Conference Zuerich (Konzert, Fuehrungen, Keynote) - late afternoon",produktion:"",tickets:"",location:"Spiegelsaal",chef:"Katherine Waldvogel und Manuela Wyder"},
+  {saison:"26/27",vorstellungen:[],titel:"OHZ Events",typ:"Event",kat:"Event",prem:"2026-11-14",lv:"2026-11-14",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Nachtfuehrung mit anschliessendem Schlummertrunk im Spiegelsaal (stille Auktion)",produktion:"",tickets:"",location:"Opernhaus und Spiegelsaal",chef:"Meret Roth"},
+  {saison:"26/27",vorstellungen:[],titel:"Freunde des Balletts Zuerich",typ:"Event",kat:"Event",prem:"2026-11-19",lv:"2026-11-19",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Akquise FBZ (Fokus: Junge Mitglieder)",produktion:"Romeo und Julia",tickets:"",location:"Opernhaus und Spiegelsaal",chef:"Corinne Amsler"},
+  {saison:"26/27",vorstellungen:[],titel:"Freunde der Oper Zuerich",typ:"Event",kat:"Event",prem:"2026-11-23",lv:"2026-11-23",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Mitgliederversammlung FZO und anschliessend IOS-Werkstattkonzert + Apero",produktion:"",tickets:"",location:"Opernhaus, Spiegelsaal, Umgaenge, Foyer",chef:"Katherine Waldvogel"},
+  {saison:"26/27",vorstellungen:[],titel:"OHZ Events",typ:"Event",kat:"Event",prem:"2026-12-01",lv:"2026-12-01",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Candle Light Dinner auf dem Opernhaus-Balkon",produktion:"",tickets:"",location:"Spiegelsaal und Balkon",chef:"Meret Roth, Tosca Stocker"},
+  {saison:"26/27",vorstellungen:[],titel:"Freunde der Oper Zuerich",typ:"Event",kat:"Event",prem:"2026-12-15",lv:"2026-12-15",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Buehnenprobenbesuch fuer Mitglieder",produktion:"La traviata",tickets:"",location:"Opernhaus und Spiegelsaal",chef:"Katherine Waldvogel"},
+  {saison:"26/27",vorstellungen:[],titel:"OHZ Weihnachtsfeier",typ:"Event",kat:"Event",prem:"2026-12-16",lv:"2026-12-16",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Weihnachtsfeier",produktion:"",tickets:"",location:"Saal und Bueros +1 und +2, Singen Zuschauerraum (16.00-16.30 Uhr)",chef:"Nila Chea, Meret Roth, Manuela Wyder, Tosca Stocker"},
+  {saison:"26/27",vorstellungen:[],titel:"Kuehne Stiftung",typ:"Event",kat:"Event",prem:"2026-12-20",lv:"2026-12-20",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Besuch des Stiftungsrates",produktion:"La traviata",tickets:"26",location:"Spiegelsaal, Parkettumgang, Seitenfoyer links Parkett",chef:"Nila Chea, Cornelia Tschirky-Mueller"},
+  {saison:"26/27",vorstellungen:[],titel:"Atto primo",typ:"Event",kat:"Event",prem:"2026-12-20",lv:"2026-12-20",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Atto primo-Premierenbesuch inkl. Rahmenprogramm",produktion:"La traviata",tickets:"20",location:"Cafe Lulu, Seitenfoyer links 1. Rang",chef:"Schu-Han Yang"},
+  {saison:"26/27",vorstellungen:[],titel:"Zuerich Versicherung",typ:"Event",kat:"Event",prem:"2027-01-10",lv:"2027-01-10",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Ticket-Aktion",produktion:"Alice im Wunderland",tickets:"260",location:"",chef:"Claudia Puppato"},
+  {saison:"26/27",vorstellungen:[],titel:"Freunde des Balletts Zuerich",typ:"Event",kat:"Event",prem:"2027-01-12",lv:"2027-01-12",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Probenbesuch fuer Mitglieder",produktion:"Slow Rush",tickets:"",location:"Opernhaus",chef:"Corinne Amsler"},
+  {saison:"26/27",vorstellungen:[],titel:"FK, Goenner- und Sponsoren",typ:"Event",kat:"Event",prem:"2027-01-14",lv:"2027-01-14",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"IOS-Workshop mit Brigitte Fassbaender",produktion:"",tickets:"",location:"",chef:"Manuela Wyder (Orga), FK + Sponsoring (Betreuung)"},
+  {saison:"26/27",vorstellungen:[],titel:"Zuercher Kantonalbank",typ:"Event",kat:"Event",prem:"2027-01-15",lv:"2027-01-15",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Sponsorenanlass",produktion:"La traviata",tickets:"68",location:"Spiegelsaal + Parkettumgang",chef:"Meret Roth, Tosca Stocker, Claudia Puppato"},
+  {saison:"26/27",vorstellungen:[],titel:"Gen.Vers. Aktionaere",typ:"Event",kat:"Event",prem:"2027-01-18",lv:"2027-01-18",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Generalversammlung Aktionaer:innen",produktion:"",tickets:"",location:"Opernhaus",chef:"Marie Wolfram Zweig + Manuela Wyder"},
+  {saison:"26/27",vorstellungen:[],titel:"Zuercher Kantonalbank",typ:"Event",kat:"Event",prem:"2027-01-19",lv:"2027-01-19",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Sponsorenanlass",produktion:"La traviata",tickets:"40",location:"Spiegelsaal + Parkettumgang",chef:"Meret Roth, Tosca Stocker, Claudia Puppato"},
+  {saison:"26/27",vorstellungen:[],titel:"Freunde der Oper Zuerich",typ:"Event",kat:"Event",prem:"2027-02-10",lv:"2027-02-10",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"OA mit Oksana Lyniv (Chopin: Klavierkonzert Nr. 1 e-Moll op. 11; John Adams: Harmonielehre)",produktion:"",tickets:"",location:"Kreuzplatz",chef:"Katherine Waldvogel"},
+  {saison:"26/27",vorstellungen:[],titel:"Rolex",typ:"Event",kat:"Event",prem:"2027-02-25",lv:"2027-02-25",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Sponsorenanlass",produktion:"La fanciulla del West",tickets:"30",location:"Spiegelsaal + Parkettumgang",chef:"Cornelia Tschirky-Mueller, Events tbd (falls Orga)"},
+  {saison:"26/27",vorstellungen:[],titel:"Atto primo",typ:"Event",kat:"Event",prem:"2027-02-25",lv:"2027-02-25",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Atto primo-Premierenbesuch inkl. Rahmenprogramm",produktion:"La fanciulla del West",tickets:"20",location:"Cafe Lulu, Parkettumgang",chef:"Schu-Han Yang"},
+  {saison:"26/27",vorstellungen:[],titel:"Zuercher Kantonalbank",typ:"Event",kat:"Event",prem:"2027-03-02",lv:"2027-03-02",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Sponsorenanlass",produktion:"Romeo et Juliette",tickets:"68",location:"Spiegelsaal + Parkettumgang",chef:"Tosca Stocker/Meret Roth, Claudia Puppato"},
+  {saison:"26/27",vorstellungen:[],titel:"Freunde des Balletts Zuerich",typ:"Event",kat:"Event",prem:"2027-03-06",lv:"2027-03-06",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Balletttraining Besuch",produktion:"",tickets:"",location:"Ballettsaal",chef:"Corinne Amsler"},
+  {saison:"26/27",vorstellungen:[],titel:"Gastspiel RING in Paris",typ:"Event",kat:"Event",prem:"2027-03-09",lv:"2027-03-09",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Gastspiel",produktion:"",tickets:"",location:"Paris",chef:""},
+  {saison:"26/27",vorstellungen:[],titel:"Gastspiel RING NEW YORK",typ:"Event",kat:"Event",prem:"2027-03-18",lv:"2027-03-18",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Gastspiel",produktion:"",tickets:"",location:"New York",chef:""},
+  {saison:"26/27",vorstellungen:[],titel:"American Friends of the Zurich Opera House",typ:"Event",kat:"Event",prem:"2027-03-20",lv:"2027-03-20",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Galadinner - New York",produktion:"",tickets:"",location:"New York",chef:"Katherine Waldvogel"},
+  {saison:"26/27",vorstellungen:[],titel:"American Friends of the Zurich Opera House",typ:"Event",kat:"Event",prem:"2027-03-22",lv:"2027-03-22",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Private Einladung Mister Westreich - New York",produktion:"",tickets:"",location:"New York",chef:"Katherine Waldvogel"},
+  {saison:"26/27",vorstellungen:[],titel:"Zuercher Kantonalbank",typ:"Event",kat:"Event",prem:"2027-04-02",lv:"2027-04-02",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Sponsorenanlass",produktion:"Die Zauberfloete",tickets:"68",location:"Spiegelsaal + Parkettumgang",chef:"Tosca Stocker/Meret Roth, Claudia Puppato"},
+  {saison:"26/27",vorstellungen:[],titel:"Atto primo",typ:"Event",kat:"Event",prem:"2027-04-03",lv:"2027-04-03",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Atto primo-Jahresdinner",produktion:"",tickets:"",location:"Opernhaus im Quartier, Oerlikon",chef:"Schu-Han Yang, Nila Chea, Meret Roth, Manuela Wyder"},
+  {saison:"26/27",vorstellungen:[],titel:"UBS",typ:"Event",kat:"Event",prem:"2027-04-08",lv:"2027-04-08",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Sponsorenanlass",produktion:"Die Zauberfloete",tickets:"60",location:"Eingangsfoyer, Parkettumgang + Spiegelsaal",chef:"Meret Roth (Orga), Nila Chea (Betreuung)"},
+  {saison:"26/27",vorstellungen:[],titel:"OHZ Spielzeitpraesentation 27/28",typ:"Event",kat:"Event",prem:"2027-04-13",lv:"2027-04-13",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Spielzeitpraesentation fuer Mitarbeiter:innen",produktion:"",tickets:"",location:"Zuschauerraum, Vorbuehne",chef:"Victoria Dietrich, Marissa Domeisen"},
+  {saison:"26/27",vorstellungen:[],titel:"OHZ Spielzeitpraesentation 27/28",typ:"Event",kat:"Event",prem:"2027-04-14",lv:"2027-04-14",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Sponsoring Fruehstueck",produktion:"",tickets:"",location:"Spiegelsaal",chef:"Sponsoring"},
+  {saison:"26/27",vorstellungen:[],titel:"OHZ Spielzeitpraesentation 27/28",typ:"Event",kat:"Event",prem:"2027-04-14",lv:"2027-04-14",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Information fuer Freundeskreise, Aktionaer:innen, Abonnent:innen",produktion:"",tickets:"",location:"Kreuzplatz",chef:"Katherine Waldvogel, Manuela Wyder"},
+  {saison:"26/27",vorstellungen:[],titel:"Spielplanpraesentation Schweizerische Botschaft Berlin",typ:"Event",kat:"Event",prem:"2027-04-16",lv:"2027-04-16",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Auf Einladung der CH Botschafterin in DE",produktion:"",tickets:"",location:"Schweizerische Botschaft, Otto-von-Bismarck-Allee 4a, 10557 Berlin",chef:"Katherine Waldvogel"},
+  {saison:"26/27",vorstellungen:[],titel:"Freunde der Oper Zuerich",typ:"Event",kat:"Event",prem:"2027-04-17",lv:"2027-04-17",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Zurich Youth Summit - zweite Ausgabe",produktion:"",tickets:"",location:"Opernhaus - Vorstellungsbesuch und punktuell Spiegelsaal",chef:"Corinne Amsler"},
+  {saison:"26/27",vorstellungen:[],titel:"UBS",typ:"Event",kat:"Event",prem:"2027-04-20",lv:"2027-04-20",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Sponsorenanlass",produktion:"Die Zauberfloete",tickets:"60",location:"Eingangsfoyer, Parkettumgang + Spiegelsaal",chef:"Meret Roth / Tosca Stocker"},
+  {saison:"26/27",vorstellungen:[],titel:"Freunde der Oper Zuerich",typ:"Event",kat:"Event",prem:"2027-04-21",lv:"2027-04-21",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Buehnenorchesterprobe mit vorgaengigem Onboarding der neuen Mitglieder",produktion:"L'elisir d'amore",tickets:"",location:"Opernhaus und Spiegelsaal",chef:"Corinne Amsler"},
+  {saison:"26/27",vorstellungen:[],titel:"Zurich Versicherung",typ:"Event",kat:"Event",prem:"2027-04-22",lv:"2027-04-22",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Sponsorenanlass",produktion:"Timeframed",tickets:"40",location:"Spiegelsaal, Eingangsfoyer, Parkettumgang",chef:"Nila Chea, Claudia Puppato"},
+  {saison:"26/27",vorstellungen:[],titel:"Frankfurter Bankgesellschaft",typ:"Event",kat:"Event",prem:"2027-04-24",lv:"2027-04-24",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Sponsorenanlass",produktion:"Tosca",tickets:"40",location:"Spiegelsaal, Parkettumgang, Eingangsfoyer",chef:"Tosca Stocker, Schu-Han Yang"},
+  {saison:"26/27",vorstellungen:[],titel:"Freunde des Balletts Zuerich",typ:"Event",kat:"Event",prem:"2027-04-28",lv:"2027-04-28",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"UBS - Tanzpreisverleihung Side Event - Freunde des Balletts Zuerich (OPTION)",produktion:"Timeframed",tickets:"",location:"Opernhaus Zuerich und Spiegelsaal",chef:"Katherine Waldvogel"},
+  {saison:"26/27",vorstellungen:[],titel:"Freunde der Oper Zuerich",typ:"Event",kat:"Event",prem:"2027-05-04",lv:"2027-05-04",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"IOS-Probenbesuch OHP",produktion:"Angels in America",tickets:"",location:"Theater Winterthur",chef:"Corinne Amsler"},
+  {saison:"26/27",vorstellungen:[],titel:"UBS",typ:"Event",kat:"Event",prem:"2027-05-12",lv:"2027-05-12",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Sponsorenanlass",produktion:"L'elisir d'amore",tickets:"60",location:"Eingangsfoyer, Parkettumgang + Spiegelsaal",chef:"Meret Roth"},
+  {saison:"26/27",vorstellungen:[],titel:"Rolex",typ:"Event",kat:"Event",prem:"2027-05-13",lv:"2027-05-13",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Sponsorenanlass",produktion:"Tosca",tickets:"70",location:"Eingangsfoyer, Parkettumgang + Spiegelsaal",chef:"Nila Chea, Tosca Stocker, Cornelia Tschirky-Mueller"},
+  {saison:"26/27",vorstellungen:[],titel:"Freunde des Balletts Zuerich",typ:"Event",kat:"Event",prem:"2027-05-14",lv:"2027-05-14",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Onboarding Fruehstueck neue Mitglieder FBZ",produktion:"",tickets:"",location:"Spiegelsaal",chef:"Corinne Amsler"},
+  {saison:"26/27",vorstellungen:[],titel:"Freunde des Balletts Zuerich",typ:"Event",kat:"Event",prem:"2027-05-14",lv:"2027-05-14",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Buehnenprobenbesuch fuer Mitglieder BO2",produktion:"See the music, hear the dance",tickets:"",location:"Opernhaus",chef:"Corinne Amsler"},
+  {saison:"26/27",vorstellungen:[],titel:"Atto primo",typ:"Event",kat:"Event",prem:"2027-05-22",lv:"2027-05-22",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Atto primo-Premierenbesuch inkl. Rahmenprogramm",produktion:"See the music, hear the dance",tickets:"20",location:"Cafe Lulu, Parkettumgang",chef:"Schu-Han Yang"},
+  {saison:"26/27",vorstellungen:[],titel:"Stretton Society",typ:"Event",kat:"Event",prem:"2027-05-23",lv:"2027-05-23",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Gemeinsamer Sponsorenanlass",produktion:"Kinderopernorchester",tickets:"50",location:"Spiegelsaal",chef:"Nila Chea"},
+  {saison:"26/27",vorstellungen:[],titel:"OHZ Legat",typ:"Event",kat:"Event",prem:"2027-05-25",lv:"2027-05-25",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Nachhall Gespraechsreihe",produktion:"",tickets:"",location:"Studiobuehne",chef:"Manuela Wyder, Cornelia Tschirky-Mueller"},
+  {saison:"26/27",vorstellungen:[],titel:"HOFFEST",typ:"Event",kat:"Event",prem:"2027-05-28",lv:"2027-05-28",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"",produktion:"",tickets:"",location:"Montagehalle",chef:"Manuela Wyder"},
+  {saison:"26/27",vorstellungen:[],titel:"OHZ NatO",typ:"Event",kat:"Event",prem:"2027-06-05",lv:"2027-06-05",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"A Night at the Opera",produktion:"",tickets:"",location:"Opernhaus",chef:"Meret Roth, Nila Chea, Tosca Stocker, Manuela Wyder"},
+  {saison:"26/27",vorstellungen:[],titel:"Atto primo",typ:"Event",kat:"Event",prem:"2027-06-05",lv:"2027-06-05",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"A Night at the Opera",produktion:"",tickets:"40",location:"",chef:"Schu-Han Yang"},
+  {saison:"26/27",vorstellungen:[],titel:"Zuercher Kantonalbank",typ:"Event",kat:"Event",prem:"2027-06-05",lv:"2027-06-05",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"A Night at the Opera",produktion:"",tickets:"",location:"",chef:"Cornelia Tschirky-Mueller"},
+  {saison:"26/27",vorstellungen:[],titel:"Freunde des Balletts Zuerich",typ:"Event",kat:"Event",prem:"2027-06-12",lv:"2027-06-12",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Training, Probe, Lunch II",produktion:"",tickets:"",location:"Ballettsaal und Lulu Cafe",chef:"Corinne Amsler"},
+  {saison:"26/27",vorstellungen:[],titel:"UBS",typ:"Event",kat:"Event",prem:"2027-06-19",lv:"2027-06-19",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Sponsorenanlass Investment Banking (bestaetigt)",produktion:"Ein Sommernachtstraum",tickets:"70",location:"Eingangsfoyer, Parkettumgang + Spiegelsaal",chef:"Nila Chea, Meret Roth, Tosca Stocker tbd"},
+  {saison:"26/27",vorstellungen:[],titel:"UBS",typ:"Event",kat:"Event",prem:"2027-06-22",lv:"2027-06-22",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Sponsorenanlass",produktion:"Ein Sommernachtstraum",tickets:"60",location:"Eingangsfoyer, Parkettumgang + Spiegelsaal",chef:"Meret Roth, Tosca Stocker"},
+  {saison:"26/27",vorstellungen:[],titel:"Freunde des Balletts Zuerich",typ:"Event",kat:"Event",prem:"2027-06-27",lv:"2027-06-27",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Tanzpreisverleihung auf der Buehne im Anschluss an Vorstellung (30 Min max!)",produktion:"See the music, hear the dance",tickets:"",location:"Opernhausbuehne",chef:"Katherine Waldvogel"},
+  {saison:"26/27",vorstellungen:[],titel:"Freunde des Balletts Zuerich",typ:"Event",kat:"Event",prem:"2027-06-27",lv:"2027-06-27",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Season End Party - anschliessend nach Tanzpreisverleihung",produktion:"",tickets:"",location:"Restaurant und Terrasse des Lulu",chef:"Corinne Amsler"},
+  {saison:"26/27",vorstellungen:[],titel:"UBS",typ:"Event",kat:"Event",prem:"2027-07-04",lv:"2027-07-04",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Sponsorenanlass (tbc.)",produktion:"La Boheme",tickets:"40",location:"Spiegelsaal, Parkettumgang, Eingangsfoyer",chef:"Schu-Han Yang"},
+  {saison:"26/27",vorstellungen:[],titel:"Freunde der Oper Zuerich",typ:"Event",kat:"Event",prem:"2027-07-05",lv:"2027-07-05",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"IOS-Galakonzert mit Apero auf Hinterbuehne im Anschluss",produktion:"",tickets:"",location:"Opernhaus und Hinterbuehne",chef:"Katherine Waldvogel"}
+,
+  {saison:"26/27",vorstellungen:[],titel:"OHZ Events",typ:"Event",kat:"Event",prem:"2026-11-13",lv:"2026-11-13",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Hauskonzert (Einloesung Preis stille Auktion)",produktion:"",tickets:"",location:"Gerzensee",chef:"Meret Roth, Tosca Stocker"}
+];
+
+
+var activeIndex = null;
+var prevState = null;
+var typFilter = "alle";
+var saisonFilter = "25/26";
+var tonFilter = "";
+
+function fmt(s) {
+  if (!s) return "";
+  var d = new Date(s);
+  return d.toLocaleDateString("de-CH", {day:"2-digit", month:"2-digit", year:"2-digit"});
+}
+
+function bc(typ) {
+  if (typ === "Premiere") return "badge-P";
+  if (typ === "WA") return "badge-W";
+  if (typ === "Extra") return "badge-S";
+  if (typ === "Event") return "badge-E";
+  return "badge-L";
+}
+
+function bl(typ) {
+  if (typ === "SF") return "SF";
+  if (typ === "KZT") return "KZT";
+  if (typ === "Premiere") return "PREM";
+  if (typ === "WA") return "WA";
+  if (typ === "Extra") return "Extra";
+  if (typ === "Event") return "Event";
+  return "Labor";
+}
+
+function getSaisonFromDate(dateStr) {
+  if (!dateStr) return null;
+  var d = new Date(dateStr);
+  var year = d.getFullYear();
+  var month = d.getMonth() + 1;
+  if (month >= 8) {
+    return (String(year).slice(2)) + "/" + (String(year+1).slice(2));
+  } else {
+    return (String(year-1).slice(2)) + "/" + (String(year).slice(2));
+  }
+}
+
+function applyDateSaison() {
+  var von = document.getElementById("von").value;
+  var bis = document.getElementById("bis").value;
+  var vonEl = document.getElementById("von");
+  var bisEl = document.getElementById("bis");
+  vonEl.style.borderColor = von ? "#0fe8e8" : "#333";
+  vonEl.style.color = von ? "#f0a050" : "#ddd";
+  bisEl.style.borderColor = bis ? "#0fe8e8" : "#333";
+  bisEl.style.color = bis ? "#f0a050" : "#ddd";
+  var date = von || bis;
+  if (date) {
+    var saison = getSaisonFromDate(date);
+    if (saison && saison !== saisonFilter) {
+      saisonFilter = saison;
+      var stags = document.querySelectorAll(".qtag[id^=saison-]");
+      for (var i = 0; i < stags.length; i++) stags[i].classList.remove("active");
+      var el = document.getElementById("saison-" + saison.replace("/",""));
+      if (el) el.classList.add("active");
+    }
+    document.getElementById("reset").style.color = "#f0a050"; document.getElementById("reset").style.display = "inline-block";
+  } else {
+    document.getElementById("reset").style.color = "#f0a050"; document.getElementById("reset").style.display = "inline-block";
+  }
+  render();
+}
+
+function getDirectoryMode(q) {
+  var map = {
+    "ton": "ton", "licht": "licht", "beleuchtung": "licht",
+    "dirigent": "dirig", "diri": "dirig", "dirigat": "dirig", "musikalische leitung": "dirig",
+    "regie": "regie", "inszenierung": "regie", "choreographie": "regie", "choreo": "regie", "choreografie": "regie",
+    "inspizienz": "insp", "inspizient": "insp", "inspi": "insp",
+    "buhne": "bm", "buhnenmeister": "bm", "buehnenmeister": "bm", "buehne": "bm",
+    "regieassistenz": "reasist", "regieassistentin": "reasist", "regieassistent": "reasist",
+    "projektleitung": "projleit", "projektleiter": "projleit",
+    "komponist": "komp", "komponistin": "komp", "composer": "komp", "komposition": "komp"
+  };
+  var key = q.toLowerCase().trim();
+  if (map[key]) return map[key];
+  // Fuzzy: check if key is prefix of any map key
+  for (var k in map) {
+    if (k.indexOf(key) === 0 && key.length >= 4) return map[k];
+  }
+  return null;
+}
+
+function renderDirectory(field) {
+  var index = {};
+  for (var i = 0; i < P.length; i++) {
+    var p = P[i];
+    if (saisonFilter !== "alle" && p.saison !== saisonFilter) continue;
+    if (typFilter !== "Event" && p.kat === "Event" && !vonFilter && !bisFilter) continue;
+    if (typFilter !== "alle") {
+      if (typFilter === "Premiere" && p.typ !== "Premiere") continue;
+      if (typFilter === "WA" && p.typ !== "WA") continue;
+      if (typFilter === "Oper" && p.kat !== "Oper") continue;
+      if (typFilter === "Ballett" && p.kat !== "Ballett") continue;
+      if (typFilter === "Labor" && p.kat !== "Labor") continue;
+      if (typFilter === "Extra" && p.kat !== "Extra") continue;
+      if (typFilter === "KZT" && p.kat !== "Konzert") continue;
+      if (typFilter === "Event" && p.kat !== "Event") continue;
+    }
+    if (tonFilter && !(p.ton && p.ton.toLowerCase().indexOf(tonFilter.toLowerCase()) > -1)) continue;
+    if (vonFilter || bisFilter) {
+      var matchDate = false;
+      var checkVorst = p.vorstellungen && p.vorstellungen.length > 0;
+      if (checkVorst) {
+        for (var vi = 0; vi < p.vorstellungen.length; vi++) {
+          var vd = p.vorstellungen[vi];
+          var afterVon = !vonFilter || vd >= vonFilter;
+          var beforeBis = !bisFilter || vd <= bisFilter;
+          if (afterVon && beforeBis) { matchDate = true; break; }
+        }
+      } else {
+        var afterVon = !vonFilter || (p.lv && p.lv >= vonFilter);
+        var beforeBis = !bisFilter || (p.prem && p.prem <= bisFilter);
+        if (afterVon && beforeBis) matchDate = true;
+      }
+      if (!matchDate) continue;
+    }
+    var val = p[field];
+    if (!val) continue;
+    var valNorm = val.replace(/ *\/ */g, "|").replace(/ *, */g, "|");
+    var parts = valNorm.split("|");
+    for (var j = 0; j < parts.length; j++) {
+      var name = parts[j].trim();
+      if (!name) continue;
+      if (field === "komp") { name = name.replace(/\s*\([^)]*\)\s*$/, "").trim(); }
+      if (!name) continue;
+      if (!index[name]) index[name] = [];
+      index[name].push(p);
+    }
+  }
+  var names = [];
+  for (var n in index) { if (index.hasOwnProperty(n)) names.push(n); }
+  // Ensure split names from combined entries are included
+  if (field === "ton" && !index["Wurster"]) {
+    var wProds = [];
+    for (var wi = 0; wi < P.length; wi++) {
+      if (P[wi].ton && P[wi].ton.indexOf("Wurster") > -1) wProds.push(P[wi]);
+    }
+    if (wProds.length > 0) { index["Wurster"] = wProds; names.push("Wurster"); }
+  }
+  names.sort();
+  var html = "";
+  for (var k = 0; k < names.length; k++) {
+    var name = names[k];
+    var prods = index[name];
+    html += '<div class="row" onclick="searchFor(\'' + name + '\')">';
+    html += "<span class='row-title'>" + name + "</span><span class='row-date' style='color:#999;font-size:12px'>" + prods.length + " Produktion" + (prods.length > 1 ? "en" : "") + "</span>";
+    html += "</div>";
+  }
+  document.getElementById("list").innerHTML = (html || "<div id='empty'>Keine Eintraege.</div>") + "<div style='height:220px'></div>";
+  document.getElementById("count").textContent = names.length + " Eintraege";
+}
+
+function getFiltered() {
+  var q = document.getElementById("search").value.toLowerCase().trim();
+  var vonDate = document.getElementById("von").value ? new Date(document.getElementById("von").value) : null;
+  var bisDate = document.getElementById("bis").value ? new Date(document.getElementById("bis").value) : null;
+  var results = [];
+  for (var i = 0; i < P.length; i++) {
+    var p = P[i];
+    var fields = [
+      p.titel, p.graben, p.komp, "komponist " + p.komp,
+      "ton " + p.ton, "beleuchtung " + p.licht, "licht " + p.licht,
+      "inspizienz " + p.insp, "inspizient " + p.insp,
+      "buhnenmeister " + p.bm, "buehnenmeister " + p.bm,
+      "regie " + p.regie, "choreographie " + p.regie, "choreo " + p.regie,
+      "dirigent " + p.dirig,
+      "regieassistenz " + p.reasist,
+      "projektleitung " + p.projleit,
+      p.ton, p.licht, p.insp, p.bm, p.regie, p.dirig, p.reasist, p.projleit
+    ];
+    if (p.team) { for (var ti = 0; ti < p.team.length; ti++) fields.push(p.team[ti]); }
+    var matchQ = true;
+    if (q) {
+      var parts = q.split(" ");
+      matchQ = true;
+      for (var qi = 0; qi < parts.length; qi++) {
+        var qpart = parts[qi];
+        if (!qpart) continue;
+        var matchPart = false;
+        for (var j = 0; j < fields.length; j++) {
+          if (fields[j]) {
+            var fLower = fields[j].toLowerCase();
+            if (fLower.indexOf(qpart) > -1) {
+              matchPart = true; break;
+            }
+          }
+        }
+        if (!matchPart) { matchQ = false; break; }
+      }
+    }
+    var matchSaison = saisonFilter === "alle" || p.saison === saisonFilter;
+    var matchTon = !tonFilter || (p.ton && p.ton.toLowerCase().indexOf(tonFilter.toLowerCase()) > -1);
+    var matchTyp = (typFilter === "alle" && (p.kat !== "Event" || vonDate || bisDate)) ||
+      (typFilter === "Ballett" && p.kat === "Ballett") ||
+      (typFilter === "Oper" && p.kat === "Oper") ||
+      (typFilter === "Premiere" && p.typ === "Premiere") ||
+      (typFilter === "WA" && p.typ === "WA") ||
+      (typFilter === "Labor" && p.kat === "Labor") ||
+      (typFilter === "Extra" && p.kat === "Extra") ||
+      (typFilter === "KZT" && p.kat === "Konzert") ||
+      (typFilter === "Event" && p.kat === "Event");
+    var pDate = new Date(p.prem);
+    var matchVon, matchBis;
+    if (p.vorstellungen && p.vorstellungen.length > 0 && (vonDate || bisDate)) {
+      var matchDate = false;
+      for (var vi = 0; vi < p.vorstellungen.length; vi++) {
+        var vd = new Date(p.vorstellungen[vi]);
+        var afterVon = !vonDate || vd >= vonDate;
+        var beforeBis = !bisDate || vd <= bisDate;
+        if (afterVon && beforeBis) { matchDate = true; break; }
+      }
+      matchVon = matchDate;
+      matchBis = true;
+    } else {
+      matchVon = !vonDate || pDate >= vonDate;
+      matchBis = !bisDate || pDate <= bisDate;
+    }
+    if (matchQ && matchTyp && matchVon && matchBis && matchSaison && matchTon) results.push(p);
+  }
+  results.sort(function(a, b) {
+    var da = a.prem ? new Date(a.prem) : new Date(0);
+    var db = b.prem ? new Date(b.prem) : new Date(0);
+    return da - db;
+  });
+  return results;
+}
+
+function evExtern(p) {
+  if ((p.titel || "").toLowerCase().indexOf("herr der diebe") > -1) return true;
+  if (p.kat !== "Event") return false;
+  var l = (p.location || "").toLowerCase();
+  var tl = (p.titel || "").toLowerCase();
+  // Ohne Location-Angabe: OHZ/Hoffest gelten als im Haus (weiss), sonst weiss
+  if (!l) return false;
+  var imHaus = l.indexOf("opernhaus") > -1 || l.indexOf("buehne") > -1 || l.indexOf("b\u00fchne") > -1 || l.indexOf("spiegelsaal") > -1 || l.indexOf("eingangsfoyer") > -1 || l.indexOf("foyer") > -1 || l.indexOf("mozartplatz") > -1 || l.indexOf("lulu") > -1 || l.indexOf("ballettsaal") > -1 || l.indexOf("studio") > -1 || l.indexOf("kreuzplatz") > -1 || l.indexOf("montagehalle") > -1 || l.indexOf("sechsel") > -1 || /(^|[^r])saal/.test(l) || l.indexOf("zuschauerraum") > -1;
+  return !imHaus;
+}
+function render() {
+  var q = document.getElementById("search").value.toLowerCase().trim();
+  var dirField = getDirectoryMode(q);
+  if (dirField) { renderDirectory(dirField); return; }
+  var results = getFiltered();
+  document.getElementById("count").textContent = results.length + " Treffer";
+  var list = document.getElementById("list");
+  if (results.length === 0) { list.innerHTML = "<div id='empty'>Keine Treffer.</div>"; return; }
+  var html = "";
+  // Add "Heute" section if Aktuell filter is active
+  var vonEl = document.getElementById("von");
+  if (vonEl && vonEl.value) {
+    var todayStr = vonEl.value;
+    var todayProds = [];
+    for (var ti = 0; ti < results.length; ti++) {
+      var tp = results[ti];
+      var evLoc = (tp.location || "").toLowerCase();
+      var evImHaus = evLoc.indexOf("opernhaus") > -1 || evLoc.indexOf("ohz") > -1 || evLoc.indexOf("spiegelsaal") > -1 || evLoc.indexOf("eingangsfoyer") > -1 || evLoc.indexOf("buehne") > -1 || evLoc.indexOf("bühne") > -1;
+      var isToday = (tp.vorstellungen && tp.vorstellungen.indexOf(todayStr) > -1) || (tp.kat === "Event" && tp.prem === todayStr && evImHaus);
+      if (isToday) {
+        todayProds.push(tp);
+      }
+    }
+    if (todayProds.length > 0) {
+      todayProds.sort(function(a, b) {
+        var da = a.prem ? new Date(a.prem) : new Date(0);
+        var db = b.prem ? new Date(b.prem) : new Date(0);
+        return da - db;
+      });
+      html += "<div style='padding:6px 20px 4px;font-size:11px;color:#0fe8e8;letter-spacing:0.1em;text-transform:uppercase;border-bottom:1px solid #222'>Heute</div>";
+      for (var ti = 0; ti < todayProds.length; ti++) {
+        var tp = todayProds[ti];
+        var tidx = P.indexOf(tp);
+        var tcls = "row" + (tidx === activeIndex ? " active" : "");
+        html += "<div class=\"" + tcls + "\" onclick=\"selectRow(" + tidx + ")\">";
+        html += "<span class=\"row-title\"" + (evExtern(tp) ? " style=\"color:#8a8a8a\"" : "") + ">" + tp.titel + "</span>";
+        html += "</div>";
+      }
+      html += "<div style='padding:6px 20px 4px;font-size:11px;color:#0fe8e8;letter-spacing:0.1em;text-transform:uppercase;border-bottom:1px solid #222'>Aktuell</div>";
+    }
+  }
+  for (var i = 0; i < results.length; i++) {
+    var p = results[i];
+    var idx = P.indexOf(p);
+    var cls = "row" + (idx === activeIndex ? " active" : "");
+    html += '<div class="' + cls + '" onclick="selectRow(' + idx + ')">';
+    var titleStyle = evExtern(p) ? ' style="color:#8a8a8a"' : '';
+    html += '<span class="row-title"' + titleStyle + '>' + p.titel + '</span><span class="row-date" style="margin-left:12px">' + fmt(p.prem) + '</span><span class="badge ' + bc(p.typ) + '" style="margin-left:6px">' + bl(p.typ) + '</span><span class="row-date" style="margin-left:12px">' + fmt(p.ete) + ' &ndash; ' + fmt(p.lv) + '</span>';
+    html += "</div>";
+  }
+  list.innerHTML = html;
+}
+
+function selectRow(idx) {
+  if (activeIndex === idx) { closeDetail(); return; }
+  activeIndex = idx;
+  try { history.pushState({idx: idx}, "", ""); } catch(e) {}
+  showDetail(P[idx]);
+  var det = document.getElementById("detail");
+  if (det) det.scrollTop = 0;
+  render();
+}
+
+function drow(label, val) {
+  return "<div class='drow'><span class='dlabel'>" + label + "</span><span class='dval'>" + (val || "") + "</span></div>";
+}
+
+function drowlink(label, val) {
+  if (!val) return "<div class='drow'><span class='dlabel'>" + label + "</span><span class='dval'></span></div>";
+  var parts = val.split(" / ");
+  var links = parts.map(function(nm) {
+    nm = nm.trim();
+    if (!nm || nm === "N.N.") return nm;
+    return "<span class=\"dlink\" onclick=\"searchFor('" + nm + "')\">" + nm + "</span>";
+  });
+  return "<div class='drow'><span class='dlabel'>" + label + "</span><span class='dval'>" + links.join(" / ") + "</span></div>";
+}
+
+function showDetail(p) {
+  document.getElementById("detail").classList.add("open");
+  document.getElementById("detail").style.display = "block";
+  var html = "";
+  html += "<button id='detail-close' onclick='closeDetail()'>close x</button>";
+  html += "<div class='det-type'>" + p.typ + (p.saison ? " &nbsp;&middot;&nbsp; SZ " + p.saison : "") + "</div>";
+  html += "<div class='det-title'>" + p.titel + "</div>";
+  // Event-specific panel
+  if (p.kat === "Event") {
+    html += drow("Termin", p.prem ? fmt(p.prem) : "N.N.");
+    html += drow("Anlass", p.anlass || "N.N.");
+    html += drow("Produktion", p.produktion || "N.N.");
+    html += drow("Anzahl Tickets", p.tickets || "N.N.");
+    html += drow("Eventlocation", p.location || "N.N.");
+    html += drow("Kontakt Chef", p.chef || "N.N.");
+  } else {
+    html += drow("Premiere / WA", fmt(p.prem));
+  html += drow("Letzte Vorstellung", fmt(p.lv));
+  html += drow("Probenbeginn", fmt(p.prob));
+  html += drow("1. TE", fmt(p.ete));
+  html += drow("KHP", fmt(p.khp));
+  // Find historical OHP from other seasons
+  var normT = p.titel.replace(/ 2[0-9][0-9][0-9]$/, "").replace(/ 2[0-9][0-9]\/[0-9][0-9]$/, "").toLowerCase().trim();
+  var histOhp = "";
+  for (var oi = 0; oi < P.length; oi++) {
+    var op = P[oi];
+    if (op.saison === p.saison) continue;
+    var opNorm = op.titel.replace(/ 2[0-9][0-9][0-9]$/, "").replace(/ 2[0-9][0-9]\/[0-9][0-9]$/, "").toLowerCase().trim();
+    if (opNorm === normT && op.ohp && op.saison > p.saison) {
+      histOhp = fmt(op.ohp) + " <span style=\"color:#999\"> (" + op.saison + ")</span>";
+      break;
+    }
+  }
+  var ohpDisplay = (p.ohp ? fmt(p.ohp) : "");
+  if (histOhp) ohpDisplay = (ohpDisplay ? ohpDisplay + " / " : "") + histOhp;
+  html += drow("OHP", ohpDisplay);
+  html += drow("GP", fmt(p.gp));
+  if (p.dauer) html += drow("Dauer", p.dauer);
+  html += "<div class='divider'></div>";
+  // Ton with history
+  var normTitel = p.titel.replace(/ 2[0-9][0-9][0-9]$/, "").replace(/ 2[0-9]\/[0-9][0-9]$/, "").toLowerCase().trim();
+  var histTon = "";
+  var histTons = [];
+  for (var hi = 0; hi < P.length; hi++) {
+    var hp = P[hi];
+    if (hp.saison === p.saison) continue;
+    var hpNorm = hp.titel.replace(/ 2[0-9][0-9][0-9]$/, "").replace(/ 2[0-9]\/[0-9][0-9]$/, "").toLowerCase().trim();
+    if (hpNorm === normTitel && hp.ton) {
+      histTons.push(hp.ton + " (" + hp.saison + ")");
+    }
+  }
+  if (histTons.length > 0) histTon = histTons.join(" / ");
+  var tonDisplay = (p.ton ? "<span class='dlink' onclick=\"searchFor('" + p.ton + "')\">" + p.ton + "</span>" : "N.N.");
+  if (histTon) tonDisplay += " <span style='color:#999'>/ " + histTon + "</span>";
+  html += "<div class='drow'><span class='dlabel' style='color:#fff'>Ton</span><span class='dval'>" + tonDisplay + "</span></div>";
+  html += drowlink("Buehnenmeister", p.bm || "N.N.");
+  html += drowlink("Licht", p.licht || "N.N.");
+  html += drowlink("Inspizienz", p.insp || "N.N.");
+  html += drowlink("Projektleitung", p.projleit || "N.N.");
+  html += drowlink("Regieassistenz", p.reasist || "N.N.");
+  html += drow("Graben", p.graben || "N.N.");
+  html += "<div class='divider'></div>";
+  html += drowlink("Regie / Choreographie", p.regie || "N.N.");
+  html += drowlink("Dirigent", p.dirig || "N.N.");
+  if (p.komp) html += "<div class='drow'><span class='dlabel'>Komponist</span><span class='dval'><span class='dlink' onclick=\"searchFor('" + p.komp + "')\" style=\"cursor:pointer\">" + p.komp + "</span></span></div>";
+  if (p.team && p.team.length > 0) {
+    html += "<div class='divider'></div>";
+    html += "<div class='drow'><span class='dlabel'>Besetzung</span></div><div style='display:flex;flex-wrap:wrap;gap:4px;padding:2px 0 6px 0'>";
+    for (var ti = 0; ti < p.team.length; ti++) {
+      html += "<span class=\"dlink\" onclick=\"searchFor('" + p.team[ti] + "')\">" + p.team[ti] + "</span>";
+    }
+    html += "</div>";
+  }
+  // Vorstellungen
+  if (p.vorstellungen && p.vorstellungen.length > 0) {
+    html += "<div class='divider'></div>";
+    html += "<div class='sec-label' style='font-size:16px'>Vorstellungen</div>";
+    for (var k = 0; k < p.vorstellungen.length; k++) {
+      html += "<div class='drow'><span class='dval'>" + fmt(p.vorstellungen[k]) + "</span></div>";
+    }
+  }
+  } // end non-Event
+  // ZEITGLEICH (1. TE – letzte Vst)
+  if (p.ete && p.lv) {
+  var eteDate = new Date(p.ete);
+  var lvDate = new Date(p.lv);
+  // Aktive Segmente einer Produktion (beruecksichtigt Pausen)
+  function segsOf(x) {
+    if (x.pause && x.pause.length === 2) {
+      return [[new Date(x.ete), new Date(x.pause[0])], [new Date(x.pause[1]), new Date(x.lv)]];
+    }
+    return [[new Date(x.ete), new Date(x.lv)]];
+  }
+  function segOverlap(a, b) {
+    for (var i=0;i<a.length;i++) for (var j=0;j<b.length;j++) {
+      if (a[i][0] <= b[j][1] && a[i][1] >= b[j][0]) return true;
+    }
+    return false;
+  }
+  var pSegs = segsOf(p);
+  var overlaps = P.filter(function(o) {
+    if (o.titel === p.titel) return false;
+    if (o.kat === "Labor") return false;
+    if (!o.ete || !o.lv) return false;
+    return segOverlap(pSegs, segsOf(o));
+  }).sort(function(a,b){
+    var aShared=0, bShared=0;
+    if (p.vorstellungen && a.vorstellungen) {
+      for (var vi=0; vi<p.vorstellungen.length; vi++) {
+        if (a.vorstellungen.indexOf(p.vorstellungen[vi]) > -1) aShared++;
+      }
+    }
+    if (p.vorstellungen && b.vorstellungen) {
+      for (var vi=0; vi<p.vorstellungen.length; vi++) {
+        if (b.vorstellungen.indexOf(p.vorstellungen[vi]) > -1) bShared++;
+      }
+    }
+    if (aShared !== bShared) return bShared - aShared;
+    var aOver = Math.min(lvDate, new Date(a.lv)) - Math.max(eteDate, new Date(a.ete));
+    var bOver = Math.min(lvDate, new Date(b.lv)) - Math.max(eteDate, new Date(b.ete));
+    return bOver - aOver;
+  });
+  if (overlaps.length > 0) {
+    html += "<div class='divider'></div>";
+    html += "<div class='sec-label' style='font-size:16px'>ZEITGLEICH (1. TE – letzte Vst)</div>";
+    for (var k=0; k<overlaps.length; k++) {
+      var o = overlaps[k];
+      var oidx = -1;
+      for (var pi=0; pi<P.length; pi++) { if (P[pi].titel === o.titel && P[pi].saison === o.saison && P[pi].prem === o.prem) { oidx = pi; break; } }
+      var shared = 0;
+      if (p.vorstellungen && o.vorstellungen) {
+        for (var vi=0; vi<p.vorstellungen.length; vi++) {
+          if (o.vorstellungen.indexOf(p.vorstellungen[vi]) > -1) shared++;
+        }
+      }
+      html += "<div onclick=\"selectRow(\" + oidx + \")\" style=\"cursor:pointer;display:flex;justify-content:flex-start;align-items:baseline;gap:16px;padding:6px 0;border-bottom:1px solid #1a1a1a\">";
+      html += "<span style='font-size:16px;color:#999'>" + o.titel + "</span>";
+      html += "<span style='font-size:16px;color:#e8e8e8;white-space:nowrap;margin-left:8px'>" + fmt(o.prem) + " &ndash; " + fmt(o.lv) + (shared > 0 ? " <span style='color:#999;font-size:11px'>(" + shared + "x)</span>" : "") + "</span>";
+      html += "</div>";
+    }
+  }
+  } // end ZEITGLEICH
+  html += "<div style='height:220px'></div>";
+  document.getElementById("detail-content").innerHTML = html;
+}
+
+function closeDetail() {
+  activeIndex = null;
+  document.getElementById("detail").classList.remove("open");
+  document.getElementById("detail").style.display = "none";
+  try { history.replaceState({idx: null}, "", ""); } catch(e) {}
+  render();
+}
+
+
+
+
+
+
+function filterAktuell() {
+  var now = new Date();
+  var pad = function(n) { return n < 10 ? "0" + n : "" + n; };
+  var todayStr = now.getFullYear() + "-" + pad(now.getMonth()+1) + "-" + pad(now.getDate());
+  document.getElementById("von").value = todayStr;
+  document.getElementById("von").style.color = "transparent";
+  document.getElementById("bis").value = "";
+  document.getElementById("bis").style.color = "#ddd";
+  document.getElementById("reset").style.display = "inline-block";
+  var month = now.getMonth() + 1;
+  var year = now.getFullYear();
+  var saison = month >= 8 ? (String(year).slice(2) + "/" + String(year+1).slice(2)) : (String(year-1).slice(2) + "/" + String(year).slice(2));
+  saisonFilter = saison;
+  var szbtn = document.getElementById("sz-btn");
+  if (szbtn) { szbtn.innerHTML = saison + " &#9660;"; szbtn.style.background = "none"; szbtn.style.borderColor = "#333"; szbtn.style.color = "#bbb"; }
+  var btn = document.getElementById("aktuell-btn");
+  if (btn) { btn.style.borderTopColor = "#0fe8e8"; btn.style.borderLeftColor = "#0fe8e8"; btn.style.borderRightColor = "#0fe8e8"; btn.style.borderBottomColor = "#0fe8e8"; btn.style.color = "#0fe8e8"; btn.style.backgroundImage = "none"; btn.style.backgroundColor = "none"; btn.style.boxShadow = "none"; }
+  applyDateSaison();
+}
+function toggleSzDropdown() {
+  var dd = document.getElementById("sz-dropdown");
+  var btn = document.getElementById("sz-btn");
+  if (dd.style.display === "none") {
+    try { var rect = btn.getBoundingClientRect(); dd.style.top = (rect.bottom + 2) + "px"; dd.style.left = rect.left + "px"; } catch(e) { dd.style.top = "60px"; dd.style.left = "20px"; }
+    dd.style.display = "block";
+  } else {
+    dd.style.display = "none";
+  }
+}
+
+function closeSzDropdown() {
+  var dd = document.getElementById("sz-dropdown");
+  if (dd) dd.style.display = "none";
+}
+function filterSaison(s) {
+  closeSzDropdown();
+  var abtn = document.getElementById("aktuell-btn");
+  if (abtn) { abtn.style.backgroundImage = "none"; abtn.style.backgroundColor = "none"; abtn.style.boxShadow = "none"; abtn.style.borderColor = "#333"; abtn.style.borderTopColor = "#333"; abtn.style.borderLeftColor = "#333"; abtn.style.borderRightColor = "#333"; abtn.style.borderBottomColor = "#333"; abtn.style.color = "#ccc"; }
+  document.getElementById("von").value = "";
+  document.getElementById("von").style.color = "#999";
+  document.getElementById("von").style.borderColor = "#333";
+  document.getElementById("bis").value = "";
+  document.getElementById("bis").style.color = "#999";
+  document.getElementById("bis").style.borderColor = "#333";
+  document.getElementById("reset").style.display = "none";
+  vonFilter = ""; bisFilter = "";
+  var btn = document.getElementById("sz-btn");
+  if (btn) {
+    btn.innerHTML = (s === "alle" ? "Alle" : s) + " &#9660;";
+    btn.style.backgroundImage = "linear-gradient(145deg, #1e1e1e, #111)";
+    btn.style.backgroundColor = "";
+    btn.style.borderTopColor = "#0fe8e8";
+    btn.style.borderLeftColor = "#0fe8e8";
+    btn.style.borderRightColor = "#0fe8e8";
+    btn.style.borderBottomColor = "#0fe8e8";
+    btn.style.color = "#0fe8e8";
+    btn.style.boxShadow = "1px 2px 3px rgba(0,0,0,0.5)";
+  }
+  var opts = document.querySelectorAll(".sz-opt");
+  for (var i = 0; i < opts.length; i++) opts[i].classList.remove("active");
+  
+  saisonFilter = s;
+  var stags = document.querySelectorAll(".qtag[id^=saison-]");
+  for (var i = 0; i < stags.length; i++) stags[i].classList.remove("active");
+  var el = document.getElementById("saison-" + s.replace("/",""));
+  if (el) el.classList.add("active");
+  if (tonFilter) {
+    var tonEl = document.getElementById("ton-" + tonFilter.toLowerCase());
+    if (tonEl) tonEl.classList.add("active");
+  }
+  var artEl = document.getElementById("tag-" + typFilter);
+  if (artEl) artEl.classList.add("active");
+  activeIndex = null;
+  closeDetail();
+  render();
+}
+
+function filterTon(name) {
+  tonFilter = name;
+  var tags = document.querySelectorAll(".qtag[id^=ton-]");
+  for (var i = 0; i < tags.length; i++) tags[i].classList.remove("active");
+  if (tonFilter) {
+    var el = document.getElementById("ton-" + tonFilter.toLowerCase());
+    if (el) el.classList.add("active");
+  } else {
+    var alle = document.getElementById("ton-alle");
+    if (alle) alle.classList.add("active");
+  }
+  activeIndex = null;
+  closeDetail();
+  render();
+}
+
+function filterTyp(typ) {
+  typFilter = typ;
+  document.getElementById("search").value = "";
+  document.getElementById("search-clear").style.display = "none";
+  var tags = document.querySelectorAll(".qtag");
+  for (var i = 0; i < tags.length; i++) tags[i].classList.remove("active");
+  var saisonEl = document.getElementById("saison-" + saisonFilter.replace("/",""));
+  if (saisonEl) saisonEl.classList.add("active");
+  if (tonFilter) {
+    var tonEl = document.getElementById("ton-" + tonFilter.toLowerCase());
+    if (tonEl) tonEl.classList.add("active");
+  }
+  var el = document.getElementById("tag-" + typ);
+  if (el) el.classList.add("active");
+  activeIndex = null;
+  closeDetail();
+  render();
+}
+
+function searchFor(name) {
+  prevState = {q: document.getElementById("search").value, saison: saisonFilter, typ: typFilter, ton: tonFilter, idx: activeIndex};
+  var tonTag = document.getElementById("ton-" + name.toLowerCase());
+  var tags = document.querySelectorAll(".qtag");
+  for (var i = 0; i < tags.length; i++) tags[i].classList.remove("active");
+  var saisonEl = document.getElementById("saison-" + saisonFilter.replace("/",""));
+  if (saisonEl) saisonEl.classList.add("active");
+  if (tonTag) {
+    tonFilter = name;
+    tonTag.classList.add("active");
+    var el = document.getElementById("tag-alle");
+    if (el) el.classList.add("active");
+  } else {
+    document.getElementById("search").value = name;
+    document.getElementById("search-clear").style.display = "block";
+    typFilter = "alle";
+    var el = document.getElementById("tag-alle");
+    if (el) el.classList.add("active");
+  }
+  activeIndex = null;
+  closeDetail();
+  render();
+}
+
+function goBack() {
+  if (!prevState) return;
+  document.getElementById("search").value = prevState.q;
+  saisonFilter = prevState.saison;
+  typFilter = prevState.typ;
+  tonFilter = prevState.ton;
+  activeIndex = prevState.idx;
+  prevState = null;
+  var tags = document.querySelectorAll(".qtag");
+  for (var i = 0; i < tags.length; i++) tags[i].classList.remove("active");
+  var saisonEl = document.getElementById("saison-" + saisonFilter.replace("/",""));
+  if (saisonEl) saisonEl.classList.add("active");
+  var el = document.getElementById("tag-" + typFilter);
+  if (el) el.classList.add("active");
+  if (tonFilter) {
+    var tonEl = document.getElementById("ton-" + tonFilter.toLowerCase());
+    if (tonEl) tonEl.classList.add("active");
+  }
+  if (activeIndex !== null) showDetail(P[activeIndex]);
+  render();
+}
+
+function resetFilters() {
+  var abtn = document.getElementById("aktuell-btn");
+  if (abtn) { abtn.style.backgroundImage = "none"; abtn.style.backgroundColor = "none"; abtn.style.boxShadow = "none"; abtn.style.borderColor = "#333"; abtn.style.borderTopColor = "#333"; abtn.style.borderLeftColor = "#333"; abtn.style.borderRightColor = "#333"; abtn.style.borderBottomColor = "#333"; abtn.style.color = "#ccc"; }
+  var szbtn = document.getElementById("sz-btn");
+  if (szbtn) { szbtn.style.backgroundImage = "linear-gradient(145deg, #1e1e1e, #111)"; szbtn.style.backgroundColor = ""; szbtn.style.borderColor = "#0fe8e8"; szbtn.style.color = "#0fe8e8"; }
+  document.getElementById("reset").style.display = "none";
+  document.getElementById("von").style.borderColor = "#333";
+  document.getElementById("von").style.color = "#ddd";
+  document.getElementById("bis").style.borderColor = "#333";
+  document.getElementById("bis").style.color = "#ddd";
+  document.getElementById("von").value = "";
+  document.getElementById("bis").value = "";
+  document.getElementById("search").value = "";
+  document.getElementById("search-clear").style.display = "none";
+  document.body.classList.remove("party");
+  tonFilter = "";
+  var ttags = document.querySelectorAll(".qtag[id^=ton-]");
+  for (var i = 0; i < ttags.length; i++) ttags[i].classList.remove("active");
+  var tonAlle = document.getElementById("ton-alle");
+  if (tonAlle) tonAlle.classList.add("active");
+  document.getElementById("tag-alle").classList.add("active");
+  typFilter = "alle";
+  activeIndex = null;
+  closeDetail();
+  render();
+}
+
+function clearSearch() {
+  document.getElementById("search").value = "";
+  document.getElementById("search-clear").style.display = "none";
+  document.body.classList.remove("party");
+  tonFilter = "";
+  var ttags = document.querySelectorAll(".qtag[id^=ton-]");
+  for (var i = 0; i < ttags.length; i++) ttags[i].classList.remove("active");
+  var tonAlle = document.getElementById("ton-alle");
+  if (tonAlle) tonAlle.classList.add("active");
+  document.getElementById("tag-alle").classList.add("active");
+  activeIndex = null;
+  render();
+}
+
+function setMainHeight() {
+  try {
+    var header = document.getElementById("header");
+    var main = document.getElementById("main");
+    if (header && main) { main.style.height = ""; }
+  } catch(e) {}
+}
+
+window.addEventListener("popstate", function(e) {
+  if (e.state && e.state.idx !== null && e.state.idx !== undefined) {
+    activeIndex = e.state.idx;
+    showDetail(P[e.state.idx]);
+  } else {
+    activeIndex = null;
+    document.getElementById("detail").classList.remove("open");
+    document.getElementById("detail").style.display = "none";
+  }
+  render();
+});
+
+document.getElementById("search").addEventListener("input", function() {
+  var q = this.value;
+  if (q === "party") {
+    document.body.classList.add("party");
+    document.getElementById("search-clear").style.display = "block";
+    var partyColors = ["#0fe8e8","#ff8c00","#4ab87a","#e05050","#ffd700"];
+    var partyHtml = "";
+    for (var pi = 0; pi < 10; pi++) {
+      var col = partyColors[pi % partyColors.length];
+      partyHtml += "<div class='row'><span class='row-title' style='color:" + col + "'>PARTY PARTY PARTY PARTY PARTY PARTY PARTY PARTY PARTY PARTY</span></div>";
+    }
+    document.getElementById("list").innerHTML = partyHtml;
+    document.getElementById("count").textContent = "Party!";
+    return;
+  } else {
+    document.body.classList.remove("party");
+  }
+  document.getElementById("search-clear").style.display = this.value ? "block" : "none";
+  activeIndex = null;
+  render();
+});
+
+function matchSearchWidth() {
+  try {
+  var search = document.getElementById("search");
+  var h1 = document.getElementById("main-h1");
+  if (search && h1) {
+    h1.style.width = search.offsetWidth + "px";
+    window.addEventListener("resize", matchSearchWidth);
+  }
+  } catch(e) {}
+}
+
+function setMainHeight() {
+  var header = document.getElementById("header");
+  var main = document.getElementById("main");
+  if (header && main) {
+    main.style.height = (window.innerHeight - header.offsetHeight) + "px";
+  }
+}
+
+try { window.addEventListener("resize", setMainHeight); } catch(e) {}
+if (document.addEventListener) { document.addEventListener("click", function(e) {
+  var btn = document.getElementById("sz-btn");
+  var dd = document.getElementById("sz-dropdown");
+  if (dd && btn && !btn.contains(e.target) && !dd.contains(e.target)) {
+    dd.style.display = "none";
+  }
+}); }
+setMainHeight();
+matchSearchWidth();
+try { history.replaceState({idx: null}, "", ""); } catch(e) {}
+function openKalender() {
+  var START = new Date("2026-08-01"), END = new Date("2027-07-31");
+  var TOTAL = (END - START) / 86400000;
+  var katcolor = {Oper:"#0fe8e8", Ballett:"#f0a050", Konzert:"#a06cd5", Extra:"#6ce0a0", Event:"#e8e8e8"};
+  function pd(s){ return new Date(s); }
+  function xpct(d){ return (pd(d) - START) / 86400000 / TOTAL * 100; }
+  function wpct(a,b){ return Math.max(0.6, (pd(b) - pd(a)) / 86400000 / TOTAL * 100); }
+
+  if (typeof window.kalKats === "undefined") { window.kalKats = {Oper:true, Ballett:true, Konzert:true, Extra:true, Event:false}; }
+  if (typeof window.kalTon === "undefined") { window.kalTon = ""; }
+  var prods = P.filter(function(p){
+    if (p.saison !== "26/27" || p.kat === "Labor" || !p.prem) return false;
+    if ((p.titel || "").toLowerCase().indexOf("gastspiel") > -1) return false;
+    if (p.kat === "Event") {
+      // nur hellweisse (im-Haus) Events, wenn Event-Kategorie aktiv; bei Ton-Filter ausblenden
+      if (!window.kalKats.Event || evExtern(p) || window.kalTon) return false;
+      return true;
+    }
+    if (!window.kalKats[p.kat]) return false;
+    if (window.kalTon) {
+      // Bei aktivem Ton-Filter: Konzert/Extra hier ausblenden (kommen separat unten)
+      if (p.kat === "Konzert" || p.kat === "Extra") return false;
+      return p.ton === window.kalTon;
+    }
+    return true;
+  });
+  // Separater KZT+SF-Block nur bei aktivem Ton-Filter
+  var kztSf = window.kalTon ? P.filter(function(p){
+    return p.saison === "26/27" && (p.kat === "Konzert" || p.kat === "Extra") && p.prem && window.kalKats[p.kat];
+  }) : [];
+  prods = prods.map(function(p){
+    return {titel:p.titel, kat:p.kat, prem:p.prem, ete:p.ete||"", lv:p.lv||"", range: !!(p.ete && p.lv), pause:p.pause||null, pidx:P.indexOf(p)};
+  }).sort(function(a,b){
+    var ka = a.range ? a.ete : a.prem, kb = b.range ? b.ete : b.prem;
+    return ka < kb ? -1 : 1;
+  });
+
+  var months = [], y = 2026, m = 8;
+  while (y < 2027 || (y === 2027 && m <= 7)) {
+    var md = new Date(y, m-1, 1);
+    var names = ["Jan","Feb","Mrz","Apr","Mai","Jun","Jul","Aug","Sep","Okt","Nov","Dez"];
+    var yr = (m === 8 || m === 1) ? " '" + String(y).slice(2) : "";
+    months.push({name: names[m-1] + yr, x: (md - START)/86400000/TOTAL*100});
+    m++; if (m > 12){ m = 1; y++; }
+  }
+
+  var monthlines = months.map(function(mo, i){
+    var nextX = (i+1 < months.length) ? months[i+1].x : 100;
+    var midX = (mo.x + nextX) / 2;
+    return "<div style='position:absolute;top:0;height:100%;border-left:1px solid #262626;left:" + mo.x.toFixed(2) + "%'></div>"
+      + "<div style='position:absolute;top:4px;left:" + midX.toFixed(2) + "%;transform:translateX(-50%);font-size:11px;color:#999;white-space:nowrap'>" + mo.name + "</div>";
+  }).join("");
+
+  function kalShort(t) {
+    return t
+      .replace("Brueckenschlagkonzert Festival Barock", "Brueckenkonzert Festiv.")
+      .replace("Philharmonisches", "Philh.")
+      .replace("Festival Barock - Liederabend Jakub Jozef Orlinski", "Festiv. Barock - Liederabend Orlinski")
+      .replace("Festival Barock - Familienkonzert Klanghotel", "Festiv. Barock - Familienkonz.")
+      .replace("Festival Barock", "Festiv. Barock")
+      .replace("Gastspiel", "Gastsp.")
+      .replace("Ballett -", "Bal.")
+      .replace("Ballett fuer alle - Sommernachtstraum", "BfA Sommernachtstraum")
+      .replace("Ballett fuer alle", "BfA")
+      .replace("Ballett", "Bal.")
+      .replace("Ballettschule", "Bal.schule")
+      .replace("Junior Bal.", "Jun.Bal.")
+      .replace("Oper fuer alle - Samson et Dalila", "OfA Samson et Dalila")
+      .replace("Oper fuer alle", "OfA")
+      .replace("IOS Angels in America - Theater Winterthur", "IOS Angels - THW")
+      .replace("Kinder Opernorchester", "Kinder-Orch.")
+      .replace("Zuercher Filmfestival", "Filmfestival")
+      .replace(" - Un Ballo in Maschera Edinburgh", " Ballo Edinburgh")
+      .replace("Rachmaninov - die 3 Opern", "Rachmaninov 3 Opern")
+      .replace("Art Matters - Junior Ballett THW", "Art Matters - THW");
+  }
+  function buildRows(list){
+    return list.map(function(p){
+      var col = katcolor[p.kat] || "#666";
+      var bar;
+      if (p.ete && p.lv) {
+        if (p.pause && p.pause.length === 2) {
+          // Zwei Segmente mit Pause dazwischen
+          var seg1L = xpct(p.ete), seg1W = wpct(p.ete, p.pause[0]);
+          var seg2L = xpct(p.pause[1]), seg2W = wpct(p.pause[1], p.lv);
+          bar = "<div style='position:absolute;top:5px;height:14px;border-radius:3px;opacity:0.85;left:" + seg1L.toFixed(2) + "%;width:" + seg1W.toFixed(2) + "%;background:" + col + "' title='" + p.titel + "\n" + fmt(p.ete) + " – " + fmt(p.pause[0]) + "'></div>"
+            + "<div style='position:absolute;top:5px;height:14px;border-radius:3px;opacity:0.85;left:" + seg2L.toFixed(2) + "%;width:" + seg2W.toFixed(2) + "%;background:" + col + "' title='" + p.titel + "\n" + fmt(p.pause[1]) + " – " + fmt(p.lv) + "'></div>"
+            + "<div style='position:absolute;top:2px;width:2px;height:20px;background:#fff;left:" + xpct(p.prem).toFixed(2) + "%' title='Premiere " + fmt(p.prem) + "'></div>";
+        } else {
+          bar = "<div style='position:absolute;top:5px;height:14px;border-radius:3px;opacity:0.85;left:" + xpct(p.ete).toFixed(2) + "%;width:" + wpct(p.ete,p.lv).toFixed(2) + "%;background:" + col + "' title='" + p.titel + "\n" + fmt(p.ete) + " – " + fmt(p.lv) + "'></div>"
+            + "<div style='position:absolute;top:2px;width:2px;height:20px;background:#fff;left:" + xpct(p.prem).toFixed(2) + "%' title='Premiere " + fmt(p.prem) + "'></div>";
+        }
+      } else {
+        bar = "<div style='position:absolute;top:7px;width:11px;height:11px;transform:translateX(-50%) rotate(45deg);opacity:0.9;left:" + xpct(p.prem).toFixed(2) + "%;background:" + col + "' title='" + p.titel + "\n" + fmt(p.prem) + "'></div>";
+      }
+      var clickAttr = (p.pidx != null && p.pidx > -1) ? " onclick='kalOpenDetail(" + p.pidx + ")' style='display:flex;align-items:center;height:24px;cursor:pointer'" : " style='display:flex;align-items:center;height:24px'";
+      return "<div class='kal-row'" + clickAttr + "><div style='width:150px;flex-shrink:0;padding-right:10px;text-align:right;font-size:11.5px;color:#ccc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis' title='" + p.titel + "'>" + kalShort(p.titel) + "</div><div style='position:relative;flex:1;height:100%'>" + bar + "</div></div>";
+    }).join("");
+  }
+  function sortByStart(list){
+    return list.slice().sort(function(a,b){
+      var ka = (a.ete && a.lv) ? a.ete : a.prem, kb = (b.ete && b.lv) ? b.ete : b.prem;
+      return ka < kb ? -1 : 1;
+    });
+  }
+  var rows = buildRows(prods);
+  var kztSfMapped = kztSf.map(function(p){ return {titel:p.titel, kat:p.kat, prem:p.prem, ete:p.ete||"", lv:p.lv||"", range: !!(p.ete && p.lv), pause:p.pause||null, pidx:P.indexOf(p)}; });
+  var kztSfRows = kztSfMapped.length ? buildRows(sortByStart(kztSfMapped)) : "";
+
+  function kalChip(kat, label, col) {
+    var on = window.kalKats[kat];
+    return "<span onclick=\"toggleKalKat('" + kat + "')\" style='display:inline-flex;align-items:center;gap:5px;cursor:pointer;padding:2px 8px;border-radius:2px;border:1px solid " + (on ? col : "#333") + ";opacity:" + (on ? "1" : "0.35") + "'><i style='width:12px;height:12px;border-radius:2px;background:" + col + "'></i>" + label + "</span>";
+  }
+  var legend = "<div style='display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;font-size:12px'>"
+    + kalChip("Oper","Oper","#0fe8e8")
+    + kalChip("Ballett","Bal","#f0a050")
+    + kalChip("Konzert","Kzt","#a06cd5")
+    + kalChip("Extra","SF","#6ce0a0")
+    + kalChip("Event","Event","#e8e8e8")
+    + "</div>";
+
+  // Ton-Filter-Chips (aus vorhandenen Ton-Namen 26/27)
+  var allTon = [];
+  P.filter(function(p){ return p.saison === "26/27" && p.kat !== "Event" && p.kat !== "Labor" && p.prem && p.ton; }).forEach(function(p){
+    if (allTon.indexOf(p.ton) === -1) allTon.push(p.ton);
+  });
+  allTon.sort();
+  var tonVorname = {Beck:"Do", Granda:"Fe", Paciorek:"Ra", Schilling:"Th", Surgutschow:"Ol", Winter:"Mi", Zdravkovic:"Va"};
+  function tonChip(name) {
+    var on = window.kalTon === name;
+    var lbl = tonVorname[name] || name.slice(0,2);
+    return "<span onclick=\"toggleKalTon('" + name + "')\" title='" + name + "' style='display:inline-flex;align-items:center;cursor:pointer;padding:2px 8px;border-radius:2px;border:1px solid " + (on ? "#0fe8e8" : "#333") + ";color:" + (on ? "#0fe8e8" : "#bbb") + ";opacity:" + (on ? "1" : "0.7") + "'>" + lbl + "</span>";
+  }
+  var tonRow = "<div style='display:flex;gap:6px;flex-wrap:nowrap;margin-top:8px;font-size:12px;align-items:center'>"
+    + "<span style='color:#888;margin-right:2px'>Ton:</span>"
+    + allTon.map(tonChip).join("")
+    + "</div>";
+
+  var html = "<div style='background:#141414;padding:16px 20px 10px;border-bottom:1px solid #333'>"
+    + "<button onclick=\"document.getElementById('kalender-modal').style.display='none'\" style='position:fixed;top:10px;right:14px;z-index:2100;background:#181818;border:1px solid #333;border-radius:3px;color:#f0a050;font-size:16px;cursor:pointer;padding:4px 10px'>close x</button>"
+    + "<h2 style='margin:0 0 4px;font-size:17px;padding-right:80px'><span style='color:#0fe8e8;font-style:italic'>SPIELPLAN</span> OHZ 26/27 — Produktionskalender</h2>"
+    + legend + tonRow + "</div>"
+    + "<div style='padding:0 20px 60px'>"
+    + "<div style='overflow-x:auto;-webkit-overflow-scrolling:touch'><div style='min-width:820px'>"
+    + "<div style='position:relative;margin-left:150px;height:22px;border-bottom:1px solid #444;margin-bottom:6px'>" + monthlines + "</div>"
+    + rows
+    + (kztSfRows ? "<div style='display:flex;align-items:center;height:22px;margin-top:10px;border-top:1px solid #333'><div style='width:150px;flex-shrink:0;padding-right:10px;text-align:right;font-size:11px;color:#888;font-style:italic'>Konzerte / SF</div><div style='flex:1'></div></div>" + kztSfRows : "")
+    + "</div></div>"
+    + "<div style='margin-top:20px;font-size:12px;color:#888;line-height:1.6'>Balken = Produktionszeitraum (1. TE bis letzte Vorstellung), weisse Linie = Premiere.<br>Raute = Einzeltermin (Konzerte, Sonderveranstaltungen ohne Probenzeitraum).<br>Vertikale Überschneidungen zeigen, was gleichzeitig im Haus läuft. " + prods.length + " Einträge (ohne Labor, ohne Events).</div>"
+    + "</div>";
+
+  document.getElementById("kalender-body").innerHTML = html;
+  document.getElementById("kalender-modal").style.display = "block";
+}
+
+function kalOpenDetail(idx) {
+  document.getElementById("kalender-modal").style.display = "none";
+  if (idx != null && idx > -1 && P[idx]) { activeIndex = idx; showDetail(P[idx]); }
+}
+function toggleKalKat(k) { window.kalKats[k] = !window.kalKats[k]; openKalender(); }
+function toggleKalTon(n) { window.kalTon = (window.kalTon === n) ? "" : n; openKalender(); }
+filterAktuell();
+</script>
+
+
+<div id="info-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;align-items:center;justify-content:center;padding:20px">
+  <div style="background:#181818;border:1px solid #333;border-radius:6px;max-width:480px;width:100%;max-height:80vh;overflow-y:auto;padding:24px;position:relative">
+    <button onclick="document.getElementById('info-modal').style.display='none'" style="position:sticky;top:0;float:right;background:#181818;border:none;color:#f0a050;font-size:16px;cursor:pointer;padding:0 0 4px 8px;z-index:10">close x</button>
+    <h2 style="font-size:18px;color:#fff;margin-bottom:16px;margin-top:8px;padding-right:60px">&Uuml;ber die Produktionsdatenbank</h2>
+    <div style="color:#e8e8e8;font-size:15px;line-height:1.7">
+      <p>Die Produktionsdatenbank erfasst alle Premieren, Wiederaufnahmen und Sonderformate des Opernhauses Z&uuml;rich (Spielzeit 22/23 bis 26/27) &ndash; mit Angaben zu Produktionsverantwortlichen, k&uuml;nstl. Teams, Dirigat und Besetzung.</p>
+      <p style="margin-top:12px"><strong style="color:#fff">Suche:</strong> Durchsucht alle Felder gleichzeitig. Teilbegriffe gen&uuml;gen (&laquo;rosenk&raquo; findet den Rosenkavalier, &laquo;tannhaeuser&raquo; statt &laquo;Tannh&auml;user&raquo;, &laquo;ton&raquo; alle Tonverantwortlichen, usw.).</p>
+      <p style="margin-top:12px"><strong style="color:#fff">Filter:</strong> Spielzeit, Art und Ton k&ouml;nnen frei kombiniert werden.</p>
+      <p style="margin-top:12px"><strong style="color:#fff">Datumsfilter:</strong> Von/Bis filtert den gew&uuml;nschten Zeitraum.</p>
+      <p style="margin-top:12px"><strong><em>Aktuell</em></strong> zeigt alle ab heute noch laufenden Produktionen und ggf. heutige Vorstellungen.<br><u>Als Produktionszeitraum gilt jeweils die 1.&nbsp;TE bis zur letzten Vorstellung.</u></p>
+      <p style="margin-top:12px"><strong style="color:#fff">Panel:</strong> Ein Klick auf eine Produktion in der Liste &ouml;ffnet das Detailpanel mit detaillierten Angaben. Namen im Panel sind anklickbar und aktivieren einen Filter.</p>
+      <p style="margin-top:12px">&laquo;<strong>OHZ</strong>&raquo; oben rechts &ouml;ffnet den aktuellen Spielplan auf der Website des Opernhauses.</p>
+      <p style="margin-top:12px">In der Titelzeile: <strong>Button D</strong> &ouml;ffnet einen freigegebenen Google-Drive-Ordner f&uuml;r flexiblen Datei-Upload/-Zugriff/Dateitausch zwischen allen im Google-Tonabteilung-Account eingeloggten Handys und Computern und <strong>Button P</strong> eine Google-Keep-Checkliste f&uuml;r schnelle Pendenz-Eintr&auml;ge. &Auml;nderungen sind f&uuml;r alle sofort einsehbar und bearbeitbar.</p>
+      <p style="margin-top:12px">Die <strong>WebApp</strong> besteht aus einer einzigen HTML-Datei (inkl. JS und CSS) ohne externe Abh&auml;ngigkeiten (kein Datenaustausch mit externen Servern oder Diensten &ndash; ausser die Links in der Titelzeile) und wird &uuml;ber GitHub gehostet (https://...). Sie l&auml;uft auf allen g&auml;ngigen Browsern auf Mac, Windows, Android und iPhone.</p>
+      <p>Die Daten basieren auf den Spielplanunterlagen der Technischen Direktion und des KBB sowie der Website des Opernhauses Z&uuml;rich. &Auml;nderungen w&auml;hrend laufender Spielzeit sind m&ouml;glicherweise nicht ber&uuml;cksichtigt, werden aber kontinuierlich aktualisiert.</p>
+      <p>Diese WebApp ist als Hilfsmittel f&uuml;r den Produktionsalltag gedacht. F&uuml;r die Richtigkeit, Vollst&auml;ndigkeit und Aktualit&auml;t der Inhalte wird keine Gew&auml;hr &uuml;bernommen.</p>
+      <p style="color:#aaa;margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_110726" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
+      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_110726</p>
+      </div>
+  </div>
+</div>
+<div id="kalender-modal" style="display:none;position:fixed;inset:0;background:#141414;z-index:2000;overflow-y:auto;color:#e8e8e8;font-family:-apple-system,'Helvetica Neue',Arial,sans-serif">
+  <div id="kalender-body"></div>
+</div>
+</body>
+</html>
