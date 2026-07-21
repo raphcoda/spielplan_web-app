@@ -103,8 +103,9 @@ input[type=date]::-webkit-calendar-picker-indicator { filter: invert(0.8) bright
   50% { color: #f0a050; }
 }
 @keyframes i-fade {
-  0%, 82%, 100% { color: #bbb; border-color: #bbb; text-shadow: none; }
-  91% { color: #fff; border-color: #fff; text-shadow: 0 0 10px rgba(255,255,255,1), 0 0 18px rgba(255,255,255,0.7); }
+  0%, 12%, 100% { color: #bbb; border-color: #bbb; text-shadow: none; }
+  20% { color: #fff; border-color: #fff; text-shadow: 0 0 22px rgba(255,255,255,1), 0 0 44px rgba(255,255,255,1), 0 0 66px rgba(255,255,255,1), 0 0 90px rgba(255,255,255,1), 0 0 120px rgba(255,255,255,0.85); }
+  28% { color: #bbb; border-color: #bbb; text-shadow: none; }
 }
 #info-i { animation: i-fade 10s ease-in-out infinite; }
 </style>
@@ -1279,7 +1280,7 @@ function openKalender() {
     START = new Date(SEASON_START); END = new Date(SEASON_END);
   }
   var TOTAL = (END - START) / 86400000;
-  var katcolor = {Oper:"#0fe8e8", Ballett:"#f0a050", Konzert:"#a06cd5", Extra:"#6ce0a0", Event:"#e8e8e8"};
+  var katcolor = {Oper:"#0fe8e8", Ballett:"#f0a050", Konzert:"#a06cd5", Extra:"#6ce0a0", Event:"#e8e8e8", Labor:"#4a90d9"};
   function pd(s){ return new Date(s); }
   function xpct(d){ return (pd(d) - START) / 86400000 / TOTAL * 100; }
   function wpct(a,b){ return Math.max(0.6, (pd(b) - pd(a)) / 86400000 / TOTAL * 100); }
@@ -1306,11 +1307,20 @@ function openKalender() {
   if (typeof window.kalKats === "undefined") { window.kalKats = {Oper:true, Ballett:true, Konzert:true, Extra:true, Event:false}; }
   if (typeof window.kalTon === "undefined") { window.kalTon = ""; }
   var prods = P.filter(function(p){
-    if (p.saison !== "26/27" || p.kat === "Labor" || !p.prem) return false;
+    if (p.saison !== "26/27" || !p.prem) return false;
+    // Ausnahme: Werckmeister - Oerlikon (Labor, April 27) wie SF behandeln (kein Labor-Filter im Kalender)
+    var istWerckmeisterLabor = (p.kat === "Labor" && p.titel === "Werckmeister - Oerlikon" && p.prem === "2027-04-22");
+    if (p.kat === "Labor" && !istWerckmeisterLabor) return false;
     if ((p.titel || "").toLowerCase().indexOf("gastspiel") > -1) return false;
     if (p.kat === "Event") {
       // nur hellweisse (im-Haus) Events, wenn Event-Kategorie aktiv; bei Ton-Filter ausblenden
       if (!window.kalKats.Event || evExtern(p) || window.kalTon) return false;
+      return true;
+    }
+    if (istWerckmeisterLabor) {
+      // wie SF/Extra: sichtbar wenn SF-Chip (Extra) aktiv; bei Ton-Filter unten im Block
+      if (!window.kalKats.Extra) return false;
+      if (window.kalTon) return false;
       return true;
     }
     if (!window.kalKats[p.kat]) return false;
@@ -1321,12 +1331,18 @@ function openKalender() {
     }
     return true;
   });
-  // Separater KZT+SF-Block nur bei aktivem Ton-Filter
+  // Separater KZT+SF-Block nur bei aktivem Ton-Filter (inkl. Events + Werckmeister-Labor unten statt oben)
   var kztSf = window.kalTon ? P.filter(function(p){
-    return p.saison === "26/27" && (p.kat === "Konzert" || p.kat === "Extra") && p.prem && window.kalKats[p.kat];
+    if (p.saison !== "26/27" || !p.prem) return false;
+    if (p.kat === "Event") return window.kalKats.Event && !evExtern(p);
+    if (p.kat === "Labor" && p.titel === "Werckmeister - Oerlikon" && p.prem === "2027-04-22") return window.kalKats.Extra;
+    return (p.kat === "Konzert" || p.kat === "Extra") && window.kalKats[p.kat];
   }) : [];
   prods = prods.map(function(p){
-    return {titel:p.titel, kat:p.kat, prem:p.prem, ete:p.ete||"", lv:p.lv||"", range: !!(p.ete && p.lv), pause:p.pause||null, pidx:P.indexOf(p)};
+    var eteEff = p.ete || "", lvEff = p.lv || "";
+    // Werckmeister-Labor: Balken vom Probenbeginn (01.04) bis letzte Vorstellung
+    if (p.kat === "Labor" && p.titel === "Werckmeister - Oerlikon" && p.prob && p.lv) { eteEff = p.prob; lvEff = p.lv; }
+    return {titel:p.titel, kat:p.kat, prem:p.prem, ete:eteEff, lv:lvEff, range: !!(eteEff && lvEff), pause:p.pause||null, pidx:P.indexOf(p)};
   }).sort(function(a,b){
     var ka = a.range ? a.ete : a.prem, kb = b.range ? b.ete : b.prem;
     return ka < kb ? -1 : 1;
@@ -1412,6 +1428,7 @@ function openKalender() {
       .replace("Mutter & Gonzalez-Granados", "Mutter & Gonzalez")
       .replace("Des Oiseaux Rebelles", "Oiseaux Rebelles")
       .replace("A Night at the Opera", "Night at the Opera")
+      .replace("Werckmeister - Oerlikon", "Werckmeister")
       .replace("la Fanciulla del West", "Fanciulla del West");
   }
   function segBar(seg, col, titel, dateLabel) {
@@ -1436,7 +1453,7 @@ function openKalender() {
         if (inWindow(p.prem)) { var diaShift = ZOOM ? 100/TOTAL/2 : 0; bar = "<div style='position:absolute;top:7px;width:11px;height:11px;transform:translateX(-50%) rotate(45deg);opacity:0.9;left:" + (xpct(p.prem) + diaShift).toFixed(3) + "%;background:" + col + "' title='" + p.titel + "\n" + fmt(p.prem) + "'></div>"; }
       }
       var clickAttr = (p.pidx != null && p.pidx > -1) ? " onclick='kalOpenDetail(" + p.pidx + ")' style='display:flex;align-items:center;height:24px;cursor:pointer'" : " style='display:flex;align-items:center;height:24px'";
-      return "<div class='kal-row'" + clickAttr + "><div style='width:120px;flex-shrink:0;padding-right:8px;text-align:right;font-size:13px;color:#ccc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;position:sticky;left:0;z-index:2;background:#141414' title='" + p.titel + "'>" + kalShort(p.titel) + "</div><div style='position:relative;flex:1;height:100%'>" + bar + "</div></div>";
+      return "<div class='kal-row'" + clickAttr + "><div style='width:120px;flex-shrink:0;padding-right:8px;text-align:right;font-size:13px;font-weight:500;color:#e2e2e2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;position:sticky;left:0;z-index:2;background:#141414' title='" + p.titel + "'>" + kalShort(p.titel) + "</div><div style='position:relative;flex:1;height:100%'>" + bar + "</div></div>";
     }).join("");
   }
   function sortByStart(list){
@@ -1446,7 +1463,7 @@ function openKalender() {
     });
   }
   var rows = buildRows(prods);
-  var kztSfMapped = kztSf.map(function(p){ return {titel:p.titel, kat:p.kat, prem:p.prem, ete:p.ete||"", lv:p.lv||"", range: !!(p.ete && p.lv), pause:p.pause||null, pidx:P.indexOf(p)}; });
+  var kztSfMapped = kztSf.map(function(p){ var eteEff = p.ete || "", lvEff = p.lv || ""; if (p.kat === "Labor" && p.titel === "Werckmeister - Oerlikon" && p.prob && p.lv) { eteEff = p.prob; lvEff = p.lv; } return {titel:p.titel, kat:p.kat, prem:p.prem, ete:eteEff, lv:lvEff, range: !!(eteEff && lvEff), pause:p.pause||null, pidx:P.indexOf(p)}; });
   var kztSfRows = kztSfMapped.length ? buildRows(sortByStart(kztSfMapped)) : "";
 
   function kalChip(kat, label, col) {
@@ -1471,7 +1488,7 @@ function openKalender() {
   function tonChip(name) {
     var on = window.kalTon === name;
     var lbl = tonVorname[name] || name.slice(0,2);
-    return "<span onclick=\"toggleKalTon('" + name + "')\" title='" + name + "' style='display:inline-flex;align-items:center;cursor:pointer;padding:2px 8px;border-radius:2px;border:1px solid " + (on ? "#0fe8e8" : "#333") + ";color:" + (on ? "#0fe8e8" : "#bbb") + ";opacity:" + (on ? "1" : "0.7") + "'>" + lbl + "</span>";
+    return "<span onclick=\"toggleKalTon('" + name + "')\" title='" + name + "' style='display:inline-flex;align-items:center;cursor:pointer;padding:2px 8px;border-radius:2px;border:1px solid " + (on ? "#0fe8e8" : "#555") + ";color:" + (on ? "#0fe8e8" : "#fff") + ";opacity:" + (on ? "1" : "0.85") + "'>" + lbl + "</span>";
   }
   var tonRow = "<div style='display:flex;gap:6px;flex-wrap:nowrap;margin-top:8px;font-size:14px;align-items:center'>"
     + "<span style='color:#888;margin-right:2px'>Ton:</span>"
@@ -1504,9 +1521,9 @@ function openKalender() {
     + todayLine
     + "<div style='position:relative;margin-left:120px;height:" + tlHeight + "px;border-bottom:1px solid #444;margin-bottom:6px'>" + monthlines + "</div>"
     + rows
-    + (kztSfRows ? "<div style='display:flex;align-items:center;height:22px;margin-top:10px;border-top:1px solid #333'><div style='width:120px;flex-shrink:0;padding-right:8px;text-align:right;font-size:12px;color:#888;font-style:italic;position:sticky;left:0;z-index:2;background:#141414'>Konzerte / SF</div><div style='flex:1'></div></div>" + kztSfRows : "")
+    + (kztSfRows ? "<div style='display:flex;align-items:center;height:22px;margin-top:14px;border-top:1px solid #666'><div style='width:120px;flex-shrink:0;padding-right:8px;text-align:right;font-size:13px;color:#888;font-style:italic;white-space:nowrap;position:sticky;left:0;z-index:2;background:#141414'>Kzt / SF / Event</div><div style='flex:1'></div></div>" + kztSfRows : "")
     + "</div></div>"
-    + "<div style='margin-top:20px;font-size:12px;color:#888;line-height:1.6'>Balken = Produktionszeitraum (1. TE bis letzte Vorstellung), weisse Linie = Premiere.<br>Raute = Einzeltermin (Konzerte, Sonderveranstaltungen ohne Probenzeitraum).<br>Vertikale Überschneidungen zeigen, was gleichzeitig im Haus läuft. " + prods.length + " Einträge (ohne Labor, ohne Events).</div>"
+    + "<div style='margin-top:20px;font-size:12px;color:#888;line-height:1.6'>Balken = Produktionszeitraum (1. TE bis letzte Vorstellung), weisse Linie = Prem/WA.<br>Raute = Einzeltermin (Konzerte, Sonderveranstaltungen ohne Probenzeitraum).<br>Vertikale Überschneidungen zeigen, was gleichzeitig im Haus läuft. <span style='color:#fff;font-weight:bold'>" + prods.length + " Einträge</span> (ohne Events).</div>"
     + "</div>";
 
   document.getElementById("kalender-body").innerHTML = html;
@@ -1555,7 +1572,7 @@ filterAktuell();
       <p style="margin-top:12px"><strong><em>Aktuell</em></strong> zeigt alle ab heute noch laufenden Produktionen und ggf. heutige Vorstellungen.<br><u>Als Produktionszeitraum gilt jeweils die 1.&nbsp;TE bis zur letzten Vorstellung.</u></p>
       <p style="margin-top:12px"><strong style="color:#fff">Panel:</strong> Ein Klick auf eine Produktion in der Liste &ouml;ffnet das Detailpanel mit detaillierten Angaben. Namen im Panel sind anklickbar und aktivieren einen Filter.</p>
       <p style="margin-top:12px">&laquo;<strong>Spielplan OHZ</strong>&raquo; oben links &ouml;ffnet den aktuellen Spielplan auf der Website des Opernhauses.</p>
-      <p style="margin-top:12px">&laquo;<strong>Kalender</strong>&raquo; oben rechts &ouml;ffnet den tabellarischen Produktionskalender (Jahres- und Monatsansicht).</p>
+      <p style="margin-top:12px">&laquo;<strong>Kalender</strong>&raquo; oben rechts &ouml;ffnet den tabellarischen Produktionskalender. Klick auf einen Monat in der Monatsleiste zoomt in eine Dreimonatsansicht.</p>
       <p style="margin-top:12px">In der Titelzeile: <strong>Button D</strong> &ouml;ffnet einen freigegebenen Google-Drive-Ordner f&uuml;r flexiblen Datei-Upload/-Zugriff/Dateitausch zwischen allen im Google-Tonabteilung-Account eingeloggten Handys und Computern und <strong>Button P</strong> eine Google-Keep-Checkliste f&uuml;r schnelle Pendenz-Eintr&auml;ge. &Auml;nderungen sind f&uuml;r alle sofort einsehbar und bearbeitbar.</p>
       <p style="margin-top:12px">Die <strong>WebApp</strong> besteht aus einer einzigen HTML-Datei (inkl. JS und CSS) ohne externe Abh&auml;ngigkeiten (kein Datenaustausch mit externen Servern oder Diensten &ndash; ausser die Links in der Titelzeile) und wird &uuml;ber GitHub gehostet (https://...). Sie l&auml;uft auf allen g&auml;ngigen Browsern auf Mac, Windows, Android und iPhone.</p>
       <p>Die Daten basieren auf den Spielplanunterlagen der Technischen Direktion und des KBB sowie der Website des Opernhauses Z&uuml;rich. &Auml;nderungen w&auml;hrend laufender Spielzeit sind m&ouml;glicherweise nicht ber&uuml;cksichtigt, werden aber kontinuierlich aktualisiert.</p>
