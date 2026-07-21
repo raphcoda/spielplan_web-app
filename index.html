@@ -90,11 +90,16 @@ input[type=date]::-webkit-calendar-picker-indicator { filter: invert(0.8) bright
   0%, 100% { color: #0fe8e8; }
   50% { color: #f0a050; }
 }
+@keyframes i-fade {
+  0%, 82%, 100% { color: #bbb; border-color: #bbb; text-shadow: none; }
+  91% { color: #fff; border-color: #fff; text-shadow: 0 0 10px rgba(255,255,255,1), 0 0 18px rgba(255,255,255,0.7); }
+}
+#info-i { animation: i-fade 10s ease-in-out infinite; }
 </style>
 </head>
 <body>
 <div id="header">
-  <h1 id="main-h1" style="white-space:nowrap;width:100%;display:flex;align-items:baseline"><span onclick="window.open('https://www.opernhaus.ch/spielplan/kalendarium/','_blank')" style="cursor:pointer;color:#e8e8e8;font-style:italic;font-size:18px;text-shadow:0 0 8px rgba(255,255,255,0.5)">SPIELPLAN</span><span onclick="window.open('https://www.opernhaus.ch/spielplan/kalendarium/','_blank')" style="cursor:pointer;color:#e8e8e8;font-weight:700;font-style:italic;margin-left:8px;font-size:18px;text-shadow:0 0 8px rgba(255,255,255,0.5)">OHZ</span><span onclick="document.getElementById('info-modal').style.display='flex'" style="display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border:1px solid #bbb;border-radius:50%;font-size:10px;color:#bbb;cursor:pointer;margin-left:12px;font-style:italic;font-family:Georgia,serif;position:relative;top:-3px">i</span><a href="https://drive.google.com/drive/folders/1WM9YPpCGen3EHeY3C5c_k_9tL9kMRel_" target="_blank" style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:linear-gradient(180deg,#1e3535,#0d2020);color:#0fe8e8;font-size:11px;font-weight:bold;text-decoration:none;border-top:1px solid #2a5555;border-bottom:1px solid #080f0f;border-left:1px solid #1a4040;border-right:1px solid #080f0f;box-shadow:none;margin-left:auto;margin-right:7px;flex-shrink:0;align-self:center">D</a><a href="https://keep.google.com/#LIST/1_K2fuuC7XY9k2Cd6eg8oLcLuF_pSCmvaM8uw_XeN6IxMYh6WARY2lbzFqiDPzA" target="_blank" style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:linear-gradient(180deg,#1e3535,#0d2020);color:#0fe8e8;font-size:11px;font-weight:bold;text-decoration:none;border-top:1px solid #2a5555;border-bottom:1px solid #080f0f;border-left:1px solid #1a4040;border-right:1px solid #080f0f;box-shadow:none;margin-right:10px;flex-shrink:0;align-self:center">P</a><button onclick="openKalender()" title="Produktionskalender 26/27" style="background:linear-gradient(180deg,#1e3535,#0d2020);color:#0fe8e8;border-top:1px solid #2a5555;border-bottom:1px solid #080f0f;border-left:1px solid #1a4040;border-right:1px solid #080f0f;border-radius:3px;font-size:13px;font-weight:bold;padding:2px 9px;cursor:pointer;flex-shrink:0;align-self:center">KALENDER</button></h1>
+  <h1 id="main-h1" style="white-space:nowrap;width:100%;display:flex;align-items:baseline"><span onclick="window.open('https://www.opernhaus.ch/spielplan/kalendarium/','_blank')" style="cursor:pointer;color:#ffffff;font-style:italic;font-size:18px">SPIELPLAN</span><span onclick="window.open('https://www.opernhaus.ch/spielplan/kalendarium/','_blank')" style="cursor:pointer;color:#ffffff;font-weight:700;font-style:italic;margin-left:8px;font-size:18px">OHZ</span><span id="info-i" onclick="document.getElementById('info-modal').style.display='flex'" style="display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border:1px solid #bbb;border-radius:50%;font-size:10px;color:#bbb;cursor:pointer;margin-left:12px;font-style:italic;font-family:Georgia,serif;position:relative;top:-3px">i</span><a href="https://drive.google.com/drive/folders/1WM9YPpCGen3EHeY3C5c_k_9tL9kMRel_" target="_blank" style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:linear-gradient(180deg,#1e3535,#0d2020);color:#0fe8e8;font-size:11px;font-weight:bold;text-decoration:none;border-top:1px solid #2a5555;border-bottom:1px solid #080f0f;border-left:1px solid #1a4040;border-right:1px solid #080f0f;box-shadow:none;margin-left:auto;margin-right:7px;flex-shrink:0;align-self:center">D</a><a href="https://keep.google.com/#LIST/1_K2fuuC7XY9k2Cd6eg8oLcLuF_pSCmvaM8uw_XeN6IxMYh6WARY2lbzFqiDPzA" target="_blank" style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:linear-gradient(180deg,#1e3535,#0d2020);color:#0fe8e8;font-size:11px;font-weight:bold;text-decoration:none;border-top:1px solid #2a5555;border-bottom:1px solid #080f0f;border-left:1px solid #1a4040;border-right:1px solid #080f0f;box-shadow:none;margin-right:10px;flex-shrink:0;align-self:center">P</a><button onclick="openKalender()" title="Produktionskalender 26/27" style="background:linear-gradient(180deg,#1e3535,#0d2020);color:#0fe8e8;border-top:1px solid #2a5555;border-bottom:1px solid #080f0f;border-left:1px solid #1a4040;border-right:1px solid #080f0f;border-radius:3px;font-size:13px;font-weight:bold;padding:2px 9px;cursor:pointer;flex-shrink:0;align-self:center">KALENDER</button></h1>
   <div style="display:block;width:100%;">
   <div style="position:relative;display:flex;align-items:center;">
     <input type="text" id="search" placeholder="Produktion, Person, Funktion ..." style="padding-right:36px;margin-bottom:8px;width:100%;">
@@ -324,7 +329,7 @@ var P = [
   {saison:"24/25",vorstellungen:[],titel:"Lohengrin",typ:"WA",kat:"Oper",prem:"2025-04-13",lv:"2025-05-04",prob:"2025-03-17",ete:"2025-03-24",khp:"",ohp:"2025-04-09",gp:"",bm:"Rasche",licht:"Kunz",ton:"Surgutschow",insp:"Kuehnel",reasist:"Lenzen",projleit:"",graben:"",regie:"Homoki",dirig:"Kober",komp:"Wagner (1850)",dauer:"4:41h",team:["Piotr Beczala (Lohengrin)","Simone Schneider (Elsa)","Martin Gantner","Christof Fischesser"]},
   {saison:"24/25",vorstellungen:[],titel:"Die tote Stadt",typ:"Premiere",kat:"Oper",prem:"2025-04-21",lv:"2025-06-01",prob:"2025-03-10",ete:"2025-03-31",khp:"2025-04-11",ohp:"2025-04-17",gp:"2025-04-19",bm:"Huerlimann",licht:"Ostfalk",ton:"Surgutschow",insp:"Bierich",reasist:"Doering/ Whiting",projleit:"",graben:"gross",regie:"Homoki",dirig:"Noseda",komp:"Korngold (1920)",dauer:"",team:[]},
   {saison:"24/25",vorstellungen:[],titel:"Rigoletto 2425",typ:"WA",kat:"Oper",prem:"2025-04-26",lv:"2025-05-15",prob:"2025-04-01",ete:"2025-04-16",khp:"",ohp:"2025-04-23",gp:"",bm:"Willi",licht:"Roller",ton:"Zdravkovic",insp:"Kuehnel",reasist:"Russi",projleit:"",graben:"mittel",regie:"Guerbaca",dirig:"Sanguineti",komp:"Verdi (1851)",dauer:"2:40h",team:["Liparit Avetisyan (Duca)","Quinn Kelsey (Rigoletto)","Brenda Rae (Gilda)"]},
-  {saison:"24/25",vorstellungen:[],titel:"Jakob Lenz - Winterthur",typ:"WA",kat:"Oper",prem:"2025-05-06",lv:"2025-05-16",prob:"2025-04-14",ete:"2025-04-22",khp:"",ohp:"2025-05-02",gp:"2025-05-03",bm:"Rasche",licht:"Strucken",ton:"Asja/ Wurster",insp:"Tschannen",reasist:"",projleit:"",graben:"",regie:"Homoki",dirig:"Kelly",komp:"",dauer:"1:12h",team:["Yannick Debus (Lenz)","Maximilian Lawrie"]},
+  {saison:"24/25",vorstellungen:[],titel:"Jakob Lenz - Winterthur",typ:"WA",kat:"Oper",prem:"2025-05-06",lv:"2025-05-16",prob:"2025-04-14",ete:"2025-04-22",khp:"",ohp:"2025-05-02",gp:"2025-05-03",bm:"Rasche",licht:"Strucken",ton:"Asja/ Wurster",insp:"Tschannen",reasist:"",projleit:"",graben:"",regie:"",dirig:"Kelly",komp:"",dauer:"1:12h",team:["Yannick Debus (Lenz)","Maximilian Lawrie"]},
   {saison:"24/25",vorstellungen:[],titel:"Ballett 3 - Countertime 2425",typ:"Premiere",kat:"Ballett",prem:"2025-05-10",lv:"2025-06-27",prob:"2025-04-23",ete:"2025-04-22",khp:"2025-05-03",ohp:"2025-05-08",gp:"2025-05-09",bm:"Studer",licht:"Gebhardt",ton:"Schilling",insp:"Warthmann",reasist:"",projleit:"Klimmer",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[]},
   {saison:"24/25",vorstellungen:[],titel:"Don Pasquale 2425",typ:"WA",kat:"Oper",prem:"2025-05-18",lv:"2025-06-03",prob:"2025-04-29",ete:"2025-05-12",khp:"",ohp:"2025-05-15",gp:"",bm:"Wlli",licht:"Roller",ton:"Schneider",insp:"",reasist:"Senn",projleit:"Klimmer",graben:"mittel",regie:"Michieletto",dirig:"Lopez-Reynoso",komp:"Donizetti (1843)",dauer:"2:37h",team:["Pietro Spagnoli (Don Pasquale)","Florian Sempey","Olga Peretyatko"]},
   {saison:"24/25",vorstellungen:[],titel:"Salome",typ:"WA",kat:"Oper",prem:"2025-05-29",lv:"2025-06-15",prob:"2025-05-05",ete:"2025-05-16",khp:"",ohp:"2025-05-24",gp:"",bm:"Huerlimann",licht:"Ostfalk",ton:"Peng",insp:"Kuehnel",reasist:"",projleit:"Noll",graben:"gross",regie:"Homoki",dirig:"Young",komp:"R. Strauss (1905)",dauer:"1:47h",team:["Elena Stikhina (Salome)","John Daszak (Herodes)","Michaela Schuster (Herodias)"]},
@@ -351,7 +356,7 @@ var P = [
   {saison:"22/23",vorstellungen:[],titel:"Faust",typ:"WA",kat:"Oper",prem:"2022-10-29",lv:"2022-11-16",prob:"2022-10-11",ete:"2022-10-19",khp:"",ohp:"",gp:"",bm:"Huerlimann",licht:"Kunz",ton:"Peng",insp:"Kuehnel",reasist:"Blersch",projleit:"",graben:"gross",regie:"Homoki",dirig:"McAdams",komp:"Gounod (1859)",dauer:"2:58h",team:[]},
   {saison:"22/23",vorstellungen:[],titel:"Entfuehrung aus dem Serail",typ:"WA",kat:"Oper",prem:"2022-11-05",lv:"2022-12-01",prob:"2022-10-19",ete:"2022-10-31",khp:"",ohp:"",gp:"",bm:"Willi",licht:"Kunz",ton:"Paciorek",insp:"Bierich",reasist:"",projleit:"",graben:"",regie:"Homoki",dirig:"Minasi",komp:"Mozart (1782)",dauer:"2:51h",team:[]},
   {saison:"22/23",vorstellungen:[],titel:"Alice im Wunderland",typ:"Premiere",kat:"Oper",prem:"2022-11-12",lv:"2023-01-22",prob:"2022-10-10",ete:"2022-10-24",khp:"",ohp:"",gp:"",bm:"Landolt",licht:"Evin/ Roller",ton:"Schilling",insp:"Warthmann",reasist:"Gama",projleit:"Klimmer",graben:"gross",regie:"Loschk",dirig:"Richter",komp:"Unsuk Chin (2007)",dauer:"2:06h",team:["Sandra Hamaoui (Alice)","Ruben Drole","Gary Martin"]},
-  {saison:"22/23",vorstellungen:[],titel:"Jakob Lenz ZKO",typ:"Premiere",kat:"Oper",prem:"2022-11-19",lv:"2022-11-28",prob:"2022-10-17",ete:"2022-11-09",khp:"",ohp:"",gp:"",bm:"",licht:"Strucken",ton:"Niziol",insp:"Tschannen",reasist:"",projleit:"",graben:"",regie:"Homoki",dirig:"Fasolis",komp:"Rihm (1979)",dauer:"",team:[]},
+  {saison:"22/23",vorstellungen:[],titel:"Jakob Lenz ZKO",typ:"Premiere",kat:"Oper",prem:"2022-11-19",lv:"2022-11-28",prob:"2022-10-17",ete:"2022-11-09",khp:"",ohp:"",gp:"",bm:"",licht:"Strucken",ton:"Niziol",insp:"Tschannen",reasist:"",projleit:"",graben:"",regie:"",dirig:"Fasolis",komp:"Rihm (1979)",dauer:"",team:[]},
   {saison:"22/23",vorstellungen:[],titel:"Ballett Nussknacker und Mausekoenig",typ:"WA",kat:"Ballett",prem:"2022-11-20",lv:"2022-12-10",prob:"2022-11-16",ete:"2022-11-11",khp:"",ohp:"",gp:"",bm:"Huerlimann (Studer)",licht:"Gebhardt",ton:"Pauli",insp:"Mathes",reasist:"",projleit:"",graben:"gross",regie:"",dirig:"",komp:"",dauer:"2:18h",team:[]},
   {saison:"22/23",vorstellungen:[],titel:"Eliogabalo ( Cavalli)",typ:"Premiere",kat:"Oper",prem:"2022-12-04",lv:"2023-01-07",prob:"2022-10-24",ete:"2022-11-14",khp:"",ohp:"",gp:"",bm:"Studer",licht:"Evin/ Kunz",ton:"Schneider",insp:"Botthof",reasist:"Russi/ Senn",projleit:"Klimmer",graben:"mittel",regie:"Bieito",dirig:"Sinkovsky",komp:"Cavalli (1668)",dauer:"",team:["Yuriy Mynenko (Eliogabalo)"]},
   {saison:"22/23",vorstellungen:[],titel:"La Boheme",typ:"WA",kat:"Oper",prem:"2022-12-09",lv:"2022-12-28",prob:"2022-11-21",ete:"2022-11-28",khp:"",ohp:"",gp:"",bm:"Willi (Rasche)",licht:"Strucken",ton:"Peng",insp:"Warthmann",reasist:"Lenzen/ Whiting",projleit:"",graben:"",regie:"Homoki",dirig:"Armiliato",komp:"Puccini (1896)",dauer:"2:24h",team:[]},
@@ -373,7 +378,7 @@ var P = [
   {saison:"22/23",vorstellungen:[],titel:"Ballett 3 - The Cellist ( Feeney)",typ:"WA",kat:"Ballett",prem:"2023-04-30",lv:"2023-06-22",prob:"2023-04-12",ete:"2023-04-12",khp:"",ohp:"",gp:"",bm:"Willi (Landolt)",licht:"Gebhardt",ton:"",insp:"Warthmann",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[]},
   {saison:"22/23",vorstellungen:[],titel:"Serse (IOS ThW) ( Haendel)",typ:"Premiere",kat:"Oper",prem:"2023-05-06",lv:"2023-05-17",prob:"2023-03-20",ete:"2023-04-21",khp:"",ohp:"",gp:"",bm:"Landolt",licht:"Kunz",ton:"Schneider/ Peng",insp:"Tschannen",reasist:"",projleit:"",graben:"",regie:"Russi",dirig:"Chryssicos",komp:"Haendel (1738)",dauer:"2:50h",team:[]},
   {saison:"22/23",vorstellungen:[],titel:"Orphee et Euridice",typ:"WA",kat:"Oper",prem:"2023-05-07",lv:"2023-05-23",prob:"2023-04-19",ete:"2023-05-03",khp:"",ohp:"",gp:"",bm:"Landolt (Studer)",licht:"Roller",ton:"Niziol",insp:"Botthof",reasist:"",projleit:"",graben:"",regie:"Homoki",dirig:"Minasi",komp:"Gluck (1762)",dauer:"1:36h",team:[]},
-  {saison:"22/23",vorstellungen:[],titel:"Lessons in Love and Violence (G.Benjamin)",typ:"Premiere",kat:"Oper",prem:"2023-05-21",lv:"2023-06-11",prob:"2023-04-03",ete:"2023-05-02",khp:"",ohp:"",gp:"",bm:"Huerlimann (Studer)",licht:"Gebhardt",ton:"Paciorek",insp:"Bierich",reasist:"Blersch",projleit:"",graben:"gross",regie:"Homoki",dirig:"Noseda",komp:"Benjamin (2018)",dauer:"",team:[]},
+  {saison:"22/23",vorstellungen:[],titel:"Lessons in Love and Violence (G.Benjamin)",typ:"Premiere",kat:"Oper",prem:"2023-05-21",lv:"2023-06-11",prob:"2023-04-03",ete:"2023-05-02",khp:"",ohp:"",gp:"",bm:"Huerlimann (Studer)",licht:"Gebhardt",ton:"Paciorek",insp:"Bierich",reasist:"Blersch",projleit:"",graben:"gross",regie:"",dirig:"Noseda",komp:"Benjamin (2018)",dauer:"",team:[]},
   {saison:"22/23",vorstellungen:[],titel:"Ballett Monteverdi",typ:"WA",kat:"Ballett",prem:"2023-05-26",lv:"2023-06-25",prob:"2023-05-22",ete:"2023-05-22",khp:"",ohp:"",gp:"",bm:"Studer",licht:"Strucken",ton:"Pauli",insp:"Warthmann",reasist:"",projleit:"",graben:"gross / hoch",regie:"",dirig:"",komp:"",dauer:"2:29h",team:[]},
   {saison:"22/23",vorstellungen:[],titel:"Don Pasquale",typ:"WA",kat:"Oper",prem:"2023-05-29",lv:"2023-06-17",prob:"2023-05-08",ete:"2023-05-22",khp:"",ohp:"",gp:"",bm:"Willi (Rasche)",licht:"Kunz",ton:"Schneider",insp:"Botthof",reasist:"Senn",projleit:"Klimmer",graben:"mittel",regie:"Homoki",dirig:"Fasolis",komp:"Donizetti (1843)",dauer:"2:39h",team:[]},
   {saison:"22/23",vorstellungen:[],titel:"Turandot",typ:"Premiere",kat:"Oper",prem:"2023-06-18",lv:"2023-07-08",prob:"2023-05-03",ete:"2023-05-30",khp:"",ohp:"",gp:"",bm:"Studer o. Landolt",licht:"Roller",ton:"Schilling",insp:"Kuehnel",reasist:"Lenzen/ Whiting",projleit:"Noll",graben:"gross",regie:"Homoki",dirig:"Noseda",komp:"Puccini (1926)",dauer:"",team:[]},
@@ -1245,12 +1250,46 @@ setMainHeight();
 matchSearchWidth();
 try { history.replaceState({idx: null}, "", ""); } catch(e) {}
 function openKalender() {
-  var START = new Date("2026-08-01"), END = new Date("2027-07-31");
+  if (typeof window.kalZoom === "undefined") { window.kalZoom = null; }
+  var SEASON_START = new Date("2026-08-01"), SEASON_END = new Date("2027-07-31");
+  var START, END, ZOOM = window.kalZoom;
+  if (ZOOM) {
+    // 3-Monats-Bereich: Vormonat + geklickter Monat + Folgemonat
+    var zy = ZOOM.y, zm = ZOOM.m; // zm: 1-12
+    var prevM = zm - 1, prevY = zy; if (prevM < 1) { prevM = 12; prevY--; }
+    var nextM = zm + 1, nextY = zy; if (nextM > 12) { nextM = 1; nextY++; }
+    START = new Date(prevY, prevM - 1, 1);
+    END = new Date(nextY, nextM, 0); // letzter Tag des Folgemonats
+    // Auf Saison begrenzen
+    if (START < SEASON_START) START = new Date(SEASON_START);
+    if (END > SEASON_END) END = new Date(SEASON_END);
+  } else {
+    START = new Date(SEASON_START); END = new Date(SEASON_END);
+  }
   var TOTAL = (END - START) / 86400000;
   var katcolor = {Oper:"#0fe8e8", Ballett:"#f0a050", Konzert:"#a06cd5", Extra:"#6ce0a0", Event:"#e8e8e8"};
   function pd(s){ return new Date(s); }
   function xpct(d){ return (pd(d) - START) / 86400000 / TOTAL * 100; }
   function wpct(a,b){ return Math.max(0.6, (pd(b) - pd(a)) / 86400000 / TOTAL * 100); }
+  // Geclipptes Segment: gibt {l, w} in % zurueck, auf 0..100 begrenzt; oder null wenn ganz ausserhalb
+  function clipSeg(a, b) {
+    var l = xpct(a), r = xpct(b);
+    if (r < 0 || l > 100) return null;
+    var cl = Math.max(0, l), cr = Math.min(100, r);
+    return { l: cl, w: Math.max(0.4, cr - cl) };
+  }
+  // Ist ein Punkt-Datum im sichtbaren Fenster?
+  function inWindow(d) { var x = xpct(d); return x >= 0 && x <= 100; }
+  // Liegt eine Produktion (mit Segmenten) im Fenster?
+  function prodVisible(p) {
+    if (p.ete && p.lv) {
+      if (p.pause && p.pause.length === 2) {
+        return clipSeg(p.ete, p.pause[0]) !== null || clipSeg(p.pause[1], p.lv) !== null;
+      }
+      return clipSeg(p.ete, p.lv) !== null;
+    }
+    return inWindow(p.prem);
+  }
 
   if (typeof window.kalKats === "undefined") { window.kalKats = {Oper:true, Ballett:true, Konzert:true, Extra:true, Event:false}; }
   if (typeof window.kalTon === "undefined") { window.kalTon = ""; }
@@ -1281,21 +1320,51 @@ function openKalender() {
     return ka < kb ? -1 : 1;
   });
 
-  var months = [], y = 2026, m = 8;
-  while (y < 2027 || (y === 2027 && m <= 7)) {
-    var md = new Date(y, m-1, 1);
-    var names = ["Jan","Feb","Mrz","Apr","Mai","Jun","Jul","Aug","Sep","Okt","Nov","Dez"];
-    var yr = (m === 8 || m === 1) ? " '" + String(y).slice(2) : "";
-    months.push({name: names[m-1] + yr, x: (md - START)/86400000/TOTAL*100});
-    m++; if (m > 12){ m = 1; y++; }
+  var names = ["Jan","Feb","Mrz","Apr","Mai","Jun","Jul","Aug","Sep","Okt","Nov","Dez"];
+  var monthlines;
+  if (ZOOM) {
+    // Tagesraster: jede vertikale Linie ein Tag, Nummer darunter, Montag staerker
+    var dayLines = "";
+    var cur = new Date(START);
+    var endMs = END.getTime();
+    var monthLabels = "";
+    var lastMonth = -1;
+    while (cur.getTime() <= endMs) {
+      var xp = (cur - START)/86400000/TOTAL*100;
+      var dow = cur.getDay(); // 0=So, 1=Mo
+      var isMon = (dow === 1);
+      var lineCol = isMon ? "#4a4a4a" : "#222";
+      var lineW = isMon ? "1.5px" : "1px";
+      dayLines += "<div style='position:absolute;top:0;height:100%;border-left:" + lineW + " solid " + lineCol + ";left:" + xp.toFixed(3) + "%'></div>";
+      // Tageszahl (nur wenn genug Platz: immer, da 3 Monate)
+      var dnum = cur.getDate();
+      var numCol = isMon ? "#ccc" : "#888";
+      var numWeight = isMon ? "bold" : "normal";
+      dayLines += "<div style='position:absolute;bottom:2px;left:" + xp.toFixed(3) + "%;transform:translateX(2px);font-size:20px;color:" + numCol + ";font-weight:" + numWeight + ";white-space:nowrap'>" + dnum + "</div>";
+      // Monatsname beim 1. des Monats
+      var mo = cur.getMonth();
+      if (mo !== lastMonth) {
+        lastMonth = mo;
+        monthLabels += "<div style='position:absolute;top:3px;left:" + xp.toFixed(3) + "%;transform:translateX(4px);font-size:19px;color:#0fe8e8;font-weight:bold;white-space:nowrap'>" + names[mo] + "</div>";
+      }
+      cur.setDate(cur.getDate() + 1);
+    }
+    monthlines = dayLines + monthLabels;
+  } else {
+    var months = [], y = 2026, m = 8;
+    while (y < 2027 || (y === 2027 && m <= 7)) {
+      var md = new Date(y, m-1, 1);
+      var yr = (m === 8 || m === 1) ? " '" + String(y).slice(2) : "";
+      months.push({name: names[m-1] + yr, x: (md - START)/86400000/TOTAL*100, y: y, m: m});
+      m++; if (m > 12){ m = 1; y++; }
+    }
+    monthlines = months.map(function(mo, i){
+      var nextX = (i+1 < months.length) ? months[i+1].x : 100;
+      var midX = (mo.x + nextX) / 2;
+      return "<div style='position:absolute;top:0;height:100%;border-left:1px solid #262626;left:" + mo.x.toFixed(2) + "%'></div>"
+        + "<div onclick='kalZoomTo(" + mo.y + "," + mo.m + ")' style='position:absolute;top:4px;left:" + midX.toFixed(2) + "%;transform:translateX(-50%);font-size:13.5px;color:#999;white-space:nowrap;cursor:pointer' title='Auf diesen Monat zoomen'>" + mo.name + "</div>";
+    }).join("");
   }
-
-  var monthlines = months.map(function(mo, i){
-    var nextX = (i+1 < months.length) ? months[i+1].x : 100;
-    var midX = (mo.x + nextX) / 2;
-    return "<div style='position:absolute;top:0;height:100%;border-left:1px solid #262626;left:" + mo.x.toFixed(2) + "%'></div>"
-      + "<div style='position:absolute;top:4px;left:" + midX.toFixed(2) + "%;transform:translateX(-50%);font-size:11px;color:#999;white-space:nowrap'>" + mo.name + "</div>";
-  }).join("");
 
   function kalShort(t) {
     return t
@@ -1320,27 +1389,29 @@ function openKalender() {
       .replace("Rachmaninov - die 3 Opern", "Rachmaninov 3 Opern")
       .replace("Art Matters - Junior Ballett THW", "Art Matters - THW");
   }
+  function segBar(seg, col, titel, dateLabel) {
+    return "<div style='position:absolute;top:5px;height:14px;border-radius:3px;opacity:0.85;left:" + seg.l.toFixed(2) + "%;width:" + seg.w.toFixed(2) + "%;background:" + col + "' title='" + titel + "\n" + dateLabel + "'></div>";
+  }
   function buildRows(list){
-    return list.map(function(p){
+    return list.filter(function(p){ return ZOOM ? prodVisible(p) : true; }).map(function(p){
       var col = katcolor[p.kat] || "#666";
-      var bar;
+      var bar = "";
       if (p.ete && p.lv) {
         if (p.pause && p.pause.length === 2) {
-          // Zwei Segmente mit Pause dazwischen
-          var seg1L = xpct(p.ete), seg1W = wpct(p.ete, p.pause[0]);
-          var seg2L = xpct(p.pause[1]), seg2W = wpct(p.pause[1], p.lv);
-          bar = "<div style='position:absolute;top:5px;height:14px;border-radius:3px;opacity:0.85;left:" + seg1L.toFixed(2) + "%;width:" + seg1W.toFixed(2) + "%;background:" + col + "' title='" + p.titel + "\n" + fmt(p.ete) + " – " + fmt(p.pause[0]) + "'></div>"
-            + "<div style='position:absolute;top:5px;height:14px;border-radius:3px;opacity:0.85;left:" + seg2L.toFixed(2) + "%;width:" + seg2W.toFixed(2) + "%;background:" + col + "' title='" + p.titel + "\n" + fmt(p.pause[1]) + " – " + fmt(p.lv) + "'></div>"
-            + "<div style='position:absolute;top:2px;width:2px;height:20px;background:#fff;left:" + xpct(p.prem).toFixed(2) + "%' title='Premiere " + fmt(p.prem) + "'></div>";
+          var s1 = clipSeg(p.ete, p.pause[0]);
+          var s2 = clipSeg(p.pause[1], p.lv);
+          if (s1) bar += segBar(s1, col, p.titel, fmt(p.ete) + " – " + fmt(p.pause[0]));
+          if (s2) bar += segBar(s2, col, p.titel, fmt(p.pause[1]) + " – " + fmt(p.lv));
         } else {
-          bar = "<div style='position:absolute;top:5px;height:14px;border-radius:3px;opacity:0.85;left:" + xpct(p.ete).toFixed(2) + "%;width:" + wpct(p.ete,p.lv).toFixed(2) + "%;background:" + col + "' title='" + p.titel + "\n" + fmt(p.ete) + " – " + fmt(p.lv) + "'></div>"
-            + "<div style='position:absolute;top:2px;width:2px;height:20px;background:#fff;left:" + xpct(p.prem).toFixed(2) + "%' title='Premiere " + fmt(p.prem) + "'></div>";
+          var sg = clipSeg(p.ete, p.lv);
+          if (sg) bar += segBar(sg, col, p.titel, fmt(p.ete) + " – " + fmt(p.lv));
         }
+        if (inWindow(p.prem)) bar += "<div style='position:absolute;top:2px;width:2px;height:20px;background:#fff;left:" + xpct(p.prem).toFixed(2) + "%' title='Premiere " + fmt(p.prem) + "'></div>";
       } else {
-        bar = "<div style='position:absolute;top:7px;width:11px;height:11px;transform:translateX(-50%) rotate(45deg);opacity:0.9;left:" + xpct(p.prem).toFixed(2) + "%;background:" + col + "' title='" + p.titel + "\n" + fmt(p.prem) + "'></div>";
+        if (inWindow(p.prem)) bar = "<div style='position:absolute;top:7px;width:11px;height:11px;transform:translateX(-50%) rotate(45deg);opacity:0.9;left:" + xpct(p.prem).toFixed(2) + "%;background:" + col + "' title='" + p.titel + "\n" + fmt(p.prem) + "'></div>";
       }
       var clickAttr = (p.pidx != null && p.pidx > -1) ? " onclick='kalOpenDetail(" + p.pidx + ")' style='display:flex;align-items:center;height:24px;cursor:pointer'" : " style='display:flex;align-items:center;height:24px'";
-      return "<div class='kal-row'" + clickAttr + "><div style='width:150px;flex-shrink:0;padding-right:10px;text-align:right;font-size:11.5px;color:#ccc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis' title='" + p.titel + "'>" + kalShort(p.titel) + "</div><div style='position:relative;flex:1;height:100%'>" + bar + "</div></div>";
+      return "<div class='kal-row'" + clickAttr + "><div style='width:170px;flex-shrink:0;padding-right:10px;text-align:right;font-size:15.4px;color:#ccc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis' title='" + p.titel + "'>" + kalShort(p.titel) + "</div><div style='position:relative;flex:1;height:100%'>" + bar + "</div></div>";
     }).join("");
   }
   function sortByStart(list){
@@ -1355,9 +1426,9 @@ function openKalender() {
 
   function kalChip(kat, label, col) {
     var on = window.kalKats[kat];
-    return "<span onclick=\"toggleKalKat('" + kat + "')\" style='display:inline-flex;align-items:center;gap:5px;cursor:pointer;padding:2px 8px;border-radius:2px;border:1px solid " + (on ? col : "#333") + ";opacity:" + (on ? "1" : "0.35") + "'><i style='width:12px;height:12px;border-radius:2px;background:" + col + "'></i>" + label + "</span>";
+    return "<span onclick=\"toggleKalKat('" + kat + "')\" style='display:inline-flex;align-items:center;gap:4px;cursor:pointer;padding:2px 6px;border-radius:2px;border:1px solid " + (on ? col : "#333") + ";opacity:" + (on ? "1" : "0.35") + "'><i style='width:10px;height:10px;border-radius:2px;background:" + col + "'></i>" + label + "</span>";
   }
-  var legend = "<div style='display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;font-size:12px'>"
+  var legend = "<div style='display:flex;gap:6px;flex-wrap:nowrap;margin-top:8px;font-size:12px'>"
     + kalChip("Oper","Oper","#0fe8e8")
     + kalChip("Ballett","Bal","#f0a050")
     + kalChip("Konzert","Kzt","#a06cd5")
@@ -1377,26 +1448,64 @@ function openKalender() {
     var lbl = tonVorname[name] || name.slice(0,2);
     return "<span onclick=\"toggleKalTon('" + name + "')\" title='" + name + "' style='display:inline-flex;align-items:center;cursor:pointer;padding:2px 8px;border-radius:2px;border:1px solid " + (on ? "#0fe8e8" : "#333") + ";color:" + (on ? "#0fe8e8" : "#bbb") + ";opacity:" + (on ? "1" : "0.7") + "'>" + lbl + "</span>";
   }
-  var tonRow = "<div style='display:flex;gap:6px;flex-wrap:nowrap;margin-top:8px;font-size:12px;align-items:center'>"
+  var tonRow = "<div style='display:flex;gap:6px;flex-wrap:nowrap;margin-top:8px;font-size:14px;align-items:center'>"
     + "<span style='color:#888;margin-right:2px'>Ton:</span>"
     + allTon.map(tonChip).join("")
     + "</div>";
 
+  var tlHeight = ZOOM ? 54 : 26;
+  var innerMinW = ZOOM ? "2600px" : "820px";
+  // Heute-Linie: nur wenn heute im sichtbaren Zeitraum liegt
+  var todayLine = "";
+  var today = new Date();
+  today.setHours(0,0,0,0);
+  if (today >= START && today <= END) {
+    var todayX = (today - START) / 86400000 / TOTAL * 100;
+    // Position innerhalb der Achse (nach 170px Label-Spalte)
+    todayLine = "<div style='position:absolute;top:0;bottom:0;left:calc(170px + (100% - 170px) * " + (todayX/100).toFixed(4) + ");width:1px;background:rgba(240,160,80,0.45);z-index:1;pointer-events:none'></div>";
+  }
+  var zoomBtn = ZOOM
+    ? "<button onclick='kalZoomTo(null)' style='background:#1c1c1c;border:1px solid #0fe8e8;border-radius:3px;color:#0fe8e8;font-size:12px;cursor:pointer;padding:2px 10px;vertical-align:middle'>&#8594; Jahresansicht</button>"
+    : "";
+  var hint = ZOOM ? "" : "<span style='font-size:11px;color:#666;margin-left:8px;white-space:nowrap'>(Monat antippen zum Zoomen)</span>";
+
   var html = "<div style='background:#141414;padding:16px 20px 10px;border-bottom:1px solid #333'>"
     + "<button onclick=\"document.getElementById('kalender-modal').style.display='none'\" style='position:fixed;top:10px;right:14px;z-index:2100;background:#181818;border:1px solid #333;border-radius:3px;color:#f0a050;font-size:16px;cursor:pointer;padding:4px 10px'>close x</button>"
-    + "<h2 style='margin:0 0 4px;font-size:17px;padding-right:80px'><span style='color:#0fe8e8;font-style:italic'>SPIELPLAN</span> OHZ 26/27 — Produktionskalender</h2>"
+    + "<h2 style='margin:0 0 4px;font-size:18px;padding-right:80px;font-style:italic;color:#ffffff'><span style='white-space:nowrap'>KALENDER OHZ 26/27</span><span style='font-style:normal'>" + hint + "</span></h2>"
+    + (zoomBtn ? "<div style='margin:2px 0 4px'>" + zoomBtn + "</div>" : "")
     + legend + tonRow + "</div>"
     + "<div style='padding:0 20px 60px'>"
-    + "<div style='overflow-x:auto;-webkit-overflow-scrolling:touch'><div style='min-width:820px'>"
-    + "<div style='position:relative;margin-left:150px;height:22px;border-bottom:1px solid #444;margin-bottom:6px'>" + monthlines + "</div>"
+    + "<div id='kal-hscroll' style='overflow-x:auto;-webkit-overflow-scrolling:touch'><div style='min-width:" + innerMinW + ";position:relative'>"
+    + todayLine
+    + "<div style='position:relative;margin-left:170px;height:" + tlHeight + "px;border-bottom:1px solid #444;margin-bottom:6px'>" + monthlines + "</div>"
     + rows
-    + (kztSfRows ? "<div style='display:flex;align-items:center;height:22px;margin-top:10px;border-top:1px solid #333'><div style='width:150px;flex-shrink:0;padding-right:10px;text-align:right;font-size:11px;color:#888;font-style:italic'>Konzerte / SF</div><div style='flex:1'></div></div>" + kztSfRows : "")
+    + (kztSfRows ? "<div style='display:flex;align-items:center;height:22px;margin-top:10px;border-top:1px solid #333'><div style='width:170px;flex-shrink:0;padding-right:10px;text-align:right;font-size:13px;color:#888;font-style:italic'>Konzerte / SF</div><div style='flex:1'></div></div>" + kztSfRows : "")
     + "</div></div>"
     + "<div style='margin-top:20px;font-size:12px;color:#888;line-height:1.6'>Balken = Produktionszeitraum (1. TE bis letzte Vorstellung), weisse Linie = Premiere.<br>Raute = Einzeltermin (Konzerte, Sonderveranstaltungen ohne Probenzeitraum).<br>Vertikale Überschneidungen zeigen, was gleichzeitig im Haus läuft. " + prods.length + " Einträge (ohne Labor, ohne Events).</div>"
     + "</div>";
 
   document.getElementById("kalender-body").innerHTML = html;
   document.getElementById("kalender-modal").style.display = "block";
+  // Im Zoom: horizontal so scrollen, dass der geklickte Monat zentriert ist
+  if (ZOOM) {
+    var doScroll = function() {
+      var hs = document.getElementById("kal-hscroll");
+      if (!hs) return;
+      var midDay = new Date(ZOOM.y, ZOOM.m - 1, 15);
+      var midPct = (midDay - START) / 86400000 / TOTAL; // 0..1 innerhalb Zeitachse
+      var labelW = 170;
+      var axisW = hs.scrollWidth - labelW;
+      var targetX = labelW + midPct * axisW - hs.clientWidth / 2;
+      hs.scrollLeft = Math.max(0, targetX);
+    };
+    if (typeof requestAnimationFrame !== "undefined") { requestAnimationFrame(doScroll); }
+    else { doScroll(); }
+  }
+}
+function kalZoomTo(y, m) {
+  if (y === null) { window.kalZoom = null; }
+  else { window.kalZoom = {y: y, m: m}; }
+  openKalender();
 }
 
 function kalOpenDetail(idx) {
@@ -1420,13 +1529,14 @@ filterAktuell();
       <p style="margin-top:12px"><strong style="color:#fff">Datumsfilter:</strong> Von/Bis filtert den gew&uuml;nschten Zeitraum.</p>
       <p style="margin-top:12px"><strong><em>Aktuell</em></strong> zeigt alle ab heute noch laufenden Produktionen und ggf. heutige Vorstellungen.<br><u>Als Produktionszeitraum gilt jeweils die 1.&nbsp;TE bis zur letzten Vorstellung.</u></p>
       <p style="margin-top:12px"><strong style="color:#fff">Panel:</strong> Ein Klick auf eine Produktion in der Liste &ouml;ffnet das Detailpanel mit detaillierten Angaben. Namen im Panel sind anklickbar und aktivieren einen Filter.</p>
-      <p style="margin-top:12px">&laquo;<strong>OHZ</strong>&raquo; oben rechts &ouml;ffnet den aktuellen Spielplan auf der Website des Opernhauses.</p>
+      <p style="margin-top:12px">&laquo;<strong>Spielplan OHZ</strong>&raquo; oben links &ouml;ffnet den aktuellen Spielplan auf der Website des Opernhauses.</p>
+      <p style="margin-top:12px">&laquo;<strong>Kalender</strong>&raquo; oben rechts &ouml;ffnet den tabellarischen Produktionskalender (Jahres- und Monatsansicht).</p>
       <p style="margin-top:12px">In der Titelzeile: <strong>Button D</strong> &ouml;ffnet einen freigegebenen Google-Drive-Ordner f&uuml;r flexiblen Datei-Upload/-Zugriff/Dateitausch zwischen allen im Google-Tonabteilung-Account eingeloggten Handys und Computern und <strong>Button P</strong> eine Google-Keep-Checkliste f&uuml;r schnelle Pendenz-Eintr&auml;ge. &Auml;nderungen sind f&uuml;r alle sofort einsehbar und bearbeitbar.</p>
       <p style="margin-top:12px">Die <strong>WebApp</strong> besteht aus einer einzigen HTML-Datei (inkl. JS und CSS) ohne externe Abh&auml;ngigkeiten (kein Datenaustausch mit externen Servern oder Diensten &ndash; ausser die Links in der Titelzeile) und wird &uuml;ber GitHub gehostet (https://...). Sie l&auml;uft auf allen g&auml;ngigen Browsern auf Mac, Windows, Android und iPhone.</p>
       <p>Die Daten basieren auf den Spielplanunterlagen der Technischen Direktion und des KBB sowie der Website des Opernhauses Z&uuml;rich. &Auml;nderungen w&auml;hrend laufender Spielzeit sind m&ouml;glicherweise nicht ber&uuml;cksichtigt, werden aber kontinuierlich aktualisiert.</p>
       <p>Diese WebApp ist als Hilfsmittel f&uuml;r den Produktionsalltag gedacht. F&uuml;r die Richtigkeit, Vollst&auml;ndigkeit und Aktualit&auml;t der Inhalte wird keine Gew&auml;hr &uuml;bernommen.</p>
-      <p style="color:#aaa;margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_110726" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
-      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_110726</p>
+      <p style="color:#aaa;margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_210726" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
+      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_210726</p>
       </div>
   </div>
 </div>
