@@ -35,7 +35,8 @@ input[type=date] { background: #181818; border: 1px solid #333; color: #e8e8e8; 
 .badge-L { background: #555; color: #fff; }
 .badge-S { background: #555; color: #fff; }
 .badge-E { background: #555; color: #fff; }
-.kal-row:hover { background:#1c1c1c; }
+.kal-row:hover { background:#33383d; }
+.kal-row:hover > div:first-child { background:#33383d !important; }
 #detail { width: min(885px, 100vw); border-left: 1px solid #222; overflow-y: scroll; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; touch-action: pan-y; padding: 20px 20px 120px 8px; display: none; flex-shrink: 0; background: #131313; }
 #detail.open { display: block; }
 #detail-close { background: none; border: none; color: #f0a050; cursor: pointer; font-size: 15px; line-height: 1; padding: 0; position: sticky; top: 0; float: right; z-index: 10; }
@@ -122,7 +123,7 @@ input[type=date]::-webkit-calendar-picker-indicator { filter: invert(0.8) bright
 </head>
 <body>
 <div id="header">
-  <h1 id="main-h1" style="white-space:nowrap;width:100%;display:flex;align-items:baseline"><span onclick="window.open('https://www.opernhaus.ch/spielplan/kalendarium/','_blank')" style="cursor:pointer;color:#ffffff;font-style:italic;font-size:18px">SPIELPLAN</span><span onclick="window.open('https://www.opernhaus.ch/spielplan/kalendarium/','_blank')" style="cursor:pointer;color:#ffffff;font-weight:700;font-style:italic;margin-left:8px;font-size:18px">OHZ</span><span id="info-i" onclick="document.getElementById('info-modal').style.display='flex'" style="display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border:1px solid #bcc2c8;border-radius:50%;font-size:10px;color:#bcc2c8;cursor:pointer;margin-left:12px;font-style:italic;font-family:Georgia,serif;position:relative;top:-3px">i</span><a href="https://drive.google.com/drive/folders/1WM9YPpCGen3EHeY3C5c_k_9tL9kMRel_" target="_blank" style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:linear-gradient(180deg,#1e3535,#0d2020);color:#0fe8e8;font-size:11px;font-weight:bold;text-decoration:none;border-top:1px solid #2a5555;border-bottom:1px solid #080f0f;border-left:1px solid #1a4040;border-right:1px solid #080f0f;box-shadow:none;margin-left:auto;margin-right:7px;flex-shrink:0;align-self:center">D</a><a href="https://keep.google.com/#LIST/1_K2fuuC7XY9k2Cd6eg8oLcLuF_pSCmvaM8uw_XeN6IxMYh6WARY2lbzFqiDPzA" target="_blank" style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:linear-gradient(180deg,#1e3535,#0d2020);color:#0fe8e8;font-size:11px;font-weight:bold;text-decoration:none;border-top:1px solid #2a5555;border-bottom:1px solid #080f0f;border-left:1px solid #1a4040;border-right:1px solid #080f0f;box-shadow:none;margin-right:10px;flex-shrink:0;align-self:center">P</a><button onclick="openKalender()" title="Produktionskalender 26/27" style="background:linear-gradient(180deg,#1e3535,#0d2020);color:#0fe8e8;border-top:1px solid #2a5555;border-bottom:1px solid #080f0f;border-left:1px solid #1a4040;border-right:1px solid #080f0f;border-radius:3px;font-size:11px;font-weight:bold;padding:2px 9px;cursor:pointer;flex-shrink:0;align-self:center">KALENDER</button></h1>
+  <h1 id="main-h1" style="white-space:nowrap;width:100%;display:flex;align-items:baseline"><span onclick="window.open('https://www.opernhaus.ch/spielplan/kalendarium/','_blank')" style="cursor:pointer;color:#ffffff;font-style:italic;font-size:18px">SPIELPLAN</span><span onclick="window.open('https://www.opernhaus.ch/spielplan/kalendarium/','_blank')" style="cursor:pointer;color:#ffffff;font-weight:700;font-style:italic;margin-left:8px;font-size:18px">OHZ</span><span id="info-i" onclick="document.getElementById('info-modal').style.display='flex'" style="display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border:1px solid #bcc2c8;border-radius:50%;font-size:10px;color:#bcc2c8;cursor:pointer;margin-left:12px;font-style:italic;font-family:Georgia,serif;position:relative;top:-3px">i</span><a href="https://drive.google.com/drive/folders/1WM9YPpCGen3EHeY3C5c_k_9tL9kMRel_" target="_blank" style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:linear-gradient(180deg,#1e3535,#0d2020);color:#0fe8e8;font-size:11px;font-weight:bold;text-decoration:none;border-top:1px solid #2a5555;border-bottom:1px solid #080f0f;border-left:1px solid #1a4040;border-right:1px solid #080f0f;box-shadow:none;margin-left:auto;margin-right:7px;flex-shrink:0;align-self:center">D</a><a href="https://keep.google.com/#LIST/1_K2fuuC7XY9k2Cd6eg8oLcLuF_pSCmvaM8uw_XeN6IxMYh6WARY2lbzFqiDPzA" target="_blank" style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:linear-gradient(180deg,#1e3535,#0d2020);color:#0fe8e8;font-size:11px;font-weight:bold;text-decoration:none;border-top:1px solid #2a5555;border-bottom:1px solid #080f0f;border-left:1px solid #1a4040;border-right:1px solid #080f0f;box-shadow:none;margin-right:10px;flex-shrink:0;align-self:center">P</a><button onclick="window.kalScale=1;window.kalZoom=null;openKalender()" title="Produktionskalender 26/27" style="background:linear-gradient(180deg,#1e3535,#0d2020);color:#0fe8e8;border-top:1px solid #2a5555;border-bottom:1px solid #080f0f;border-left:1px solid #1a4040;border-right:1px solid #080f0f;border-radius:3px;font-size:11px;font-weight:bold;padding:2px 9px;cursor:pointer;flex-shrink:0;align-self:center">KALENDER</button></h1>
   <div style="display:block;width:100%;">
   <div style="position:relative;display:flex;align-items:center;">
     <input type="text" id="search" placeholder="Produktion, Person, Funktion ..." style="padding-right:36px;margin-bottom:8px;width:100%;">
@@ -172,11 +173,11 @@ input[type=date]::-webkit-calendar-picker-indicator { filter: invert(0.8) bright
     <span class="qtag active" id="ton-alle" onclick="filterTon('')">Alle</span>
     <span class="qtag" id="ton-beck" onclick="filterTon('Beck')">Dominik</span>
     <span class="qtag" id="ton-granda" onclick="filterTon('Granda')">Felipe</span>
-    <span class="qtag" id="ton-paciorek" onclick="filterTon('Paciorek')">Raphael</span>
     <span class="qtag" id="ton-schilling" onclick="filterTon('Schilling')">Thorsten</span>
     <span class="qtag" id="ton-surgutschow" onclick="filterTon('Surgutschow')">Oleg</span>
     <span class="qtag" id="ton-winter" onclick="filterTon('Winter')">Milena</span>
     <span class="qtag" id="ton-zdravkovic" onclick="filterTon('Zdravkovic')">Vasilije</span>
+    <span class="qtag" id="ton-paciorek" onclick="filterTon('Paciorek')">Raphael</span>
   </div>
 </div>
 <div style="height:6px;background:linear-gradient(180deg,rgba(0,0,0,0.6),transparent);"></div>
@@ -1327,7 +1328,7 @@ function openKalender() {
     var l = xpct(a) + HALFDAY, r = xpct(b) + HALFDAY;
     if (r < 0 || l > 100) return null;
     var cl = Math.max(0, l), cr = Math.min(100, r);
-    return { l: cl, w: Math.max(0.4, cr - cl) };
+    return { l: cl, w: Math.max(0.4, cr - cl), clipL: l < 0, clipR: r > 100 };
   }
   // Ist ein Punkt-Datum im sichtbaren Fenster?
   function inWindow(d) { var x = xpct(d); return x >= 0 && x <= 100; }
@@ -1407,12 +1408,12 @@ function openKalender() {
       var numCol = isMon ? "#ccc" : "#888";
       var numWeight = isMon ? "bold" : "normal";
       var halfDay = 100 / TOTAL / 2;
-      dayLines += "<div style='position:absolute;bottom:2px;left:" + (xp + halfDay).toFixed(3) + "%;transform:translateX(-50%);font-size:20px;color:" + numCol + ";font-weight:" + numWeight + ";white-space:nowrap'>" + dnum + "</div>";
+      dayLines += "<div style='position:absolute;bottom:2px;left:" + (xp + halfDay).toFixed(3) + "%;transform:translateX(-50%);font-size:13px;color:" + numCol + ";font-weight:" + numWeight + ";white-space:nowrap'>" + dnum + "</div>";
       // Monatsname beim 1. des Monats
       var mo = cur.getMonth();
       if (mo !== lastMonth) {
         lastMonth = mo;
-        monthLabels += "<div style='position:absolute;top:3px;left:" + xp.toFixed(3) + "%;transform:translateX(4px);font-size:19px;color:#0fe8e8;font-weight:bold;white-space:nowrap'>" + names[mo] + "</div>";
+        monthLabels += "<div style='position:absolute;top:3px;left:" + xp.toFixed(3) + "%;transform:translateX(4px);font-size:14px;color:#0fe8e8;font-weight:bold;white-space:nowrap'>" + names[mo] + "</div>";
       }
       cur.setDate(cur.getDate() + 1);
     }
@@ -1429,7 +1430,7 @@ function openKalender() {
       var nextX = (i+1 < months.length) ? months[i+1].x : 100;
       var midX = (mo.x + nextX) / 2;
       return "<div style='position:absolute;top:0;height:100%;border-left:1px solid #262626;left:" + mo.x.toFixed(2) + "%'></div>"
-        + "<div onclick='kalZoomTo(" + mo.y + "," + mo.m + ")' style='position:absolute;top:4px;left:" + midX.toFixed(2) + "%;transform:translateX(-50%);font-size:13.5px;color:#999;white-space:nowrap;cursor:pointer' title='Auf diesen Monat zoomen'>" + mo.name + "</div>";
+        + "<div onclick='kalZoomTo(" + mo.y + "," + mo.m + ")' style='position:absolute;top:4px;left:" + midX.toFixed(2) + "%;transform:translateX(-50%);font-size:13.5px;font-weight:600;color:#e2e2e2;white-space:nowrap;cursor:pointer' title='Auf diesen Monat zoomen'>" + mo.name + "</div>";
     }).join("");
   }
 
@@ -1469,8 +1470,33 @@ function openKalender() {
       .replace("Werckmeister - Oerlikon", "Werckmeister")
       .replace("la Fanciulla del West", "Fanciulla del West");
   }
-  function segBar(seg, col, titel, dateLabel) {
-    return "<div style='position:absolute;top:5px;height:14px;border-radius:3px;opacity:0.85;left:" + seg.l.toFixed(2) + "%;width:" + seg.w.toFixed(2) + "%;background:" + col + "' title='" + titel + "\n" + dateLabel + "'></div>";
+  function segBar(seg, col, titel, dateLabel, dStart, dEnd) {
+    var html = "<div style='position:absolute;top:5px;height:14px;border-radius:3px;opacity:0.85;left:" + seg.l.toFixed(2) + "%;width:" + seg.w.toFixed(2) + "%;background:" + col + "' title='" + titel + "\n" + dateLabel + "'></div>";
+    // Datum am Balkenanfang/-ende, nur wenn der Balken breit genug ist
+    var minW = ZOOM ? 3.6 : 7.5;
+    if (dStart && dEnd) {
+      var fs = ZOOM ? "10px" : "9px";
+      if (seg.w >= minW) {
+        // Breiter Balken: Datum dunkel im Balken
+        if (!seg.clipL) html += "<div style='position:absolute;top:7px;left:" + seg.l.toFixed(2) + "%;margin-left:3px;font-size:" + fs + ";color:#0d1a1a;font-weight:700;line-height:10px;pointer-events:none;white-space:nowrap'>" + dStart + "</div>";
+        if (!seg.clipR) html += "<div style='position:absolute;top:7px;left:" + (seg.l + seg.w).toFixed(2) + "%;transform:translateX(-100%);margin-left:-3px;font-size:" + fs + ";color:#0d1a1a;font-weight:700;line-height:10px;pointer-events:none;white-space:nowrap'>" + dEnd + "</div>";
+      } else {
+        // Schmaler Balken: Datum hellgrau ausserhalb, links davor und rechts danach
+        if (!seg.clipL) html += "<div style='position:absolute;top:7px;left:" + seg.l.toFixed(2) + "%;transform:translateX(-100%);margin-left:-4px;font-size:" + fs + ";color:#9a9a9a;line-height:10px;pointer-events:none;white-space:nowrap'>" + dStart + "</div>";
+        if (!seg.clipR) html += "<div style='position:absolute;top:7px;left:" + (seg.l + seg.w).toFixed(2) + "%;margin-left:4px;font-size:" + fs + ";color:#9a9a9a;line-height:10px;pointer-events:none;white-space:nowrap'>" + dEnd + "</div>";
+      }
+    }
+    return html;
+  }
+  function premZeile(p) {
+    if (!p.prem) return "";
+    var lbl = (p.typ === "WA") ? "WA" : (p.typ === "Premiere" ? "Premiere" : "Datum");
+    return "\n" + lbl + ": " + fmt(p.prem);
+  }
+  function fmtKurz(s) {
+    if (!s) return "";
+    var d = new Date(s);
+    return d.toLocaleDateString("de-CH", {day:"2-digit", month:"2-digit"});
   }
   function buildRows(list){
     return list.filter(function(p){ return ZOOM ? prodVisible(p) : true; }).map(function(p){
@@ -1480,20 +1506,27 @@ function openKalender() {
         if (p.pause && p.pause.length === 2) {
           var s1 = clipSeg(p.ete, p.pause[0]);
           var s2 = clipSeg(p.pause[1], p.lv);
-          if (s1) bar += segBar(s1, col, p.titel, fmt(p.ete) + " – " + fmt(p.pause[0]));
-          if (s2) bar += segBar(s2, col, p.titel, fmt(p.pause[1]) + " – " + fmt(p.lv));
+          if (s1) bar += segBar(s1, col, p.titel, fmt(p.ete) + " – " + fmt(p.pause[0]) + premZeile(p), fmtKurz(p.ete), fmtKurz(p.pause[0]));
+          if (s2) bar += segBar(s2, col, p.titel, fmt(p.pause[1]) + " – " + fmt(p.lv) + premZeile(p), fmtKurz(p.pause[1]), fmtKurz(p.lv));
         } else {
           var sg = clipSeg(p.ete, p.lv);
-          if (sg) bar += segBar(sg, col, p.titel, fmt(p.ete) + " – " + fmt(p.lv));
+          if (sg) bar += segBar(sg, col, p.titel, fmt(p.ete) + " – " + fmt(p.lv) + premZeile(p), fmtKurz(p.ete), fmtKurz(p.lv));
         }
         if (inWindow(p.prem)) bar += "<div style='position:absolute;top:2px;width:2px;height:20px;background:#fff;left:calc(" + (xpct(p.prem) + HALFDAY).toFixed(3) + "% - 1px)' title='Premiere " + fmt(p.prem) + "'></div>";
       } else {
-        if (inWindow(p.prem)) bar = "<div style='position:absolute;top:7px;width:11px;height:11px;transform:translateX(-50%) rotate(45deg);opacity:0.9;left:" + (xpct(p.prem) + HALFDAY).toFixed(3) + "%;background:" + col + "' title='" + p.titel + "\n" + fmt(p.prem) + "'></div>";
+        if (inWindow(p.prem)) {
+          var dx = xpct(p.prem) + HALFDAY;
+          var fsD = ZOOM ? "10px" : "9px";
+          bar = "<div style='position:absolute;top:7px;width:11px;height:11px;transform:translateX(-50%) rotate(45deg);opacity:0.9;left:" + dx.toFixed(3) + "%;background:" + col + "' title='" + p.titel + "\n" + fmt(p.prem) + "'></div>";
+          bar += "<div style='position:absolute;top:7px;left:" + dx.toFixed(3) + "%;margin-left:9px;font-size:" + fsD + ";color:#9a9a9a;line-height:10px;pointer-events:none;white-space:nowrap'>" + fmtKurz(p.prem) + "</div>";
+        }
       }
-      var clickAttr = (p.pidx != null && p.pidx > -1) ? " onclick='kalOpenDetail(" + p.pidx + ")' style='display:flex;align-items:center;height:24px;cursor:pointer'" : " style='display:flex;align-items:center;height:24px'";
       var istPrem = (p.typ === "Premiere" && (p.kat === "Oper" || p.kat === "Ballett"));
       var premStyle = istPrem ? "text-decoration:underline;text-underline-offset:2px;" : "";
-      return "<div class='kal-row'" + clickAttr + "><div style='width:120px;flex-shrink:0;padding-right:8px;text-align:right;font-size:13px;font-weight:500;color:#e2e2e2;" + premStyle + "white-space:nowrap;overflow:hidden;text-overflow:ellipsis;position:sticky;left:0;z-index:2;background:#141414' title='" + p.titel + (istPrem ? " (Premiere)" : "") + "'>" + kalShort(p.titel) + "</div><div style='position:relative;flex:1;height:100%'>" + bar + "</div></div>";
+      var titelClick = (p.pidx != null && p.pidx > -1) ? " onclick='event.stopPropagation();kalOpenDetail(" + p.pidx + ")'" : "";
+      var titelCursor = (p.pidx != null && p.pidx > -1) ? "cursor:pointer;" : "";
+      var zoomCur = (window.kalScale || 1) > 1 ? "zoom-out" : "zoom-in";
+      return "<div class='kal-row' style='display:flex;align-items:center;height:24px'><div" + titelClick + " style='width:120px;flex-shrink:0;padding-right:8px;text-align:right;font-size:13px;font-weight:500;color:#e2e2e2;" + titelCursor + premStyle + "white-space:nowrap;overflow:hidden;text-overflow:ellipsis;position:sticky;left:0;z-index:2;background:#141414' title='" + p.titel + (istPrem ? " (Premiere)" : "") + "'>" + kalShort(p.titel) + "</div><div onclick='kalToggleScale(event)' style='position:relative;flex:1;height:100%;cursor:" + zoomCur + "'>" + bar + "</div></div>";
     }).join("");
   }
   function sortByStart(list){
@@ -1523,8 +1556,16 @@ function openKalender() {
   P.filter(function(p){ return p.saison === "26/27" && p.kat !== "Event" && p.kat !== "Labor" && p.prem && p.ton; }).forEach(function(p){
     if (allTon.indexOf(p.ton) === -1) allTon.push(p.ton);
   });
-  allTon.sort();
   var tonVorname = {Beck:"Do", Granda:"Fe", Paciorek:"Ra", Schilling:"Th", Surgutschow:"Ol", Winter:"Mi", Zdravkovic:"Va"};
+  // Reihenfolge im Kalender: Do, Ra, Mi, Fe, Th, Ol, Va
+  var tonOrder = ["Beck", "Paciorek", "Winter", "Granda", "Schilling", "Surgutschow", "Zdravkovic"];
+  allTon.sort(function(a, b){
+    var ia = tonOrder.indexOf(a), ib = tonOrder.indexOf(b);
+    if (ia === -1) ia = 99;
+    if (ib === -1) ib = 99;
+    if (ia !== ib) return ia - ib;
+    return a.localeCompare(b);
+  });
   function tonChip(name) {
     var on = window.kalTon === name;
     var lbl = tonVorname[name] || name.slice(0,2);
@@ -1535,8 +1576,8 @@ function openKalender() {
     + allTon.map(tonChip).join("")
     + "</div>";
 
-  var tlHeight = ZOOM ? 54 : 26;
-  var innerMinW = ZOOM ? "2600px" : "820px";
+  var tlHeight = ZOOM ? 38 : 26;
+  var innerMinW = ZOOM ? "1750px" : "820px";
   // Heute-Linie: nur wenn heute im sichtbaren Zeitraum liegt
   var todayLine = "";
   var today = new Date();
@@ -1557,7 +1598,7 @@ function openKalender() {
     + (zoomBtn ? "<div style='margin:2px 0 4px;text-align:right;padding-right:56px'>" + zoomBtn + "</div>" : "")
     + legend + tonRow + "</div>"
     + "<div style='padding:0 20px 60px'>"
-    + "<div id='kal-hscroll' style='overflow-x:auto;-webkit-overflow-scrolling:touch'><div style='min-width:" + innerMinW + ";position:relative'>"
+    + "<div id='kal-hscroll' style='overflow-x:auto;-webkit-overflow-scrolling:touch'><div id='kal-scale' style='zoom:" + (window.kalScale || 1) + ";min-width:" + innerMinW + ";position:relative'>"
     + todayLine
     + "<div style='position:relative;margin-left:120px;height:" + tlHeight + "px;border-bottom:1px solid #444;margin-bottom:6px'>" + monthlines + "</div>"
     + rows
@@ -1569,13 +1610,14 @@ function openKalender() {
   document.getElementById("kalender-body").innerHTML = html;
   document.getElementById("kalender-modal").style.display = "block";
   // Im Zoom: horizontal so scrollen, dass der geklickte Monat zentriert ist
-  if (ZOOM) {
+  if (ZOOM && !window.kalSkipAutoScroll) {
     var doScroll = function() {
       var hs = document.getElementById("kal-hscroll");
       if (!hs) return;
       var midDay = new Date(ZOOM.y, ZOOM.m - 1, 15);
       var midPct = (midDay - START) / 86400000 / TOTAL; // 0..1 innerhalb Zeitachse
-      var labelW = 170;
+      var sc = window.kalScale || 1;
+      var labelW = 120 * sc;
       var axisW = hs.scrollWidth - labelW;
       var targetX = labelW + midPct * axisW - hs.clientWidth / 2;
       hs.scrollLeft = Math.max(0, targetX);
@@ -1583,6 +1625,39 @@ function openKalender() {
     if (typeof requestAnimationFrame !== "undefined") { requestAnimationFrame(doScroll); }
     else { doScroll(); }
   }
+  window.kalSkipAutoScroll = false;
+}
+function kalToggleScale(ev) {
+  var hs = document.getElementById("kal-hscroll");
+  var modal = document.getElementById("kalender-modal");
+  var alt = window.kalScale || 1;
+  var neu = (alt > 1) ? 1 : 1.5;
+  // Klickpunkt in ungezoomten Koordinaten merken
+  var ankerX = 0, ankerY = 0;
+  if (hs && ev) {
+    var r = hs.getBoundingClientRect();
+    ankerX = (hs.scrollLeft + (ev.clientX - r.left)) / alt;
+  }
+  if (modal && ev) {
+    ankerY = (modal.scrollTop + ev.clientY) / alt;
+  }
+  window.kalScale = neu;
+  window.kalSkipAutoScroll = true;
+  openKalender();
+  // Nach dem Rendern auf denselben Punkt scrollen
+  var reposition = function() {
+    var hs2 = document.getElementById("kal-hscroll");
+    var modal2 = document.getElementById("kalender-modal");
+    if (hs2 && ev) {
+      var r2 = hs2.getBoundingClientRect();
+      hs2.scrollLeft = Math.max(0, ankerX * neu - (ev.clientX - r2.left));
+    }
+    if (modal2 && ev) {
+      modal2.scrollTop = Math.max(0, ankerY * neu - ev.clientY);
+    }
+  };
+  if (typeof requestAnimationFrame !== "undefined") { requestAnimationFrame(reposition); }
+  else { reposition(); }
 }
 function kalZoomTo(y, m) {
   if (y === null) { window.kalZoom = null; }
