@@ -1424,7 +1424,7 @@ function openKalender() {
     if (p.kat === "Labor" && p.titel === "Werckmeister - Oerlikon" && p.prob && p.lv) { eteEff = p.prob; lvEff = p.lv; }
     return {titel:p.titel, kat:p.kat, typ:p.typ, ton:p.ton||"", prem:p.prem, ete:eteEff, lv:lvEff, range: !!(eteEff && lvEff), pause:p.pause||null, pidx:P.indexOf(p)};
   }).sort(function(a,b){
-    var ka = a.range ? a.ete : a.prem, kb = b.range ? b.ete : b.prem;
+    var ka = kalSortKey(a), kb = kalSortKey(b);
     return ka < kb ? -1 : 1;
   });
 
@@ -1574,7 +1574,7 @@ function openKalender() {
   }
   function sortByStart(list){
     return list.slice().sort(function(a,b){
-      var ka = (a.ete && a.lv) ? a.ete : a.prem, kb = (b.ete && b.lv) ? b.ete : b.prem;
+      var ka = kalSortKey(a), kb = kalSortKey(b);
       return ka < kb ? -1 : 1;
     });
   }
@@ -1619,6 +1619,11 @@ function openKalender() {
     + allTon.map(tonChip).join("")
     + "</div>";
 
+  function sortBtn(modus, label) {
+    var an = (window.kalSort || "te") === modus;
+    return "<span onclick=\"kalSetSort('" + modus + "')\" style='cursor:pointer;color:"
+      + (an ? "#0fe8e8" : "#0a6e6e") + ";" + (an ? "font-weight:600" : "") + "'>" + label + "</span>";
+  }
   var tlHeight = ZOOM ? 38 : 26;
   var innerMinW = ZOOM ? "1750px" : "820px";
   // Heute-Linie: nur wenn heute im sichtbaren Zeitraum liegt
@@ -1648,7 +1653,12 @@ function openKalender() {
     + todayLine
     + "<div id='kal-guide' style='position:absolute;top:0;bottom:0;width:1px;background:rgba(200,200,200,0.35);z-index:1;pointer-events:none;display:none'></div>"
     + "<div id='kal-guide-date' style='position:absolute;top:" + (tlHeight + 3) + "px;font-size:" + (ZOOM ? 12 : 11) + "px;letter-spacing:0.08em;color:#e4e4e4;background:rgba(20,20,20,0.85);padding:1px 3px;border-radius:2px;z-index:3;pointer-events:none;white-space:nowrap;display:none'></div>"
-    + "<div style='position:relative;margin-left:120px;height:" + tlHeight + "px;border-bottom:1px solid #666;margin-bottom:18px'>" + monthlines + "</div>"
+    + "<div style='display:flex;align-items:flex-end;margin-bottom:18px'>"
+    + "<div style='width:120px;flex-shrink:0;padding-right:6px;text-align:right;line-height:1.3;white-space:nowrap;overflow:hidden;position:sticky;left:0;z-index:4;background:#141414'>"
+    + "<div style='font-size:13px;font-weight:500;letter-spacing:-0.01em'><span style='color:#aaa;margin-right:4px'>SORT</span>" + sortBtn("te", "1.TE") + "<span style='color:#555;margin:0 2px'>|</span>" + sortBtn("prem", "1.VST") + "</div>"
+    + "</div>"
+    + "<div style='position:relative;flex:1;height:" + tlHeight + "px;border-bottom:1px solid #666'>" + monthlines + "</div>"
+    + "</div>"
     + rows
     + (kztSfRows ? "<div style='display:flex;align-items:center;height:22px;margin-top:14px;border-top:1px solid #666'><div style='width:120px;flex-shrink:0;padding-right:8px;text-align:right;font-size:13px;color:#888;font-style:italic;white-space:nowrap;position:sticky;left:0;z-index:2;background:#141414'>Kzt / SF / Event</div><div style='flex:1'></div></div>" + kztSfRows : "")
     + "</div></div>"
@@ -1728,6 +1738,21 @@ function openKalender() {
   }
   window.kalSkipAutoScroll = false;
 }
+// Sortierschluessel im Kalender: nach 1. TE (Standard) oder nach Prem/WA
+function kalSortKey(x) {
+  var nachStart = x.range ? x.ete : x.prem;
+  if ((window.kalSort || "te") === "prem") return x.prem || nachStart || "";
+  return nachStart || x.prem || "";
+}
+function kalSetSort(m) {
+  var hs = document.getElementById("kal-hscroll");
+  var sl = hs ? hs.scrollLeft : 0;
+  window.kalSort = m;
+  window.kalSkipAutoScroll = true;
+  openKalender();
+  var hs2 = document.getElementById("kal-hscroll");
+  if (hs2) hs2.scrollLeft = sl;
+}
 function kalToggleScale(ev) {
   var hs = document.getElementById("kal-hscroll");
   var modal = document.getElementById("kalender-modal");
@@ -1790,7 +1815,7 @@ filterAktuell();
       <p style="margin-top:12px">&laquo;<strong>Spielplan OHZ</strong>&raquo; oben links &ouml;ffnet den aktuellen Spielplan auf der Website des Opernhauses.</p>
       <p style="margin-top:12px">&laquo;<strong>Kalender</strong>&raquo; oben rechts &ouml;ffnet den tabellarischen Produktionskalender. Klick auf einen Monat in der Monatsleiste zoomt in eine Dreimonatsansicht. Klick auf inneren Bereich im Balkendiagramm vergr&ouml;ssert Ansicht um Faktor 1,5. Nochmaliger Klick verkleinert wieder auf Original.</p>
       <p style="margin-top:12px">In der Titelzeile: <strong>Button D</strong> &ouml;ffnet einen freigegebenen Google-Drive-Ordner f&uuml;r flexiblen Datei-Upload/-Zugriff zwischen allen im Google-Tonabteilung-Account eingeloggten Ger&auml;ten und <strong>Button N</strong> eine Google-Keep-Checkliste f&uuml;r schnelle Share-Notizen oder Pendenz-Eintr&auml;ge on-the-fly. &Auml;nderungen sind f&uuml;r alle sofort einsehbar und bearbeitbar.</p>
-      <p style="margin-top:12px">Die <strong>WebApp</strong> besteht aus einer einzigen HTML-Datei (ca. 200kb inkl. JS und CSS) ohne externe Abh&auml;ngigkeiten (kein Datenaustausch mit externen Servern oder Diensten &ndash; ausgenommen Links in der Titelzeile) und wird &uuml;ber GitHub gehostet (https://...). Sie l&auml;uft auf allen g&auml;ngigen Browsern unter MacOS, Windows, Android und iOS (bei Bedarf auch offline als lokale Html-Datei).</p>
+      <p style="margin-top:12px">Die <strong>WebApp</strong> besteht aus einer einzigen HTML-Datei (ca. 200kb inkl. JS und CSS) ohne externe Abh&auml;ngigkeiten (kein Datenaustausch mit externen Servern oder Diensten &ndash; ausgenommen Links in der Titelzeile und Fusszeile unter dem Kalender) und wird &uuml;ber GitHub gehostet (https://...). Sie l&auml;uft auf allen g&auml;ngigen Browsern unter MacOS, Windows, Android und iOS (bei Bedarf auch offline als lokale Html-Datei).</p>
       <p>Die Daten basieren auf den Spielplanunterlagen der technischen Direktion, des KBB sowie der Website des Opernhauses Z&uuml;rich. &Auml;nderungen w&auml;hrend laufender Spielzeit sind m&ouml;glicherweise nicht ber&uuml;cksichtigt, werden aber kontinuierlich aktualisiert.</p>
       <p>Diese WebApp ist als Hilfsmittel f&uuml;r den Produktionsalltag gedacht. F&uuml;r die Richtigkeit, Vollst&auml;ndigkeit und Aktualit&auml;t der Inhalte wird keine Gew&auml;hr &uuml;bernommen.</p>
       <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_240726" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
