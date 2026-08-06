@@ -1631,7 +1631,7 @@ function openKalender() {
     // Position innerhalb der Achse (nach 120px Label-Spalte), Strichbreite mittig ausgeglichen
     var todayFrac = (todayX/100).toFixed(5);
     todayLine = "<div style='position:absolute;top:0;bottom:0;left:calc(120px + (100% - 120px) * " + todayFrac + " - 1px);width:2px;background:rgba(10,125,125,0.46);z-index:1;pointer-events:none'></div>"
-      + "<div style='position:absolute;top:" + (tlHeight + 3) + "px;left:calc(120px + (100% - 120px) * " + todayFrac + " + 5px);font-size:" + (ZOOM ? 10 : 9) + "px;letter-spacing:0.12em;color:#0a7d7d;z-index:1;pointer-events:none;white-space:nowrap'>" + today.getDate() + "." + (today.getMonth()+1) + ".</div>";
+      + "<div id='kal-today-date' style='position:absolute;top:" + (tlHeight + 3) + "px;left:calc(120px + (100% - 120px) * " + todayFrac + " + 5px);font-size:" + (ZOOM ? 12 : 11) + "px;letter-spacing:0.08em;color:#17b0b0;background:rgba(20,20,20,0.85);padding:1px 3px;border-radius:2px;z-index:3;pointer-events:none;white-space:nowrap'>" + today.getDate() + "." + (today.getMonth()+1) + ".</div>";
   }
   var zoomBtn = ZOOM
     ? "<button onclick='kalZoomTo(null)' style='background:#1c1c1c;border:1px solid #0fe8e8;border-radius:3px;color:#0fe8e8;font-size:12px;cursor:pointer;padding:2px 10px;vertical-align:middle'>&#8594; Jahresansicht</button>"
@@ -1647,7 +1647,7 @@ function openKalender() {
     + "<div id='kal-hscroll' style='overflow-x:auto;-webkit-overflow-scrolling:touch'><div id='kal-scale' style='zoom:" + (window.kalScale || 1) + ";min-width:" + innerMinW + ";position:relative'>"
     + todayLine
     + "<div id='kal-guide' style='position:absolute;top:0;bottom:0;width:1px;background:rgba(200,200,200,0.35);z-index:1;pointer-events:none;display:none'></div>"
-    + "<div id='kal-guide-date' style='position:absolute;top:" + (tlHeight + 3) + "px;font-size:" + (ZOOM ? 10 : 9) + "px;letter-spacing:0.12em;color:#c8c8c8;z-index:1;pointer-events:none;white-space:nowrap;display:none'></div>"
+    + "<div id='kal-guide-date' style='position:absolute;top:" + (tlHeight + 3) + "px;font-size:" + (ZOOM ? 12 : 11) + "px;letter-spacing:0.08em;color:#e4e4e4;background:rgba(20,20,20,0.85);padding:1px 3px;border-radius:2px;z-index:3;pointer-events:none;white-space:nowrap;display:none'></div>"
     + "<div style='position:relative;margin-left:120px;height:" + tlHeight + "px;border-bottom:1px solid #666;margin-bottom:18px'>" + monthlines + "</div>"
     + rows
     + (kztSfRows ? "<div style='display:flex;align-items:center;height:22px;margin-top:14px;border-top:1px solid #666'><div style='width:120px;flex-shrink:0;padding-right:8px;text-align:right;font-size:13px;color:#888;font-style:italic;white-space:nowrap;position:sticky;left:0;z-index:2;background:#141414'>Kzt / SF / Event</div><div style='flex:1'></div></div>" + kztSfRows : "")
@@ -1695,6 +1695,20 @@ function openKalender() {
       guide.style.display = "none";
       if (gdate) gdate.style.display = "none";
     });
+  })();
+  // Beide Datums-Labels beim Scrollen oben im Bild halten
+  (function() {
+    var modalEl = document.getElementById("kalender-modal");
+    if (!modalEl) return;
+    var basis = tlHeight + 3;
+    modalEl.onscroll = function() {
+      var sc2 = window.kalScale || 1;
+      var oben = basis + modalEl.scrollTop / sc2;
+      var tl = document.getElementById("kal-today-date");
+      var gl = document.getElementById("kal-guide-date");
+      if (tl) tl.style.top = oben + "px";
+      if (gl) gl.style.top = oben + "px";
+    };
   })();
   // Im Zoom: horizontal so scrollen, dass der geklickte Monat zentriert ist
   if (ZOOM && !window.kalSkipAutoScroll) {
