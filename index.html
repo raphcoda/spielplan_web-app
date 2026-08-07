@@ -150,7 +150,9 @@ input[type=date]::-webkit-calendar-picker-indicator { filter: invert(0.8) bright
     <div class="sz-opt" onclick="filterSaison('24/25')">24/25</div>
     <div class="sz-opt" onclick="filterSaison('23/24')">23/24</div>
     <div class="sz-opt" onclick="filterSaison('22/23')">22/23</div>
-  </div></div>
+  </div>
+  <span class="qtag active" id="lsort-te" style="margin-left:8px" onclick="setListeSort('te')">1.TE</span><span class="qtag" id="lsort-prem" onclick="setListeSort('prem')">1.VST</span>
+  </div>
 </div>
 <div class="qbar" style="flex-wrap:nowrap;align-items:flex-start">
   <span class="qlabel" style="padding-top:3px">Art</span>
@@ -747,9 +749,7 @@ function getFiltered() {
       }
       // 2. Produktionszeitraum ueberlappt das Fenster (wie der Balken im Kalender, Pausen beruecksichtigt)
       if (!matchDate && p.ete && p.lv) {
-        var segsF = (p.pause && p.pause.length === 2)
-          ? [[p.ete, p.pause[0]], [p.pause[1], p.lv]]
-          : [[p.ete, p.lv]];
+        var segsF = prodSegmente(p);
         for (var sf = 0; sf < segsF.length; sf++) {
           var sa = new Date(segsF[sf][0]), sb = new Date(segsF[sf][1]);
           if ((!vonDate || sb >= vonDate) && (!bisDate || sa <= bisDate)) { matchDate = true; break; }
@@ -768,13 +768,51 @@ function getFiltered() {
     if (matchQ && matchTyp && matchVon && matchBis && matchSaison && matchTon) results.push(p);
   }
   results.sort(function(a, b) {
-    var da = a.prem ? new Date(a.prem) : new Date(0);
-    var db = b.prem ? new Date(b.prem) : new Date(0);
-    return da - db;
+    var ka = listeSortKey(a), kb = listeSortKey(b);
+    if (ka === kb) return 0;
+    return ka < kb ? -1 : 1;
   });
   return results;
 }
 
+// Sortierschluessel der Liste: nach 1. TE oder nach Prem/WA (Standard)
+function listeSortKey(x) {
+  if ((window.listeSort || "te") === "te") return (x.ete || x.prem || "");
+  return (x.prem || x.ete || "");
+}
+function setListeSort(m) {
+  window.listeSort = m;
+  var a = document.getElementById("lsort-te"), b = document.getElementById("lsort-prem");
+  if (a) { if (m === "te") a.classList.add("active"); else a.classList.remove("active"); }
+  if (b) { if (m === "prem") b.classList.add("active"); else b.classList.remove("active"); }
+  render();
+}
+// Balkensegmente einer Produktion: Unterbrechungen von mehr als 14 Tagen
+// ZWISCHEN Vorstellungen trennen den Balken. Der Zeitraum von der 1. TE
+// bis zur ersten Vorstellung bleibt immer zusammen (Probenzeit).
+var SEG_SCHWELLE = 14;
+function prodSegmente(p) {
+  if (!p.ete || !p.lv) return [];
+  var v = (p.vorstellungen || []).slice().sort();
+  if (v.length < 2) {
+    if (p.pause && p.pause.length === 2) return [[p.ete, p.pause[0]], [p.pause[1], p.lv]];
+    return [[p.ete, p.lv]];
+  }
+  // Ausnahme Sommernachtstraum: 1. TE steht allein, danach erst ab Probenbeginn
+  var segs;
+  if (p.titel === "Ballett 1 - Sommernachtstraum" && p.prob && p.prob > p.ete) {
+    segs = [[p.ete, p.ete], [p.prob, v[0]]];
+  } else {
+    segs = [[p.ete, v[0]]];
+  }
+  for (var i = 1; i < v.length; i++) {
+    var tage = (new Date(v[i]) - new Date(v[i-1])) / 86400000;
+    if (tage > SEG_SCHWELLE) segs.push([v[i], v[i]]);
+    else segs[segs.length - 1][1] = v[i];
+  }
+  if (p.lv > segs[segs.length - 1][1]) segs[segs.length - 1][1] = p.lv;
+  return segs;
+}
 // Umlaute vereinheitlichen: ae/oe/ue und a/o/u werden gleich behandelt,
 // damit "Tannhäuser" sowohl "Tannhauser" als auch "Tannhaeuser" findet
 function normUml(s) {
@@ -991,10 +1029,7 @@ function showDetail(p) {
   var lvDate = new Date(p.lv);
   // Aktive Segmente einer Produktion (beruecksichtigt Pausen)
   function segsOf(x) {
-    if (x.pause && x.pause.length === 2) {
-      return [[new Date(x.ete), new Date(x.pause[0])], [new Date(x.pause[1]), new Date(x.lv)]];
-    }
-    return [[new Date(x.ete), new Date(x.lv)]];
+    return prodSegmente(x).map(function(sg){ return [new Date(sg[0]), new Date(sg[1])]; });
   }
   function segOverlap(a, b) {
     for (var i=0;i<a.length;i++) for (var j=0;j<b.length;j++) {
@@ -1376,10 +1411,7 @@ function openKalender() {
   // Liegt eine Produktion (mit Segmenten) im Fenster?
   function prodVisible(p) {
     if (p.ete && p.lv) {
-      if (p.pause && p.pause.length === 2) {
-        return clipSeg(p.ete, p.pause[0]) !== null || clipSeg(p.pause[1], p.lv) !== null;
-      }
-      return clipSeg(p.ete, p.lv) !== null;
+      return prodSegmente(p).some(function(sg){ return clipSeg(sg[0], sg[1]) !== null; });
     }
     return inWindow(p.prem);
   }
@@ -1422,7 +1454,7 @@ function openKalender() {
     var eteEff = p.ete || "", lvEff = p.lv || "";
     // Werckmeister-Labor: Balken vom Probenbeginn (01.04) bis letzte Vorstellung
     if (p.kat === "Labor" && p.titel === "Werckmeister - Oerlikon" && p.prob && p.lv) { eteEff = p.prob; lvEff = p.lv; }
-    return {titel:p.titel, kat:p.kat, typ:p.typ, ton:p.ton||"", prem:p.prem, ete:eteEff, lv:lvEff, range: !!(eteEff && lvEff), pause:p.pause||null, pidx:P.indexOf(p)};
+    return {titel:p.titel, kat:p.kat, typ:p.typ, ton:p.ton||"", prem:p.prem, ete:eteEff, lv:lvEff, range: !!(eteEff && lvEff), pause:p.pause||null, prob:p.prob||"", vorstellungen:p.vorstellungen||[], pidx:P.indexOf(p)};
   }).sort(function(a,b){
     var ka = kalSortKey(a), kb = kalSortKey(b);
     return ka < kb ? -1 : 1;
@@ -1546,15 +1578,10 @@ function openKalender() {
       var col = katcolor[p.kat] || "#666";
       var bar = "";
       if (p.ete && p.lv) {
-        if (p.pause && p.pause.length === 2) {
-          var s1 = clipSeg(p.ete, p.pause[0]);
-          var s2 = clipSeg(p.pause[1], p.lv);
-          if (s1) bar += segBar(s1, col, p.titel, fmt(p.ete) + " – " + fmt(p.pause[0]) + premZeile(p) + tonZeile(p), fmtKurz(p.ete), fmtKurz(p.pause[0]));
-          if (s2) bar += segBar(s2, col, p.titel, fmt(p.pause[1]) + " – " + fmt(p.lv) + premZeile(p) + tonZeile(p), fmtKurz(p.pause[1]), fmtKurz(p.lv));
-        } else {
-          var sg = clipSeg(p.ete, p.lv);
-          if (sg) bar += segBar(sg, col, p.titel, fmt(p.ete) + " – " + fmt(p.lv) + premZeile(p) + tonZeile(p), fmtKurz(p.ete), fmtKurz(p.lv));
-        }
+        prodSegmente(p).forEach(function(sgm){
+          var sc = clipSeg(sgm[0], sgm[1]);
+          if (sc) bar += segBar(sc, col, p.titel, fmt(sgm[0]) + " – " + fmt(sgm[1]) + premZeile(p) + tonZeile(p), fmtKurz(sgm[0]), fmtKurz(sgm[1]));
+        });
         if (inWindow(p.prem)) bar += "<div style='position:absolute;top:2px;width:2px;height:20px;background:#fff;left:calc(" + (xpct(p.prem) + HALFDAY).toFixed(3) + "% - 1px)' title='Premiere " + fmt(p.prem) + "'></div>";
       } else {
         if (inWindow(p.prem)) {
@@ -1579,7 +1606,7 @@ function openKalender() {
     });
   }
   var rows = buildRows(prods);
-  var kztSfMapped = kztSf.map(function(p){ var eteEff = p.ete || "", lvEff = p.lv || ""; if (p.kat === "Labor" && p.titel === "Werckmeister - Oerlikon" && p.prob && p.lv) { eteEff = p.prob; lvEff = p.lv; } return {titel:p.titel, kat:p.kat, typ:p.typ, ton:p.ton||"", prem:p.prem, ete:eteEff, lv:lvEff, range: !!(eteEff && lvEff), pause:p.pause||null, pidx:P.indexOf(p)}; });
+  var kztSfMapped = kztSf.map(function(p){ var eteEff = p.ete || "", lvEff = p.lv || ""; if (p.kat === "Labor" && p.titel === "Werckmeister - Oerlikon" && p.prob && p.lv) { eteEff = p.prob; lvEff = p.lv; } return {titel:p.titel, kat:p.kat, typ:p.typ, ton:p.ton||"", prem:p.prem, ete:eteEff, lv:lvEff, range: !!(eteEff && lvEff), pause:p.pause||null, prob:p.prob||"", vorstellungen:p.vorstellungen||[], pidx:P.indexOf(p)}; });
   var kztSfRows = kztSfMapped.length ? buildRows(sortByStart(kztSfMapped)) : "";
 
   function kalChip(kat, label, col) {
