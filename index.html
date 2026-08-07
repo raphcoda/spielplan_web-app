@@ -1615,14 +1615,13 @@ function openKalender() {
     return "<span onclick=\"toggleKalTon('" + name + "')\" title='" + name + "' style='display:inline-flex;align-items:center;cursor:pointer;padding:2px 8px;border-radius:2px;border:1px solid " + (on ? "#0fe8e8" : "#555") + ";color:" + (on ? "#0fe8e8" : "#fff") + ";opacity:" + (on ? "1" : "0.85") + "'>" + lbl + "</span>";
   }
   var tonRow = "<div style='display:flex;gap:6px;flex-wrap:nowrap;margin-top:8px;font-size:14px;align-items:center'>"
-    + "<span style='color:#888;margin-right:2px'>Ton:</span>"
     + allTon.map(tonChip).join("")
     + "</div>";
 
   function sortBtn(modus, label) {
     var an = (window.kalSort || "te") === modus;
     return "<span onclick=\"kalSetSort('" + modus + "')\" style='cursor:pointer;color:"
-      + (an ? "#0fe8e8" : "#0a6e6e") + ";" + (an ? "font-weight:600" : "") + "'>" + label + "</span>";
+      + (an ? "#0fe8e8" : "#12a8a8") + ";" + (an ? "font-weight:600" : "") + "'>" + label + "</span>";
   }
   var tlHeight = ZOOM ? 38 : 26;
   var innerMinW = ZOOM ? "1750px" : "820px";
@@ -1653,20 +1652,23 @@ function openKalender() {
     + todayLine
     + "<div id='kal-guide' style='position:absolute;top:0;bottom:0;width:1px;background:rgba(200,200,200,0.35);z-index:1;pointer-events:none;display:none'></div>"
     + "<div id='kal-guide-date' style='position:absolute;top:" + (tlHeight + 3) + "px;font-size:" + (ZOOM ? 12 : 11) + "px;letter-spacing:0.08em;color:#e4e4e4;background:rgba(20,20,20,0.85);padding:1px 3px;border-radius:2px;z-index:3;pointer-events:none;white-space:nowrap;display:none'></div>"
-    + "<div style='display:flex;align-items:flex-end;margin-bottom:18px'>"
-    + "<div style='width:120px;flex-shrink:0;padding-right:6px;text-align:right;line-height:1.3;white-space:nowrap;overflow:hidden;position:sticky;left:0;z-index:4;background:#141414'>"
-    + "<div style='font-size:13px;font-weight:500;letter-spacing:-0.01em'><span style='color:#aaa;margin-right:4px'>SORT</span>" + sortBtn("te", "1.TE") + "<span style='color:#555;margin:0 2px'>|</span>" + sortBtn("prem", "1.VST") + "</div>"
-    + "</div>"
+    + "<div id='kal-monthrow' style='display:flex;align-items:flex-end;position:relative;z-index:5;background:#141414'>"
+    + "<div style='width:120px;flex-shrink:0;position:sticky;left:0;z-index:4;background:#141414'></div>"
     + "<div style='position:relative;flex:1;height:" + tlHeight + "px;border-bottom:1px solid #666'>" + monthlines + "</div>"
+    + "</div>"
+    + "<div style='display:flex;align-items:center;margin-top:3px;margin-bottom:5px'>"
+    + "<div style='width:120px;flex-shrink:0;padding-right:6px;text-align:left;line-height:1.3;white-space:nowrap;overflow:hidden;position:sticky;left:0;z-index:4;background:#141414;font-size:13px;font-weight:500;letter-spacing:-0.01em'>"
+    + "<span style='color:#aaa;margin-right:4px'>SORT</span>" + sortBtn("te", "1.TE") + "<span style='color:#aaa;margin:0 2px'>|</span>" + sortBtn("prem", "1.VST")
+    + "</div><div style='flex:1'></div>"
     + "</div>"
     + rows
     + (kztSfRows ? "<div style='display:flex;align-items:center;height:22px;margin-top:14px;border-top:1px solid #666'><div style='width:120px;flex-shrink:0;padding-right:8px;text-align:right;font-size:13px;color:#888;font-style:italic;white-space:nowrap;position:sticky;left:0;z-index:2;background:#141414'>Kzt / SF / Event</div><div style='flex:1'></div></div>" + kztSfRows : "")
     + "</div></div>"
     + "<div style='margin-top:20px;font-size:12px;color:#888;line-height:1.6'><span style='color:#b5b5b5'>FILTER - <span style='font-weight:bold'>" + prods.length + " EINTRÄGE</span></span></div>"
-    + "<div style='margin-top:10px;font-size:12px;color:#b5b5b5;line-height:1.6'><span onclick=\"window.open('https://teamup.com/ks119b0a3494b39295','_blank')\" style='cursor:pointer;text-decoration:underline'>Orchesterproberaum KP</span></div>"
-    + "<div style='margin-top:4px;font-size:12px;color:#b5b5b5;line-height:1.6'><span onclick=\"window.open('https://www.opernhaus.ch/tv/','_blank')\" style='cursor:pointer;text-decoration:underline'>Besetzung-Screen</span></div>"
-    + "<div style='margin-top:4px;font-size:12px;color:#b5b5b5;line-height:1.6'><span onclick=\"window.open('https://open.spotify.com/show/4N6SlElxVx0Tl7bwESQTAl','_blank')\" style='cursor:pointer;text-decoration:underline'>Audioeinf&uuml;hrungen</span></div>"
-    + "<div style='margin-top:4px;font-size:12px;color:#b5b5b5;line-height:1.6'><span onclick=\"window.open('https://open.spotify.com/show/7AqOPQlsBUAuDpwQ75o3Hw','_blank')\" style='cursor:pointer;text-decoration:underline'>Podcasts</span></div>"
+    + "<div style='margin-top:10px;font-size:14px;color:#b5b5b5;line-height:1.6'><span onclick=\"window.open('https://teamup.com/ks119b0a3494b39295','_blank')\" style='cursor:pointer;text-decoration:underline'>Orch.Proberaum KP</span></div>"
+    + "<div style='margin-top:4px;font-size:14px;color:#b5b5b5;line-height:1.6'><span onclick=\"window.open('https://www.opernhaus.ch/tv/','_blank')\" style='cursor:pointer;text-decoration:underline'>Besetzung-Screen</span></div>"
+    + "<div style='margin-top:4px;font-size:14px;color:#b5b5b5;line-height:1.6'><span onclick=\"window.open('https://open.spotify.com/show/4N6SlElxVx0Tl7bwESQTAl','_blank')\" style='cursor:pointer;text-decoration:underline'>Audioeinf&uuml;hrungen</span></div>"
+    + "<div style='margin-top:4px;font-size:14px;color:#b5b5b5;line-height:1.6'><span onclick=\"window.open('https://open.spotify.com/show/7AqOPQlsBUAuDpwQ75o3Hw','_blank')\" style='cursor:pointer;text-decoration:underline'>Podcasts</span></div>"
     + "</div>";
 
   document.getElementById("kalender-body").innerHTML = html;
@@ -1706,19 +1708,29 @@ function openKalender() {
       if (gdate) gdate.style.display = "none";
     });
   })();
-  // Beide Datums-Labels beim Scrollen oben im Bild halten
+  // Beide Datums-Labels beim Scrollen am oberen Rand halten
   (function() {
     var modalEl = document.getElementById("kalender-modal");
-    if (!modalEl) return;
+    var scaleEl = document.getElementById("kal-scale");
+    if (!modalEl || !scaleEl) return;
     var basis = tlHeight + 3;
-    modalEl.onscroll = function() {
+    var halteOben = function() {
       var sc2 = window.kalScale || 1;
-      var oben = basis + modalEl.scrollTop / sc2;
+      var rM = modalEl.getBoundingClientRect();
+      var rS = scaleEl.getBoundingClientRect();
+      // Wie weit der Kalenderinhalt bereits ueber den oberen Rand hinausgescrollt ist
+      var versatz = (rM.top - rS.top) / sc2;
+      if (versatz < 0) versatz = 0;
+      var mr = document.getElementById("kal-monthrow");
+      if (mr) mr.style.top = versatz + "px";
+      var oben = versatz + basis;   // Datumsangaben bleiben unter der Monatszeile
       var tl = document.getElementById("kal-today-date");
       var gl = document.getElementById("kal-guide-date");
       if (tl) tl.style.top = oben + "px";
       if (gl) gl.style.top = oben + "px";
     };
+    modalEl.onscroll = halteOben;
+    halteOben();
   })();
   // Im Zoom: horizontal so scrollen, dass der geklickte Monat zentriert ist
   if (ZOOM && !window.kalSkipAutoScroll) {
