@@ -1577,7 +1577,27 @@ function openKalender() {
       return ka < kb ? -1 : 1;
     });
   }
-  var rows = buildRows(prods);
+  // Bei Mehrfachauswahl von Namen: nach Tonverantwortlichem gruppieren,
+  // jede Gruppe mit dem Vornamen in Tuerkis darueber
+  var rows;
+  var aktN = kalTonAktiv();
+  if (aktN.length > 1) {
+    var tonReihe = ["Beck","Paciorek","Winter","Granda","Schilling","Surgutschow","Zdravkovic"];
+    var vorname = {Beck:"Dominik", Paciorek:"Raphael", Winter:"Milena", Granda:"Felipe",
+                   Schilling:"Thorsten", Surgutschow:"Oleg", Zdravkovic:"Vasilije"};
+    rows = "";
+    tonReihe.filter(function(n){ return aktN.indexOf(n) > -1; }).forEach(function(n, i) {
+      var grp = prods.filter(function(p){ return p.ton === n; });
+      if (!grp.length) return;
+      rows += "<div style='display:flex;align-items:center;height:22px;margin-top:" + (i ? 14 : 2) + "px'>"
+        + "<div style='width:120px;flex-shrink:0;padding-right:8px;text-align:right;font-size:13px;font-weight:500;"
+        + "color:#0fe8e8;white-space:nowrap;position:sticky;left:0;z-index:2;background:#141414'>"
+        + (vorname[n] || n) + "</div><div style='flex:1'></div></div>";
+      rows += buildRows(grp);
+    });
+  } else {
+    rows = buildRows(prods);
+  }
   var kztSfMapped = kztSf.map(function(p){ var eteEff = p.ete || "", lvEff = p.lv || ""; if (p.kat === "Labor" && p.titel === "Werckmeister - Oerlikon" && p.prob && p.lv) { eteEff = p.prob; lvEff = p.lv; } return {titel:p.titel, kat:p.kat, typ:p.typ, ton:p.ton||"", prem:p.prem, ete:eteEff, lv:lvEff, range: !!(eteEff && lvEff), pause:p.pause||null, prob:p.prob||"", vorstellungen:p.vorstellungen||[], pidx:P.indexOf(p)}; });
   var kztSfRows = kztSfMapped.length ? buildRows(sortByStart(kztSfMapped)) : "";
 
