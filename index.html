@@ -1582,14 +1582,15 @@ function openKalender() {
   var rows;
   var aktN = kalTonAktiv();
   if (aktN.length > 1) {
-    var tonReihe = ["Beck","Paciorek","Winter","Granda","Schilling","Surgutschow","Zdravkovic"];
     var vorname = {Beck:"Dominik", Paciorek:"Raphael", Winter:"Milena", Granda:"Felipe",
                    Schilling:"Thorsten", Surgutschow:"Oleg", Zdravkovic:"Vasilije"};
     rows = "";
-    tonReihe.filter(function(n){ return aktN.indexOf(n) > -1; }).forEach(function(n, i) {
+    // aktN steht bereits in Klickreihenfolge
+    aktN.forEach(function(n, i) {
       var grp = prods.filter(function(p){ return p.ton === n; });
       if (!grp.length) return;
-      rows += "<div style='display:flex;align-items:center;height:22px;margin-top:" + (i ? 14 : 2) + "px'>"
+      rows += "<div style='display:flex;align-items:center;height:22px;margin-top:" + (i ? 14 : 4) + "px;"
+        + "border-top:1px solid #3a3a3a'>"
         + "<div style='width:120px;flex-shrink:0;padding-right:8px;text-align:right;font-size:13px;font-weight:500;"
         + "color:#0fe8e8;white-space:nowrap;position:sticky;left:0;z-index:2;background:#141414'>"
         + (vorname[n] || n) + "</div><div style='flex:1'></div></div>";
@@ -1875,7 +1876,12 @@ function kalSucheLauf(q) {
   }
 }
 function kalTonAktiv() { var a = []; for (var k in window.kalTone) if (window.kalTone[k]) a.push(k); return a; }
-function toggleKalTon(n) { if (!window.kalTone) window.kalTone = {}; window.kalTone[n] = !window.kalTone[n]; openKalender(); }
+function toggleKalTon(n) {
+  if (!window.kalTone) window.kalTone = {};
+  if (window.kalTone[n]) { delete window.kalTone[n]; }
+  else { delete window.kalTone[n]; window.kalTone[n] = true; }
+  openKalender();
+}
 filterAktuell();
 </script>
 
