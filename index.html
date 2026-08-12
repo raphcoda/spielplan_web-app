@@ -217,7 +217,7 @@ var P = [
   {saison:"26/27",vorstellungen:["2027-05-07","2027-05-09","2027-05-19","2027-05-21","2027-05-23"],titel:"IOS Angels in America - Theater Winterthur",typ:"Premiere",kat:"Oper",prem:"2027-05-07",lv:"2027-05-23",prob:"2027-03-15",ete:"2027-04-26",khp:"2027-04-30",gp:"2027-05-05",ohp:"2027-05-04",bm:"René Hürlimann",licht:"Dino Strucken",ton:"Schilling",insp:"A.Bierich",graben:"",reasist:"",projleit:"Susan Klimmer",regie:"",dirig:"",dauer:"",komp:"",dram:"Kathrin Brunner",pteam:["Dentler"],team:[]},
   {saison:"26/27",vorstellungen:["2027-05-22","2027-05-28","2027-06-06","2027-06-10","2027-06-12","2027-06-15","2027-06-25","2027-06-26","2027-06-27"],titel:"Ballett 3 - See the Music",typ:"Premiere",kat:"Ballett",prem:"2027-05-22",lv:"2027-06-27",prob:"2027-05-04",ete:"2027-05-03",khp:"2027-05-12",gp:"2027-05-21",ohp:"2027-05-20",bm:"Roger Studer",licht:"Martin Gebhardt",ton:"Paciorek",insp:"Peter Warthmann",graben:"gross",reasist:"",projleit:"N.N.",regie:"",dirig:"",dauer:"",komp:"Tschaikowski / Britten / Glass",team:[]},
   {saison:"26/27",vorstellungen:["2027-05-23","2027-05-27","2027-05-30","2027-06-04","2027-06-06","2027-06-11"],titel:"Don Pasquale",typ:"WA",kat:"Oper",prem:"2027-05-23",lv:"2027-06-11",prob:"2027-05-03",ete:"2027-05-18",khp:"2027-05-20",gp:"2027-05-20",ohp:"2027-05-19",bm:"Marco Willi",licht:"Vera Ostfalk",ton:"Beck",insp:"Bierich",graben:"mittel",reasist:"Ulrich Senn",projleit:"",regie:"Michieletto",dirig:"Viotti",dauer:"2:05h",komp:"Donizetti (1843)",dram:"Kathrin Brunner",team:[]},
-  {saison:"26/27",vorstellungen:["2027-05-23","2027-05-27","2027-05-31","2027-06-19","2027-06-20"],titel:"Kinder Opernorchester",typ:"SF",kat:"Extra",prem:"2027-05-23",lv:"2027-06-20",prob:"2027-05-15",ete:"",khp:"",gp:"",ohp:"",bm:"Andreas Rasche",licht:"alle",ton:"",insp:"Bierich",graben:"",reasist:"",projleit:"",regie:"",dirig:"",dauer:"",komp:"",team:[]},
+  {saison:"26/27",vorstellungen:["2027-05-23","2027-05-27","2027-05-31","2027-06-19","2027-06-20"],titel:"Kinder Opernorchester",typ:"Premiere",kat:"Konzert",prem:"2027-05-23",lv:"2027-06-20",prob:"2027-05-15",ete:"",khp:"",gp:"",ohp:"",bm:"Andreas Rasche",licht:"alle",ton:"",insp:"Bierich",graben:"",reasist:"",projleit:"",regie:"",dirig:"",dauer:"",komp:"",team:[]},
   {saison:"26/27",vorstellungen:["2027-06-05"],titel:"A Night at the Opera",typ:"SF",kat:"Extra",prem:"2027-06-05",lv:"2027-06-05",prob:"",ete:"",khp:"",gp:"",ohp:"",bm:"Roger Studer / Andreas Rasche",licht:"Dino Strucken",ton:"",insp:"",graben:"",reasist:"",projleit:"",regie:"",dirig:"",dauer:"",komp:"",team:[]},
   {saison:"26/27",vorstellungen:["2027-06-13","2027-06-17","2027-06-20","2027-06-24","2027-06-27","2027-06-30","2027-07-02","2027-07-09"],titel:"Samson et Dalila",typ:"Premiere",kat:"Oper",prem:"2027-06-13",lv:"2027-07-09",prob:"2027-04-28",ete:"2027-05-24",khp:"2027-06-03",gp:"2027-06-10",ohp:"2027-06-09",bm:"Reto Landolt",licht:"Martin Gebhardt",ton:"Zdravkovic",insp:"Katharina Tschannen",graben:"gross",reasist:"Steven Whiting",projleit:"Moritz Noll",regie:"Titov",dirig:"Noseda",dauer:"",komp:"Saint-Saens (1877)",dram:"Fabio Dietsche / Jana Beckmann",pteam:["Didwiszus","Woods"],team:["Lise Davidsen (Dalila)","Benjamin Bernheim (Samson)"]},
   {saison:"26/27",vorstellungen:["2027-06-16","2027-06-18","2027-06-23","2027-07-04","2027-07-07","2027-07-10"],titel:"La Boheme",typ:"WA",kat:"Oper",prem:"2027-06-16",lv:"2027-07-10",prob:"2027-05-24",ete:"2027-06-09",khp:"2027-06-12",gp:"2027-06-12",ohp:"2027-06-11",bm:"Marco Willi",licht:"Elfried Roller",ton:"Schilling",insp:"Katharina Kühnel",graben:"gross",reasist:"Stephanie Lenzen",projleit:"",regie:"Michieletto",dirig:"Viotti",dauer:"2:23h",komp:"Puccini (1896)",dram:"Fabio Dietsche",team:["Ermonela Jaho (Mimi)","Jonas Kaufmann (Rodolfo)"]},
@@ -1552,7 +1552,9 @@ function openKalender() {
     return list.filter(function(p){ return ZOOM ? prodVisible(p) : true; }).map(function(p){
       var col = katcolor[p.kat] || "#666";
       var bar = "";
-      var terminAnsicht = (window.kalAnsicht === "termine") && p.vorstellungen && p.vorstellungen.length;
+      // Konzerte/Events bleiben Rauten — ausser sie haben mehrere Termine
+      var einzelTermin = !(p.ete && p.lv) && (!p.vorstellungen || p.vorstellungen.length < 2);
+      var terminAnsicht = (window.kalAnsicht === "termine") && !einzelTermin && p.vorstellungen && p.vorstellungen.length;
       if (terminAnsicht) {
         // Probentermine des Produktionszeitraums als kurze graue Marken
         [[p.prob, "Probenbeginn"], [p.ete, "1. TE"], [p.khp, "KHP"], [p.ohp, "OHP"], [p.gp, "GP"]].forEach(function(m){
@@ -1563,7 +1565,7 @@ function openKalender() {
         // Einzeltermine statt durchgehendem Balken
         p.vorstellungen.forEach(function(dt){
           if (!inWindow(dt)) return;
-          var istPremDatum = (dt === p.prem);
+          var istPremDatum = (dt === p.prem) && (p.typ === "Premiere" || p.typ === "WA");
           bar += "<div style='position:absolute;top:3px;width:" + (ZOOM ? 3 : 2) + "px;height:18px;border-radius:1px;background:"
                + (istPremDatum ? "#ffffff" : col) + ";left:calc(" + (xpct(dt) + HALFDAY).toFixed(3) + "% - 1px)' title='"
                + p.titel + "\n" + fmt(dt) + (istPremDatum ? premZeile(p) : "") + tonZeile(p) + "'></div>";
@@ -1573,7 +1575,13 @@ function openKalender() {
           var sc = clipSeg(sgm[0], sgm[1]);
           if (sc) bar += segBar(sc, col, p.titel, fmt(sgm[0]) + " – " + fmt(sgm[1]) + premZeile(p) + tonZeile(p), fmtKurz(sgm[0]), fmtKurz(sgm[1]));
         });
-        if (inWindow(p.prem)) bar += "<div style='position:absolute;top:2px;width:2px;height:20px;background:#fff;left:calc(" + (xpct(p.prem) + HALFDAY).toFixed(3) + "% - 1px)' title='Premiere " + fmt(p.prem) + "'></div>";
+        if (inWindow(p.prem) && (p.typ === "Premiere" || p.typ === "WA")) bar += "<div style='position:absolute;top:2px;width:2px;height:20px;background:#fff;left:calc(" + (xpct(p.prem) + HALFDAY).toFixed(3) + "% - 1px)' title='Premiere " + fmt(p.prem) + "'></div>";
+      } else if (p.vorstellungen && p.vorstellungen.length > 1) {
+        // mehrere Termine ohne Produktionszeitraum: Balken vom ersten bis zum letzten
+        var vs = p.vorstellungen.slice().sort();
+        var scK = clipSeg(vs[0], vs[vs.length - 1]);
+        if (scK) bar += segBar(scK, col, p.titel, fmt(vs[0]) + " – " + fmt(vs[vs.length - 1]) + tonZeile(p), fmtKurz(vs[0]), fmtKurz(vs[vs.length - 1]));
+        if (inWindow(p.prem) && (p.typ === "Premiere" || p.typ === "WA")) bar += "<div style='position:absolute;top:2px;width:2px;height:20px;background:#fff;left:calc(" + (xpct(p.prem) + HALFDAY).toFixed(3) + "% - 1px)' title='" + (p.typ === "WA" ? "WA " : "Premiere ") + fmt(p.prem) + "'></div>";
       } else {
         if (inWindow(p.prem)) {
           var dx = xpct(p.prem) + HALFDAY;
@@ -1660,7 +1668,7 @@ function openKalender() {
   function ansichtBtn(modus, label) {
     var an = (window.kalAnsicht || "balken") === modus;
     return "<span onclick=\"kalSetAnsicht('" + modus + "')\" style='cursor:pointer;color:"
-      + (an ? "#0fe8e8" : "#0a6e6e") + ";" + (an ? "font-weight:600" : "") + "'>" + label + "</span>";
+      + (an ? "#0fe8e8" : "#12a8a8") + ";" + (an ? "font-weight:600" : "") + "'>" + label + "</span>";
   }
   function sortBtn(modus, label) {
     var an = (window.kalSort || "te") === modus;
@@ -1679,7 +1687,7 @@ function openKalender() {
     // Position innerhalb der Achse (nach 120px Label-Spalte), Strichbreite mittig ausgeglichen
     var todayFrac = (todayX/100).toFixed(5);
     todayLine = "<div style='position:absolute;top:0;bottom:0;left:calc(120px + (100% - 120px) * " + todayFrac + " - 1px);width:2px;background:rgba(10,125,125,0.46);z-index:1;pointer-events:none'></div>"
-      + "<div id='kal-today-date' style='position:absolute;top:" + (tlHeight + 3) + "px;left:calc(120px + (100% - 120px) * " + todayFrac + " + 5px);font-size:" + (ZOOM ? 12 : 11) + "px;letter-spacing:0.08em;color:#17b0b0;background:rgba(20,20,20,0.85);padding:1px 3px;border-radius:2px;z-index:3;pointer-events:none;white-space:nowrap'>" + today.getDate() + "." + (today.getMonth()+1) + ".</div>";
+      + "<div id='kal-today-date' style='position:absolute;top:" + (tlHeight + 3) + "px;left:calc(120px + (100% - 120px) * " + todayFrac + " + 5px);font-size:" + (ZOOM ? 13 : 12) + "px;letter-spacing:0.08em;color:#17b0b0;background:rgba(20,20,20,0.85);padding:1px 3px;border-radius:2px;z-index:1;pointer-events:none;white-space:nowrap'>" + today.getDate() + "." + (today.getMonth()+1) + ".</div>";
   }
   var zoomBtn = ZOOM
     ? "<button onclick='kalZoomTo(null)' style='background:#1c1c1c;border:1px solid #0fe8e8;border-radius:3px;color:#0fe8e8;font-size:12px;cursor:pointer;padding:2px 10px;vertical-align:middle'>&#8594; Jahresansicht</button>"
@@ -1695,11 +1703,19 @@ function openKalender() {
     + "<div id='kal-hscroll' style='overflow-x:auto;-webkit-overflow-scrolling:touch'><div id='kal-scale' style='zoom:" + (window.kalScale || 1) + ";min-width:" + innerMinW + ";position:relative'>"
     + todayLine
     + "<div id='kal-guide' style='position:absolute;top:0;bottom:0;width:1px;background:rgba(200,200,200,0.35);z-index:1;pointer-events:none;display:none'></div>"
-    + "<div id='kal-guide-date' style='position:absolute;top:" + (tlHeight + 3) + "px;font-size:" + (ZOOM ? 12 : 11) + "px;letter-spacing:0.08em;color:#e4e4e4;background:rgba(20,20,20,0.85);padding:1px 3px;border-radius:2px;z-index:3;pointer-events:none;white-space:nowrap;display:none'></div>"
+    + "<div id='kal-guide-date' style='position:absolute;top:" + (tlHeight + 3) + "px;font-size:" + (ZOOM ? 13 : 12) + "px;letter-spacing:0.08em;color:#e4e4e4;background:rgba(20,20,20,0.85);padding:1px 3px;border-radius:2px;z-index:1;pointer-events:none;white-space:nowrap;display:none'></div>"
     + "<div id='kal-monthrow' style='display:flex;align-items:flex-end;position:relative;z-index:5;background:#141414'>"
-    + "<div style='width:120px;flex-shrink:0;align-self:stretch;position:sticky;left:0;z-index:6;background:#141414;display:flex;align-items:flex-end;justify-content:flex-start;padding-left:2px;padding-bottom:2px'>"
-    + "<span onclick='kalSucheToggle()' title='Produktion suchen' style='cursor:pointer;line-height:0;opacity:0.75'>"
-    + "<svg width='16' height='16' viewBox='0 0 16 16' fill='none' stroke='#cfcfcf' stroke-width='1.6'><circle cx='6.8' cy='6.8' r='4.6'/><line x1='10.4' y1='10.4' x2='14.6' y2='14.6' stroke-linecap='round'/></svg></span>"
+    + "<div style='width:120px;flex-shrink:0;align-self:stretch;position:sticky;left:0;z-index:6;background:#141414;display:flex;align-items:flex-end;justify-content:flex-start;padding-left:1px;padding-bottom:2px;font-size:13px;font-weight:500;letter-spacing:-0.01em;white-space:nowrap;line-height:1.3'>"
+    + ansichtBtn("balken", "BALKEN") + "<span style='display:inline-block;width:5px'></span>" + ansichtBtn("termine", "TERMINE")
+    + "</div>"
+    + "<div style='position:relative;flex:1;height:" + tlHeight + "px;border-bottom:1px solid #666'>" + monthlines + "</div>"
+    + "</div>"
+    + "<div id='kal-sortrow' style='display:flex;align-items:stretch;padding:3px 0 5px;position:relative;z-index:4'>"
+    + "<div style='width:120px;flex-shrink:0;padding-right:12px;line-height:1.3;white-space:nowrap;position:sticky;left:0;z-index:5;background:#141414;font-size:13px;font-weight:500;letter-spacing:-0.01em;display:flex;align-items:center;padding-left:3px'>"
+    + "<span id='kal-sortbtns' style='display:flex;align-items:center;width:100%'>"
+    + "<span onclick='kalSucheToggle()' title='Produktion suchen' style='cursor:pointer;line-height:0;opacity:0.75;flex-shrink:0;margin-right:auto'>" + "<svg width='16' height='16' viewBox='0 0 16 16' fill='none' stroke='#cfcfcf' stroke-width='1.6'><circle cx='6.8' cy='6.8' r='4.6'/><line x1='10.4' y1='10.4' x2='14.6' y2='14.6' stroke-linecap='round'/></svg>" + "</span>"
+    + sortBtn("te", "1.TE") + "<span style='display:inline-block;width:5px'></span>" + sortBtn("prem", "1.VST")
+    + "</span>"
     + "<input id='kal-suche' type='text' placeholder='Titel suchen' oninput='kalSucheLauf(this.value)' "
     + "style='display:none;position:absolute;left:0;bottom:1px;width:92px;z-index:7;background:#181818;border:1px solid #0a9090;"
     + "color:#f0a050;font-size:13px;padding:3px 5px;border-radius:2px;outline:none;-webkit-appearance:none'>"
@@ -1707,25 +1723,16 @@ function openKalender() {
     + "style='display:none;position:absolute;left:100px;bottom:1px;z-index:7;color:#f0a050;font-size:17px;"
     + "line-height:22px;cursor:pointer;padding:0 2px'>&times;</span>"
     + "</div>"
-    + "<div style='position:relative;flex:1;height:" + tlHeight + "px;border-bottom:1px solid #666'>" + monthlines + "</div>"
-    + "</div>"
-    + "<div style='display:flex;align-items:stretch;padding:3px 0 5px;background:#141414;position:relative;z-index:4'>"
-    + "<div style='width:120px;flex-shrink:0;padding-right:6px;text-align:left;line-height:1.3;white-space:nowrap;overflow:hidden;position:sticky;left:0;z-index:5;background:#141414;font-size:13px;font-weight:500;letter-spacing:-0.01em'>"
-    + "<span style='color:#aaa;margin-right:4px'>SORT</span>" + sortBtn("te", "1.TE") + "<span style='color:#aaa;margin:0 2px'>|</span>" + sortBtn("prem", "1.VST")
-    + "</div>"
-    + "<div style='flex-shrink:0;position:sticky;left:126px;z-index:5;background:#141414;padding-right:10px;"
-    + "white-space:nowrap;font-size:13px;font-weight:500;letter-spacing:-0.01em'>"
-    + ansichtBtn("balken", "Balken") + "<span style='color:#aaa;margin:0 3px'>|</span>" + ansichtBtn("termine", "Termine")
-    + "</div><div style='flex:1;background:#141414'></div>"
+    + "<div style='flex:1'></div>"
     + "</div>"
     + rows
     + (kztSfRows ? "<div style='display:flex;align-items:center;height:22px;margin-top:14px;border-top:1px solid #666'><div style='width:120px;flex-shrink:0;height:22px;line-height:22px;padding-right:8px;text-align:right;font-size:13px;color:#888;font-style:italic;white-space:nowrap;position:sticky;left:0;z-index:2;background:#141414'>Kzt / SF / Event</div><div style='flex:1'></div></div>" + kztSfRows : "")
     + "</div></div>"
     + "<div style='margin-top:20px;font-size:12px;color:#888;line-height:1.6'><span style='color:#b5b5b5'>FILTER - <span style='font-weight:bold'>" + prods.length + " EINTRÄGE</span></span></div>"
-    + "<div style='margin-top:10px;font-size:14px;color:#b5b5b5;line-height:1.6'><span onclick=\"window.open('https://teamup.com/ks119b0a3494b39295','_blank')\" style='cursor:pointer;text-decoration:underline'>Orch.Proberaum KP</span></div>"
-    + "<div style='margin-top:4px;font-size:14px;color:#b5b5b5;line-height:1.6'><span onclick=\"window.open('https://www.opernhaus.ch/tv/','_blank')\" style='cursor:pointer;text-decoration:underline'>Besetzung-Screen</span></div>"
-    + "<div style='margin-top:4px;font-size:14px;color:#b5b5b5;line-height:1.6'><span onclick=\"window.open('https://open.spotify.com/show/4N6SlElxVx0Tl7bwESQTAl','_blank')\" style='cursor:pointer;text-decoration:underline'>Audioeinf&uuml;hrungen</span></div>"
-    + "<div style='margin-top:4px;font-size:14px;color:#b5b5b5;line-height:1.6'><span onclick=\"window.open('https://open.spotify.com/show/7AqOPQlsBUAuDpwQ75o3Hw','_blank')\" style='cursor:pointer;text-decoration:underline'>Podcasts</span></div>"
+    + "<div style='margin-top:10px;font-size:14px;color:#cccccc;line-height:1.6'><span onclick=\"window.open('https://teamup.com/ks119b0a3494b39295','_blank')\" style='cursor:pointer;text-decoration:underline'>Orch.Proberaum KP</span></div>"
+    + "<div style='margin-top:4px;font-size:14px;color:#cccccc;line-height:1.6'><span onclick=\"window.open('https://www.opernhaus.ch/tv/','_blank')\" style='cursor:pointer;text-decoration:underline'>Besetzung-Screen</span></div>"
+    + "<div style='margin-top:4px;font-size:14px;color:#cccccc;line-height:1.6'><span onclick=\"window.open('https://open.spotify.com/show/4N6SlElxVx0Tl7bwESQTAl','_blank')\" style='cursor:pointer;text-decoration:underline'>Audioeinf&uuml;hrungen</span></div>"
+    + "<div style='margin-top:4px;font-size:14px;color:#cccccc;line-height:1.6'><span onclick=\"window.open('https://open.spotify.com/show/7AqOPQlsBUAuDpwQ75o3Hw','_blank')\" style='cursor:pointer;text-decoration:underline'>Podcasts</span></div>"
     + "</div>";
 
   document.getElementById("kalender-body").innerHTML = html;
@@ -1780,7 +1787,7 @@ function openKalender() {
       if (versatz < 0) versatz = 0;
       var mr = document.getElementById("kal-monthrow");
       if (mr) mr.style.top = versatz + "px";
-      var oben = versatz + basis;   // Datumsangaben bleiben unter der Monatszeile
+      var oben = versatz + basis;   // Datumsangaben sitzen direkt unter der Monatsleiste
       var tl = document.getElementById("kal-today-date");
       var gl = document.getElementById("kal-guide-date");
       if (tl) tl.style.top = oben + "px";
@@ -1877,10 +1884,13 @@ function toggleKalKat(k) { window.kalKats[k] = !window.kalKats[k]; openKalender(
 function kalSucheToggle() {
   var f = document.getElementById("kal-suche");
   if (!f) return;
+  var btns = document.getElementById("kal-sortbtns");
   if (f.style.display === "none" || !f.style.display) {
+    if (btns) btns.style.visibility = "hidden";
     f.style.display = "block";
     f.focus();
   } else {
+    if (btns) btns.style.visibility = "visible";
     f.value = "";
     kalSucheLauf("");
     f.style.display = "none";
@@ -1889,11 +1899,8 @@ function kalSucheToggle() {
   }
 }
 function kalSucheLeeren() {
-  var f = document.getElementById("kal-suche");
-  if (!f) return;
-  f.value = "";
-  kalSucheLauf("");
-  f.focus();
+  // Klick auf das x schliesst die Suche wieder zur Lupe
+  kalSucheToggle();
 }
 function kalSucheLauf(q) {
   var such = normUml(q).trim();
@@ -1941,8 +1948,8 @@ filterAktuell();
       <p style="margin-top:12px">Die <strong>WebApp</strong> besteht aus einer einzigen HTML-Datei (ca. 200kb inkl. JS und CSS) ohne externe Abh&auml;ngigkeiten (kein Datenaustausch mit externen Servern oder Diensten &ndash; ausgenommen Links in der Titelzeile und Fusszeile unter dem Kalender) und wird &uuml;ber GitHub gehostet (https://...). Sie l&auml;uft auf allen g&auml;ngigen Browsern unter MacOS, Windows, Android und iOS (bei Bedarf auch offline als lokale Html-Datei).</p>
       <p>Die Daten basieren auf den Spielplanunterlagen der technischen Direktion, des KBB sowie der Website des Opernhauses Z&uuml;rich. &Auml;nderungen w&auml;hrend laufender Spielzeit sind m&ouml;glicherweise nicht ber&uuml;cksichtigt, werden aber kontinuierlich aktualisiert.</p>
       <p>Diese WebApp ist als Hilfsmittel f&uuml;r den Produktionsalltag gedacht. F&uuml;r die Richtigkeit, Vollst&auml;ndigkeit und Aktualit&auml;t der Inhalte wird keine Gew&auml;hr &uuml;bernommen.</p>
-      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_240726" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
-      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_240726</p>
+      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_120826" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
+      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_120826</p>
       </div>
   </div>
 </div>
