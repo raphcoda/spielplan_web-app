@@ -11,19 +11,19 @@ body { overflow-x: hidden; font-family: -apple-system, 'Helvetica Neue', Arial, 
 #header { padding: 12px 16px 8px; border-bottom: 1px solid #333; background: #1c1c1c; flex-shrink: 0; }
 .eyebrow { font-size: 11px; letter-spacing: 0.15em; color: #bbb; text-transform: uppercase; margin-bottom: 4px; }
 h1 { font-size: 17px; font-weight: 500; color: #fff; margin-bottom: 10px; }
-#search { font-weight:400; width: 100%; background: #181818; border: 1px solid #333; color: #f0a050 !important; padding: 6px 14px; font-size: 15px; font-weight: 500; outline: none; border-radius: 2px; margin-bottom: 10px; -webkit-appearance: none; }
+#search { font-weight:400; width: 100%; background: #181818; border: 1px solid #333; color: #f0a050 !important; height: 32px; box-sizing: border-box; padding: 0 14px; font-size: 15px; font-weight: 500; outline: none; border-radius: 4px; margin-bottom: 10px; -webkit-appearance: none; }
 #search::placeholder { color: #999 !important; font-size: 13px; font-style: italic; }
 .qbar { display: flex; gap: 4px; flex-wrap: nowrap; padding: 8px 20px 8px 16px; border-bottom: 1px solid #222; align-items: center; background:#1c1c1c; }
 .qlabel { font-weight:500; font-size: 14px; color: #999; letter-spacing: 0.1em; margin-right: 4px; white-space: nowrap; flex-shrink: 0; width: 36px; display: inline-block; }
-.qtag { cursor: pointer; font-size: 14px; padding: 3px 6px; border: 1px solid #444; border-radius: 1px; color: #ccc; white-space: nowrap; -webkit-tap-highlight-color: transparent; margin: 2px 1px; }
+.qtag { cursor: pointer; font-size: 14px; padding: 1px 6px; border: 1px solid #444; border-radius: 4px; color: #ccc; white-space: nowrap; -webkit-tap-highlight-color: transparent; margin: 2px 1px; }
 .qtag:active { background: #181818; }
 .qtag.active { border-color: #0fe8e8; color: #0fe8e8; }
 #filters { display: flex; flex-wrap: nowrap; gap: 8px; align-items: center; padding-top: 4px; }
-input[type=date] { background: #181818; border: 1px solid #333; color: #e8e8e8; padding: 7px 10px; font-size: 14px; font-weight: 500; color-scheme: dark; border-radius: 2px; -webkit-appearance: none; }
+input[type=date] { background: #181818; border: 1px solid #333; color: #e8e8e8; height: 26px; box-sizing: border-box; padding: 0 10px; font-size: 14px; font-weight: 500; color-scheme: dark; border-radius: 4px; -webkit-appearance: none; }
 #reset { background: none; border: none; color: #f0a050; cursor: pointer; font-size: 13px; padding: 0; display: none; }
 #count { margin-left: auto; color: #ccc; font-size: 13px; }
 #main { display: flex; overflow: hidden; flex: 1; min-height: 0; }
-#list { flex: 1; overflow-y: scroll; overflow-x: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; height: 100%; padding-top: 12px; padding-bottom: max(220px, calc(200px + env(safe-area-inset-bottom))); box-sizing: border-box; background: #131313; }
+#list { flex: 1; overflow-y: scroll; overflow-x: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; height: 100%; padding-top: 6px; padding-bottom: max(220px, calc(200px + env(safe-area-inset-bottom))); box-sizing: border-box; background: #131313; }
 .row { padding: 12px 20px; cursor: pointer; border-bottom: 1px solid #262626; display: flex; align-items: baseline; gap: 8px; white-space: nowrap; min-width: max-content; -webkit-tap-highlight-color: transparent; }
 .row:active { background: #161616; }
 .row.active { background: #2a2a2a; }
@@ -130,18 +130,18 @@ input[type=date]::-webkit-calendar-picker-indicator { filter: invert(0.8) bright
     <span id="search-clear" onclick="clearSearch()" style="position:absolute;right:10px;top:5px;cursor:pointer;color:#f0a050;font-size:18px;line-height:1;display:none;">&#x2715;</span>
   </div>
   <div id="filters" style="display:flex;flex-wrap:nowrap;gap:8px;align-items:center;">
-    <input type="date" id="von" onchange="applyDateSaison()" style="background:#181818;border:1px solid #333;color:#e8e8e8;padding:4px 10px;font-size:14px;font-weight:500;border-radius:2px;outline:none;-webkit-appearance:none;">
+    <input type="date" id="von" onchange="applyDateSaison()" style="background:#181818;border:1px solid #333;color:#e8e8e8;height:26px;box-sizing:border-box;padding:0 10px;font-size:14px;font-weight:500;border-radius:4px;outline:none;-webkit-appearance:none;">
     <span style="color:#999;font-size:14px">bis</span>
-    <input type="date" id="bis" onchange="applyDateSaison()" style="background:#181818;border:1px solid #333;color:#e8e8e8;padding:4px 10px;font-size:14px;font-weight:500;border-radius:2px;outline:none;-webkit-appearance:none;">
+    <input type="date" id="bis" onchange="applyDateSaison()" style="background:#181818;border:1px solid #333;color:#e8e8e8;height:26px;box-sizing:border-box;padding:0 10px;font-size:14px;font-weight:500;border-radius:4px;outline:none;-webkit-appearance:none;">
     <button id="reset" onclick="resetFilters()">X RESET</button>
     <span id="count"></span>
   </div>
   </div>
 </div>
 
-<div class="qbar" style="flex-wrap:nowrap;align-items:flex-start;width:100%">
+<div class="qbar" style="flex-wrap:nowrap;align-items:flex-start;width:100%;padding-top:5px;padding-bottom:5px">
   <div style="display:flex;flex-wrap:nowrap;gap:5px;flex:1">
-  <button id="aktuell-btn" onclick="filterAktuell()" style="background:none;border:1px solid #333;color:#ccc;font-size:14px;padding:3px 9px;border-radius:1px;cursor:pointer;margin-right:4px;-webkit-tap-highlight-color:transparent;">Aktuell</button><button id="sz-btn" onclick="toggleSzDropdown()" style="background:none;border:1px solid #333;color:#ccc;font-size:14px;padding:3px 9px;border-radius:1px;cursor:pointer;">25/26 &#9660;</button>
+  <button id="aktuell-btn" onclick="filterAktuell()" style="background:none;border:1px solid #333;color:#ccc;font-size:14px;height:25px;box-sizing:border-box;padding:0 8px;border-radius:4px;cursor:pointer;margin-right:4px;-webkit-tap-highlight-color:transparent;">Aktuell</button><button id="sz-btn" onclick="toggleSzDropdown()" style="background:none;border:1px solid #333;color:#ccc;font-size:14px;height:25px;box-sizing:border-box;padding:0 8px;border-radius:4px;cursor:pointer;">25/26 &#9660;</button>
   <div id="sz-dropdown" style="display:none;position:fixed;background:#181818;border:1px solid #444;border-radius:2px;z-index:100;min-width:100px;">
     <div class="sz-opt" onclick="filterSaison('alle')">Alle</div>
     <div class="sz-opt" onclick="filterSaison('26/27')">26/27</div>
@@ -150,10 +150,10 @@ input[type=date]::-webkit-calendar-picker-indicator { filter: invert(0.8) bright
     <div class="sz-opt" onclick="filterSaison('23/24')">23/24</div>
     <div class="sz-opt" onclick="filterSaison('22/23')">22/23</div>
   </div>
-  <span class="qtag active" id="lsort-te" style="margin-left:60px" onclick="setListeSort('te')">1.TE</span><span class="qtag" id="lsort-prem" onclick="setListeSort('prem')">1.VST</span>
+  <span class="qtag active" id="lsort-te" style="margin-left:64px;padding:1px 6px" onclick="setListeSort('te')">1.TE</span><span class="qtag" id="lsort-prem" style="padding:1px 6px" onclick="setListeSort('prem')">1.VST</span>
   </div>
 </div>
-<div class="qbar" style="flex-wrap:nowrap;align-items:flex-start">
+<div class="qbar" style="flex-wrap:nowrap;align-items:flex-start;padding-bottom:5px">
   <div style="display:flex;flex-wrap:nowrap;gap:5px">
     <span class="qtag art-tag" id="tag-Premiere" onclick="filterTyp('Premiere')">PRM</span>
     <span class="qtag art-tag" id="tag-WA" onclick="filterTyp('WA')">WA</span>
@@ -165,7 +165,7 @@ input[type=date]::-webkit-calendar-picker-indicator { filter: invert(0.8) bright
   </div>
 </div>
 
-<div class="qbar" style="flex-wrap:nowrap;align-items:flex-start">
+<div class="qbar" style="flex-wrap:nowrap;align-items:flex-start;padding-top:8px;padding-bottom:14px">
   <div style="display:flex;flex-wrap:nowrap;gap:5px;font-size:13px">
     <span class="qtag" id="ton-beck" onclick="filterTon('Beck')" title="Dominik Beck">Do</span>
     <span class="qtag" id="ton-paciorek" onclick="filterTon('Paciorek')" title="Raphael Paciorek">Ra</span>
@@ -923,7 +923,7 @@ function render() {
         var db = b.prem ? new Date(b.prem) : new Date(0);
         return da - db;
       });
-      html += "<div style='padding:6px 20px 4px;font-size:11px;color:#0fe8e8;letter-spacing:0.1em;text-transform:uppercase;border-bottom:1px solid #222'>Heute</div>";
+      html += "<div style='padding:2px 20px 4px;font-size:11px;color:#0fe8e8;letter-spacing:0.1em;text-transform:uppercase;border-bottom:1px solid #222'>Heute</div>";
       for (var ti = 0; ti < todayProds.length; ti++) {
         var tp = todayProds[ti];
         var tidx = P.indexOf(tp);
@@ -948,7 +948,7 @@ function render() {
               .concat(tonReihe.filter(function(k){ return tonFilters[k]; }).map(function(k){ return tonLabel[k] || k; }));
   var listenTitel = teile.length ? teile.join(" · ") : (aktuellAktiv ? "Aktuell" : "");
   if (results.length > 0 && listenTitel) {
-    html += "<div style='padding:6px 20px 4px;font-size:11px;color:#0fe8e8;letter-spacing:0.1em;text-transform:uppercase;border-bottom:1px solid #222'>" + listenTitel + "</div>";
+    html += "<div style='padding:2px 20px 4px;font-size:11px;color:#0fe8e8;letter-spacing:0.1em;text-transform:uppercase;border-bottom:1px solid #222'>" + listenTitel + "</div>";
   }
   for (var i = 0; i < results.length; i++) {
     var p = results[i];
@@ -995,7 +995,7 @@ function showDetail(p) {
   html += "<button id='detail-close' onclick='closeDetail()'>close</button>";
   html += "<div class='det-type'>" + p.typ + (p.saison ? " &nbsp;&middot;&nbsp; SZ " + p.saison : "")
         + (p.titel.indexOf("Un Ballo in Maschera Edinburgh") > -1 ? "" : " <span onclick='kalenderZeigen(" + P.indexOf(p) + ")' title='Im Kalender zeigen'"
-        + " style='margin-left:10px;position:relative;top:-2px;font-size:13px;letter-spacing:0.06em;color:#0fe8e8;border:1px solid #0a6e6e;"
+        + " style='margin-left:10px;position:relative;top:-1px;font-size:13px;letter-spacing:0.06em;color:#0fe8e8;border:1px solid #0a6e6e;"
         + "border-radius:2px;padding:1px 7px;cursor:pointer;white-space:nowrap'>KAL &#8594;</span>") + "</div>";
   html += "<div class='det-title'>" + p.titel
         + (evExtern(p) && p.location ? " <span style='margin-left:2px;font-size:16px;font-weight:400;color:#bbb;letter-spacing:0.1em;text-transform:uppercase;white-space:nowrap'>" + p.location + "</span>" : "")
@@ -1814,7 +1814,7 @@ function openKalender() {
   var hint = ZOOM ? "" : "<span style='font-size:12px;color:#aaa;margin-left:8px;white-space:nowrap'>(Klick Monat für Zoom)</span>";
 
   var html = "<div style='background:#141414;padding:16px 20px 10px;border-bottom:1px solid #555'>"
-    + "<button onclick=\"document.getElementById('kalender-modal').style.display='none'\" style='position:fixed;top:42px;right:10px;z-index:2100;background:#181818;border:1px solid #333;border-radius:3px;color:#f0a050;font-size:16px;cursor:pointer;padding:1px 5px;line-height:1.2'>close</button>"
+    + "<button onclick=\"document.getElementById('kalender-modal').style.display='none'\" style='position:fixed;top:45px;right:13px;z-index:2100;background:#181818;border:1px solid #333;border-radius:3px;color:#f0a050;font-size:16px;cursor:pointer;padding:1px 5px;line-height:1.2'>close</button>"
     + "<h2 style='margin:0 0 4px;font-size:18px;font-weight:500;font-style:italic;color:#ffffff'><span onclick=\"window.open('https://www.opernhaus.ch/spielplan/kalendarium/','_blank')\" style='white-space:nowrap;cursor:pointer'>KALENDER OHZ 26/27</span><span style='font-style:normal'>" + hint + "</span></h2>"
     + (zoomBtn ? "<div style='margin:2px 0 4px;text-align:right;padding-right:56px'>" + zoomBtn + "</div>" : "")
     + legend + tonRow + "</div>"
@@ -1830,7 +1830,7 @@ function openKalender() {
     + "<div style='position:relative;flex:1;height:" + tlHeight + "px;border-bottom:1px solid #666'>" + monthlines + "</div>"
     + "</div>"
     + "<div id='kal-sortrow' style='display:flex;align-items:stretch;padding:3px 0 5px;position:relative;z-index:4'>"
-    + "<div style='width:120px;flex-shrink:0;padding-right:16px;line-height:1.3;white-space:nowrap;position:sticky;left:0;z-index:5;background:#141414;font-size:13px;font-weight:500;letter-spacing:-0.01em;display:flex;align-items:center;padding-left:3px'>"
+    + "<div style='width:120px;flex-shrink:0;padding-right:18px;line-height:1.3;white-space:nowrap;position:sticky;left:0;z-index:5;background:#141414;font-size:13px;font-weight:500;letter-spacing:-0.01em;display:flex;align-items:center;padding-left:3px'>"
     + "<span id='kal-sortbtns' style='display:flex;align-items:center;width:100%'>"
     + "<span onclick='kalSucheToggle()' title='Produktion suchen' style='cursor:pointer;line-height:0;opacity:0.95;flex-shrink:0;margin-right:auto'>" + "<svg width='16' height='16' viewBox='0 0 16 16' fill='none' stroke='#eaeaea' stroke-width='1.6'><circle cx='6.8' cy='6.8' r='4.6'/><line x1='10.4' y1='10.4' x2='14.6' y2='14.6' stroke-linecap='round'/></svg>" + "</span>"
     + sortBtn("te", "1.TE") + "<span style='display:inline-block;width:5px'></span>" + sortBtn("prem", "1.VST")
