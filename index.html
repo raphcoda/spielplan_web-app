@@ -916,7 +916,7 @@ function render() {
     }
     var dSpH = new Date(vonEl.value);
     var mSpH = dSpH.getMonth() + 1, tSpH = dSpH.getDate();
-    var inSommerH = (mSpH === 7 && tSpH > 15) || (mSpH === 8 && tSpH <= 15);
+    var inSommerH = (mSpH === 7 && tSpH > 15) || (mSpH === 8 && tSpH <= 23);
     if (todayProds.length > 0 || inSommerH) {
       todayProds.sort(function(a, b) {
         var da = a.prem ? new Date(a.prem) : new Date(0);
