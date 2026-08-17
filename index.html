@@ -993,10 +993,10 @@ function showDetail(p) {
   document.getElementById("detail").style.display = "block";
   var html = "";
   html += "<button id='detail-close' onclick='closeDetail()'>close</button>";
-  html += "<div class='det-type'>" + p.typ + (p.saison ? " &nbsp;&middot;&nbsp; SZ " + p.saison : "")
+  html += "<div class='det-type'>" + (p.typ === "Premiere" ? "PREM" : p.typ) + (p.saison ? " &nbsp;&middot;&nbsp; SZ " + p.saison : "")
         + (p.titel.indexOf("Un Ballo in Maschera Edinburgh") > -1 ? "" : " <span onclick='kalenderZeigen(" + P.indexOf(p) + ")' title='Im Kalender zeigen'"
-        + " style='margin-left:10px;position:relative;top:-1px;font-size:13px;letter-spacing:0.06em;color:#0fe8e8;border:1px solid #0a6e6e;"
-        + "border-radius:2px;padding:1px 7px;cursor:pointer;white-space:nowrap'>KAL &#8594;</span>") + "</div>";
+        + " style='margin-left:10px;position:relative;top:-1px;font-size:13px;letter-spacing:0.06em;color:#0fe8e8;border-top:1px solid #2a5555;border-bottom:1px solid #080f0f;border-left:1px solid #1a4040;border-right:1px solid #080f0f;"
+        + "border-radius:2px;padding:1px 7px;cursor:pointer;white-space:nowrap'>KALENDER &#8594;</span>") + "</div>";
   html += "<div class='det-title'>" + p.titel
         + (evExtern(p) && p.location ? " <span style='margin-left:2px;font-size:16px;font-weight:400;color:#bbb;letter-spacing:0.1em;text-transform:uppercase;white-space:nowrap'>" + p.location + "</span>" : "")
         + "</div>";
@@ -1724,7 +1724,7 @@ function openKalender() {
       var titelClick = (p.pidx != null && p.pidx > -1) ? " onclick='event.stopPropagation();kalOpenDetail(" + p.pidx + ")'" : "";
       var titelCursor = (p.pidx != null && p.pidx > -1) ? "cursor:pointer;" : "";
       var zoomCur = (window.kalScale || 1) > 1 ? "zoom-out" : "zoom-in";
-      return "<div class='kal-row' style='display:flex;align-items:center;height:24px'><div class='kal-titel'" + titelClick + " style='width:120px;flex-shrink:0;height:24px;line-height:24px;padding-right:8px;text-align:right;font-size:13px;font-weight:500;color:" + ((evExtern(p) || /gastspiel/i.test(p.titel)) ? "#8a8a8a" : "#ffffff") + ";" + titelCursor + premStyle + "white-space:nowrap;overflow:hidden;text-overflow:ellipsis;position:sticky;left:0;z-index:2;background:#141414' title='" + p.titel + (istPrem ? " (Premiere)" : "") + "'>" + kalShort(p.titel) + "</div><div onclick='kalToggleScale(event)' style='position:relative;flex:1;height:100%;cursor:" + zoomCur + "'>" + bar + "</div></div>";
+      return "<div class='kal-row' style='display:flex;align-items:center;height:24px'><div class='kal-titel'" + titelClick + " style='width:120px;flex-shrink:0;height:24px;line-height:24px;padding-right:8px;text-align:right;font-size:13px;font-weight:500;color:" + ((evExtern(p) || /gastspiel/i.test(p.titel)) ? "#8a8a8a" : "#ffffff") + ";" + titelCursor + premStyle + "white-space:nowrap;overflow:hidden;text-overflow:ellipsis;position:sticky;left:0;z-index:2;background:#141414' title='" + p.titel + (istPrem ? " (Premiere)" : "") + premZeile(p) + tonZeile(p) + "'>" + kalShort(p.titel) + "</div><div onclick='kalToggleScale(event)' style='position:relative;flex:1;height:100%;cursor:" + zoomCur + "'>" + bar + "</div></div>";
     }).join("");
   }
   function sortByStart(list){
@@ -2101,21 +2101,22 @@ filterAktuell();
     <button onclick="document.getElementById('info-modal').style.display='none'" style="position:sticky;top:0;float:right;background:#181818;border:none;color:#f0a050;font-size:16px;cursor:pointer;padding:0 0 4px 8px;z-index:10">close</button>
     <h2 style="font-size:18px;color:#fff;margin-bottom:16px;margin-top:8px;padding-right:60px">&Uuml;ber die Produktionsdatenbank</h2>
     <div style="color:#e8e8e8;font-size:15px;line-height:1.7">
-      <p>Die Produktionsdatenbank erfasst alle Premieren, Wiederaufnahmen und Sonderformate des Opernhauses Z&uuml;rich (Spielzeit 22/23 bis 26/27) &ndash; mit Angaben zu Produktionsverantwortlichen, k&uuml;nstl. Teams, Dirigat und Besetzung.</p>
+      <p>Die Produktionsdatenbank erfasst alle Premieren, Wiederaufnahmen und Sonderformate des Opernhauses Z&uuml;rich &ndash; mit Angaben zu Produktionsverantwortlichen, k&uuml;nstl. Teams, Dirigat und Besetzung (Spielzeit 22/23 bis 26/27) sowie Vorstellungen und Proben (ab Spielzeit 26/27).</p>
       <p style="margin-top:12px"><strong style="color:#fff">Suche:</strong> Durchsucht alle Felder gleichzeitig - Teilbegriffe gen&uuml;gen.</p>
       <p style="margin-top:12px"><strong style="color:#fff">Filter</strong> k&ouml;nnen frei kombiniert werden. Kein Filter: zeigt alle Produktionen ohne Events.</p>
       <p style="margin-top:12px"><strong style="color:#fff">Datumsfilter:</strong> Von/Bis filtert den gew&uuml;nschten Zeitraum.</p>
       <p style="margin-top:12px">Auswahl <strong><em>1.TE / 1.VST</em></strong> sortiert die Produktionsliste nach Datum der 1.&nbsp;TE bzw. der 1.&nbsp;Vorstellung (Prem/WA).</p>
-      <p style="margin-top:12px"><strong><em>Aktuell</em></strong> zeigt alle ab heute noch laufenden Produktionen (exkl. Events) und ggf. heutige Vorstellungen.<br><u>Als Produktionszeitraum gilt jeweils die 1.&nbsp;TE bis zur letzten Vorstellung.</u></p>
+      <p style="margin-top:12px"><strong><em>Aktuell</em></strong> zeigt alle ab heute noch laufenden Produktionen (exkl. Events) und ggf. heutige Vorstellungen.</p>
+      <p style="margin-top:12px">Als Produktionszeitraum gilt grunds&auml;tzlich die 1.&nbsp;TE bis zur letzten Vorstellung.</p>
       <p style="margin-top:12px"><strong style="color:#fff">Panel:</strong> Ein Klick auf eine Produktion in der Liste &ouml;ffnet das Detailpanel mit detaillierten Angaben. Namen im Panel sind anklickbar und aktivieren einen Filter.</p>
       <p style="margin-top:12px">&laquo;<strong>Spielplan OHZ</strong>&raquo; oben links &ouml;ffnet den aktuellen Spielplan auf der Website des Opernhauses.</p>
-      <p style="margin-top:12px">&laquo;<strong>Kalender</strong>&raquo; oben rechts &ouml;ffnet den tabellarischen Produktionskalender. Klick auf einen Monat in der Monatsleiste zoomt in eine Dreimonatsansicht. Klick auf inneren Bereich im Balkendiagramm vergr&ouml;ssert Ansicht um Faktor 1,5. Nochmaliger Klick verkleinert wieder auf Original. Tooltip/Mouse-Over auf Kalenderbalken zeigt zus&auml;tzliche Details.</p>
+      <p style="margin-top:12px">&laquo;<strong>Kalender</strong>&raquo; oben rechts &ouml;ffnet den tabellarischen Produktionskalender. Klick auf einen Monat in der Monatsleiste zoomt in eine Dreimonatsansicht. Klick auf inneren Bereich im Balkendiagramm vergr&ouml;ssert Ansicht um Faktor 1,5. Nochmaliger Klick verkleinert wieder auf Original. Tooltip/Mouse-Over auf Kalenderbalken bzw. auf Termin in Terminansicht zeigt zus&auml;tzliche Details.</p>
       <p style="margin-top:12px">In der Titelzeile: <strong>Button D</strong> &ouml;ffnet einen freigegebenen Google-Drive-Ordner f&uuml;r flexiblen Datei-Upload/-Zugriff zwischen allen im Google-Tonabteilung-Account eingeloggten Ger&auml;ten und <strong>Button N</strong> eine Google-Keep-Checkliste f&uuml;r schnelle Share-Notizen oder Pendenz-Eintr&auml;ge on-the-fly. &Auml;nderungen sind f&uuml;r alle sofort einsehbar und bearbeitbar.</p>
       <p style="margin-top:12px">Die <strong>WebApp</strong> besteht aus einer einzigen HTML-Datei (ca. 250kb inkl. JS und CSS) ohne externe Abh&auml;ngigkeiten (kein Datenaustausch mit externen Servern oder Diensten &ndash; ausgenommen Links in der Titelzeile und Fusszeile unter dem Kalender) und wird &uuml;ber GitHub gehostet (https://...). Sie l&auml;uft auf allen g&auml;ngigen Browsern unter MacOS, Windows, Android und iOS (bei Bedarf auch offline als lokale Html-Datei).</p>
       <p>Die Daten basieren auf den Spielplanunterlagen der technischen Direktion, des KBB sowie der Website des Opernhauses Z&uuml;rich. &Auml;nderungen w&auml;hrend laufender Spielzeit sind m&ouml;glicherweise nicht ber&uuml;cksichtigt, werden aber kontinuierlich aktualisiert.</p>
       <p>Diese WebApp ist als Hilfsmittel f&uuml;r den Produktionsalltag gedacht. F&uuml;r die Richtigkeit, Vollst&auml;ndigkeit und Aktualit&auml;t der Inhalte wird keine Gew&auml;hr &uuml;bernommen.</p>
-      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_150826" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
-      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_150826</p>
+      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_170826" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
+      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_170826</p>
       </div>
   </div>
 </div>
