@@ -930,6 +930,13 @@ function render() {
         var tcls = "row" + (tidx === activeIndex ? " active" : "");
         html += "<div class=\"" + tcls + "\" onclick=\"selectRow(" + tidx + ")\">";
         html += "<span class=\"row-title\"" + (evExtern(tp) ? " style=\"color:#8a8a8a\"" : "") + ">" + tp.titel + "</span>";
+        // Uhrzeit der heutigen Vorstellung, falls hinterlegt
+        var hIdx = (tp.vorstellungen || []).indexOf(vonEl.value);
+        var hZeit = (hIdx > -1 && tp.vzeit && tp.vzeit[hIdx]) ? tp.vzeit[hIdx] : "";
+        if (hZeit) html += "<span class=\"row-date\" style=\"margin-left:12px\">" + hZeit + "</span>";
+        // Premiere bzw. Wiederaufnahme kennzeichnen
+        if (tp.prem === vonEl.value && (tp.typ === "Premiere" || tp.typ === "WA"))
+          html += "<span class=\"row-date\" style=\"margin-left:10px\">" + (tp.typ === "WA" ? "WA" : "PREM") + "</span>";
         html += "</div>";
       }
       if (inSommerH) {
