@@ -20,6 +20,10 @@ h1 { font-size: 17px; font-weight: 500; color: #fff; margin-bottom: 12px; }
 .qtag.active { border-color: #63f0f0; color: #63f0f0; }
 #filters { display: flex; flex-wrap: nowrap; gap: 8px; align-items: center; padding-top: 4px; }
 input[type=date] { background: #181818; border: 1px solid #333; color: #e8e8e8; height: 26px; box-sizing: border-box; padding: 0 10px; font-size: 14px; font-weight: 500; color-scheme: dark; border-radius: 4px; -webkit-appearance: none; }
+.kal-zoomhint { display: none; }
+@media (min-width: 1000px) and (hover: hover) and (pointer: fine) {
+  .kal-zoomhint { display: inline; }
+}
 #reset { background: none; border: none; color: #f0a050; cursor: pointer; font-size: 16px; font-weight: 500; padding: 0; display: none; }
 #count { margin-left: auto; color: #ccc; font-size: 13px; }
 #main { display: flex; overflow: hidden; flex: 1; min-height: 0; }
@@ -1921,6 +1925,7 @@ function openKalender() {
   }
   var tonRow = "<div style='display:flex;gap:6px;flex-wrap:nowrap;margin-top:12px;font-size:14px;align-items:center'>"
     + allTon.map(tonChip).join("")
+    + "<span class='kal-zoomhint' style='margin-left:32%;font-size:13.5px;color:#8a8a8a;white-space:nowrap;flex-shrink:0'>Klick Monat f&uuml;r Zoom</span>"
     + "</div>";
 
   function ansichtBtn(modus, label) {
@@ -2010,7 +2015,11 @@ function openKalender() {
     var gdate = document.getElementById("kal-guide-date");
     scale.addEventListener("mousemove", function(ev) {
       var r = scale.getBoundingClientRect();
-      var sc = window.kalScale || 1;
+      // Zoomfaktor messen statt annehmen: getBoundingClientRect liefert je nach
+      // Browser Bildschirm- oder CSS-Pixel (Safari mit Browserzoom, Chrome/Firefox ohne),
+      // offsetWidth immer CSS-Pixel. Ohne diese Messung waere die Linie in Safari versetzt.
+      var sc = (scale.offsetWidth > 0) ? (r.width / scale.offsetWidth) : (window.kalScale || 1);
+      if (!(sc > 0.1)) sc = window.kalScale || 1;
       var x = (ev.clientX - r.left) / sc;
       guide.style.left = x + "px";
       guide.style.display = "block";
@@ -2244,8 +2253,8 @@ filterAktuell();
       <p style="margin-top:12px">Die <strong>WebApp</strong> besteht aus einer einzigen HTML-Datei (ca. 250kb inkl. JS und CSS) ohne externe Abh&auml;ngigkeiten (kein Datenaustausch mit externen Servern oder Diensten &ndash; ausgenommen Links in der Titelzeile und Fusszeile unter dem Kalender) und wird &uuml;ber GitHub gehostet (https://...). Sie l&auml;uft auf allen g&auml;ngigen Browsern unter MacOS, Windows, Android und iOS (bei Bedarf auch offline als lokale Html-Datei).</p>
       <p>Die Daten basieren auf den Spielplanunterlagen der technischen Direktion, des KBB sowie der Website des Opernhauses Z&uuml;rich. &Auml;nderungen w&auml;hrend laufender Spielzeit sind m&ouml;glicherweise nicht ber&uuml;cksichtigt, werden aber kontinuierlich aktualisiert.</p>
       <p>Diese WebApp ist als Hilfsmittel f&uuml;r den Produktionsalltag gedacht. F&uuml;r die Richtigkeit, Vollst&auml;ndigkeit und Aktualit&auml;t der Inhalte wird keine Gew&auml;hr &uuml;bernommen.</p>
-      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_190826zai" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
-      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_190826zai</p>
+      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_190826_2" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
+      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_190826_2</p>
       </div>
   </div>
 </div>
