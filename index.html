@@ -1956,10 +1956,14 @@ function openKalender() {
     ? "<button onclick='kalZoomTo(null)' style='background:#1c1c1c;border:1px solid #63f0f0;border-radius:3px;color:#ffffff;font-size:12px;cursor:pointer;padding:2px 10px;position:relative;top:-3px;vertical-align:middle'>&#8594; Jahresansicht</button>"
     : "";
   var hint = "<span onclick=\"document.getElementById('kalender-modal').style.display='none'\" title='Zur Hauptansicht' "
-    + "style='display:inline-block;background:#0d2020;color:#63f0f0;"
+    + "style='display:inline-flex;align-items:center;gap:5px;background:#0d2020;color:#63f0f0;"
     + "border-top:1px solid #2a5555;border-bottom:1px solid #080f0f;border-left:1px solid #1a4040;border-right:1px solid #080f0f;"
-    + "border-radius:3px;font-size:11px;font-weight:bold;height:20px;box-sizing:border-box;padding:0 9px;cursor:pointer;white-space:nowrap;align-items:center;"
-    + "-webkit-tap-highlight-color:transparent'>&#8594; SPIELPLAN</span>";
+    + "border-radius:3px;font-size:11px;font-weight:bold;height:20px;box-sizing:border-box;padding:0 9px;cursor:pointer;white-space:nowrap;"
+    + "-webkit-tap-highlight-color:transparent'>"
+    + "<svg width='17' height='9' viewBox='0 0 17 9' fill='none' stroke='#63f0f0' stroke-width='1.4' style='display:block;flex-shrink:0'>"
+    + "<line x1='0.5' y1='4.5' x2='14' y2='4.5' stroke-linecap='round'/>"
+    + "<polyline points='10.5,1.5 14,4.5 10.5,7.5' stroke-linecap='round' stroke-linejoin='round'/>"
+    + "</svg>SPIELPLAN</span>";
 
   var html = "<div style='background:#141414;padding:13px 20px 13px;border-bottom:1px solid #555'>"
     + "<button onclick=\"document.getElementById('kalender-modal').style.display='none'\" style='display:none;position:fixed;top:45px;right:13px;z-index:2100;background:#181818;border:1px solid #333;border-radius:3px;color:#f0a050;font-size:16px;cursor:pointer;padding:1px 5px;line-height:1.2'>close</button>"
@@ -2253,8 +2257,8 @@ filterAktuell();
       <p style="margin-top:12px">Die <strong>WebApp</strong> besteht aus einer einzigen HTML-Datei (ca. 250kb inkl. JS und CSS) ohne externe Abh&auml;ngigkeiten (kein Datenaustausch mit externen Servern oder Diensten &ndash; ausgenommen Links in der Titelzeile und Fusszeile unter dem Kalender) und wird &uuml;ber GitHub gehostet (https://...). Sie l&auml;uft auf allen g&auml;ngigen Browsern unter MacOS, Windows, Android und iOS (bei Bedarf auch offline als lokale Html-Datei).</p>
       <p>Die Daten basieren auf den Spielplanunterlagen der technischen Direktion, des KBB sowie der Website des Opernhauses Z&uuml;rich. &Auml;nderungen w&auml;hrend laufender Spielzeit sind m&ouml;glicherweise nicht ber&uuml;cksichtigt, werden aber kontinuierlich aktualisiert.</p>
       <p>Diese WebApp ist als Hilfsmittel f&uuml;r den Produktionsalltag gedacht. F&uuml;r die Richtigkeit, Vollst&auml;ndigkeit und Aktualit&auml;t der Inhalte wird keine Gew&auml;hr &uuml;bernommen.</p>
-      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_190826_2" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
-      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_190826_2</p>
+      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_190826_6" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
+      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_190826_6</p>
       </div>
   </div>
 </div>
