@@ -1784,8 +1784,8 @@ function openKalender() {
           var mBest = pplanGedeckt(m[0]);
           var mCol = (m[2] === "#f5e050" && !mBest) ? "#8a8459" : m[2];
           var mHin = (m[2] === "#f5e050" && !mBest) ? "\nnicht bestätigt" : "";
-          bar += "<div style='position:absolute;top:3px;width:" + (ZOOM ? 3 : 2) + "px;height:18px;border-radius:1px;background:" + mCol + ";left:calc("
-               + (xpct(m[0]) + HALFDAY).toFixed(3) + "% - 1px)' title='" + p.titel + "\n" + fmt(m[0]) + mz + mHin + "'></div>";
+          bar += "<div style='position:absolute;top:3px;width:" + (ZOOM ? 3 : 2) + "px;height:18px;border-radius:1px;box-sizing:content-box;border-left:3px solid transparent;border-right:3px solid transparent;background:" + mCol + ";background-clip:content-box;left:calc("
+               + (xpct(m[0]) + HALFDAY).toFixed(3) + "% - 4px)' title='" + p.titel + "\n" + fmt(m[0]) + mz + mHin + "'></div>";
         });
         // Proben und Tonproben in Gelb
         (p.proben || []).forEach(function(dt, pi){
@@ -1795,16 +1795,16 @@ function openKalender() {
           var pBest = pplanGedeckt(dt);
           var pCol = pBest ? "#f5e050" : "#8a8459";
           var pHin = pBest ? "" : "\nnicht bestätigt";
-          bar += "<div style='position:absolute;top:3px;width:" + (ZOOM ? 3 : 2) + "px;height:18px;border-radius:1px;background:" + pCol + ";left:calc("
-               + (xpct(dt) + HALFDAY).toFixed(3) + "% - 1px)' title='" + p.titel + "\n" + fmt(dt) + pz + pHin + "'></div>";
+          bar += "<div style='position:absolute;top:3px;width:" + (ZOOM ? 3 : 2) + "px;height:18px;border-radius:1px;box-sizing:content-box;border-left:3px solid transparent;border-right:3px solid transparent;background:" + pCol + ";background-clip:content-box;left:calc("
+               + (xpct(dt) + HALFDAY).toFixed(3) + "% - 4px)' title='" + p.titel + "\n" + fmt(dt) + pz + pHin + "'></div>";
         });
         // Einzeltermine statt durchgehendem Balken
         p.vorstellungen.forEach(function(dt, vi){
           if (!inWindow(dt)) return;
           var istPremDatum = (dt === p.prem) && (p.typ === "Premiere" || p.typ === "WA");
           var uz = (p.vzeit && p.vzeit[vi]) ? "  " + p.vzeit[vi] : "";
-          bar += "<div style='position:absolute;top:3px;width:" + (ZOOM ? 3 : 2) + "px;height:18px;border-radius:1px;background:"
-               + (istPremDatum ? "#ffffff" : col) + ";left:calc(" + (xpct(dt) + HALFDAY).toFixed(3) + "% - 1px)' title='"
+          bar += "<div style='position:absolute;top:3px;width:" + (ZOOM ? 3 : 2) + "px;height:18px;border-radius:1px;box-sizing:content-box;border-left:3px solid transparent;border-right:3px solid transparent;background:"
+               + (istPremDatum ? "#ffffff" : col) + ";background-clip:content-box;left:calc(" + (xpct(dt) + HALFDAY).toFixed(3) + "% - 4px)' title='"
                + p.titel + "\n" + fmt(dt) + uz + (istPremDatum ? premZeile(p) : "") + tonZeile(p) + "'></div>";
         });
       } else if (p.ete && p.lv) {
@@ -2235,8 +2235,8 @@ filterAktuell();
       <p style="margin-top:12px">Die <strong>WebApp</strong> besteht aus einer einzigen HTML-Datei (ca. 250kb inkl. JS und CSS) ohne externe Abh&auml;ngigkeiten (kein Datenaustausch mit externen Servern oder Diensten &ndash; ausgenommen Links in der Titelzeile und Fusszeile unter dem Kalender) und wird &uuml;ber GitHub gehostet (https://...). Sie l&auml;uft auf allen g&auml;ngigen Browsern unter MacOS, Windows, Android und iOS (bei Bedarf auch offline als lokale Html-Datei).</p>
       <p>Die Daten basieren auf den Spielplanunterlagen der technischen Direktion, des KBB sowie der Website des Opernhauses Z&uuml;rich. &Auml;nderungen w&auml;hrend laufender Spielzeit sind m&ouml;glicherweise nicht ber&uuml;cksichtigt, werden aber kontinuierlich aktualisiert.</p>
       <p>Diese WebApp ist als Hilfsmittel f&uuml;r den Produktionsalltag gedacht. F&uuml;r die Richtigkeit, Vollst&auml;ndigkeit und Aktualit&auml;t der Inhalte wird keine Gew&auml;hr &uuml;bernommen.</p>
-      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_190826zz" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
-      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_190826zz</p>
+      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_190826zab" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
+      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_190826zab</p>
       </div>
   </div>
 </div>
