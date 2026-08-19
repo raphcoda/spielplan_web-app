@@ -925,6 +925,11 @@ function normUml(s) {
     .replace(/\u00df/g, "ss")
     .replace(/ae/g, "a").replace(/oe/g, "o").replace(/ue/g, "u");
 }
+// Open-Air Konzert ist offiziell kat "Extra" (SF), soll aber auch beim Kzt-Filter erscheinen
+function zaehltAlsKzt(p) {
+  return p.titel === "Open-Air Konzert";
+}
+
 function evExtern(p) {
   var l = (p.location || "").toLowerCase();
   var tl = (p.titel || "").toLowerCase();
@@ -1068,7 +1073,7 @@ function showDetail(p) {
     if (p.produktion) html += drow("Produktion", p.produktion);
     if (p.tickets) html += drow("Anzahl Tickets", p.tickets);
     if (p.location) html += drow("Eventlocation", p.location);
-    if (p.chef) html += drow("Kontakt Chef", p.chef);
+    if (p.chef) html += drow("Kontakt", p.chef);
   } else {
   var istWA = (p.typ === "WA"), istKzt = (p.kat === "Konzert"), istSF = (p.typ === "SF");
   // Einzeltermin: nur eine Zeile "Vorstellung"
@@ -1589,7 +1594,7 @@ function openKalender() {
       if (kalTonAktiv().length) return false;
       return true;
     }
-    if (!window.kalKats[p.kat]) return false;
+    if (!window.kalKats[p.kat] && !(zaehltAlsKzt(p) && window.kalKats.Konzert)) return false;
     if (kalTonAktiv().length) {
       // Bei aktivem Ton-Filter: Konzert/Extra hier ausblenden (kommen separat unten)
       if (p.kat === "Konzert" || p.kat === "Extra") return false;
@@ -1602,7 +1607,7 @@ function openKalender() {
     if (p.saison !== "26/27" || !p.prem) return false;
     if (p.kat === "Event") return window.kalKats.Event && !evExtern(p);
     if (p.kat === "Labor" && p.titel === "Werckmeister - Oerlikon" && p.prem === "2027-04-22") return window.kalKats.Extra;
-    return (p.kat === "Konzert" || p.kat === "Extra") && window.kalKats[p.kat];
+    return (p.kat === "Konzert" || p.kat === "Extra") && (window.kalKats[p.kat] || (zaehltAlsKzt(p) && window.kalKats.Konzert));
   }) : [];
   prods = prods.map(function(p){
     var eteEff = p.ete || "", lvEff = p.lv || "";
@@ -2230,8 +2235,8 @@ filterAktuell();
       <p style="margin-top:12px">Die <strong>WebApp</strong> besteht aus einer einzigen HTML-Datei (ca. 250kb inkl. JS und CSS) ohne externe Abh&auml;ngigkeiten (kein Datenaustausch mit externen Servern oder Diensten &ndash; ausgenommen Links in der Titelzeile und Fusszeile unter dem Kalender) und wird &uuml;ber GitHub gehostet (https://...). Sie l&auml;uft auf allen g&auml;ngigen Browsern unter MacOS, Windows, Android und iOS (bei Bedarf auch offline als lokale Html-Datei).</p>
       <p>Die Daten basieren auf den Spielplanunterlagen der technischen Direktion, des KBB sowie der Website des Opernhauses Z&uuml;rich. &Auml;nderungen w&auml;hrend laufender Spielzeit sind m&ouml;glicherweise nicht ber&uuml;cksichtigt, werden aber kontinuierlich aktualisiert.</p>
       <p>Diese WebApp ist als Hilfsmittel f&uuml;r den Produktionsalltag gedacht. F&uuml;r die Richtigkeit, Vollst&auml;ndigkeit und Aktualit&auml;t der Inhalte wird keine Gew&auml;hr &uuml;bernommen.</p>
-      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_190826zw" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
-      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_190826zw</p>
+      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_190826zx" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
+      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_190826zx</p>
       </div>
   </div>
 </div>
