@@ -2182,6 +2182,24 @@ function openKalender() {
     var scaleEl = document.getElementById("kal-scale");
     if (!modalEl || !scaleEl) return;
     var basis = tlHeight + 3;
+    var deskt = false;
+    try { deskt = window.matchMedia("(min-width: 1000px) and (hover: hover) and (pointer: fine)").matches; } catch(e) {}
+
+    // Auf dem Desktop uebernimmt CSS-Sticky die Monatsleiste. Der Browser haelt
+    // sie dadurch ruckelfrei unter dem klebenden Kopfbereich - anders als beim
+    // Nachfuehren per Scroll-Ereignis, das immer einen Frame hinterherhinkt.
+    var mrEl = document.getElementById("kal-monthrow");
+    if (deskt && mrEl) {
+      var headEl0 = document.querySelector(".kal-head");
+      var rS0 = scaleEl.getBoundingClientRect();
+      var sc0 = (scaleEl.offsetWidth > 0) ? (rS0.width / scaleEl.offsetWidth) : 1;
+      if (!(sc0 > 0.1)) sc0 = 1;
+      var headH0 = headEl0 ? (headEl0.getBoundingClientRect().height / sc0) : 0;
+      mrEl.style.position = "sticky";
+      mrEl.style.top = headH0.toFixed(1) + "px";
+      mrEl.style.zIndex = "25";
+    }
+
     var halteOben = function() {
       var rM = modalEl.getBoundingClientRect();
       var rS = scaleEl.getBoundingClientRect();
@@ -2189,21 +2207,18 @@ function openKalender() {
       // Browser Bildschirm- oder CSS-Pixel, offsetWidth immer CSS-Pixel
       var sc2 = (scaleEl.offsetWidth > 0) ? (rS.width / scaleEl.offsetWidth) : 1;
       if (!(sc2 > 0.1)) sc2 = 1;
-      // Wie weit der Kalenderinhalt bereits ueber den oberen Rand hinausgescrollt ist
-      var versatz = (rM.top - rS.top) / sc2;
-      if (versatz < 0) versatz = 0;
-      // Auf dem Desktop klebt der Kopfbereich oben. Die Monatsleiste (samt der
-      // Buttons BALKEN/TERMINE) muss dann direkt darunter stehenbleiben statt
-      // dahinter zu verschwinden.
-      var headEl = document.querySelector(".kal-head");
-      var deskt = false;
-      try { deskt = window.matchMedia("(min-width: 1000px) and (hover: hover) and (pointer: fine)").matches; } catch(e) {}
-      if (deskt && headEl && versatz > 0) {
-        versatz += headEl.getBoundingClientRect().height / sc2;
-      }
       var mr = document.getElementById("kal-monthrow");
-      if (mr) mr.style.top = versatz + "px";
-      var oben = versatz + basis;   // Datumsangaben sitzen direkt unter der Monatsleiste
+      var oben;
+      if (deskt && mr) {
+        // Datumsangaben an der tatsaechlichen Position der Monatsleiste ausrichten
+        oben = (mr.getBoundingClientRect().top - rS.top) / sc2 + basis;
+      } else {
+        // Wie weit der Kalenderinhalt ueber den oberen Rand hinausgescrollt ist
+        var versatz = (rM.top - rS.top) / sc2;
+        if (versatz < 0) versatz = 0;
+        if (mr) mr.style.top = versatz + "px";
+        oben = versatz + basis;
+      }
       var tl = document.getElementById("kal-today-date");
       var gl = document.getElementById("kal-guide-date");
       if (tl) tl.style.top = oben + "px";
@@ -2393,8 +2408,8 @@ filterAktuell();
       <p style="margin-top:12px">Die <strong>WebApp</strong> besteht aus einer einzigen HTML-Datei (ca. 250kb inkl. JS und CSS) ohne externe Abh&auml;ngigkeiten (kein Datenaustausch mit externen Servern oder Diensten &ndash; ausgenommen Links in der Titelzeile und Fusszeile unter dem Kalender) und wird &uuml;ber GitHub gehostet (https://...). Sie l&auml;uft auf allen g&auml;ngigen Browsern unter MacOS, Windows, Android und iOS (bei Bedarf auch offline als lokale Html-Datei).</p>
       <p>Die Daten basieren auf den Spielplanunterlagen der technischen Direktion, des KBB sowie der Website des Opernhauses Z&uuml;rich. &Auml;nderungen w&auml;hrend laufender Spielzeit sind m&ouml;glicherweise nicht ber&uuml;cksichtigt, werden aber kontinuierlich aktualisiert.</p>
       <p>Diese WebApp ist als Hilfsmittel f&uuml;r den Produktionsalltag gedacht. F&uuml;r die Richtigkeit, Vollst&auml;ndigkeit und Aktualit&auml;t der Inhalte wird keine Gew&auml;hr &uuml;bernommen.</p>
-      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_190826_53" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
-      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_190826_53</p>
+      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_190826_54" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
+      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_190826_54</p>
       </div>
   </div>
 </div>
