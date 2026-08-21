@@ -47,6 +47,49 @@ input[type=date] { background: #181818; border: 1px solid #333; color: #e8e8e8; 
   .kal-head { position: sticky; top: 0; z-index: 30; }
   .zoombtn-mob { display: none; }
 }
+/* Logo auf schmalen Geraeten: derzeit ausgeblendet, Code bleibt fuer spaeter
+   erhalten. Zum Wiedereinschalten "display: none" in "inline-block" aendern. */
+.ohz-logo-mob { display: inline-block; margin-left: auto; font-family: 'Helvetica Neue', Arial, sans-serif;
+                font-weight: 300; font-size: 13px; letter-spacing: 0.29em; color: #4a4a4a;
+                white-space: nowrap; flex-shrink: 0; text-decoration: none; padding-left: 10px;
+                margin-right: 4px; }
+@media (min-width: 1000px) and (hover: hover) and (pointer: fine) {
+  .ohz-logo-mob { display: none; }
+}
+/* Menue-Button und Klappliste (nur schmale Geraete) */
+#menu-btn { display: inline-flex; align-items: center; justify-content: center; margin-left: 12px;
+            width: 28px; height: 20px; box-sizing: border-box; background: #1e1e1e;
+            border: 1px solid #444; border-radius: 3px; cursor: pointer; flex-shrink: 0;
+            position: relative; top: 1px; -webkit-tap-highlight-color: transparent; }
+#menu-btn:active { background: #262626; }
+#menu-drop { display: none; position: absolute; left: 0; z-index: 900; min-width: 190px;
+             background: #1a1a1a; border: 1px solid #3a3a3a; border-radius: 5px;
+             box-shadow: 0 6px 18px rgba(0,0,0,0.55); overflow: hidden; }
+#menu-drop a, #menu-drop span.mi { display: block; padding: 11px 14px; font-size: 14px;
+             color: #ddd; text-decoration: none; border-bottom: 1px solid #2a2a2a;
+             cursor: pointer; letter-spacing: 0.04em; -webkit-tap-highlight-color: transparent; }
+#menu-drop a:last-child, #menu-drop span.mi:last-child { border-bottom: none; }
+#menu-drop a:active, #menu-drop span.mi:active { background: #242424; }
+@media (min-width: 1000px) and (hover: hover) and (pointer: fine) {
+  #menu-btn:hover { border-color: #666; }
+}
+/* Gleichmaessige Abstaende in der Titelzeile auf schmalen Geraeten:
+   SPiELPLAN - OHZ - Menue ... D - N - KALENDER */
+@media (max-width: 999px) {
+  .bs-btn  { margin-left: 10px !important; }
+  #menu-btn { margin-left: 10px; }
+  #dbtn    { margin-right: 10px !important; }
+}
+/* Ortsangabe neben dem Titel: auf schmalen Schirmen darf sie in eine eigene
+   Zeile unter den Titel rutschen, statt das Panel horizontal scrollbar zu
+   machen. Gekuerzt wird nur, wenn selbst die volle Zeile nicht reicht. */
+.det-loc { font-size: 16px; font-weight: 400; color: #bbb; letter-spacing: 0.1em;
+           text-transform: uppercase; white-space: nowrap; margin-left: 2px; }
+@media (max-width: 999px) {
+  .det-title { overflow: hidden; }
+  .det-loc { display: inline-block; max-width: calc(100vw - 60px);
+             white-space: normal; overflow-wrap: anywhere; vertical-align: bottom; }
+}
 #reset { background: none; border: none; color: #f0a050; cursor: pointer; font-size: 16px; font-weight: 500; padding: 0; display: none; }
 #count { margin-left: auto; color: #ccc; font-size: 13px; }
 #main { display: flex; overflow: hidden; flex: 1; min-height: 0; }
@@ -71,6 +114,8 @@ input[type=date] { background: #181818; border: 1px solid #333; color: #e8e8e8; 
 .det-title { font-size: 24px; font-weight: 500; color: #fff; margin-bottom: 18px; clear: both; }
 .drow { display: flex; gap: 10px; padding: 6px 0; border-bottom: 1px solid #262626; flex-wrap: wrap; }
 .dlabel { font-size: 16px; color: #bbb; width: 130px; flex-shrink: 0; }
+.dlabel-link { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.dlabel-link:hover { color: #63f0f0; }
 .dval { font-size: 16px; color: #e8e8e8; flex: 1; min-width: 0; overflow-wrap: anywhere; }
 .dlink { font-size: 16px; color: #e8e8e8; cursor: pointer; text-decoration: underline; text-decoration-color: #999; -webkit-tap-highlight-color: transparent; }
 .divider { margin: 14px 0; border-top: 1px solid #1e1e1e; }
@@ -146,11 +191,23 @@ input[type=date]::-webkit-calendar-picker-indicator { filter: invert(0.8) bright
 }
 .sonne-glow { display:inline-block; animation: sonne-puls 2.2s ease-in-out infinite; }
 #info-i { animation: i-fade-first 10s ease-in-out 1s 1, i-fade 10s ease-in-out 11s infinite; }
+/* Glow-Effekt, frueher auf dem i-Symbol, jetzt auf dem Menue-Button */
+@keyframes menu-fade {
+  0%, 12%, 100% { border-color: #444; box-shadow: none; }
+  20% { border-color: #eaf4ff; box-shadow: 0 0 5px 1px rgba(215,235,255,0.2), 0 0 12px 2px rgba(205,230,255,0.1), 0 0 20px 5px rgba(200,228,255,0.045); }
+  28% { border-color: #444; box-shadow: none; }
+}
+@keyframes menu-fade-first {
+  0%, 12%, 100% { border-color: #444; box-shadow: none; }
+  20% { border-color: #eaf4ff; box-shadow: 0 0 10px 2px rgba(220,238,255,0.8), 0 0 22px 5px rgba(205,230,255,0.5), 0 0 38px 11px rgba(195,225,255,0.25); }
+  28% { border-color: #444; box-shadow: none; }
+}
+#menu-btn { animation: menu-fade-first 10s ease-in-out 1s 1; }
 </style>
 </head>
 <body>
 <div id="header">
-  <h1 id="main-h1" style="white-space:nowrap;width:100%;display:flex;align-items:flex-end"><span onclick="window.open('https://www.opernhaus.ch/spielplan/kalendarium/','_blank')" style="cursor:pointer;color:#ffffff;font-size:18px;line-height:1">SPiELPLAN</span><span id="info-i" onclick="document.getElementById('info-modal').style.display='flex'" style="display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border:1px solid #bcc2c8;border-radius:50%;font-size:10px;color:#bcc2c8;cursor:pointer;margin-left:12px;font-style:italic;font-family:Georgia,serif;position:relative;top:-2px">i</span><a href="https://backstage.opernhaus.ch/content/news/archive/6388d94ef2be791bc1c6215f/articles/0" target="_blank" rel="noopener noreferrer" title="OHZ Backstage" class="bs-btn" style="display:inline-flex;align-items:center;justify-content:center;margin-left:19px;background:#2e2a63;color:#82ebf0;border-top:1px solid #4a4590;border-bottom:1px solid #14122e;border-left:1px solid #3a3578;border-right:1px solid #14122e;border-radius:3px;height:20px;box-sizing:border-box;padding:0 8px;font-size:11px;font-weight:bold;letter-spacing:0.06em;text-decoration:none;flex-shrink:0;position:relative;top:1px;-webkit-tap-highlight-color:transparent"><span class="bs-mob">OHZ</span><span class="bs-desk">PROBENPLAN</span></a><a href="https://www.opernhaus.ch" target="_blank" rel="noopener noreferrer" class="ohz-logo" style="margin-left:calc(32% - 45px);text-decoration:none">OPERNHAUS Z&Uuml;RICH</a><a href="https://drive.google.com/drive/folders/1WM9YPpCGen3EHeY3C5c_k_9tL9kMRel_" target="_blank" style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#0d2020;color:#63f0f0;font-size:11px;font-weight:bold;text-decoration:none;border-top:1px solid #2a5555;border-bottom:1px solid #080f0f;border-left:1px solid #1a4040;border-right:1px solid #080f0f;box-shadow:none;margin-left:auto;margin-right:7px;flex-shrink:0;position:relative;top:1px">D</a><a href="https://keep.google.com/#LIST/1_K2fuuC7XY9k2Cd6eg8oLcLuF_pSCmvaM8uw_XeN6IxMYh6WARY2lbzFqiDPzA" target="_blank" style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#0d2020;color:#63f0f0;font-size:11px;font-weight:bold;text-decoration:none;border-top:1px solid #2a5555;border-bottom:1px solid #080f0f;border-left:1px solid #1a4040;border-right:1px solid #080f0f;box-shadow:none;margin-right:10px;flex-shrink:0;position:relative;top:1px">N</a><button onclick="window.kalScale=1;window.kalZoom=null;openKalender()" title="Produktionskalender 26/27" style="background:#0d2020;color:#63f0f0;border-top:1px solid #2a5555;border-bottom:1px solid #080f0f;border-left:1px solid #1a4040;border-right:1px solid #080f0f;border-radius:3px;font-size:11px;font-weight:bold;height:20px;box-sizing:border-box;padding:0 9px;cursor:pointer;flex-shrink:0;display:inline-flex;align-items:center;position:relative;top:1px">KALENDER</button></h1>
+  <h1 id="main-h1" style="white-space:nowrap;width:100%;display:flex;align-items:flex-end"><span onclick="window.open('https://www.opernhaus.ch/spielplan/kalendarium/','_blank')" style="cursor:pointer;color:#ffffff;font-size:18px;line-height:1">SPiELPLAN</span><span id="info-i" onclick="document.getElementById('info-modal').style.display='flex'" style="display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border:1px solid #bcc2c8;border-radius:50%;font-size:10px;color:#bcc2c8;cursor:pointer;margin-left:12px;font-style:italic;font-family:Georgia,serif;position:relative;top:-2px;display:none">i</span><a href="https://backstage.opernhaus.ch/content/news/archive/6388d94ef2be791bc1c6215f/articles/0" target="_blank" rel="noopener noreferrer" title="OHZ Backstage" class="bs-btn" style="display:inline-flex;align-items:center;justify-content:center;margin-left:14px;background:#2e2a63;color:#82ebf0;border-top:1px solid #4a4590;border-bottom:1px solid #14122e;border-left:1px solid #3a3578;border-right:1px solid #14122e;border-radius:3px;height:20px;box-sizing:border-box;padding:0 8px;font-size:11px;font-weight:bold;letter-spacing:0.06em;text-decoration:none;flex-shrink:0;position:relative;top:1px;-webkit-tap-highlight-color:transparent"><span class="bs-mob">OHZ</span><span class="bs-desk">PROBENPLAN</span></a><span id="menu-btn" onclick="toggleMenu(event)" title="Men&uuml;"><svg width="15" height="11" viewBox="0 0 15 11" fill="none" stroke="#bbb" stroke-width="1.5" stroke-linecap="round"><line x1="1" y1="1.5" x2="14" y2="1.5"/><line x1="1" y1="5.5" x2="14" y2="5.5"/><line x1="1" y1="9.5" x2="14" y2="9.5"/></svg></span><a href="https://www.opernhaus.ch" target="_blank" rel="noopener noreferrer" class="ohz-logo" style="margin-left:calc(32% - 45px);text-decoration:none">OPERNHAUS Z&Uuml;RICH</a><a href="https://drive.google.com/drive/folders/1WM9YPpCGen3EHeY3C5c_k_9tL9kMRel_" target="_blank" style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#0d2020;color:#63f0f0;font-size:11px;font-weight:bold;text-decoration:none;border-top:1px solid #2a5555;border-bottom:1px solid #080f0f;border-left:1px solid #1a4040;border-right:1px solid #080f0f;box-shadow:none;margin-left:auto;margin-right:7px;flex-shrink:0;position:relative;top:1px" id="dbtn">D</a><a href="https://keep.google.com/#LIST/1_K2fuuC7XY9k2Cd6eg8oLcLuF_pSCmvaM8uw_XeN6IxMYh6WARY2lbzFqiDPzA" target="_blank" style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#0d2020;color:#63f0f0;font-size:11px;font-weight:bold;text-decoration:none;border-top:1px solid #2a5555;border-bottom:1px solid #080f0f;border-left:1px solid #1a4040;border-right:1px solid #080f0f;box-shadow:none;margin-right:10px;flex-shrink:0;position:relative;top:1px">N</a><button onclick="window.kalScale=1;window.kalZoom=null;openKalender()" title="Produktionskalender 26/27" style="background:#0d2020;color:#63f0f0;border-top:1px solid #2a5555;border-bottom:1px solid #080f0f;border-left:1px solid #1a4040;border-right:1px solid #080f0f;border-radius:3px;font-size:11px;font-weight:bold;height:20px;box-sizing:border-box;padding:0 9px;cursor:pointer;flex-shrink:0;display:inline-flex;align-items:center;position:relative;top:1px">KALENDER</button></h1>
   <div style="display:block;width:100%;">
   <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;min-height:26px;">
     <span id="such-lupe" onclick="oeffneSuche()" title="Suche" style="cursor:pointer;line-height:0;flex-shrink:0;-webkit-tap-highlight-color:transparent;">
@@ -160,6 +217,15 @@ input[type=date]::-webkit-calendar-picker-indicator { filter: invert(0.8) bright
       <input type="text" id="search" placeholder="Suche nach Produktion, Person, Funktion ...">
       <span id="search-clear" onclick="clearSearch()" style="cursor:pointer;color:#f0a050;font-size:18px;line-height:1;flex-shrink:0;">&#x2715;</span>
     </span>
+    <a href="https://www.opernhaus.ch" target="_blank" rel="noopener noreferrer" id="ohz-logo-mob" class="ohz-logo-mob">OPERNHAUS Z&Uuml;RICH</a>
+  </div>
+  <div id="menu-drop">
+    <span class="mi" style="color:#7fcfcf" onclick="schliesseMenu();document.getElementById('info-modal').style.display='flex'">ABOUT</span>
+    <span class="mi" onclick="zeigeKontakte()">KONTAKTE</span>
+    <a href="https://teamup.com/ks119b0a3494b39295" target="_blank" rel="noopener noreferrer" onclick="schliesseMenu()">ORCH.PROBERAUM KP</a>
+    <a href="https://www.opernhaus.ch/tv/" target="_blank" rel="noopener noreferrer" onclick="schliesseMenu()">BESETZUNG-SCREEN</a>
+    <a href="https://open.spotify.com/show/4N6SlElxVx0Tl7bwESQTAl" target="_blank" rel="noopener noreferrer" onclick="schliesseMenu()">AUDIOEINF&Uuml;HRUNGEN</a>
+    <a href="https://open.spotify.com/show/7AqOPQlsBUAuDpwQ75o3Hw" target="_blank" rel="noopener noreferrer" onclick="schliesseMenu()">PODCASTS</a>
   </div>
   <div id="filters" style="display:flex;flex-wrap:nowrap;gap:8px;align-items:center;">
     <input type="date" id="von" onchange="applyDateSaison()" style="background:#181818;border:1px solid #333;color:#e8e8e8;height:26px;box-sizing:border-box;padding:0 10px;font-size:14px;font-weight:500;border-radius:4px;outline:none;-webkit-appearance:none;">
@@ -681,6 +747,10 @@ function terminAnzahl(person, liste) {
   return anzahl;
 }
 
+// Datumsfilter als globale Variablen deklarieren. Sie wurden bisher nur beim
+// Saisonwechsel implizit angelegt, was vorher zu einem ReferenceError fuehrte.
+var vonFilter = "", bisFilter = "";
+
 var activeIndex = null;
 var prevState = null;
 var typFilters = {};   // Art-Chips: mehrere gleichzeitig moeglich
@@ -796,6 +866,7 @@ function getDirectoryMode(q) {
     "buhne": "bm", "buhnenmeister": "bm", "buehnenmeister": "bm", "buehne": "bm",
     "regieassistenz": "reasist", "regieassistentin": "reasist", "regieassistent": "reasist",
     "projektleitung": "projleit", "projektleiter": "projleit",
+    "dramaturgie": "dram", "dramaturg": "dram", "dramaturgin": "dram",
     "komponist": "komp", "komponistin": "komp", "composer": "komp", "komposition": "komp"
   };
   var key = normUml(q).trim();
@@ -807,39 +878,41 @@ function getDirectoryMode(q) {
   return null;
 }
 
+// Prueft, ob ein Eintrag eine einzelne benannte Person ist. Platzhalter wie
+// "N.N.", Sammelangaben ("alle BM", "alle ausser ...") und Nicht-Namen
+// gehoeren nicht in die Personenuebersicht.
+function istPerson(n) {
+  if (!n) return false;
+  var t = n.trim();
+  if (t.length < 2) return false;
+  if (!/[A-Za-z\u00c0-\u017f]{2}/.test(t)) return false;      // enthaelt keine Buchstaben
+  if (/^n\.?\s*n\.?$/i.test(t)) return false;                  // N.N.
+  if (/\balle\b/i.test(t)) return false;                       // "alle", "alle ausser ..."
+  if (/^(keine|offen|unklar|ja|nein|ev\.?|xx+|bt technik|studiob\.?|technik)$/i.test(t)) return false;
+  return true;
+}
+
 function renderDirectory(field) {
   var index = {};
   for (var i = 0; i < P.length; i++) {
     var p = P[i];
     if (saisonFilter !== "alle" && p.saison !== saisonFilter) continue;
-    if (!passtTyp(p) && !(p.kat === "Event" && (vonFilter || bisFilter))) continue;
+    if (!passtTyp(p)) continue;
     if (!passtTon(p)) continue;
-    if (vonFilter || bisFilter) {
-      var matchDate = false;
-      var checkVorst = p.vorstellungen && p.vorstellungen.length > 0;
-      if (checkVorst) {
-        for (var vi = 0; vi < p.vorstellungen.length; vi++) {
-          var vd = p.vorstellungen[vi];
-          var afterVon = !vonFilter || vd >= vonFilter;
-          var beforeBis = !bisFilter || vd <= bisFilter;
-          if (afterVon && beforeBis) { matchDate = true; break; }
-        }
-      } else {
-        var afterVon = !vonFilter || (p.lv && p.lv >= vonFilter);
-        var beforeBis = !bisFilter || (p.prem && p.prem <= bisFilter);
-        if (afterVon && beforeBis) matchDate = true;
-      }
-      if (!matchDate) continue;
-    }
+    // Datumsfilter (auch "Aktuell") wird hier bewusst ignoriert: In der
+    // Personenuebersicht sollen immer alle Namen der Saison erscheinen,
+    // nicht nur die mit noch bevorstehenden Vorstellungen.
     var val = p[field];
     if (!val) continue;
-    var valNorm = val.replace(/ *\/ */g, "|").replace(/ *, */g, "|");
+    // Trennzeichen vereinheitlichen; " o. " steht fuer eine Alternative
+    var valNorm = val.replace(/ *\/ */g, "|").replace(/ *, */g, "|")
+                     .replace(/ *; */g, "|").replace(/ *& */g, "|").replace(/ +o\. +/g, "|");
     var parts = valNorm.split("|");
     for (var j = 0; j < parts.length; j++) {
-      var name = parts[j].trim();
-      if (!name) continue;
-      if (field === "komp") { name = name.replace(/\s*\([^)]*\)\s*$/, "").trim(); }
-      if (!name) continue;
+      // Klammerzusaetze entfernen: "Rasche (Willi)" -> "Rasche",
+      // bei Komponisten auch Jahreszahlen
+      var name = parts[j].replace(/\s*\([^)]*\)\s*/g, " ").trim();
+      if (!istPerson(name)) continue;
       if (!index[name]) index[name] = [];
       index[name].push(p);
     }
@@ -864,7 +937,7 @@ function renderDirectory(field) {
     html += "</div>";
   }
   document.getElementById("list").innerHTML = (html || "<div id='empty'>Keine Eintraege.</div>") + "<div style='height:220px'></div>";
-  document.getElementById("count").textContent = names.length + " Eintraege";
+  document.getElementById("count").textContent = names.length + "x";
 }
 
 function getFiltered() {
@@ -1120,19 +1193,54 @@ function selectRow(idx) {
   render();
 }
 
+// Panel-Bezeichnungen, die eine Personenuebersicht oeffnen. Der Wert ist der
+// Suchbegriff, den getDirectoryMode() versteht.
+var LABEL_SUCHE = {
+  "Ton": "ton",
+  "B\u00fchnenmeister": "b\u00fchnenmeister",
+  "Beleuchtung": "beleuchtung",
+  "Projektleitung": "projektleitung",
+  "Inspizienz": "inspizienz",
+  "Regieassistenz": "regieassistenz",
+  "Dramaturgie": "dramaturgie",
+  "Regie / Choreographie": "regie",
+  "Dirigent": "dirigent",
+  "Komponist": "komponist"
+};
+
+// Setzt die Suche auf eine Funktionsbezeichnung und zeigt die Personenliste
+function sucheFunktion(begriff) {
+  var f = document.getElementById("search");
+  if (!f) return;
+  f.value = begriff;
+  oeffneSuche();
+  closeDetail();
+  activeIndex = null;
+  render();
+}
+
+// Baut die Beschriftung einer Panelzeile - klickbar, wenn es dazu eine
+// Personenuebersicht gibt.
+function dlabelHtml(label) {
+  var b = LABEL_SUCHE[label];
+  if (!b) return "<span class='dlabel'>" + label + "</span>";
+  return "<span class='dlabel dlabel-link' onclick=\"sucheFunktion('" + b + "')\" title='Alle "
+       + label + " anzeigen'>" + label + "</span>";
+}
+
 function drow(label, val) {
-  return "<div class='drow'><span class='dlabel'>" + label + "</span><span class='dval'>" + (val || "") + "</span></div>";
+  return "<div class='drow'>" + dlabelHtml(label) + "<span class='dval'>" + (val || "") + "</span></div>";
 }
 
 function drowlink(label, val) {
-  if (!val) return "<div class='drow'><span class='dlabel'>" + label + "</span><span class='dval'></span></div>";
+  if (!val) return "<div class='drow'>" + dlabelHtml(label) + "<span class='dval'></span></div>";
   var parts = val.split(" / ");
   var links = parts.map(function(nm) {
     nm = nm.trim();
     if (!nm || nm === "N.N.") return nm;
     return "<span class=\"dlink\" onclick=\"searchFor('" + nm + "')\">" + nm + "</span>";
   });
-  return "<div class='drow'><span class='dlabel'>" + label + "</span><span class='dval'>" + links.join(" / ") + "</span></div>";
+  return "<div class='drow'>" + dlabelHtml(label) + "<span class='dval'>" + links.join(" / ") + "</span></div>";
 }
 
 function showDetail(p) {
@@ -1141,11 +1249,11 @@ function showDetail(p) {
   var html = "";
   html += "<button id='detail-close' onclick='closeDetail()'>close</button>";
   html += "<div class='det-type'>" + (p.typ === "Premiere" ? "PREM" : p.typ) + (p.saison ? "<span style='margin-left:-4px'>&nbsp;&middot;&nbsp; SZ " + p.saison + "</span>" : "")
-        + (p.titel.indexOf("Un Ballo in Maschera Edinburgh") > -1 ? "" : " <span onclick='kalenderZeigen(" + P.indexOf(p) + ")' title='Im Kalender zeigen'"
+        + (p.saison !== "26/27" || p.titel.indexOf("Un Ballo in Maschera Edinburgh") > -1 ? "" : " <span onclick='kalenderZeigen(" + P.indexOf(p) + ")' title='Im Kalender zeigen'"
         + " style='margin-left:10px;position:relative;top:-1px;font-size:13px;letter-spacing:0.06em;color:#63f0f0;border-top:1px solid #2a5555;border-bottom:1px solid #080f0f;border-left:1px solid #1a4040;border-right:1px solid #080f0f;"
         + "border-radius:2px;padding:1px 7px;cursor:pointer;white-space:nowrap'>KALENDER &#8594;</span>") + "</div>";
   html += "<div class='det-title'>" + p.titel
-        + (evExtern(p) && p.location ? " <span style='margin-left:2px;font-size:16px;font-weight:400;color:#bbb;letter-spacing:0.1em;text-transform:uppercase;white-space:nowrap'>" + p.location + "</span>" : "")
+        + (evExtern(p) && p.location && p.kat !== "Event" ? " <span class='det-loc' title='" + p.location + "'>" + p.location + "</span>" : "")
         + "</div>";
   // Event-specific panel
   if (p.kat === "Event") {
@@ -1205,7 +1313,7 @@ function showDetail(p) {
   var tonEff = pv("ton");
   var tonDisplay = (tonEff ? "<span class='dlink' onclick=\"searchFor('" + tonEff + "')\">" + tonEff + "</span>" : "N.N.");
   if (histTon) tonDisplay += " <span style='color:#999'>/ " + histTon + "</span>";
-  html += "<div class='drow'><span class='dlabel' style='color:#fff'>Ton</span><span class='dval'>" + tonDisplay + "</span></div>";
+  html += "<div class='drow'><span class='dlabel dlabel-link' style='color:#fff' onclick=\"sucheFunktion('ton')\" title='Alle Ton anzeigen'>Ton</span><span class='dval'>" + tonDisplay + "</span></div>";
   html += drowlink("Bühnenmeister", pv("bm") || "N.N.");
   html += drowlink("Beleuchtung", pv("licht") || "N.N.");
   html += drowlink("Projektleitung", pv("projleit") || "N.N.");
@@ -1225,7 +1333,7 @@ function showDetail(p) {
   html += "<div class='divider'></div>";
   if (!ohneKuenstl) html += drowlink("Regie / Choreographie", pv("regie") || "N.N.");
   if (!ohneKuenstl) html += drowlink("Dirigent", pv("dirig") || "N.N.");
-  if (p.komp && !ohneKuenstl) html += "<div class='drow'><span class='dlabel'>Komponist</span><span class='dval'><span class='dlink' onclick=\"searchFor('" + p.komp + "')\" style=\"cursor:pointer\">" + p.komp + "</span></span></div>";
+  if (p.komp && !ohneKuenstl) html += "<div class='drow'>" + dlabelHtml("Komponist") + "<span class='dval'><span class='dlink' onclick=\"searchFor('" + p.komp + "')\" style=\"cursor:pointer\">" + p.komp + "</span></span></div>";
   if (p.dauer) html += drow("Dauer", p.dauer);
   if (p.team && p.team.length > 0) {
     html += "<div class='divider'></div>";
@@ -1485,15 +1593,173 @@ function filterTyp(typ) {
   render();
 }
 
+// ---- Menue (nur schmale Geraete) ----
+function toggleMenu(ev) {
+  if (ev) ev.stopPropagation();
+  var d = document.getElementById("menu-drop");
+  if (!d) return;
+  if (d.style.display === "block") { d.style.display = "none"; return; }
+  var b = document.getElementById("menu-btn");
+  d.style.visibility = "hidden";
+  d.style.display = "block";
+  if (b) {
+    var r = b.getBoundingClientRect();
+    d.style.top = (r.bottom + window.scrollY + 6) + "px";
+    // Linksbuendig unter dem Button, aber nicht ueber den rechten Rand hinaus.
+    // Die Breite ist erst messbar, wenn das Menue eingeblendet ist.
+    var links = r.left + window.scrollX;
+    var maxLinks = window.innerWidth - d.offsetWidth - 12;
+    if (links > maxLinks) links = maxLinks;
+    if (links < 8) links = 8;
+    d.style.left = links + "px";
+  }
+  d.style.visibility = "visible";
+}
+function schliesseMenu() {
+  var d = document.getElementById("menu-drop");
+  if (d) d.style.display = "none";
+}
+document.addEventListener("click", function(ev) {
+  var d = document.getElementById("menu-drop");
+  var b = document.getElementById("menu-btn");
+  if (!d || d.style.display !== "block") return;
+  if (d.contains(ev.target) || (b && b.contains(ev.target))) return;
+  d.style.display = "none";
+});
+
+// ---- Kontakte ----
+// Hier koennen weitere Eintraege ergaenzt werden.
+// tel: fuer den Anruf, telAnzeige: wie es dastehen soll.
+var KONTAKTE = [
+  {gruppe:"Empfang", zeit:"Mo–So, 07.00–22.45 Uhr", personen:[
+    {tel:"+41 (0)44 268 64 00", mail:"info@opernhaus.ch"}
+  ]},
+  {gruppe:"KBB", personen:[
+    {name:"Chantal Moser", tel:"+41 (0)44 268 64 41", mail:"chantal.moser@opernhaus.ch"},
+    {name:"Katarzyna Bogucka", tel:"+41 (0)44 268 64 44", mail:"katarzyna.bogucka@opernhaus.ch"},
+    {name:"Katharina Alvarez", tel:"+41 (0)44 268 64 44", mail:"katharina.alvarez@opernhaus.ch"},
+    {name:"allgemein", mail:"kbb@opernhaus.ch"}
+  ]},
+  {gruppe:"Projektleitung", feld:"projleit", personen:[]},
+  {gruppe:"Orchestertechnik", personen:[]},
+  {gruppe:"Untermaschinerie", personen:[]},
+  {gruppe:"Inspizienz", feld:"insp", personen:[]},
+  {gruppe:"Regieassistenz", feld:"reasist", personen:[]},
+  {gruppe:"Technischer Dienst", personen:[]},
+  {gruppe:"Transport", personen:[]},
+  {gruppe:"Dramaturgie", feld:"dram", aus:["Beate Breidenbach","Edward Kemp","Werner Hintze"], personen:[]},
+  {gruppe:"Marketing & Events", personen:[]},
+  {gruppe:"Ballettbüro", personen:[
+    {name:"Florian König", funktion:"Betriebsdirektion", tel:"+41 (0)44 268 64 60", mail:"florian.koenig@opernhaus.ch"},
+    {name:"Mikel Jauregui", funktion:"Produktionsleitung", tel:"+41 (0)44 268 64 62", mail:"mikel.jauregui@opernhaus.ch"},
+    {name:"allgemein", mail:"ballett-zuerich@opernhaus.ch"}
+  ]},
+  {gruppe:"Hausverwaltung", personen:[
+    {name:"Glenn Oberholzer", tel:"+41 (0)44 268 65 40", mail:"oberholzer.glenn@opernhaus.ch"}
+  ]},
+  {gruppe:"IT Helpdesk", zeit:"Mo–Fr, 08.00–20.00 Uhr", personen:[
+    {name:"Helpdesk", tel:"+41 (0)44 258 70 17", mail:"helpdesk@opernhaus.ch"}
+  ]},
+  {gruppe:"Sicherheitsbeauftragte AS/GS", personen:[
+    {name:"Sandra Reck", tel:"+41 (0)44 268 64 85", mail:"sandra.reck@opernhaus.ch"}
+  ]}
+];
+
+// Namen einer Funktion aus den Produktionsdaten der laufenden Saison sammeln.
+// Wird fuer Kontaktgruppen genutzt, zu denen noch keine Tel./Mail vorliegen.
+function namenAusPanel(feld) {
+  var set = {};
+  for (var i = 0; i < P.length; i++) {
+    var p = P[i];
+    if (p.saison !== "26/27") continue;
+    var v = p[feld];
+    if (!v) continue;
+    v.replace(/ *\/ */g, "|").replace(/ *, */g, "|").replace(/ *& */g, "|")
+     .replace(/ +o\. +/g, "|").split("|").forEach(function(t) {
+      var n = t.replace(/\s*\([^)]*\)\s*/g, " ").trim();
+      if (istPerson(n)) set[n] = true;
+    });
+  }
+  return Object.keys(set).sort();
+}
+
+// Merkt sich, welche Kontaktgruppen aufgeklappt sind
+var kontaktOffen = {};
+
+function toggleKontaktGruppe(i) {
+  kontaktOffen[i] = !kontaktOffen[i];
+  zeigeKontakte(true);
+}
+
+function zeigeKontakte(behalten) {
+  schliesseMenu();
+  if (!behalten) { closeDetail(); activeIndex = null; }
+  var anzahl = 0;
+  var html = "<div style='padding:14px 16px 40px'>"
+    + "<div class='sec-label' style='font-size:16px;color:#8a8a8a;margin-bottom:16px'>Kontakte</div>";
+  KONTAKTE.forEach(function(g, gi) {
+    var liste = g.personen || [];
+    // Ohne hinterlegte Kontakte: Namen aus den Produktionsdaten anzeigen
+    if (liste.length === 0 && g.feld) {
+      var aus = g.aus || [];
+      liste = namenAusPanel(g.feld)
+        .filter(function(n) { return aus.indexOf(n) === -1; })
+        .map(function(n) { return { name: n }; });
+    }
+    anzahl += liste.length;
+    var offen = !!kontaktOffen[gi];
+    html += "<div style='margin-top:14px'>"
+         + "<div onclick='toggleKontaktGruppe(" + gi + ")' style='font-size:17px;color:#7fcfcf;"
+         + "letter-spacing:0.06em;text-transform:uppercase;border-bottom:1px solid #333;"
+         + "padding-bottom:5px;cursor:pointer;display:flex;align-items:baseline;gap:8px;"
+         + "-webkit-tap-highlight-color:transparent'>"
+         + "<span style='font-size:12px;color:#6a8f8f;width:10px;flex-shrink:0'>"
+         + (offen ? "&#9660;" : "&#9654;") + "</span>"
+         + "<span>" + g.gruppe + "</span></div>";
+    if (offen) {
+      if (g.zeit) html += "<div style='font-size:13px;color:#8a8a8a;margin-top:6px'>" + g.zeit + "</div>";
+      if (liste.length === 0) {
+        html += "<div style='padding:9px 0;font-size:13px;color:#6a6a6a'>&ndash;</div>";
+      }
+      liste.forEach(function(p) {
+        html += "<div style='padding:9px 0 9px 18px;border-bottom:1px solid #232323'>";
+        if (p.name) html += "<div style='font-size:16px;color:#e8e8e8'>" + p.name + "</div>";
+        if (p.funktion) html += "<div style='font-size:13px;color:#8a8a8a;margin-top:1px'>" + p.funktion + "</div>";
+        if (p.tel) {
+          // Bei internationaler Vorwahl entfaellt die Null in Klammern:
+          // "+41 (0)44 268 64 00" -> "tel:+41442686400"
+          var telNr = p.tel.replace(/\(0\)/g, "").replace(/[^+0-9]/g, "");
+          html += "<div style='margin-top:5px'><a href='tel:" + telNr
+               + "' style='font-size:15px;color:#ffffff;text-decoration:none'>" + p.tel + "</a></div>";
+        }
+        if (p.mail) {
+          html += "<div style='margin-top:3px'><a href='mailto:" + p.mail
+               + "' style='font-size:15px;color:#ffffff;text-decoration:none;overflow-wrap:anywhere'>"
+               + p.mail + "</a></div>";
+        }
+        html += "</div>";
+      });
+    }
+    html += "</div>";
+  });
+  html += "</div>";
+  document.getElementById("list").innerHTML = html;
+  document.getElementById("count").textContent = anzahl + "x";
+}
+
 function oeffneSuche() {
   document.getElementById("such-lupe").style.display = "none";
   document.getElementById("such-box").style.display = "flex";
+  var lg = document.getElementById("ohz-logo-mob");
+  if (lg) lg.style.display = "none";
   document.getElementById("search").focus();
 }
 
 function schliesseSucheAufLupe() {
   document.getElementById("such-box").style.display = "none";
   document.getElementById("such-lupe").style.display = "inline-flex";
+  var lg = document.getElementById("ohz-logo-mob");
+  if (lg) { lg.style.display = ""; alignLogoMob(); }
 }
 
 function searchFor(name) {
@@ -1626,6 +1892,35 @@ setMainHeight();
 // Richtet 1.TE / 1.VST so aus, dass die rechte Aussenkante von 1.VST
 // buendig unter der rechten Kante des Event-Tags liegt. Wird gemessen statt
 // geschaetzt, damit es bei anderen Schriften und Fensterbreiten stimmt.
+// Richtet das mobile Logo so aus, dass sein Textanfang buendig unter der
+// linken Kante des Menue-Buttons liegt. Die rechte Kante bleibt fix, daher
+// wird die Schriftgroesse passend verkleinert.
+function alignLogoMob() {
+  try {
+    var lg = document.getElementById("ohz-logo-mob");
+    var mb = document.getElementById("menu-btn");
+    if (!lg || !mb) return;
+    if (window.getComputedStyle(lg).display === "none") return;
+    var basis = 13;
+    lg.style.fontSize = basis + "px";
+    var r = lg.getBoundingClientRect();
+    // 2px Versatz, damit der Text minimal rechts der Buttonkante beginnt
+    var ziel = mb.getBoundingClientRect().left + 2;
+    // Das linke Padding gehoert nicht zum Text, sonst begaenne die Schrift
+    // rechts der Buttonkante
+    var pad = parseFloat(window.getComputedStyle(lg).paddingLeft) || 0;
+    var sollBreite = r.right - ziel;          // vom Menue-Rand bis zum rechten Ende
+    var istBreite = r.width - pad;            // reine Textbreite bei 13px
+    if (!(istBreite > 0) || !(sollBreite > 0)) return;
+    // Breite skaliert linear mit der Schriftgroesse (letter-spacing in em)
+    var fs = basis * (sollBreite / istBreite);
+    if (fs < 7) fs = 7;
+    if (fs > 15) fs = 15;
+    lg.style.fontSize = fs.toFixed(2) + "px";
+  } catch (e) {}
+}
+window.addEventListener("resize", alignLogoMob);
+
 function alignSortButtons() {
   try {
     var wrap = document.getElementById("lsort-wrap");
@@ -1643,6 +1938,7 @@ window.addEventListener("resize", alignSortButtons);
 
 // matchSearchWidth();  // deaktiviert: Suchfeld ist jetzt Lupe+35ch statt 100% Breite
 alignSortButtons();
+alignLogoMob();
 try { history.replaceState({idx: null}, "", ""); } catch(e) {}
 function openKalender() {
   if (typeof window.kalZoom === "undefined") { window.kalZoom = null; }
@@ -2387,15 +2683,15 @@ filterAktuell();
       <p style="margin-top:12px">Auswahl <strong><em>1.TE / 1.VST</em></strong> sortiert die Produktionsliste nach Datum der 1.&nbsp;TE bzw. der 1.&nbsp;Vorstellung (Prem/WA).</p>
       <p style="margin-top:12px"><strong><em>Aktuell</em></strong> zeigt alle ab heute noch laufenden Produktionen (exkl. Events) und ggf. heutige Vorstellungen.</p>
       <p style="margin-top:12px">Als Produktionszeitraum gilt grunds&auml;tzlich die 1.&nbsp;TE bis zur letzten Vorstellung.</p>
-      <p style="margin-top:12px"><strong style="color:#fff">Panel:</strong> Ein Klick auf eine Produktion in der Liste &ouml;ffnet das Detailpanel mit detaillierten Angaben. Namen im Panel sind anklickbar und aktivieren einen Filter.</p>
+      <p style="margin-top:12px"><strong style="color:#fff">Panel:</strong> Ein Klick auf eine Produktion in der Liste &ouml;ffnet das Detailpanel mit detaillierten Angaben. Namen und Funktionen im Panel sind anklickbar und aktivieren einen Filter.</p>
       <p style="margin-top:12px">&laquo;<strong>Spielplan</strong>&raquo; oben links &ouml;ffnet den aktuellen Spielplan auf der Website des Opernhauses.</p>
       <p style="margin-top:12px">&laquo;<strong>Kalender</strong>&raquo; oben rechts &ouml;ffnet den tabellarischen Produktionskalender. Klick auf einen Monat in der Monatsleiste zoomt in eine Dreimonatsansicht. Klick auf inneren Bereich im Balkendiagramm vergr&ouml;ssert Ansicht um Faktor 1,5. Nochmaliger Klick verkleinert wieder auf Original. Tooltip/Mouse-Over auf Kalenderbalken bzw. auf Termin in Terminansicht zeigt zus&auml;tzliche Details.</p>
       <p style="margin-top:12px">In der Titelzeile: <strong>Button OHZ</strong> (Handy) bzw. <strong>Probenplan</strong> (Desktop) verlinkt auf Backstage/Probenplan, <strong>Button D</strong> &ouml;ffnet einen freigegebenen Google-Drive-Ordner f&uuml;r flexiblen Datei-Upload/-Zugriff zwischen allen im Google-Tonabteilung-Account eingeloggten Ger&auml;ten und <strong>Button N</strong> eine Google-Keep-Checkliste f&uuml;r schnelle Share-Notizen oder Pendenz-Eintr&auml;ge on-the-fly. &Auml;nderungen sind f&uuml;r alle sofort einsehbar und bearbeitbar.</p>
       <p style="margin-top:12px">Die <strong>WebApp</strong> besteht aus einer einzigen HTML-Datei (ca. 250kb inkl. JS und CSS) ohne externe Abh&auml;ngigkeiten (kein Datenaustausch mit externen Servern oder Diensten &ndash; ausgenommen Links in der Titelzeile und Fusszeile unter dem Kalender) und wird &uuml;ber GitHub gehostet (https://...). Sie l&auml;uft auf allen g&auml;ngigen Browsern unter MacOS, Windows, Android und iOS (bei Bedarf auch offline als lokale Html-Datei).</p>
       <p>Die Daten basieren auf den Spielplanunterlagen der technischen Direktion, des KBB sowie der Website des Opernhauses Z&uuml;rich. &Auml;nderungen w&auml;hrend laufender Spielzeit sind m&ouml;glicherweise nicht ber&uuml;cksichtigt, werden aber kontinuierlich aktualisiert.</p>
       <p>Diese WebApp ist als Hilfsmittel f&uuml;r den Produktionsalltag gedacht. F&uuml;r die Richtigkeit, Vollst&auml;ndigkeit und Aktualit&auml;t der Inhalte wird keine Gew&auml;hr &uuml;bernommen.</p>
-      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_190826_56" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
-      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_190826_56</p>
+      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_190826_102" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
+      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_190826_102</p>
       </div>
   </div>
 </div>
