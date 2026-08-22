@@ -24,7 +24,7 @@ input[type=date] { background: #181818; border: 1px solid #333; color: #e8e8e8; 
 .bs-desk { display: none; }
 .bs-mob  { display: inline; }
 .ohz-logo { display: none; font-family: 'Helvetica Neue', Arial, sans-serif; font-weight: 300;
-            font-size: 16px; letter-spacing: 0.42em; color: #5e5e5e; white-space: nowrap;
+            font-size: 16px; letter-spacing: 0.42em; color: #4a4a4a; white-space: nowrap;
             flex-shrink: 0; position: relative; top: 1px; line-height: 1; }
 @media (min-width: 1000px) and (hover: hover) and (pointer: fine) {
   .kal-zoomhint { display: inline; }
@@ -58,9 +58,13 @@ input[type=date] { background: #181818; border: 1px solid #333; color: #e8e8e8; 
 }
 /* Menue-Button und Klappliste (nur schmale Geraete) */
 #menu-btn { display: inline-flex; align-items: center; justify-content: center; margin-left: 12px;
-            width: 28px; height: 20px; box-sizing: border-box; background: #1e1e1e;
-            border: 1px solid #444; border-radius: 3px; cursor: pointer; flex-shrink: 0;
+            width: 28px; height: 20px; box-sizing: border-box;
+            background: #1e1e1e;
+            border-top: 1px solid #585858; border-left: 1px solid #484848;
+            border-bottom: 1px solid #0d0d0d; border-right: 1px solid #0d0d0d;
+            border-radius: 3px; cursor: pointer; flex-shrink: 0;
             position: relative; top: 1px; -webkit-tap-highlight-color: transparent; }
+#menu-btn:active { background: #262626; }
 #menu-btn:active { background: #262626; }
 #menu-drop { display: none; position: absolute; left: 0; z-index: 900; min-width: 190px;
              background: #1a1a1a; border: 1px solid #3a3a3a; border-radius: 5px;
@@ -72,6 +76,17 @@ input[type=date] { background: #181818; border: 1px solid #333; color: #e8e8e8; 
 #menu-drop a:active, #menu-drop span.mi:active { background: #242424; }
 @media (min-width: 1000px) and (hover: hover) and (pointer: fine) {
   #menu-btn:hover { border-color: #666; }
+  /* Reihenfolge auf dem Desktop: SPiELPLAN - PROBENPLAN - Menue - D - N,
+     danach das Logo, ganz rechts der Kalender-Button. Das Logo steht im HTML
+     vor D/N, wird per order dahinter einsortiert. */
+  .dn-btn   { order: 0; }
+  #main-h1 .ohz-logo { order: 1; margin-left: calc(32% - 114px) !important; }
+  #kal-btn  { order: 2; margin-left: auto; }
+  #dbtn.dn-btn { margin-left: 12px !important; }
+  .kal-pfeil { display: block !important; }
+  /* Die beiden Wechsel-Buttons duerfen auf dem Desktop groesser sein */
+  #kal-btn, .sp-btn { height: 22px !important; font-size: 11.5px !important;
+                      padding: 0 10px !important; }
 }
 /* Gleichmaessige Abstaende in der Titelzeile auf schmalen Geraeten:
    SPiELPLAN - OHZ - Menue ... D - N - KALENDER */
@@ -89,6 +104,12 @@ input[type=date] { background: #181818; border: 1px solid #333; color: #e8e8e8; 
   .det-title { overflow: hidden; }
   .det-loc { display: inline-block; max-width: calc(100vw - 60px);
              white-space: normal; overflow-wrap: anywhere; vertical-align: bottom; }
+}
+/* Verhindert, dass beim schnellen Tippen auf Buttons versehentlich Text
+   markiert wird (blaue Auswahl auf dem Logo). */
+#menu-btn, #such-lupe, .ohz-logo, .ohz-logo-mob, #main-h1, .bs-btn, .dn-btn,
+#kal-btn, .sp-btn, .kal-zoomhint, #menu-drop {
+  -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;
 }
 #reset { background: none; border: none; color: #f0a050; cursor: pointer; font-size: 16px; font-weight: 500; padding: 0; display: none; }
 #count { margin-left: auto; color: #ccc; font-size: 13px; }
@@ -192,22 +213,17 @@ input[type=date]::-webkit-calendar-picker-indicator { filter: invert(0.8) bright
 .sonne-glow { display:inline-block; animation: sonne-puls 2.2s ease-in-out infinite; }
 #info-i { animation: i-fade-first 10s ease-in-out 1s 1, i-fade 10s ease-in-out 11s infinite; }
 /* Glow-Effekt, frueher auf dem i-Symbol, jetzt auf dem Menue-Button */
-@keyframes menu-fade {
-  0%, 12%, 100% { border-color: #444; box-shadow: none; }
-  20% { border-color: #eaf4ff; box-shadow: 0 0 5px 1px rgba(215,235,255,0.2), 0 0 12px 2px rgba(205,230,255,0.1), 0 0 20px 5px rgba(200,228,255,0.045); }
-  28% { border-color: #444; box-shadow: none; }
-}
 @keyframes menu-fade-first {
-  0%, 12%, 100% { border-color: #444; box-shadow: none; }
-  20% { border-color: #eaf4ff; box-shadow: 0 0 10px 2px rgba(220,238,255,0.8), 0 0 22px 5px rgba(205,230,255,0.5), 0 0 38px 11px rgba(195,225,255,0.25); }
-  28% { border-color: #444; box-shadow: none; }
+  0%, 12%, 100% { box-shadow: none; }
+  20% { box-shadow: 0 0 10px 2px rgba(220,238,255,0.8), 0 0 22px 5px rgba(205,230,255,0.5), 0 0 38px 11px rgba(195,225,255,0.25); }
+  28% { box-shadow: none; }
 }
 #menu-btn { animation: menu-fade-first 10s ease-in-out 1s 1; }
 </style>
 </head>
 <body>
 <div id="header">
-  <h1 id="main-h1" style="white-space:nowrap;width:100%;display:flex;align-items:flex-end"><span onclick="window.open('https://www.opernhaus.ch/spielplan/kalendarium/','_blank')" style="cursor:pointer;color:#ffffff;font-size:18px;line-height:1">SPiELPLAN</span><span id="info-i" onclick="document.getElementById('info-modal').style.display='flex'" style="display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border:1px solid #bcc2c8;border-radius:50%;font-size:10px;color:#bcc2c8;cursor:pointer;margin-left:12px;font-style:italic;font-family:Georgia,serif;position:relative;top:-2px;display:none">i</span><a href="https://backstage.opernhaus.ch/content/news/archive/6388d94ef2be791bc1c6215f/articles/0" target="_blank" rel="noopener noreferrer" title="OHZ Backstage" class="bs-btn" style="display:inline-flex;align-items:center;justify-content:center;margin-left:14px;background:#2e2a63;color:#82ebf0;border-top:1px solid #4a4590;border-bottom:1px solid #14122e;border-left:1px solid #3a3578;border-right:1px solid #14122e;border-radius:3px;height:20px;box-sizing:border-box;padding:0 8px;font-size:11px;font-weight:bold;letter-spacing:0.06em;text-decoration:none;flex-shrink:0;position:relative;top:1px;-webkit-tap-highlight-color:transparent"><span class="bs-mob">OHZ</span><span class="bs-desk">PROBENPLAN</span></a><span id="menu-btn" onclick="toggleMenu(event)" title="Men&uuml;"><svg width="15" height="11" viewBox="0 0 15 11" fill="none" stroke="#bbb" stroke-width="1.5" stroke-linecap="round"><line x1="1" y1="1.5" x2="14" y2="1.5"/><line x1="1" y1="5.5" x2="14" y2="5.5"/><line x1="1" y1="9.5" x2="14" y2="9.5"/></svg></span><a href="https://www.opernhaus.ch" target="_blank" rel="noopener noreferrer" class="ohz-logo" style="margin-left:calc(32% - 45px);text-decoration:none">OPERNHAUS Z&Uuml;RICH</a><a href="https://drive.google.com/drive/folders/1WM9YPpCGen3EHeY3C5c_k_9tL9kMRel_" target="_blank" style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#0d2020;color:#63f0f0;font-size:11px;font-weight:bold;text-decoration:none;border-top:1px solid #2a5555;border-bottom:1px solid #080f0f;border-left:1px solid #1a4040;border-right:1px solid #080f0f;box-shadow:none;margin-left:auto;margin-right:7px;flex-shrink:0;position:relative;top:1px" id="dbtn">D</a><a href="https://keep.google.com/#LIST/1_K2fuuC7XY9k2Cd6eg8oLcLuF_pSCmvaM8uw_XeN6IxMYh6WARY2lbzFqiDPzA" target="_blank" style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#0d2020;color:#63f0f0;font-size:11px;font-weight:bold;text-decoration:none;border-top:1px solid #2a5555;border-bottom:1px solid #080f0f;border-left:1px solid #1a4040;border-right:1px solid #080f0f;box-shadow:none;margin-right:10px;flex-shrink:0;position:relative;top:1px">N</a><button onclick="window.kalScale=1;window.kalZoom=null;openKalender()" title="Produktionskalender 26/27" style="background:#0d2020;color:#63f0f0;border-top:1px solid #2a5555;border-bottom:1px solid #080f0f;border-left:1px solid #1a4040;border-right:1px solid #080f0f;border-radius:3px;font-size:11px;font-weight:bold;height:20px;box-sizing:border-box;padding:0 9px;cursor:pointer;flex-shrink:0;display:inline-flex;align-items:center;position:relative;top:1px">KALENDER</button></h1>
+  <h1 id="main-h1" style="white-space:nowrap;width:100%;display:flex;align-items:flex-end"><span onclick="window.open('https://www.opernhaus.ch/spielplan/kalendarium/','_blank')" style="cursor:pointer;color:#ffffff;font-size:18px;line-height:1">SPiELPLAN</span><span id="info-i" onclick="document.getElementById('info-modal').style.display='flex'" style="display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border:1px solid #bcc2c8;border-radius:50%;font-size:10px;color:#bcc2c8;cursor:pointer;margin-left:12px;font-style:italic;font-family:Georgia,serif;position:relative;top:-2px;display:none">i</span><a href="https://backstage.opernhaus.ch/content/news/archive/6388d94ef2be791bc1c6215f/articles/0" target="_blank" rel="noopener noreferrer" title="OHZ Backstage" class="bs-btn" style="display:inline-flex;align-items:center;justify-content:center;margin-left:14px;background:#2e2a63;color:#82ebf0;border-top:1px solid #4a4590;border-bottom:1px solid #14122e;border-left:1px solid #3a3578;border-right:1px solid #14122e;border-radius:3px;height:20px;box-sizing:border-box;padding:0 8px;font-size:11px;font-weight:bold;letter-spacing:0.06em;text-decoration:none;flex-shrink:0;position:relative;top:1px;-webkit-tap-highlight-color:transparent"><span class="bs-mob">OHZ</span><span class="bs-desk">PROBENPLAN</span></a><span id="menu-btn" onclick="toggleMenu(event)" title="Men&uuml;"><svg width="15" height="11" viewBox="0 0 15 11" fill="none" stroke="#bbb" stroke-width="1.5" stroke-linecap="round"><line x1="1" y1="1.5" x2="14" y2="1.5"/><line x1="1" y1="5.5" x2="14" y2="5.5"/><line x1="1" y1="9.5" x2="14" y2="9.5"/></svg></span><a href="https://www.opernhaus.ch" target="_blank" rel="noopener noreferrer" class="ohz-logo" style="margin-left:calc(32% - 45px);text-decoration:none">OPERNHAUS Z&Uuml;RICH</a><a href="https://drive.google.com/drive/folders/1WM9YPpCGen3EHeY3C5c_k_9tL9kMRel_" target="_blank" style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#1e1e1e;color:#bbb;font-size:11px;font-weight:bold;text-decoration:none;border-top:1px solid #585858;border-bottom:1px solid #0d0d0d;border-left:1px solid #484848;border-right:1px solid #0d0d0d;margin-left:auto;margin-right:7px;flex-shrink:0;position:relative;top:1px" id="dbtn" class="dn-btn">D</a><a href="https://keep.google.com/#LIST/1_K2fuuC7XY9k2Cd6eg8oLcLuF_pSCmvaM8uw_XeN6IxMYh6WARY2lbzFqiDPzA" target="_blank" style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#1e1e1e;color:#bbb;font-size:11px;font-weight:bold;text-decoration:none;border-top:1px solid #585858;border-bottom:1px solid #0d0d0d;border-left:1px solid #484848;border-right:1px solid #0d0d0d;margin-right:10px;flex-shrink:0;position:relative;top:1px" class="dn-btn">N</a><button onclick="window.kalScale=1;window.kalZoom=null;openKalender()" title="Produktionskalender 26/27" style="background:#0d2020;color:#63f0f0;border-top:1px solid #2a5555;border-bottom:1px solid #080f0f;border-left:1px solid #1a4040;border-right:1px solid #080f0f;border-radius:3px;font-size:11px;font-weight:bold;height:20px;box-sizing:border-box;padding:0 9px;cursor:pointer;flex-shrink:0;display:inline-flex;align-items:center;gap:5px;position:relative;top:1px" id="kal-btn"><svg class="kal-pfeil" width="17" height="9" viewBox="0 0 17 9" fill="none" stroke="#63f0f0" stroke-width="1.4" style="display:none;flex-shrink:0"><line x1="0.5" y1="4.5" x2="14" y2="4.5" stroke-linecap="round"/><polyline points="10.5,1.5 14,4.5 10.5,7.5" stroke-linecap="round" stroke-linejoin="round"/></svg>KALENDER</button></h1>
   <div style="display:block;width:100%;">
   <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;min-height:26px;">
     <span id="such-lupe" onclick="oeffneSuche()" title="Suche" style="cursor:pointer;line-height:0;flex-shrink:0;-webkit-tap-highlight-color:transparent;">
@@ -2368,7 +2384,7 @@ function openKalender() {
   var zoomBtn = ZOOM
     ? "<button onclick='kalZoomTo(null)' style='background:#1c1c1c;border:1px solid #63f0f0;border-radius:3px;color:#ffffff;font-size:12px;cursor:pointer;padding:2px 10px;position:relative;top:-3px;vertical-align:middle'>&#8594; Jahresansicht</button>"
     : "";
-  var hint = "<span onclick=\"document.getElementById('kalender-modal').style.display='none'\" title='Zur Hauptansicht' "
+  var hint = "<span onclick=\"document.getElementById('kalender-modal').style.display='none'\" title='Zur Hauptansicht' class='sp-btn' "
     + "style='display:inline-flex;align-items:center;gap:5px;background:#0d2020;color:#63f0f0;"
     + "border-top:1px solid #2a5555;border-bottom:1px solid #080f0f;border-left:1px solid #1a4040;border-right:1px solid #080f0f;"
     + "border-radius:3px;font-size:11px;font-weight:bold;height:20px;box-sizing:border-box;padding:0 9px;cursor:pointer;white-space:nowrap;"
@@ -2424,10 +2440,7 @@ function openKalender() {
         }).join("");
         return "<div style='margin-top:20px;font-size:12px;color:#888;line-height:1.6'>" + zeilen + "</div>";
       })()
-    + "<div style='margin-top:10px;font-size:14px;color:#cccccc;line-height:1.6'><span onclick=\"window.open('https://teamup.com/ks119b0a3494b39295','_blank')\" style='cursor:pointer;text-decoration:underline'>Orch.Proberaum KP</span></div>"
-    + "<div style='margin-top:4px;font-size:14px;color:#cccccc;line-height:1.6'><span onclick=\"window.open('https://www.opernhaus.ch/tv/','_blank')\" style='cursor:pointer;text-decoration:underline'>Besetzung-Screen</span></div>"
-    + "<div style='margin-top:4px;font-size:14px;color:#cccccc;line-height:1.6'><span onclick=\"window.open('https://open.spotify.com/show/4N6SlElxVx0Tl7bwESQTAl','_blank')\" style='cursor:pointer;text-decoration:underline'>Audioeinf&uuml;hrungen</span></div>"
-    + "<div style='margin-top:4px;font-size:14px;color:#cccccc;line-height:1.6'><span onclick=\"window.open('https://open.spotify.com/show/7AqOPQlsBUAuDpwQ75o3Hw','_blank')\" style='cursor:pointer;text-decoration:underline'>Podcasts</span></div>"
+
     + "</div>";
 
   document.getElementById("kalender-body").innerHTML = html;
@@ -2690,11 +2703,11 @@ filterAktuell();
       <p style="margin-top:12px">&laquo;<strong>Spielplan</strong>&raquo; oben links &ouml;ffnet den aktuellen Spielplan auf der Website des Opernhauses.</p>
       <p style="margin-top:12px">&laquo;<strong>Kalender</strong>&raquo; oben rechts &ouml;ffnet den tabellarischen Produktionskalender. Klick auf einen Monat in der Monatsleiste zoomt in eine Dreimonatsansicht. Klick auf inneren Bereich im Balkendiagramm vergr&ouml;ssert Ansicht um Faktor 1,5. Nochmaliger Klick verkleinert wieder auf Original. Tooltip/Mouse-Over auf Kalenderbalken bzw. auf Termin in Terminansicht zeigt zus&auml;tzliche Details.</p>
       <p style="margin-top:12px">In der Titelzeile: <strong>Button OHZ</strong> (Handy) bzw. <strong>Probenplan</strong> (Desktop) verlinkt auf Backstage/Probenplan, <strong>Button D</strong> &ouml;ffnet einen freigegebenen Google-Drive-Ordner f&uuml;r flexiblen Datei-Upload/-Zugriff zwischen allen im Google-Tonabteilung-Account eingeloggten Ger&auml;ten und <strong>Button N</strong> eine Google-Keep-Checkliste f&uuml;r schnelle Share-Notizen oder Pendenz-Eintr&auml;ge on-the-fly. &Auml;nderungen sind f&uuml;r alle sofort einsehbar und bearbeitbar.</p>
-      <p style="margin-top:12px">Die <strong>WebApp</strong> besteht aus einer einzigen HTML-Datei (ca. 250kb inkl. JS und CSS) ohne externe Abh&auml;ngigkeiten (kein Datenaustausch mit externen Servern oder Diensten &ndash; ausgenommen Links in der Titelzeile und Fusszeile unter dem Kalender) und wird &uuml;ber GitHub gehostet (https://...). Sie l&auml;uft auf allen g&auml;ngigen Browsern unter MacOS, Windows, Android und iOS (bei Bedarf auch offline als lokale Html-Datei).</p>
+      <p style="margin-top:12px">Die <strong>WebApp</strong> besteht aus einer einzigen HTML-Datei (ca. 250kb inkl. JS und CSS) ohne externe Abh&auml;ngigkeiten (kein Datenaustausch mit externen Servern oder Diensten &ndash; ausgenommen Links in der Titelzeile) und wird &uuml;ber GitHub gehostet (https://...). Sie l&auml;uft auf allen g&auml;ngigen Browsern unter MacOS, Windows, Android und iOS (bei Bedarf auch offline als lokale Html-Datei).</p>
       <p>Die Daten basieren auf den Spielplanunterlagen der technischen Direktion, des KBB sowie der Website des Opernhauses Z&uuml;rich. &Auml;nderungen w&auml;hrend laufender Spielzeit sind m&ouml;glicherweise nicht ber&uuml;cksichtigt, werden aber kontinuierlich aktualisiert.</p>
       <p>Diese WebApp ist als Hilfsmittel f&uuml;r den Produktionsalltag gedacht. F&uuml;r die Richtigkeit, Vollst&auml;ndigkeit und Aktualit&auml;t der Inhalte wird keine Gew&auml;hr &uuml;bernommen.</p>
-      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_190826_104" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
-      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_190826_104</p>
+      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_190826_123" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
+      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_190826_123</p>
       </div>
   </div>
 </div>
