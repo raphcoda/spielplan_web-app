@@ -39,8 +39,12 @@ input[type=date] { background: #181818; border: 1px solid #333; color: #e8e8e8; 
 /* Auf breiten Bildschirmen beginnt das Panel exakt in der Bildschirmmitte.
    Darunter gilt weiter die feste Breite aus der Basisregel, damit das Panel
    auf schmalen Fenstern und auf dem Handy nicht zu eng wird. */
-@media (min-width: 1600px) {
-  #detail { width: 50vw; }
+/* Ab dieser Breite teilen sich Liste und Panel den Platz exakt haelftig.
+   Ueber flex statt fester Breite, damit Innenabstaende und Scrollbalken
+   die Aufteilung nicht verschieben. */
+@media (min-width: 1200px) {
+  #detail { width: auto; flex: 1 1 0; min-width: 0; box-sizing: border-box; }
+  #detail.open ~ #list, #main > #list { flex: 1 1 0; min-width: 0; }
 }
 /* Auf dem Desktop bleibt der SPIELPLAN-Button beim Scrollen im Kalender
    sichtbar. Auf Touch-Geraeten scrollt er wie bisher mit. */
@@ -86,8 +90,8 @@ input[type=date] { background: #181818; border: 1px solid #333; color: #e8e8e8; 
   #dbtn.dn-btn { margin-left: 12px !important; }
   .kal-pfeil { display: block !important; }
   /* Die beiden Wechsel-Buttons duerfen auf dem Desktop groesser sein */
-  #kal-btn, .sp-btn { height: 22px !important; font-size: 11.5px !important;
-                      padding: 0 10px !important; }
+  #kal-btn, .sp-btn { height: 24px !important; font-size: 12.5px !important;
+                      padding: 0 12px !important; }
 }
 /* Gleichmaessige Abstaende in der Titelzeile auf schmalen Geraeten:
    SPiELPLAN - OHZ - Menue ... D - N - KALENDER */
@@ -2180,12 +2184,24 @@ function openKalender() {
       var numCol = isMon ? "#ffffff" : (isWE ? "#d8d8d8" : "#a8a8a8");
       var numWeight = isMon ? "bold" : "normal";
       var halfDay = 100 / TOTAL / 2;
-      dayLines += "<div style='position:absolute;bottom:" + (window.kalZoomTage ? 1 : 2) + "px;left:" + (xp + halfDay).toFixed(3) + "%;transform:translateX(-50%);font-size:" + (window.kalZoomTage ? (deskKal ? 10 : 12.5) : 15) + "px;color:" + numCol + ";font-weight:" + numWeight + ";white-space:nowrap'>" + dnum + "</div>";
+      dayLines += "<div style='position:absolute;bottom:" + (window.kalZoomTage ? (deskKal ? 1 : 1) : 2) + "px;left:" + (xp + halfDay).toFixed(3) + "%;transform:translateX(-50%);font-size:" + (window.kalZoomTage ? (deskKal ? 10 : 12.5) : 15) + "px;color:" + numCol + ";font-weight:" + numWeight + ";white-space:nowrap'>" + dnum + "</div>";
+      // Wochentagsbuchstabe ueber der Tageszahl - dezent und klein.
+      // Am Monatsanfang und am Tag davor ausgelassen, da dort der Monatsname steht.
+      var naechster = new Date(cur.getTime() + 86400000);
+      var monatswechsel = (cur.getDate() === 1) || (cur.getDate() === 2) || (naechster.getDate() === 1);
+      // Nur Mittwoch und Freitag beschriften - das reicht zur Orientierung
+      if (!monatswechsel && (dow === 3 || dow === 5)) {
+        var wtag = ["S","M","D","M","D","F","S"][dow];
+        dayLines += "<div style='position:absolute;top:" + (deskKal ? 0 : 5) + "px;left:"
+                 + (xp + halfDay).toFixed(3) + "%;transform:translateX(-50%);font-size:"
+                 + (window.kalZoomTage ? (deskKal ? 7 : 8.5) : 8.5) + "px;color:#7a7a7a;line-height:1;white-space:nowrap'>"
+                 + wtag + "</div>";
+      }
       // Monatsname beim 1. des Monats
       var mo = cur.getMonth();
       if (mo !== lastMonth) {
         lastMonth = mo;
-        monthLabels += "<div style='position:absolute;top:" + (window.kalZoomTage ? (deskKal ? -3 : 1) : 3) + "px;left:" + xp.toFixed(3) + "%;transform:translateX(4px);font-size:" + (deskKal ? 10.5 : 14) + "px;color:#63f0f0;font-weight:bold;white-space:nowrap'>" + names[mo] + "</div>";
+        monthLabels += "<div style='position:absolute;top:" + (window.kalZoomTage ? (deskKal ? 0 : -1) : 3) + "px;left:" + xp.toFixed(3) + "%;transform:translateX(4px);font-size:" + (deskKal ? 10.5 : 14) + "px;color:#63f0f0;font-weight:bold;white-space:nowrap'>" + names[mo] + "</div>";
       }
       cur.setDate(cur.getDate() + 1);
     }
@@ -2512,7 +2528,7 @@ function openKalender() {
   // Auf dem Desktop ist der Kalender ohnehin vergroessert dargestellt,
   // daher duerfen Schriften und Abstaende dort knapper ausfallen.
   var deskKal = kalBasisScale() > 1;
-  var tlHeight = ZOOM ? (deskKal ? 33 : 44) : 26;
+  var tlHeight = ZOOM ? (deskKal ? 31 : 34) : 26;
   // Im Zoom wird die ganze Saison breiter gezeichnet. Ist eine Tageszahl
   // vorgegeben (Klick auf eine Produktionszeile), wird die Breite so gewaehlt,
   // dass genau dieser Zeitraum ins Fenster passt.
@@ -2566,7 +2582,7 @@ function openKalender() {
     + "<div style='position:relative;flex:1;height:" + tlHeight + "px;border-bottom:1px solid #666'>" + monthlines + "</div>"
     + "</div>"
     + "<div id='kal-sortrow' style='display:flex;align-items:stretch;padding:3px 0 5px;position:relative;z-index:4'>"
-    + "<div style='width:120px;box-sizing:border-box;flex-shrink:0;" + (deskKal ? 'min-height:' + (window.kalZoomTage ? 22 : 16) + 'px;' : '') + "padding-right:" + (deskKal ? 19 : 17) + "px;line-height:1.3;white-space:nowrap;position:sticky;left:0;z-index:5;background:#1a1a1a;font-size:" + (deskKal ? 10.5 : 13) + "px;font-weight:500;letter-spacing:-0.01em;display:flex;align-items:center;padding-left:3px'>"
+    + "<div style='width:120px;box-sizing:border-box;flex-shrink:0;" + (deskKal ? 'min-height:' + (window.kalZoomTage ? 22 : 16) + 'px;' : '') + "padding-right:" + (deskKal ? 22 : 16) + "px;line-height:1.3;white-space:nowrap;position:sticky;left:0;z-index:5;background:#1a1a1a;font-size:" + (deskKal ? 10.5 : 13) + "px;font-weight:500;letter-spacing:-0.01em;display:flex;align-items:center;padding-left:3px'>"
     + sortZeileInhalt()
     + "</div>"
     + "<div style='flex:1'></div>"
@@ -3121,8 +3137,8 @@ filterAktuell();
       <p style="margin-top:0">Die <strong>WebApp</strong> besteht aus einer einzigen HTML-Datei (ca. 300kb inkl. JS und CSS) ohne externe Abh&auml;ngigkeiten (kein Datenaustausch mit externen Servern oder Diensten &ndash; ausgenommen Links in der Titelzeile) und wird &uuml;ber GitHub gehostet (https://...). Sie l&auml;uft auf allen g&auml;ngigen Browsern unter MacOS, Windows, Android und iOS (bei Bedarf auch offline als lokale Html-Datei).</p>
       <p>Die Daten basieren auf den Spielplanunterlagen der technischen Direktion, des KBB sowie der Website des Opernhauses Z&uuml;rich. &Auml;nderungen w&auml;hrend laufender Spielzeit sind m&ouml;glicherweise nicht ber&uuml;cksichtigt, werden aber kontinuierlich aktualisiert.</p>
       <p>Diese WebApp ist als Hilfsmittel f&uuml;r den Produktionsalltag gedacht. F&uuml;r die Richtigkeit, Vollst&auml;ndigkeit und Aktualit&auml;t der Inhalte wird keine Gew&auml;hr &uuml;bernommen.</p>
-      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_190826_229" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
-      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_190826_229</p>
+      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_190826_244" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
+      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_190826_244</p>
       </div>
   </div>
 </div>
