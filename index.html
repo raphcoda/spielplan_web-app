@@ -27,7 +27,8 @@ input[type=date] { background: #181818; border: 1px solid #333; color: #e8e8e8; 
             font-size: 16px; letter-spacing: 0.42em; color: #4a4a4a; white-space: nowrap;
             flex-shrink: 0; position: relative; top: 1px; line-height: 1; }
 @media (min-width: 1000px) and (hover: hover) and (pointer: fine) {
-  .kal-zoomhint { display: inline; }
+  /* Zurueck-Button ausgeblendet: der Wechsel laeuft ueber den Zeilenklick */
+  .kal-zoomhint { display: none; }
   .bs-desk { display: inline; font-weight: 500; }
   .bs-mob  { display: none; }
   .ohz-logo { display: inline; }
@@ -50,7 +51,7 @@ input[type=date] { background: #181818; border: 1px solid #333; color: #e8e8e8; 
 /* Logo auf schmalen Geraeten: derzeit ausgeblendet, Code bleibt fuer spaeter
    erhalten. Zum Wiedereinschalten "display: none" in "inline-block" aendern. */
 .ohz-logo-mob { display: inline-block; margin-left: auto; font-family: 'Helvetica Neue', Arial, sans-serif;
-                font-weight: 300; font-size: 13px; letter-spacing: 0.29em; color: #4a4a4a;
+                font-weight: 300; font-size: 13px; letter-spacing: 0.29em; color: #656565;
                 white-space: nowrap; flex-shrink: 0; text-decoration: none; padding-left: 10px;
                 margin-right: 4px; }
 @media (min-width: 1000px) and (hover: hover) and (pointer: fine) {
@@ -101,6 +102,11 @@ input[type=date] { background: #181818; border: 1px solid #333; color: #e8e8e8; 
 .det-loc { font-size: 16px; font-weight: 400; color: #bbb; letter-spacing: 0.1em;
            text-transform: uppercase; white-space: nowrap; margin-left: 2px; }
 @media (max-width: 999px) {
+  /* Auf schmalen Geraeten Liste und Panel in reinem Schwarz */
+  #list, #detail { background: #000000; }
+  /* Werte, Namen und Daten im Panel dort in reinem Weiss */
+  .dval, .dlink { color: #ffffff; }
+  .prob-typ { color: #ffffff !important; }
   .det-title { overflow: hidden; }
   .det-loc { display: inline-block; max-width: calc(100vw - 60px);
              white-space: normal; overflow-wrap: anywhere; vertical-align: bottom; }
@@ -127,6 +133,10 @@ input[type=date] { background: #181818; border: 1px solid #333; color: #e8e8e8; 
 .badge-S { background: #555; color: #fff; }
 .badge-E { background: #555; color: #fff; }
 .kal-row:hover { background:#33383d; }
+/* Zeile, aus der heraus gezoomt wurde, bleibt markiert - hilft bei der
+   Orientierung, wenn der Mauszeiger nicht mehr darueber steht. */
+.kal-row.kal-fokus { background:#2a3238; }
+.kal-row.kal-fokus > div:first-child { background:#2a3238 !important; }
 .kal-row:hover > div:first-child { background:#33383d !important; }
 #detail { width: min(945px, 100vw); border-left: 1px solid #222; overflow-y: scroll; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; touch-action: pan-y; padding: 20px 20px 120px 20px; display: none; flex-shrink: 0; background: #131313; }
 #detail.open { display: block; }
@@ -187,6 +197,95 @@ input[type=date]::-webkit-calendar-picker-indicator { filter: invert(0.8) bright
 #kal-hscroll::-webkit-scrollbar { width: 5px; height: 5px; }
 #kal-hscroll::-webkit-scrollbar-track { background: #181818; }
 #kal-hscroll::-webkit-scrollbar-thumb { background: #0a9090; border-radius: 2px; }
+/* Auf dem Desktop bleibt der waagrechte Balken immer sichtbar. macOS blendet
+   ihn sonst aus, wodurch im Dreimonats-Zoom nicht erkennbar ist, dass man
+   seitlich scrollen kann. Der Balken im Kalender selbst wuerde beim
+   vertikalen Scrollen wegwandern, daher ein eigener am Fensterrand. */
+#kal-hbar { display: none; }
+/* Kontextmenue im Kalender (Rechtsklick) */
+#about-desk { display: none; }
+#kal-hilfe-btn { display: none; }
+/* Hilfe-Button auf schmalen Geraeten: rechts in der Kategoriezeile,
+   buendig mit der Aussenkante des Kalender-Buttons darueber */
+.hilfe-mob { display: inline-flex; align-items: center; justify-content: center;
+             margin-left: auto; margin-right: 4px; align-self: flex-end;
+             width: 21px; height: 21px; box-sizing: border-box;
+             background: #2a2a2a; color: #eaeaea; font-size: 13px; font-weight: bold;
+             border-top: 1px solid #6e6e6e; border-left: 1px solid #5c5c5c;
+             border-bottom: 1px solid #0d0d0d; border-right: 1px solid #0d0d0d;
+             border-radius: 50%; cursor: pointer; flex-shrink: 0;
+             -webkit-user-select: none; user-select: none;
+             -webkit-tap-highlight-color: transparent; }
+@media (min-width: 1000px) and (hover: hover) and (pointer: fine) {
+  /* ABOUT steht auf dem Desktop neben dem N-Button, nicht im Klappmenue */
+  .hilfe-mob { display: none !important; }
+  #about-desk { display: inline-flex; align-items: center; justify-content: center;
+                margin-left: 7px; width: 20px; height: 20px; box-sizing: border-box;
+                border-radius: 50%; color: #bbb; font-size: 14px; font-weight: bold;
+                cursor: pointer; flex-shrink: 0; position: relative; top: 0;
+                -webkit-user-select: none; user-select: none;
+                -webkit-tap-highlight-color: transparent; }
+  #about-desk:hover { color: #eee; }
+  .mi-about { display: none !important; }
+  #kal-hilfe-btn { display: inline-flex; align-items: center; justify-content: center;
+                   margin-left: 12px; width: 20px; height: 20px; box-sizing: border-box;
+                   border-radius: 50%; color: #bbb; font-size: 14px; font-weight: bold;
+                   cursor: pointer; flex-shrink: 0;
+                   position: relative; top: 0; -webkit-user-select: none; user-select: none;
+                   -webkit-tap-highlight-color: transparent; }
+  #kal-hilfe-btn:hover { color: #eee; }
+}
+#kal-hilfe { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.72);
+             z-index: 2400; align-items: center; justify-content: center; padding: 20px; }
+#kal-hilfe > div { background: #1a1a1a; border: 1px solid #333; border-radius: 6px;
+                   max-width: 520px; width: 100%; max-height: 80vh; overflow-y: auto;
+                   padding: 20px 22px 24px; font-size: 15px; line-height: 1.65; color: #ccc; }
+#kal-hilfe h3 { margin: 0 0 14px; font-size: 16px; font-weight: 500; color: #7fcfcf;
+                letter-spacing: 0.05em; }
+#kal-hilfe p { margin: 0 0 10px; }
+#kal-hilfe b { color: #fff; font-weight: 500; }
+/* Tooltip auf Touchgeraeten: erscheint bei laengerem Antippen, da die
+   title-Hinweise dort sonst nie sichtbar werden. */
+/* iOS: beim langen Antippen keine Textauswahl oder Systemvorschau im Kalender */
+#kal-hscroll { -webkit-user-select: none; user-select: none;
+               -webkit-touch-callout: none; }
+#kal-tip { display: none; position: fixed; z-index: 2350; max-width: 76vw;
+           background: #1a1a1a; border: 1px solid #3a3a3a; border-radius: 5px;
+           box-shadow: 0 6px 18px rgba(0,0,0,0.6); padding: 9px 12px;
+           font-size: 13px; line-height: 1.5; color: #e8e8e8; white-space: pre-line;
+           -webkit-user-select: none; user-select: none; pointer-events: none; }
+#kal-ctx { display: none; position: fixed; z-index: 2300; min-width: 130px;
+           background: #1a1a1a; border: 1px solid #3a3a3a; border-radius: 5px;
+           box-shadow: 0 6px 18px rgba(0,0,0,0.55); overflow: hidden;
+           -webkit-user-select: none; user-select: none; }
+#kal-ctx span { display: block; padding: 9px 14px; font-size: 13px; color: #ddd;
+                cursor: pointer; border-bottom: 1px solid #2a2a2a; letter-spacing: 0.04em; }
+#kal-ctx span:last-child { border-bottom: none; }
+#kal-ctx span:hover { background: #242424; }
+#kal-ctx span.aktiv { color: #63f0f0; }
+@media (min-width: 1000px) and (hover: hover) and (pointer: fine) {
+  #kal-hscroll { scrollbar-width: none; }
+  #kal-hscroll::-webkit-scrollbar { height: 0; width: 0; }
+  #kal-hbar { display: block; position: fixed; left: 0; right: 0; bottom: 0; height: 14px;
+              overflow-x: scroll; overflow-y: hidden; z-index: 2200;
+              background: #101818; border-top: 1px solid #223030;
+              scrollbar-width: thin; scrollbar-color: #0a9090 #101818; }
+  #kal-hbar::-webkit-scrollbar { height: 13px; -webkit-appearance: none; }
+  #kal-hbar::-webkit-scrollbar-track { background: #101818; }
+  #kal-hbar::-webkit-scrollbar-thumb { background: #0a9090; border-radius: 5px;
+                                       border: 2px solid #101818; min-width: 40px; }
+  #kal-hbar::-webkit-scrollbar-thumb:hover { background: #0fc4c4; }
+  #kal-hbar-inner { height: 1px; }
+}
+/* Auf dem Desktop sind Readme und Kalender-Kurzanleitung breiter und
+   etwas groesser gesetzt - mobil bleibt alles wie gehabt. */
+@media (min-width: 1000px) and (hover: hover) and (pointer: fine) {
+  #info-modal-content { max-width: 870px !important; }
+  #info-modal-content > div { font-size: 17px !important; }
+  #info-modal-content h2 { font-size: 20px !important; }
+  #kal-hilfe > div { max-width: 950px; font-size: 17px; }
+  #kal-hilfe h3 { font-size: 18px; }
+}
 #info-modal-content { scrollbar-width: thin; scrollbar-color: #0a9090 #141414; }
 #info-modal-content::-webkit-scrollbar { width: 5px; }
 #info-modal-content::-webkit-scrollbar-track { background: #181818; }
@@ -218,12 +317,18 @@ input[type=date]::-webkit-calendar-picker-indicator { filter: invert(0.8) bright
   20% { box-shadow: 0 0 10px 2px rgba(220,238,255,0.8), 0 0 22px 5px rgba(205,230,255,0.5), 0 0 38px 11px rgba(195,225,255,0.25); }
   28% { box-shadow: none; }
 }
+/* Der Glow liegt auf dem Fragezeichen-Button der Hauptansicht.
+   Auf dem Handy bleibt er beim Menue-Button. */
 #menu-btn { animation: menu-fade-first 10s ease-in-out 1s 1; }
+@media (min-width: 1000px) and (hover: hover) and (pointer: fine) {
+  #menu-btn { animation: none; }
+  #about-desk { animation: menu-fade-first 10s ease-in-out 1s 1; }
+}
 </style>
 </head>
 <body>
 <div id="header">
-  <h1 id="main-h1" style="white-space:nowrap;width:100%;display:flex;align-items:flex-end"><span onclick="window.open('https://www.opernhaus.ch/spielplan/kalendarium/','_blank')" style="cursor:pointer;color:#ffffff;font-size:18px;line-height:1">SPiELPLAN</span><span id="info-i" onclick="document.getElementById('info-modal').style.display='flex'" style="display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border:1px solid #bcc2c8;border-radius:50%;font-size:10px;color:#bcc2c8;cursor:pointer;margin-left:12px;font-style:italic;font-family:Georgia,serif;position:relative;top:-2px;display:none">i</span><a href="https://backstage.opernhaus.ch/content/news/archive/6388d94ef2be791bc1c6215f/articles/0" target="_blank" rel="noopener noreferrer" title="OHZ Backstage" class="bs-btn" style="display:inline-flex;align-items:center;justify-content:center;margin-left:14px;background:#2e2a63;color:#82ebf0;border-top:1px solid #4a4590;border-bottom:1px solid #14122e;border-left:1px solid #3a3578;border-right:1px solid #14122e;border-radius:3px;height:20px;box-sizing:border-box;padding:0 8px;font-size:11px;font-weight:bold;letter-spacing:0.06em;text-decoration:none;flex-shrink:0;position:relative;top:1px;-webkit-tap-highlight-color:transparent"><span class="bs-mob">OHZ</span><span class="bs-desk">PROBENPLAN</span></a><span id="menu-btn" onclick="toggleMenu(event)" title="Men&uuml;"><svg width="15" height="11" viewBox="0 0 15 11" fill="none" stroke="#bbb" stroke-width="1.5" stroke-linecap="round"><line x1="1" y1="1.5" x2="14" y2="1.5"/><line x1="1" y1="5.5" x2="14" y2="5.5"/><line x1="1" y1="9.5" x2="14" y2="9.5"/></svg></span><a href="https://www.opernhaus.ch" target="_blank" rel="noopener noreferrer" class="ohz-logo" style="margin-left:calc(32% - 45px);text-decoration:none">OPERNHAUS Z&Uuml;RICH</a><a href="https://drive.google.com/drive/folders/1WM9YPpCGen3EHeY3C5c_k_9tL9kMRel_" target="_blank" style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#1e1e1e;color:#bbb;font-size:11px;font-weight:bold;text-decoration:none;border-top:1px solid #585858;border-bottom:1px solid #0d0d0d;border-left:1px solid #484848;border-right:1px solid #0d0d0d;margin-left:auto;margin-right:7px;flex-shrink:0;position:relative;top:1px" id="dbtn" class="dn-btn">D</a><a href="https://keep.google.com/#LIST/1_K2fuuC7XY9k2Cd6eg8oLcLuF_pSCmvaM8uw_XeN6IxMYh6WARY2lbzFqiDPzA" target="_blank" style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#1e1e1e;color:#bbb;font-size:11px;font-weight:bold;text-decoration:none;border-top:1px solid #585858;border-bottom:1px solid #0d0d0d;border-left:1px solid #484848;border-right:1px solid #0d0d0d;margin-right:10px;flex-shrink:0;position:relative;top:1px" class="dn-btn">N</a><button onclick="window.kalScale=1;window.kalZoom=null;openKalender()" title="Produktionskalender 26/27" style="background:#0d2020;color:#63f0f0;border-top:1px solid #2a5555;border-bottom:1px solid #080f0f;border-left:1px solid #1a4040;border-right:1px solid #080f0f;border-radius:3px;font-size:11px;font-weight:bold;height:20px;box-sizing:border-box;padding:0 9px;cursor:pointer;flex-shrink:0;display:inline-flex;align-items:center;gap:5px;position:relative;top:1px" id="kal-btn"><svg class="kal-pfeil" width="17" height="9" viewBox="0 0 17 9" fill="none" stroke="#63f0f0" stroke-width="1.4" style="display:none;flex-shrink:0"><line x1="0.5" y1="4.5" x2="14" y2="4.5" stroke-linecap="round"/><polyline points="10.5,1.5 14,4.5 10.5,7.5" stroke-linecap="round" stroke-linejoin="round"/></svg>KALENDER</button></h1>
+  <h1 id="main-h1" style="white-space:nowrap;width:100%;display:flex;align-items:flex-end"><span onclick="window.open('https://www.opernhaus.ch/spielplan/kalendarium/','_blank')" style="cursor:pointer;color:#ffffff;font-size:18px;line-height:1">SPiELPLAN</span><span id="info-i" onclick="document.getElementById('info-modal').style.display='flex'" style="display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border:1px solid #bcc2c8;border-radius:50%;font-size:10px;color:#bcc2c8;cursor:pointer;margin-left:12px;font-style:italic;font-family:Georgia,serif;position:relative;top:-2px;display:none">i</span><a href="https://backstage.opernhaus.ch/content/news/archive/6388d94ef2be791bc1c6215f/articles/0" target="_blank" rel="noopener noreferrer" title="OHZ Backstage" class="bs-btn" style="display:inline-flex;align-items:center;justify-content:center;margin-left:14px;background:#2e2a63;color:#82ebf0;border-top:1px solid #4a4590;border-bottom:1px solid #14122e;border-left:1px solid #3a3578;border-right:1px solid #14122e;border-radius:3px;height:20px;box-sizing:border-box;padding:0 8px;font-size:11px;font-weight:bold;letter-spacing:0.06em;text-decoration:none;flex-shrink:0;position:relative;top:1px;-webkit-tap-highlight-color:transparent"><span class="bs-mob">OHZ</span><span class="bs-desk">PROBENPLAN</span></a><span id="menu-btn" onclick="toggleMenu(event)" title="Men&uuml;"><svg width="15" height="11" viewBox="0 0 15 11" fill="none" stroke="#bbb" stroke-width="1.5" stroke-linecap="round"><line x1="1" y1="1.5" x2="14" y2="1.5"/><line x1="1" y1="5.5" x2="14" y2="5.5"/><line x1="1" y1="9.5" x2="14" y2="9.5"/></svg></span><a href="https://www.opernhaus.ch" target="_blank" rel="noopener noreferrer" class="ohz-logo" style="margin-left:calc(32% - 45px);text-decoration:none">OPERNHAUS Z&Uuml;RICH</a><a href="https://drive.google.com/drive/folders/1WM9YPpCGen3EHeY3C5c_k_9tL9kMRel_" target="_blank" style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#1e1e1e;color:#bbb;font-size:11px;font-weight:bold;text-decoration:none;border-top:1px solid #585858;border-bottom:1px solid #0d0d0d;border-left:1px solid #484848;border-right:1px solid #0d0d0d;margin-left:auto;margin-right:7px;flex-shrink:0;position:relative;top:1px" id="dbtn" class="dn-btn">D</a><a href="https://keep.google.com/#LIST/1_K2fuuC7XY9k2Cd6eg8oLcLuF_pSCmvaM8uw_XeN6IxMYh6WARY2lbzFqiDPzA" target="_blank" style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#1e1e1e;color:#bbb;font-size:11px;font-weight:bold;text-decoration:none;border-top:1px solid #585858;border-bottom:1px solid #0d0d0d;border-left:1px solid #484848;border-right:1px solid #0d0d0d;margin-right:10px;flex-shrink:0;position:relative;top:1px" class="dn-btn">N</a><span id="about-desk" onclick="document.getElementById('info-modal').style.display='flex'" title="Über die Produktionsdatenbank">?</span><button onclick="window.kalScale=kalBasisScale();window.kalZoom=null;window.kalZoomTage=null;openKalender()" title="Produktionskalender 26/27" style="background:#0d2020;color:#63f0f0;border-top:1px solid #2a5555;border-bottom:1px solid #080f0f;border-left:1px solid #1a4040;border-right:1px solid #080f0f;border-radius:3px;font-size:11px;font-weight:bold;height:20px;box-sizing:border-box;padding:0 9px;cursor:pointer;flex-shrink:0;display:inline-flex;align-items:center;gap:5px;position:relative;top:1px" id="kal-btn"><svg class="kal-pfeil" width="17" height="9" viewBox="0 0 17 9" fill="none" stroke="#63f0f0" stroke-width="1.4" style="display:none;flex-shrink:0"><line x1="0.5" y1="4.5" x2="14" y2="4.5" stroke-linecap="round"/><polyline points="10.5,1.5 14,4.5 10.5,7.5" stroke-linecap="round" stroke-linejoin="round"/></svg>KALENDER</button></h1>
   <div style="display:block;width:100%;">
   <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;min-height:26px;">
     <span id="such-lupe" onclick="oeffneSuche()" title="Suche" style="cursor:pointer;line-height:0;flex-shrink:0;-webkit-tap-highlight-color:transparent;">
@@ -236,7 +341,7 @@ input[type=date]::-webkit-calendar-picker-indicator { filter: invert(0.8) bright
     <a href="https://www.opernhaus.ch" target="_blank" rel="noopener noreferrer" id="ohz-logo-mob" class="ohz-logo-mob">OPERNHAUS Z&Uuml;RICH</a>
   </div>
   <div id="menu-drop">
-    <span class="mi" style="color:#7fcfcf" onclick="schliesseMenu();document.getElementById('info-modal').style.display='flex'">ABOUT</span>
+    <span class="mi mi-about" style="color:#7fcfcf" onclick="schliesseMenu();document.getElementById('info-modal').style.display='flex'">ABOUT</span>
     <span class="mi" onclick="zeigeKontakte()">KONTAKTE</span>
     <a href="https://teamup.com/ks119b0a3494b39295" target="_blank" rel="noopener noreferrer" onclick="schliesseMenu()">ORCH.PROBERAUM KP</a>
     <a href="https://www.opernhaus.ch/tv/" target="_blank" rel="noopener noreferrer" onclick="schliesseMenu()">BESETZUNG-SCREEN</a>
@@ -279,7 +384,7 @@ input[type=date]::-webkit-calendar-picker-indicator { filter: invert(0.8) bright
   </div>
 </div>
 
-<div class="qbar" style="flex-wrap:nowrap;align-items:flex-start;padding-top:8px;padding-bottom:14px">
+<div class="qbar" style="flex-wrap:nowrap;align-items:flex-start;padding-top:8px;padding-bottom:14px;position:relative;z-index:3;box-shadow:0 6px 10px -4px rgba(15,232,232,0.085), 0 11px 18px -6px rgba(0,0,0,0.32)">
   <div style="display:flex;flex-wrap:nowrap;gap:5px;font-size:13px">
     <span class="qtag" id="ton-beck" onclick="filterTon('Beck')" title="Dominik Beck">Do</span>
     <span class="qtag" id="ton-paciorek" onclick="filterTon('Paciorek')" title="Raphael Paciorek">Ra</span>
@@ -290,7 +395,7 @@ input[type=date]::-webkit-calendar-picker-indicator { filter: invert(0.8) bright
     <span class="qtag" id="ton-zdravkovic" onclick="filterTon('Zdravkovic')" title="Vasilije Zdravkovic">Va</span>
   </div>
 </div>
-<div style="height:6px;background:linear-gradient(180deg,rgba(0,0,0,0.6),transparent);"></div>
+<div style="height:0"></div>
 <div id="main">
   <div id="list"></div>
   <div id="detail">
@@ -998,8 +1103,9 @@ function getFiltered() {
     var matchSaison = saisonFilter === "alle" || p.saison === saisonFilter;
     var matchTon = passtTon(p);
     var heuteStr = new Date().getFullYear() + "-" + String(new Date().getMonth()+1).padStart(2,"0") + "-" + String(new Date().getDate()).padStart(2,"0");
-    var eventHeute = (p.kat === "Event" && p.prem === heuteStr && (vonDate || bisDate));
-    var matchTyp = passtTyp(p) || (p.kat === "Event" && eventHeute);
+    // Events erscheinen in der Liste ausschliesslich ueber den Evt-Chip.
+    // Der Heute-Block oben zeigt sie weiterhin.
+    var matchTyp = passtTyp(p);
     var pDate = new Date(p.prem);
     var matchVon, matchBis;
     if (vonDate || bisDate) {
@@ -1398,7 +1504,7 @@ function showDetail(p) {
     html += "<div class='sec-label' style='font-size:16px;margin-top:26px;color:#7fcfcf'>Proben vorl&auml;ufig</div>";
     for (var pr = 0; pr < probRows.length; pr++) {
       var rz = probRows[pr].z ? "<span style='margin-left:28px'>" + probRows[pr].z + "</span>" : "";
-      var rt = probRows[pr].t ? "<span style='margin-left:28px;color:#bbb'>" + probRows[pr].t + "</span>" : "";
+      var rt = probRows[pr].t ? "<span class='prob-typ' style='margin-left:28px;color:#bbb'>" + probRows[pr].t + "</span>" : "";
       html += "<div class='drow'><span class='dval'>" + fmt(probRows[pr].d) + rz + rt + "</span></div>";
     }
   }
@@ -1488,7 +1594,7 @@ function kalenderZeigen(idx) {
         if (modal) {
           var r = els[i].getBoundingClientRect(), rm = modal.getBoundingClientRect();
           modal.scrollTop += (r.top - rm.top) - 140;
-          if (modal.onscroll) modal.onscroll();
+          if (window.kalHalteOben) window.kalHalteOben();
         }
         // waagrecht zum Produktionsbeginn
         var hs = document.getElementById("kal-hscroll");
@@ -1954,6 +2060,14 @@ function alignSortButtons() {
   } catch (e) {}
 }
 window.addEventListener("resize", alignSortButtons);
+// Nach dem vollstaendigen Laden erneut ausrichten: beim ersten Aufruf koennen
+// die Schriften noch nicht fertig geladen sein, wodurch die gemessenen
+// Textbreiten und damit die Position abweichen.
+window.addEventListener("load", alignSortButtons);
+if (document.fonts && document.fonts.ready) {
+  document.fonts.ready.then(alignSortButtons).catch(function() {});
+}
+setTimeout(alignSortButtons, 300);
 
 // matchSearchWidth();  // deaktiviert: Suchfeld ist jetzt Lupe+35ch statt 100% Breite
 alignSortButtons();
@@ -2056,20 +2170,22 @@ function openKalender() {
       var xp = (cur - START)/86400000/TOTAL*100;
       var dow = cur.getDay(); // 0=So, 1=Mo
       var isMon = (dow === 1);
-      var lineCol = isMon ? "#4a4a4a" : "#222";
+      var lineCol = isMon ? "#5c5c5c" : "#2e2e2e";
       var lineW = isMon ? "1.5px" : "1px";
       dayLines += "<div style='position:absolute;top:0;height:100%;border-left:" + lineW + " solid " + lineCol + ";left:" + xp.toFixed(3) + "%'></div>";
       // Tageszahl mittig ueber dem Tagesabschnitt (halber Tag nach rechts, dann zentriert)
       var dnum = cur.getDate();
-      var numCol = isMon ? "#ffffff" : "#a8a8a8";
+      var isWE = (dow === 0 || dow === 6);
+      // Samstag und Sonntag etwas heller hervorheben
+      var numCol = isMon ? "#ffffff" : (isWE ? "#d8d8d8" : "#a8a8a8");
       var numWeight = isMon ? "bold" : "normal";
       var halfDay = 100 / TOTAL / 2;
-      dayLines += "<div style='position:absolute;bottom:2px;left:" + (xp + halfDay).toFixed(3) + "%;transform:translateX(-50%);font-size:15px;color:" + numCol + ";font-weight:" + numWeight + ";white-space:nowrap'>" + dnum + "</div>";
+      dayLines += "<div style='position:absolute;bottom:" + (window.kalZoomTage ? 1 : 2) + "px;left:" + (xp + halfDay).toFixed(3) + "%;transform:translateX(-50%);font-size:" + (window.kalZoomTage ? (deskKal ? 10 : 12.5) : 15) + "px;color:" + numCol + ";font-weight:" + numWeight + ";white-space:nowrap'>" + dnum + "</div>";
       // Monatsname beim 1. des Monats
       var mo = cur.getMonth();
       if (mo !== lastMonth) {
         lastMonth = mo;
-        monthLabels += "<div style='position:absolute;top:3px;left:" + xp.toFixed(3) + "%;transform:translateX(4px);font-size:14px;color:#63f0f0;font-weight:bold;white-space:nowrap'>" + names[mo] + "</div>";
+        monthLabels += "<div style='position:absolute;top:" + (window.kalZoomTage ? (deskKal ? -3 : 1) : 3) + "px;left:" + xp.toFixed(3) + "%;transform:translateX(4px);font-size:" + (deskKal ? 10.5 : 14) + "px;color:#63f0f0;font-weight:bold;white-space:nowrap'>" + names[mo] + "</div>";
       }
       cur.setDate(cur.getDate() + 1);
     }
@@ -2087,7 +2203,7 @@ function openKalender() {
       var midX = (mo.x + nextX) / 2;
       var w = nextX - mo.x;
       return "<div style='position:absolute;top:0;height:100%;border-left:1px solid #4a4a4a;left:" + mo.x.toFixed(2) + "%'></div>"
-        + "<div onclick='kalZoomTo(" + mo.y + "," + mo.m + ")' style='position:absolute;top:0;height:100%;left:" + mo.x.toFixed(2) + "%;width:" + w.toFixed(2) + "%;display:flex;align-items:flex-start;justify-content:center;padding-top:4px;box-sizing:border-box;cursor:pointer;font-size:13.5px;font-weight:600;color:#e2e2e2;white-space:nowrap' title='Auf diesen Monat zoomen'>" + mo.name + "</div>";
+        + "<div style='position:absolute;top:0;height:100%;left:" + mo.x.toFixed(2) + "%;width:" + w.toFixed(2) + "%;display:flex;align-items:flex-start;justify-content:center;padding-top:4px;box-sizing:border-box;font-size:13.5px;font-weight:600;color:#e2e2e2;white-space:nowrap'>" + mo.name + "</div>";
     }).join("");
   }
 
@@ -2208,8 +2324,17 @@ function openKalender() {
           var mBest = pplanGedeckt(m[0]);
           var mCol = (m[2] === "#f5e050" && !mBest) ? "#a59b57" : m[2];
           var mHin = (m[2] === "#f5e050" && !mBest) ? "\nnicht bestätigt" : "";
+          // KHP, OHP und GP zusaetzlich mit einem kleinen Punkt in der Mitte
+          // kennzeichnen - schmaler als der Strich selbst.
+          var istHP = (m[1] === "KHP" || m[1] === "OHP" || m[1] === "GP");
+          var punkt = "";
+          if (istHP) {
+            // Duenner waagrechter Strich auf halber Hoehe, von Kante zu Kante
+            punkt = "<span style='position:absolute;left:0;right:0;top:50%;height:1px;"
+                  + "transform:translateY(-50%);background:#8a8a8a'></span>";
+          }
           bar += "<div style='" + STRICH_CSS + mCol + ";left:calc("
-               + (xpct(m[0]) + HALFDAY).toFixed(3) + "% - " + STRICH_OFF + "px)' title='" + p.titel + "\n" + fmt(m[0]) + mz + mHin + "'></div>";
+               + (xpct(m[0]) + HALFDAY).toFixed(3) + "% - " + STRICH_OFF + "px)' title='" + p.titel + "\n" + fmt(m[0]) + mz + mHin + "'>" + punkt + "</div>";
         });
         // Proben und Tonproben in Gelb
         (p.proben || []).forEach(function(dt, pi){
@@ -2267,8 +2392,8 @@ function openKalender() {
       var premStyle = istPrem ? "text-decoration:underline;text-underline-offset:2px;" : "";
       var titelClick = (p.pidx != null && p.pidx > -1) ? " onclick='event.stopPropagation();kalOpenDetail(" + p.pidx + ")'" : "";
       var titelCursor = (p.pidx != null && p.pidx > -1) ? "cursor:pointer;" : "";
-      var zoomCur = (window.kalScale || 1) > 1 ? "zoom-out" : "zoom-in";
-      return "<div class='kal-row' style='display:flex;align-items:center;height:24px'><div class='kal-titel'" + titelClick + " style='width:120px;flex-shrink:0;height:24px;line-height:24px;padding-right:8px;text-align:right;font-size:13px;font-weight:500;color:" + ((evExtern(p) || /gastspiel/i.test(p.titel)) ? "#8a8a8a" : "#ffffff") + ";" + titelCursor + premStyle + "white-space:nowrap;overflow:hidden;text-overflow:ellipsis;position:sticky;left:0;z-index:2;background:#141414' title='" + p.titel + (istPrem ? " (Premiere)" : "") + premZeile(p) + tonZeile(p) + "'>" + kalShort(p.titel) + "</div><div onclick='kalToggleScale(event)' style='position:relative;flex:1;height:100%;cursor:" + zoomCur + "'>" + bar + "</div></div>";
+      var zoomCur = (window.kalZoom || (window.kalScale || 1) > kalBasisScale() + 0.01) ? "zoom-out" : "zoom-in";
+      return "<div class='kal-row" + (window.kalFokusZeile && window.kalFokusZeile.indexOf(p.titel) === 0 ? " kal-fokus" : "") + "' style='display:flex;align-items:center;height:24px'><div class='kal-titel'" + titelClick + " style='width:120px;flex-shrink:0;height:24px;line-height:24px;padding-right:8px;text-align:right;font-size:13px;font-weight:500;color:" + ((evExtern(p) || /gastspiel/i.test(p.titel)) ? "#8a8a8a" : "#ffffff") + ";" + titelCursor + premStyle + "white-space:nowrap;overflow:hidden;text-overflow:ellipsis;position:sticky;left:0;z-index:2;background:#1a1a1a' title='" + p.titel + (istPrem ? " (Premiere)" : "") + premZeile(p) + tonZeile(p) + "'>" + kalShort(p.titel) + "</div><div onclick='kalToggleScale(event)' style='position:relative;flex:1;height:100%;cursor:" + zoomCur + "'>" + bar + "</div></div>";
     }).join("");
   }
   function sortByStart(list){
@@ -2306,12 +2431,13 @@ function openKalender() {
     var on = window.kalKats[kat];
     return "<span onclick=\"toggleKalKat('" + kat + "')\" style='display:inline-flex;align-items:center;gap:4px;cursor:pointer;padding:2px 6px;border-radius:2px;border:1px solid " + (on ? col : "#555") + ";opacity:" + (on ? "1" : "0.55") + "'><i style='width:10px;height:10px;border-radius:2px;background:" + col + "'></i>" + label + "</span>";
   }
-  var legend = "<div style='display:flex;gap:6px;flex-wrap:nowrap;margin-top:13px;font-size:12px;padding-right:56px'>"
+  var legend = "<div style='display:flex;gap:6px;flex-wrap:nowrap;align-items:flex-end;margin-top:13px;font-size:12px;padding-right:" + (deskKal ? 56 : 0) + "px'>"
     + kalChip("Oper","Oper","#63f0f0")
     + kalChip("Ballett","Bal","#f0a050")
     + kalChip("Konzert","Kzt","#a06cd5")
     + kalChip("Extra","SF","#6ce0a0")
     + kalChip("Event","Event","#e8e8e8")
+    + (deskKal ? "" : "<span class='hilfe-mob' onclick='kalHilfeZeigen()' title='Kurzanleitung Kalender'>?</span>")
     + "</div>";
 
   // Ton-Filter-Chips (aus vorhandenen Ton-Namen 26/27)
@@ -2332,7 +2458,7 @@ function openKalender() {
   function tonChip(name) {
     var on = !!(window.kalTone && window.kalTone[name]);
     var lbl = tonVorname[name] || name.slice(0,2);
-    return "<span onclick=\"toggleKalTon('" + name + "')\" title='" + name + "' style='display:inline-flex;align-items:center;cursor:pointer;padding:2px 8px;border-radius:2px;border:1px solid " + (on ? "#63f0f0" : "#555") + ";color:" + (on ? "#63f0f0" : "#fff") + ";opacity:" + (on ? "1" : "0.85") + "'>" + lbl + "</span>";
+    return "<span onclick=\"toggleKalTon('" + name + "')\" title='" + name + "' style='display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:2px 6px;min-width:32px;box-sizing:border-box;border-radius:2px;border:1px solid " + (on ? "#63f0f0" : "#555") + ";color:" + (on ? "#63f0f0" : "#fff") + ";opacity:" + (on ? "1" : "0.85") + "'>" + lbl + "</span>";
   }
   // Counter zaehlt nur die eigentlichen Produktionen. Der Zusatzblock kztSf
   // (Konzerte/Events/SF, der bei Namensfilter zusaetzlich eingeblendet wird)
@@ -2353,7 +2479,7 @@ function openKalender() {
     + allTon.map(tonChip).join("")
     + (ZOOM
         ? "<span class='kal-zoomhint' style='margin-left:calc(32% - 24px);flex-shrink:0'><button onclick='kalZoomTo(null)' style='background:#1c1c1c;border:1px solid #63f0f0;border-radius:3px;color:#ffffff;font-size:12px;cursor:pointer;padding:2px 10px;vertical-align:middle;-webkit-tap-highlight-color:transparent'>&#8594; Jahresansicht</button></span>"
-        : "<span class='kal-zoomhint' style='margin-left:calc(32% - 12px);font-size:13.5px;color:#8a8a8a;white-space:nowrap;flex-shrink:0'>Klick Monat f&uuml;r Zoom</span>")
+        : "")
     + "<span style='margin-left:auto;padding-left:12px;padding-right:max(0px, env(safe-area-inset-right));font-size:14px;color:#999;white-space:nowrap;flex-shrink:0'>" + kalCountTxt + "</span>"
     + "</div>";
 
@@ -2362,13 +2488,42 @@ function openKalender() {
     return "<span onclick=\"kalSetAnsicht('" + modus + "')\" style='cursor:pointer;color:"
       + (an ? "#63f0f0" : "#12a8a8") + ";" + (an ? "font-weight:600" : "") + "'>" + label + "</span>";
   }
+  // Lupe, 1.TE/1.VST und das Suchfeld als Baustein - auf dem Desktop steht
+  // dieser Block in der Monatsleiste, sonst in der Zeile darunter.
+  function sortZeileInhalt() {
+    return "<span id='kal-sortbtns' style='display:flex;align-items:center;width:100%'>"
+      + "<span onclick='kalSucheToggle()' title='Produktion suchen' style='cursor:pointer;line-height:0;opacity:0.95;flex-shrink:0;margin-right:auto'>"
+      + "<svg width='" + (deskKal ? 14 : 16) + "' height='" + (deskKal ? 14 : 16) + "' viewBox='0 0 16 16' fill='none' stroke='#eaeaea' stroke-width='1.6'><circle cx='6.8' cy='6.8' r='4.6'/><line x1='10.4' y1='10.4' x2='14.6' y2='14.6' stroke-linecap='round'/></svg>"
+      + "</span>"
+      + sortBtn("te", "1.TE") + "<span style='display:inline-block;width:5px'></span>" + sortBtn("prem", "1.VST")
+      + "</span>"
+      + "<input id='kal-suche' type='text' placeholder='Titel suchen' oninput='kalSucheLauf(this.value)' "
+      + "style='display:none;position:absolute;left:0;bottom:1px;width:92px;z-index:7;background:#181818;border:1px solid #0a9090;"
+      + "color:#f0a050;font-size:" + (deskKal ? 13 : 16) + "px;padding:3px 5px;border-radius:2px;outline:none;-webkit-appearance:none'>"
+      + "<span id='kal-suche-x' onclick='kalSucheLeeren()' title='Eingabe löschen' "
+      + "style='display:none;position:absolute;left:97px;bottom:0px;z-index:7;color:#f0a050;font-size:19px;"
+      + "line-height:22px;cursor:pointer;padding:0 2px'>&times;</span>";
+  }
   function sortBtn(modus, label) {
     var an = (window.kalSort || "te") === modus;
     return "<span onclick=\"kalSetSort('" + modus + "')\" style='cursor:pointer;color:"
       + (an ? "#63f0f0" : "#12a8a8") + ";" + (an ? "font-weight:600" : "") + "'>" + label + "</span>";
   }
-  var tlHeight = ZOOM ? 44 : 26;
-  var innerMinW = ZOOM ? (Math.round(120 + TOTAL * 17.9) + "px") : "820px";
+  // Auf dem Desktop ist der Kalender ohnehin vergroessert dargestellt,
+  // daher duerfen Schriften und Abstaende dort knapper ausfallen.
+  var deskKal = kalBasisScale() > 1;
+  var tlHeight = ZOOM ? (deskKal ? 33 : 44) : 26;
+  // Im Zoom wird die ganze Saison breiter gezeichnet. Ist eine Tageszahl
+  // vorgegeben (Klick auf eine Produktionszeile), wird die Breite so gewaehlt,
+  // dass genau dieser Zeitraum ins Fenster passt.
+  var innerMinW;
+  if (ZOOM && window.kalZoomTage) {
+    var verf = (window.innerWidth || 1200) / (window.kalScale || kalBasisScale()) - 120;
+    var proTag = Math.max(6, verf / window.kalZoomTage);
+    innerMinW = Math.round(120 + TOTAL * proTag) + "px";
+  } else {
+    innerMinW = ZOOM ? (Math.round(120 + TOTAL * 17.9) + "px") : "820px";
+  }
   // Heute-Linie: nur wenn heute im sichtbaren Zeitraum liegt
   var todayLine = "";
   var today = new Date();
@@ -2384,7 +2539,7 @@ function openKalender() {
   var zoomBtn = ZOOM
     ? "<button onclick='kalZoomTo(null)' style='background:#1c1c1c;border:1px solid #63f0f0;border-radius:3px;color:#ffffff;font-size:12px;cursor:pointer;padding:2px 10px;position:relative;top:-3px;vertical-align:middle'>&#8594; Jahresansicht</button>"
     : "";
-  var hint = "<span onclick=\"document.getElementById('kalender-modal').style.display='none'\" title='Zur Hauptansicht' class='sp-btn' "
+  var hint = "<span onclick=\"document.getElementById('kalender-modal').style.display='none';var hb=document.getElementById('kal-hbar');if(hb)hb.style.display='none'\" title='Zur Hauptansicht' class='sp-btn' "
     + "style='display:inline-flex;align-items:center;gap:5px;background:#0d2020;color:#63f0f0;"
     + "border-top:1px solid #2a5555;border-bottom:1px solid #080f0f;border-left:1px solid #1a4040;border-right:1px solid #080f0f;"
     + "border-radius:3px;font-size:11px;font-weight:bold;height:20px;box-sizing:border-box;padding:0 9px;cursor:pointer;white-space:nowrap;"
@@ -2395,33 +2550,24 @@ function openKalender() {
     + "</svg>SPIELPLAN</span>";
 
   var html = "<div class='kal-head' style='background:#141414;padding:13px 20px 13px;border-bottom:1px solid #555'>"
-    + "<button onclick=\"document.getElementById('kalender-modal').style.display='none'\" style='display:none;position:fixed;top:45px;right:13px;z-index:2100;background:#181818;border:1px solid #333;border-radius:3px;color:#f0a050;font-size:16px;cursor:pointer;padding:1px 5px;line-height:1.2'>close</button>"
-    + "<h2 style='margin:0 0 8px;font-size:18px;font-weight:500;color:#ffffff;display:flex;align-items:flex-end'><span onclick=\"window.open('https://www.opernhaus.ch/spielplan/kalendarium/','_blank')\" style='white-space:nowrap;cursor:pointer;line-height:1'>KALENDER 26/27</span><a href='https://backstage.opernhaus.ch/content/news/archive/6388d94ef2be791bc1c6215f/articles/0' target='_blank' rel='noopener noreferrer' title='OHZ Backstage' class=\"bs-btn\" style='display:inline-flex;align-items:center;justify-content:center;margin-left:20px;background:#2e2a63;color:#82ebf0;border-top:1px solid #4a4590;border-bottom:1px solid #14122e;border-left:1px solid #3a3578;border-right:1px solid #14122e;border-radius:3px;height:20px;box-sizing:border-box;padding:0 8px;font-size:11px;font-weight:bold;letter-spacing:0.06em;text-decoration:none;flex-shrink:0;position:relative;top:1px;-webkit-tap-highlight-color:transparent'><span class=\"bs-mob\">OHZ</span><span class=\"bs-desk\">PROBENPLAN</span></a><a href=\"https://www.opernhaus.ch\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"ohz-logo\" style=\"margin-left:calc(32% - 55px);text-decoration:none\">OPERNHAUS Z&Uuml;RICH</a><span style='margin-left:auto;position:relative;top:2px'>" + hint + "</span></h2>"
-    + (zoomBtn ? "<div class='zoombtn-mob' style='margin:2px 0 4px;text-align:right'>" + zoomBtn + "</div>" : "")
+    + "<button onclick=\"document.getElementById('kalender-modal').style.display='none';var hb=document.getElementById('kal-hbar');if(hb)hb.style.display='none'\" style='display:none;position:fixed;top:45px;right:13px;z-index:2100;background:#181818;border:1px solid #333;border-radius:3px;color:#f0a050;font-size:16px;cursor:pointer;padding:1px 5px;line-height:1.2'>close</button>"
+    + "<h2 style='margin:0 0 8px;font-size:18px;font-weight:500;color:#ffffff;display:flex;align-items:flex-end'><span onclick=\"window.open('https://www.opernhaus.ch/spielplan/kalendarium/','_blank')\" style='white-space:nowrap;cursor:pointer;line-height:1'>KALENDER 26/27</span><a href='https://backstage.opernhaus.ch/content/news/archive/6388d94ef2be791bc1c6215f/articles/0' target='_blank' rel='noopener noreferrer' title='OHZ Backstage' class=\"bs-btn\" style='display:inline-flex;align-items:center;justify-content:center;margin-left:20px;background:#2e2a63;color:#82ebf0;border-top:1px solid #4a4590;border-bottom:1px solid #14122e;border-left:1px solid #3a3578;border-right:1px solid #14122e;border-radius:3px;height:20px;box-sizing:border-box;padding:0 8px;font-size:11px;font-weight:bold;letter-spacing:0.06em;text-decoration:none;flex-shrink:0;position:relative;top:1px;-webkit-tap-highlight-color:transparent'><span class=\"bs-mob\">OHZ</span><span class=\"bs-desk\">PROBENPLAN</span></a><span id=\"kal-hilfe-btn\" onclick=\"kalHilfeZeigen()\" title=\"Kurzanleitung Kalender\">?</span><a href=\"https://www.opernhaus.ch\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"ohz-logo\" style=\"margin-left:calc(32% - 55px);text-decoration:none\">OPERNHAUS Z&Uuml;RICH</a><span style='margin-left:auto;position:relative;top:2px'>" + hint + "</span></h2>"
+    + ""
     + legend + tonRow + "</div>"
     + "<div style='padding:0 20px 60px'>"
-    + "<div id='kal-hscroll' style='overflow-x:auto;-webkit-overflow-scrolling:touch'><div id='kal-scale' style='zoom:" + (window.kalScale || 1) + ";min-width:" + innerMinW + ";position:relative'>"
+    + "<div id='kal-hscroll' style='overflow-x:auto;-webkit-overflow-scrolling:touch'><div id='kal-scale' style='zoom:" + (window.kalScale || kalBasisScale()) + ";min-width:" + innerMinW + ";position:relative'>"
     + todayLine
     + "<div id='kal-guide' style='position:absolute;top:0;bottom:0;width:1px;background:rgba(200,200,200,0.35);z-index:1;pointer-events:none;display:none'></div>"
     + "<div id='kal-guide-date' style='position:absolute;top:" + (tlHeight + 3) + "px;font-size:" + (ZOOM ? 13 : 12) + "px;letter-spacing:0.08em;color:#e4e4e4;background:rgba(20,20,20,0.85);padding:1px 3px;border-radius:2px;z-index:1;pointer-events:none;white-space:nowrap;display:none'></div>"
-    + "<div id='kal-monthrow' style='display:flex;align-items:flex-end;position:relative;z-index:5;background:#141414'>"
-    + "<div id='kal-labelcol' style='width:120px;flex-shrink:0;align-self:stretch;position:sticky;left:0;z-index:6;background:#141414;display:flex;align-items:flex-end;justify-content:flex-start;padding-left:1px;padding-bottom:2px;font-size:12.5px;font-weight:500;letter-spacing:-0.01em;white-space:nowrap;line-height:1.3'>"
-    + ansichtBtn("balken", "BALKEN") + "<span style='display:inline-block;width:5px'></span>" + ansichtBtn("termine", "TERMINE")
+    + "<div id='kal-monthrow' style='display:flex;align-items:flex-end;position:relative;z-index:5;background:#141414;" + (deskKal ? 'pointer-events:none;' : '') + "height:" + tlHeight + "px;box-sizing:border-box;flex-shrink:0'>"
+    + "<div id='kal-labelcol' style='pointer-events:auto;width:120px;box-sizing:border-box;flex-shrink:0;align-self:stretch;position:sticky;left:0;z-index:20;background:#1a1a1a;display:flex;align-items:" + (deskKal ? 'center' : 'flex-end') + ";justify-content:flex-start;padding-left:3px;padding-right:" + (deskKal ? 18 : 0) + "px;padding-bottom:" + (deskKal ? 0 : 2) + "px;font-size:" + (deskKal ? 10.5 : 12.5) + "px;font-weight:500;letter-spacing:-0.01em;white-space:nowrap;line-height:1.3'>"
+    + ansichtBtn("balken", "BALKEN") + "<span style='display:inline-block;width:" + (deskKal ? 8 : 5) + "px'></span>" + ansichtBtn("termine", "TERMINE")
     + "</div>"
     + "<div style='position:relative;flex:1;height:" + tlHeight + "px;border-bottom:1px solid #666'>" + monthlines + "</div>"
     + "</div>"
     + "<div id='kal-sortrow' style='display:flex;align-items:stretch;padding:3px 0 5px;position:relative;z-index:4'>"
-    + "<div style='width:120px;flex-shrink:0;padding-right:15px;line-height:1.3;white-space:nowrap;position:sticky;left:0;z-index:5;background:#141414;font-size:13px;font-weight:500;letter-spacing:-0.01em;display:flex;align-items:center;padding-left:3px'>"
-    + "<span id='kal-sortbtns' style='display:flex;align-items:center;width:100%'>"
-    + "<span onclick='kalSucheToggle()' title='Produktion suchen' style='cursor:pointer;line-height:0;opacity:0.95;flex-shrink:0;margin-right:auto'>" + "<svg width='16' height='16' viewBox='0 0 16 16' fill='none' stroke='#eaeaea' stroke-width='1.6'><circle cx='6.8' cy='6.8' r='4.6'/><line x1='10.4' y1='10.4' x2='14.6' y2='14.6' stroke-linecap='round'/></svg>" + "</span>"
-    + sortBtn("te", "1.TE") + "<span style='display:inline-block;width:5px'></span>" + sortBtn("prem", "1.VST")
-    + "</span>"
-    + "<input id='kal-suche' type='text' placeholder='Titel suchen' oninput='kalSucheLauf(this.value)' "
-    + "style='display:none;position:absolute;left:0;bottom:1px;width:92px;z-index:7;background:#181818;border:1px solid #0a9090;"
-    + "color:#f0a050;font-size:16px;padding:3px 5px;border-radius:2px;outline:none;-webkit-appearance:none'>"
-    + "<span id='kal-suche-x' onclick='kalSucheLeeren()' title='Eingabe löschen' "
-    + "style='display:none;position:absolute;left:97px;bottom:0px;z-index:7;color:#f0a050;font-size:19px;"
-    + "line-height:22px;cursor:pointer;padding:0 2px'>&times;</span>"
+    + "<div style='width:120px;box-sizing:border-box;flex-shrink:0;" + (deskKal ? 'min-height:' + (window.kalZoomTage ? 22 : 16) + 'px;' : '') + "padding-right:" + (deskKal ? 19 : 17) + "px;line-height:1.3;white-space:nowrap;position:sticky;left:0;z-index:5;background:#1a1a1a;font-size:" + (deskKal ? 10.5 : 13) + "px;font-weight:500;letter-spacing:-0.01em;display:flex;align-items:center;padding-left:3px'>"
+    + sortZeileInhalt()
     + "</div>"
     + "<div style='flex:1'></div>"
     + "</div>"
@@ -2462,7 +2608,7 @@ function openKalender() {
       // Breite ergibt den Faktor, egal ob Browserzoom, CSS-zoom oder beides wirkt.
       var lc = document.getElementById("kal-labelcol");
       var labW = lc ? lc.getBoundingClientRect().width : 0;
-      var sc = (labW > 0) ? (labW / 120) : (window.kalScale || 1);
+      var sc = (labW > 0) ? (labW / 120) : (window.kalScale || kalBasisScale());
       if (!(sc > 0.05)) sc = 1;
       var x = (ev.clientX - r.left) / sc;   // Position im CSS-Koordinatensystem
       guide.style.left = x.toFixed(2) + "px";
@@ -2495,6 +2641,16 @@ function openKalender() {
     var scaleEl = document.getElementById("kal-scale");
     if (!modalEl || !scaleEl) return;
     var basis = tlHeight + 3;
+    // Diese Werte aendern sich beim Scrollen nicht - einmal ermitteln, damit
+    // der Scroll-Handler moeglichst wenig zu tun hat.
+    var deskt = false;
+    try { deskt = window.matchMedia("(min-width: 1000px) and (hover: hover) and (pointer: fine)").matches; } catch(e) {}
+    var headEl = document.querySelector(".kal-head");
+    var mr = document.getElementById("kal-monthrow");
+    var tl = document.getElementById("kal-today-date");
+    var gl = document.getElementById("kal-guide-date");
+    var headH = (deskt && headEl) ? headEl.getBoundingClientRect().height : 0;
+
     var halteOben = function() {
       var rM = modalEl.getBoundingClientRect();
       var rS = scaleEl.getBoundingClientRect();
@@ -2508,22 +2664,183 @@ function openKalender() {
       // Auf dem Desktop klebt der Kopfbereich oben. Die Monatsleiste (samt der
       // Buttons BALKEN/TERMINE) muss dann direkt darunter stehenbleiben statt
       // dahinter zu verschwinden.
-      var headEl = document.querySelector(".kal-head");
-      var deskt = false;
-      try { deskt = window.matchMedia("(min-width: 1000px) and (hover: hover) and (pointer: fine)").matches; } catch(e) {}
-      if (deskt && headEl && versatz > 0) {
-        versatz += headEl.getBoundingClientRect().height / sc2;
-      }
-      var mr = document.getElementById("kal-monthrow");
+      if (headH && versatz > 0) versatz += headH / sc2;
       if (mr) mr.style.top = versatz + "px";
       var oben = versatz + basis;   // Datumsangaben sitzen direkt unter der Monatsleiste
-      var tl = document.getElementById("kal-today-date");
-      var gl = document.getElementById("kal-guide-date");
       if (tl) tl.style.top = oben + "px";
       if (gl) gl.style.top = oben + "px";
     };
-    modalEl.onscroll = halteOben;
+    // Direkt im Scroll-Ereignis nachziehen: ein Umweg ueber
+    // requestAnimationFrame kostet einen Frame, in dem die Leiste kurz
+    // wegrutscht. Der Handler ist bewusst schlank gehalten.
+    modalEl.addEventListener("scroll", halteOben, { passive: true });
+    // Kalender mit gedrueckter Maustaste verschieben (nur Desktop). Ein
+    // einfacher Klick ohne Bewegung bleibt der Zoomfunktion vorbehalten.
+    (function() {
+      var hs = document.getElementById("kal-hscroll");
+      if (!hs || !deskt) return;
+      var zieht = false, bewegt = false, startX = 0, startY = 0, slStart = 0, stStart = 0;
+      hs.addEventListener("mousedown", function(ev) {
+        if (ev.button !== 0) return;
+        // Auf Bedienelementen nicht ziehen
+        if (ev.target.closest && ev.target.closest("a, button, input, .kal-titel, .qtag")) return;
+        zieht = true; bewegt = false;
+        ev.preventDefault();          // verhindert, dass eine Auswahl beginnt
+        startX = ev.clientX; startY = ev.clientY;
+        slStart = hs.scrollLeft; stStart = modalEl.scrollTop;
+      });
+      document.addEventListener("mousemove", function(ev) {
+        if (!zieht) return;
+        var dx = ev.clientX - startX, dy = ev.clientY - startY;
+        if (!bewegt && (Math.abs(dx) > 4 || Math.abs(dy) > 4)) {
+          bewegt = true;
+          document.body.style.cursor = "grabbing";
+          // Textauswahl waehrend des Ziehens unterbinden
+          document.body.style.webkitUserSelect = "none";
+          document.body.style.userSelect = "none";
+          try { window.getSelection().removeAllRanges(); } catch (e) {}
+        }
+        if (!bewegt) return;
+        ev.preventDefault();
+        hs.scrollLeft = slStart - dx;
+        modalEl.scrollTop = Math.max(0, stStart - dy);
+        halteOben();
+        if (window.kalHbarSync) window.kalHbarSync();
+      });
+      document.addEventListener("mouseup", function(ev) {
+        if (!zieht) return;
+        zieht = false;
+        document.body.style.cursor = "";
+        document.body.style.webkitUserSelect = "";
+        document.body.style.userSelect = "";
+        // Nach einer Ziehbewegung den folgenden Klick unterdruecken,
+        // damit nicht versehentlich gezoomt wird
+        if (bewegt) {
+          var stopp = function(e) { e.stopPropagation(); e.preventDefault(); };
+          document.addEventListener("click", stopp, true);
+          setTimeout(function() { document.removeEventListener("click", stopp, true); }, 0);
+        }
+      });
+    })();
+
+    // Rechtsklick im Kalender: kleines Menue zum Umschalten der Darstellung
+    (function() {
+      var hs = document.getElementById("kal-hscroll");
+      var ctx = document.getElementById("kal-ctx");
+      if (!hs || !ctx || !deskt) return;
+      hs.addEventListener("contextmenu", function(ev) {
+        ev.preventDefault();
+        var akt = window.kalAnsicht || "balken";
+        var um = document.getElementById("kal-ctx-um");
+        // Nur die jeweils andere Darstellung anbieten
+        if (um) um.textContent = (akt === "balken") ? "Termine" : "Balken";
+        ctx.style.display = "block";
+        var b = ctx.getBoundingClientRect();
+        var x = Math.min(ev.clientX, window.innerWidth - b.width - 8);
+        var y = Math.min(ev.clientY, window.innerHeight - b.height - 8);
+        ctx.style.left = Math.max(4, x) + "px";
+        ctx.style.top = Math.max(4, y) + "px";
+        // Von selbst schliessen, wenn nichts ausgewaehlt wird
+        if (window.kalCtxTimer) clearTimeout(window.kalCtxTimer);
+        window.kalCtxTimer = setTimeout(kalCtxSchliessen, 2000);
+      });
+      ctx.addEventListener("mouseenter", function() {
+        if (window.kalCtxTimer) { clearTimeout(window.kalCtxTimer); window.kalCtxTimer = null; }
+      });
+      ctx.addEventListener("mouseleave", function() {
+        window.kalCtxTimer = setTimeout(kalCtxSchliessen, 700);
+      });
+      document.addEventListener("click", kalCtxSchliessen);
+      document.addEventListener("scroll", kalCtxSchliessen, true);
+    })();
+
+    // Laengeres Antippen zeigt den Tooltip-Text (nur Touchgeraete)
+    (function() {
+      var hs = document.getElementById("kal-hscroll");
+      var tip = document.getElementById("kal-tip");
+      if (!hs || !tip || deskt) return;
+      var timer = null, gezeigt = false, sx = 0, sy = 0;
+      var ausblenden = function() {
+        tip.style.display = "none";
+        if (timer) { clearTimeout(timer); timer = null; }
+      };
+      hs.addEventListener("touchstart", function(ev) {
+        if (!ev.touches || ev.touches.length !== 1) return;
+        var t = ev.touches[0];
+        sx = t.clientX; sy = t.clientY;
+        gezeigt = false;
+        var ziel = ev.target.closest ? ev.target.closest("[title]") : null;
+        if (!ziel) return;
+        var txt = ziel.getAttribute("title") || "";
+        if (!txt) return;
+        timer = setTimeout(function() {
+          gezeigt = true;
+          window.kalTipOffen = true;
+          tip.textContent = txt;
+          tip.style.display = "block";
+          var b = tip.getBoundingClientRect();
+          var x = Math.min(Math.max(8, sx - b.width / 2), window.innerWidth - b.width - 8);
+          var y = sy - b.height - 14;
+          if (y < 8) y = sy + 20;
+          tip.style.left = x + "px";
+          tip.style.top = y + "px";
+        }, 420);
+      }, { passive: true });
+      hs.addEventListener("touchmove", function(ev) {
+        if (!ev.touches || !ev.touches.length) return;
+        var t = ev.touches[0];
+        if (Math.abs(t.clientX - sx) > 8 || Math.abs(t.clientY - sy) > 8) ausblenden();
+      }, { passive: true });
+      hs.addEventListener("touchend", function() {
+        if (timer) { clearTimeout(timer); timer = null; }
+        // Beim Loslassen sofort ausblenden
+        ausblenden();
+        if (gezeigt) {
+          // Den folgenden Tap nicht zusaetzlich als Zoom werten
+          setTimeout(function() { window.kalTipOffen = false; }, 350);
+        }
+      });
+      hs.addEventListener("touchcancel", ausblenden);
+    })();
+
+    window.kalHalteOben = halteOben;
     halteOben();
+
+    // Waagrechten Balken am Fensterrand mit dem Kalender koppeln (nur Desktop)
+    (function() {
+      var hbar = document.getElementById("kal-hbar");
+      var inner = document.getElementById("kal-hbar-inner");
+      var hs = document.getElementById("kal-hscroll");
+      if (!hbar || !inner || !hs) return;
+      if (!deskt) { hbar.style.display = "none"; return; }
+      var stelleEin = function() {
+        inner.style.width = hs.scrollWidth + "px";
+        // Nur einblenden, wenn es ueberhaupt etwas zu scrollen gibt
+        hbar.style.display = (hs.scrollWidth > hs.clientWidth + 2) ? "block" : "none";
+        hbar.scrollLeft = hs.scrollLeft;
+      };
+      var sperre = false;
+      hbar.onscroll = function() {
+        if (sperre) return;
+        sperre = true; hs.scrollLeft = hbar.scrollLeft; sperre = false;
+      };
+      hs.onscroll = function() {
+        if (sperre) return;
+        sperre = true; hbar.scrollLeft = hs.scrollLeft; sperre = false;
+      };
+      stelleEin();
+      window.requestAnimationFrame(stelleEin);
+      setTimeout(stelleEin, 150);
+      window.kalHbarSync = stelleEin;
+    })();
+    // Nach dem Oeffnen wird teils noch zu einer Produktion gesprungen. Da der
+    // Zeitpunkt je nach Geraet schwankt, in der ersten Sekunde durchgehend
+    // nachziehen statt nur zu einzelnen Zeitpunkten.
+    var bis = Date.now() + 1000;
+    (function nachziehen() {
+      halteOben();
+      if (Date.now() < bis) window.requestAnimationFrame(nachziehen);
+    })();
   })();
   // Im Zoom: horizontal so scrollen, dass der geklickte Monat zentriert ist
   if (ZOOM && !window.kalSkipAutoScroll) {
@@ -2532,7 +2849,7 @@ function openKalender() {
       if (!hs) return;
       var midDay = new Date(ZOOM.y, ZOOM.m - 1, 15);
       var midPct = (midDay - START) / 86400000 / TOTAL; // 0..1 innerhalb Zeitachse
-      var sc = window.kalScale || 1;
+      var sc = window.kalScale || kalBasisScale();
       var labelW = 120 * sc;
       var axisW = hs.scrollWidth - labelW;
       var targetX = labelW + midPct * axisW - hs.clientWidth / 2;
@@ -2555,8 +2872,18 @@ function kalSetAnsicht(m) {
   window.kalAnsicht = m;
   window.kalSkipAutoScroll = true;
   openKalender();
-  var hs2 = document.getElementById("kal-hscroll");
-  if (hs2) hs2.scrollLeft = sl;
+  // Erst nach dem Neuaufbau zuruecksetzen, sonst wird der Wert vom Layout
+  // ueberschrieben und die Ansicht springt in die Mitte.
+  var zurueck = function() {
+    var hs2 = document.getElementById("kal-hscroll");
+    if (hs2) hs2.scrollLeft = sl;
+    if (window.kalHalteOben) window.kalHalteOben();
+    if (window.kalHbarSync) window.kalHbarSync();
+  };
+  zurueck();
+  if (typeof requestAnimationFrame !== "undefined") {
+    requestAnimationFrame(function() { requestAnimationFrame(zurueck); });
+  }
 }
 function kalSetSort(m) {
   var hs = document.getElementById("kal-hscroll");
@@ -2564,42 +2891,129 @@ function kalSetSort(m) {
   window.kalSort = m;
   window.kalSkipAutoScroll = true;
   openKalender();
-  var hs2 = document.getElementById("kal-hscroll");
-  if (hs2) hs2.scrollLeft = sl;
+  // Erst nach dem Neuaufbau zuruecksetzen, sonst wird der Wert vom Layout
+  // ueberschrieben und die Ansicht springt in die Mitte.
+  var zurueck = function() {
+    var hs2 = document.getElementById("kal-hscroll");
+    if (hs2) hs2.scrollLeft = sl;
+    if (window.kalHalteOben) window.kalHalteOben();
+    if (window.kalHbarSync) window.kalHbarSync();
+  };
+  zurueck();
+  if (typeof requestAnimationFrame !== "undefined") {
+    requestAnimationFrame(function() { requestAnimationFrame(zurueck); });
+  }
 }
+// Grundmassstab des Kalenderinhalts: auf dem Desktop etwas groesser, damit
+// die Titelliste die gleiche Schriftgroesse erreicht wie die Namen im Panel.
+// Der Kopfbereich bleibt davon unberuehrt.
+function kalBasisScale() {
+  try {
+    if (window.matchMedia("(min-width: 1000px) and (hover: hover) and (pointer: fine)").matches) return 1.3;
+  } catch (e) {}
+  return 1;
+}
+
+// Kontextmenue im Kalender: Umschalten zwischen Balken- und Termindarstellung
+function kalHilfeZeigen() {
+  var d = document.getElementById("kal-hilfe");
+  if (d) d.style.display = "flex";
+}
+function kalHilfeSchliessen() {
+  var d = document.getElementById("kal-hilfe");
+  if (d) d.style.display = "none";
+}
+
+function kalCtxUmschalten() {
+  var c = document.getElementById("kal-ctx");
+  if (c) c.style.display = "none";
+  kalSetAnsicht((window.kalAnsicht || "balken") === "balken" ? "termine" : "balken");
+}
+function kalCtxSchliessen() {
+  var c = document.getElementById("kal-ctx");
+  if (c) c.style.display = "none";
+}
+
 function kalToggleScale(ev) {
-  var hs = document.getElementById("kal-hscroll");
-  var modal = document.getElementById("kalender-modal");
-  var alt = window.kalScale || 1;
-  var neu = (alt > 1) ? 1 : 1.5;
-  // Klickpunkt in ungezoomten Koordinaten merken
-  var ankerX = 0, ankerY = 0;
-  if (hs && ev) {
-    var r = hs.getBoundingClientRect();
-    ankerX = (hs.scrollLeft + (ev.clientX - r.left)) / alt;
+  // Nach einem langen Antippen (Tooltip) nicht zusaetzlich zoomen
+  if (window.kalTipOffen) return;
+  var istDesktop = false;
+  try { istDesktop = window.matchMedia("(min-width: 1000px) and (hover: hover) and (pointer: fine)").matches; } catch(e) {}
+  // Zurueck zur vorherigen Ansicht, wenn die Monatsansicht schon offen ist
+  if (window.kalZoom) {
+    window.kalZoom = null;
+    window.kalZoomTage = null;
+    window.kalFokusZeile = null;
+    window.kalScale = kalBasisScale();
+    openKalender();
+    return;
   }
-  if (modal && ev) {
-    ankerY = (modal.scrollTop + ev.clientY) / alt;
+  // Angeklickte Zeile merken, damit sie im Zoom markiert bleibt
+  window.kalFokusZeile = null;
+  if (ev && ev.currentTarget && ev.currentTarget.parentNode) {
+    var zeile = ev.currentTarget.parentNode;
+    var t = zeile.querySelector(".kal-titel");
+    if (t) window.kalFokusZeile = t.getAttribute("title") || null;
   }
-  window.kalScale = neu;
+  // Datum unter dem Mauszeiger bestimmen. Gerechnet wird relativ zum
+  // Kalenderelement, weil nur dieses gezoomt ist.
+  var scale = document.getElementById("kal-scale");
+  var anteil = 0.5;
+  var cursorX = null;
+  if (scale && ev) {
+    var rS = scale.getBoundingClientRect();
+    var lc = document.getElementById("kal-labelcol");
+    var labW = lc ? lc.getBoundingClientRect().width : 0;
+    var achse = rS.width - labW;
+    if (achse > 0) {
+      anteil = (ev.clientX - rS.left - labW) / achse;
+      if (anteil < 0) anteil = 0;
+      if (anteil > 1) anteil = 1;
+    }
+    cursorX = ev.clientX;
+  }
+  // Zwei Monate im Sichtbereich
+  window.kalZoom = { bereich: true };
+  window.kalZoomTage = istDesktop ? 61 : 14;   // Desktop zwei Monate, Handy zwei Wochen
+  window.kalAnsicht = "termine";             // im Zoom sind Einzeltermine hilfreicher
+  window.kalScale = istDesktop ? (kalBasisScale() * 1.35) : 1;    // auf dem Handy ohne zusaetzlichen Zoom
+  var klickY = ev ? ev.clientY : null;
   window.kalSkipAutoScroll = true;
   openKalender();
-  // Nach dem Rendern auf denselben Punkt scrollen
-  var reposition = function() {
+  var zentrieren = function() {
     var hs2 = document.getElementById("kal-hscroll");
-    var modal2 = document.getElementById("kalender-modal");
-    if (hs2 && ev) {
-      var r2 = hs2.getBoundingClientRect();
-      hs2.scrollLeft = Math.max(0, ankerX * neu - (ev.clientX - r2.left));
+    var scale2 = document.getElementById("kal-scale");
+    if (!hs2 || !scale2) return;
+    var lc2 = document.getElementById("kal-labelcol");
+    var eff = lc2 ? (lc2.getBoundingClientRect().width / 120) : (window.kalScale || 1);
+    if (!(eff > 0.05)) eff = 1;
+    var breiteAchse = (scale2.offsetWidth - 120) * eff;
+    var zielX = 120 * eff + anteil * breiteAchse;      // Klickpunkt im Inhalt
+    // Der Punkt soll dort bleiben, wo der Mauszeiger steht, statt in die
+    // Fenstermitte zu springen.
+    var rH = hs2.getBoundingClientRect();
+    var wunschX = (cursorX !== null) ? (cursorX - rH.left) : (hs2.clientWidth / 2);
+    hs2.scrollLeft = Math.max(0, zielX - wunschX);
+    // Senkrecht so scrollen, dass die angeklickte Zeile wieder genau unter dem
+    // Mauszeiger liegt - der Blick bleibt damit an derselben Stelle.
+    if (window.kalFokusZeile && klickY !== null) {
+      var modal2 = document.getElementById("kalender-modal");
+      var reihen = document.querySelectorAll(".kal-row.kal-fokus");
+      if (modal2 && reihen.length) {
+        var rZ = reihen[0].getBoundingClientRect();
+        var mitte = rZ.top + rZ.height / 2;
+        modal2.scrollTop = Math.max(0, modal2.scrollTop + (mitte - klickY));
+      }
     }
-    if (modal2 && ev) {
-      modal2.scrollTop = Math.max(0, ankerY * neu - ev.clientY);
-    }
+    if (window.kalHalteOben) window.kalHalteOben();
+    if (window.kalHbarSync) window.kalHbarSync();
   };
-  if (typeof requestAnimationFrame !== "undefined") { requestAnimationFrame(reposition); }
-  else { reposition(); }
+  if (typeof requestAnimationFrame !== "undefined") {
+    requestAnimationFrame(function() { requestAnimationFrame(zentrieren); });
+  } else { zentrieren(); }
 }
 function kalZoomTo(y, m) {
+  window.kalZoomTage = null;
   if (y === null) { window.kalZoom = null; }
   else { window.kalZoom = {y: y, m: m}; }
   openKalender();
@@ -2701,18 +3115,41 @@ filterAktuell();
       <p style="margin-top:12px">Als Produktionszeitraum gilt grunds&auml;tzlich die 1.&nbsp;TE bis zur letzten Vorstellung.</p>
       <p style="margin-top:12px"><strong style="color:#fff">Panel:</strong> Ein Klick auf eine Produktion in der Liste &ouml;ffnet das Detailpanel mit detaillierten Angaben. Namen und Funktionen im Panel sind anklickbar und aktivieren einen Filter.</p>
       <p style="margin-top:12px">&laquo;<strong>Spielplan</strong>&raquo; oben links &ouml;ffnet den aktuellen Spielplan auf der Website des Opernhauses.</p>
-      <p style="margin-top:12px">&laquo;<strong>Kalender</strong>&raquo; oben rechts &ouml;ffnet den tabellarischen Produktionskalender. Klick auf einen Monat in der Monatsleiste zoomt in eine Dreimonatsansicht. Klick auf inneren Bereich im Balkendiagramm vergr&ouml;ssert Ansicht um Faktor 1,5. Nochmaliger Klick verkleinert wieder auf Original. Tooltip/Mouse-Over auf Kalenderbalken bzw. auf Termin in Terminansicht zeigt zus&auml;tzliche Details.</p>
+      <p style="margin-top:12px">&laquo;<strong>Kalender</strong>&raquo; oben rechts &ouml;ffnet den tabellarischen Produktionskalender. Eine Kurzanleitung zur mobilen bzw. Desktop-Version befindet sich in der Kalenderansicht <span style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;box-sizing:border-box;background:#1e1e1e;color:#bbb;font-size:11px;font-weight:bold;border-top:1px solid #585858;border-left:1px solid #484848;border-bottom:1px solid #0d0d0d;border-right:1px solid #0d0d0d;border-radius:3px;vertical-align:middle;position:relative;top:-1px">?</span>.</p>
       <p style="margin-top:12px">In der Titelzeile: <strong>Button OHZ</strong> (Handy) bzw. <strong>Probenplan</strong> (Desktop) verlinkt auf Backstage/Probenplan, <strong>Button D</strong> &ouml;ffnet einen freigegebenen Google-Drive-Ordner f&uuml;r flexiblen Datei-Upload/-Zugriff zwischen allen im Google-Tonabteilung-Account eingeloggten Ger&auml;ten und <strong>Button N</strong> eine Google-Keep-Checkliste f&uuml;r schnelle Share-Notizen oder Pendenz-Eintr&auml;ge on-the-fly. &Auml;nderungen sind f&uuml;r alle sofort einsehbar und bearbeitbar.</p>
-      <p style="margin-top:12px">Die <strong>WebApp</strong> besteht aus einer einzigen HTML-Datei (ca. 250kb inkl. JS und CSS) ohne externe Abh&auml;ngigkeiten (kein Datenaustausch mit externen Servern oder Diensten &ndash; ausgenommen Links in der Titelzeile) und wird &uuml;ber GitHub gehostet (https://...). Sie l&auml;uft auf allen g&auml;ngigen Browsern unter MacOS, Windows, Android und iOS (bei Bedarf auch offline als lokale Html-Datei).</p>
+      <div style="height:1px;background:#4d4d4d;margin:22px 0 18px"></div>
+      <p style="margin-top:0">Die <strong>WebApp</strong> besteht aus einer einzigen HTML-Datei (ca. 300kb inkl. JS und CSS) ohne externe Abh&auml;ngigkeiten (kein Datenaustausch mit externen Servern oder Diensten &ndash; ausgenommen Links in der Titelzeile) und wird &uuml;ber GitHub gehostet (https://...). Sie l&auml;uft auf allen g&auml;ngigen Browsern unter MacOS, Windows, Android und iOS (bei Bedarf auch offline als lokale Html-Datei).</p>
       <p>Die Daten basieren auf den Spielplanunterlagen der technischen Direktion, des KBB sowie der Website des Opernhauses Z&uuml;rich. &Auml;nderungen w&auml;hrend laufender Spielzeit sind m&ouml;glicherweise nicht ber&uuml;cksichtigt, werden aber kontinuierlich aktualisiert.</p>
       <p>Diese WebApp ist als Hilfsmittel f&uuml;r den Produktionsalltag gedacht. F&uuml;r die Richtigkeit, Vollst&auml;ndigkeit und Aktualit&auml;t der Inhalte wird keine Gew&auml;hr &uuml;bernommen.</p>
-      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_190826_123" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
-      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_190826_123</p>
+      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_190826_229" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
+      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_190826_229</p>
       </div>
   </div>
 </div>
 <div id="kalender-modal" style="display:none;position:fixed;inset:0;background:#141414;z-index:2000;overflow-y:auto;color:#e8e8e8;font-family:-apple-system,'Helvetica Neue',Arial,sans-serif">
   <div id="kalender-body"></div>
+  <div id="kal-hbar"><div id="kal-hbar-inner"></div></div>
+  <div id="kal-hilfe" onclick="if(event.target===this)kalHilfeSchliessen()">
+    <div>
+      <button onclick="kalHilfeSchliessen()" style="background:#181818;border:1px solid #333;border-radius:3px;color:#f0a050;cursor:pointer;font-size:15px;line-height:1.2;padding:1px 5px;float:right;position:sticky;top:0;z-index:10">close</button>
+      <h3>Kalender</h3>
+      <p><b>Zoomen:</b> Klick auf eine Produktionszeile zoomt in eine Zweimonatsansicht um die angeklickte Stelle und zeigt die Einzeltermine (Terminansicht). Nochmaliger Klick zoomt wieder zur&uuml;ck.</p>
+      <p><b>Verschieben:</b> Mit gedr&uuml;ckter Maustaste l&auml;sst sich der Kalender in beide Richtungen ziehen, alternativ zu Scrollbalken.</p>
+      <p><b>Rechtsklick</b> wechselt zwischen Balken und Einzelterminen.</p>
+      <p><b>Klick auf einen Produktionstitel</b> &ouml;ffnet das Detailpanel der Spielplanansicht.</p>
+      <p><b>Tooltips</b> an Balken und Terminstrichen zeigen jeweilige Details.</p>
+      <p style="margin-top:16px"><b>Termine</b></p>
+      <p style="margin:0 0 4px"><span style="display:inline-block;width:9px;height:9px;background:#8f8f8f;border-radius:1px;margin-right:9px;vertical-align:middle"></span>1.TE, Probenanfang / Probeb&uuml;hne</p>
+      <p style="margin:0 0 4px"><span style="display:inline-block;width:9px;height:9px;background:#f5e050;border-radius:1px;margin-right:9px;vertical-align:middle"></span>Proben (laut Monatsplan)</p>
+      <p style="margin:0 0 4px"><span style="display:inline-block;width:9px;height:9px;background:#a59b57;border-radius:1px;margin-right:9px;vertical-align:middle"></span>Proben (laut Saisonplan)</p>
+      <p style="margin:0 0 4px"><span style="display:inline-block;width:9px;height:9px;background:#ffffff;border-radius:1px;margin-right:9px;vertical-align:middle"></span>1. Vorstellung (Prem / WA)</p>
+      <p style="margin:0"><span style="display:inline-block;width:9px;height:9px;background:#63f0f0;border-radius:1px;margin-right:3px;vertical-align:middle"></span><span style="display:inline-block;width:9px;height:9px;background:#f0a050;border-radius:1px;margin-right:9px;vertical-align:middle"></span>Vorstellungen Oper / Ballett</p>
+    </div>
+  </div>
+  <div id="kal-tip"></div>
+  <div id="kal-ctx">
+    <span id="kal-ctx-um" onclick="kalCtxUmschalten()">Termine</span>
+  </div>
 </div>
 </body>
-</html>
+</html>&laquo;<strong style="color:#fff">Kalender</strong>&raquo; oben rechts &ouml;ffnet den tabellarischen Produktionskalender. Eine Kurzanleitung zur mobilen bzw. Desktop-Version findet sich in der Kalenderansicht <span style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;box-sizing:border-box;background:#1e1e1e;color:#bbb;font-size:11px;font-weight:bold;border-top:1px solid #585858;border-left:1px solid #484848;border-bottom:1px solid #0d0d0d;border-right:1px solid #0d0d0d;border-radius:3px;vertical-align:middle;position:relative;top:-1px">?</span>.
