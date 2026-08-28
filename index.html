@@ -23,6 +23,25 @@ input[type=date] { background: #181818; border: 1px solid #333; color: #e8e8e8; 
 .kal-zoomhint { display: none; }
 .bs-desk { display: none; }
 .bs-mob  { display: inline; }
+/* Auf dem Handy wechselt das Logo alle 30 Sekunden kurz zu "BILD & TON" */
+@keyframes bt-mob-ein {
+  0%, 45% { opacity: 0; }
+  74%, 78% { opacity: 1; }
+  100% { opacity: 0; }
+}
+@keyframes bt-mob-aus {
+  0%, 45% { opacity: 1; }
+  74%, 78% { opacity: 0; }
+  100% { opacity: 1; }
+}
+.ohz-txt-mob { animation: bt-mob-aus 20s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+.bild-ton-mob { position: absolute; right: 0; top: 0; white-space: nowrap;
+                opacity: 0; pointer-events: none;
+                animation: bt-mob-ein 20s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+@media (min-width: 1000px) and (hover: hover) and (pointer: fine) {
+  .ohz-txt-mob { animation: none; }
+  .bild-ton-mob { display: none; }
+}
 /* "BILD & TON" blendet sich auf dem Desktop alle zwei Minuten sanft ein */
 @keyframes bt-fade {
   0%, 82% { opacity: 0; }
@@ -31,8 +50,8 @@ input[type=date] { background: #181818; border: 1px solid #333; color: #e8e8e8; 
 }
 .bild-ton { position: absolute; top: 155%; left: 0; right: 0; text-align: center;
             font-family: 'Helvetica Neue', Arial, sans-serif; font-weight: 300;
-            font-size: 16px; letter-spacing: 0.42em; color: #585858;
-            white-space: nowrap; pointer-events: none; opacity: 0;
+            font-size: 16px; letter-spacing: 0.42em; color: #4a4a4a;
+            line-height: 1; white-space: nowrap; pointer-events: none; opacity: 0;
             animation: bt-fade 30s ease-in-out infinite; }
 .ohz-logo { display: none; font-family: 'Helvetica Neue', Arial, sans-serif; font-weight: 300;
             font-size: 16px; letter-spacing: 0.42em; color: #4a4a4a; white-space: nowrap;
@@ -65,7 +84,7 @@ input[type=date] { background: #181818; border: 1px solid #333; color: #e8e8e8; 
 }
 /* Logo auf schmalen Geraeten: derzeit ausgeblendet, Code bleibt fuer spaeter
    erhalten. Zum Wiedereinschalten "display: none" in "inline-block" aendern. */
-.ohz-logo-mob { display: inline-block; margin-left: auto; font-family: 'Helvetica Neue', Arial, sans-serif;
+.ohz-logo-mob { display: inline-block; position: relative; margin-left: auto; font-family: 'Helvetica Neue', Arial, sans-serif;
                 font-weight: 300; font-size: 13px; letter-spacing: 0.29em; color: #656565;
                 white-space: nowrap; flex-shrink: 0; text-decoration: none; padding-left: 10px;
                 margin-right: 4px; }
@@ -353,7 +372,7 @@ input[type=date]::-webkit-calendar-picker-indicator { filter: invert(0.8) bright
       <input type="text" id="search" placeholder="Suche nach Produktion, Person, Funktion ...">
       <span id="search-clear" onclick="clearSearch()" style="cursor:pointer;color:#f0a050;font-size:18px;line-height:1;flex-shrink:0;">&#x2715;</span>
     </span>
-    <a href="https://www.opernhaus.ch" target="_blank" rel="noopener noreferrer" id="ohz-logo-mob" class="ohz-logo-mob">OPERNHAUS Z&Uuml;RICH</a>
+    <a href="https://www.opernhaus.ch" target="_blank" rel="noopener noreferrer" id="ohz-logo-mob" class="ohz-logo-mob"><span class="ohz-txt-mob">OPERNHAUS Z&Uuml;RICH</span><span class="bild-ton-mob">BILD &amp; TON</span></a>
   </div>
   <div id="menu-drop">
     <span class="mi mi-about" style="color:#7fcfcf" onclick="schliesseMenu();document.getElementById('info-modal').style.display='flex'">ABOUT</span>
@@ -3180,8 +3199,8 @@ filterAktuell();
       <p style="margin-top:0">Die <strong>WebApp</strong> besteht aus einer einzigen HTML-Datei (ca. 300kb inkl. JS und CSS) ohne externe Abh&auml;ngigkeiten (kein Datenaustausch mit externen Servern oder Diensten &ndash; ausgenommen Links in der Titelzeile) und wird &uuml;ber GitHub gehostet (https://...). Sie l&auml;uft auf allen g&auml;ngigen Browsern unter MacOS, Windows, Android und iOS (bei Bedarf auch offline als lokale Html-Datei).</p>
       <p>Die Daten basieren auf den Spielplanunterlagen der technischen Direktion, des KBB sowie der Website des Opernhauses Z&uuml;rich. &Auml;nderungen w&auml;hrend laufender Spielzeit sind m&ouml;glicherweise nicht ber&uuml;cksichtigt, werden aber kontinuierlich aktualisiert.</p>
       <p>Diese WebApp ist als Hilfsmittel f&uuml;r den Produktionsalltag gedacht. F&uuml;r die Richtigkeit, Vollst&auml;ndigkeit und Aktualit&auml;t der Inhalte wird keine Gew&auml;hr &uuml;bernommen.</p>
-      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_190826_257" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
-      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_190826_257</p>
+      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_190826_264" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
+      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_190826_264</p>
       </div>
   </div>
 </div>
