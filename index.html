@@ -815,7 +815,7 @@ var P = [
 
 
 // Monate, fuer die ein Probenplan im Projektwissen vorliegt (Format "JJJJ-MM").
-// Nur Termine aus diesen Monaten erscheinen unter "Proben vorlaeufig".
+// Nur Termine aus diesen Monaten erscheinen unter "Proben lt. Monatsplan".
 // Bei neuem Monatsplan hier ergaenzen.
 var PPLAN_MONATE = ["2026-08", "2026-09"];
 function pplanGedeckt(datum) {
@@ -1558,7 +1558,7 @@ function showDetail(p) {
       }
     }
   }
-  // Proben vorlaeufig - nur Termine aus Monaten mit vorliegendem Probenplan
+  // Proben lt. Monatsplan - nur Termine aus Monaten mit vorliegendem Probenplan
   var probRows = [];
   if (p.proben && p.proben.length > 0) {
     for (var pk = 0; pk < p.proben.length; pk++) {
@@ -1578,7 +1578,7 @@ function showDetail(p) {
   if (p.gp  && pplanGedeckt(p.gp))  probRows.push({ d: p.gp,  z: p.gpz  || "", t: "GP" });
   probRows.sort(function(a, b) { return a.d < b.d ? -1 : (a.d > b.d ? 1 : 0); });
   if (probRows.length > 0) {
-    html += "<div class='sec-label' style='font-size:16px;margin-top:26px;color:#7fcfcf'>Proben vorl&auml;ufig</div>";
+    html += "<div class='sec-label' style='font-size:16px;margin-top:26px;color:#7fcfcf'>Proben lt. Monatsplan</div>";
     for (var pr = 0; pr < probRows.length; pr++) {
       var rz = probRows[pr].z ? "<span style='margin-left:28px'>" + probRows[pr].z + "</span>" : "";
       var rt = probRows[pr].t ? "<span class='prob-typ' style='margin-left:28px;color:#bbb'>" + probRows[pr].t + "</span>" : "";
@@ -3214,8 +3214,8 @@ filterAktuell();
       <p style="margin-top:0">Die <strong>WebApp</strong> besteht aus einer einzigen HTML-Datei (ca. 300kb inkl. JS und CSS) ohne externe Abh&auml;ngigkeiten (kein Datenaustausch mit externen Servern oder Diensten &ndash; ausgenommen Links in der Titelzeile) und wird &uuml;ber GitHub gehostet (https://...). Sie l&auml;uft auf allen g&auml;ngigen Browsern unter MacOS, Windows, Android und iOS (bei Bedarf auch offline als lokale Html-Datei).</p>
       <p>Die Daten basieren auf den Spielplanunterlagen der technischen Direktion, des KBB sowie der Website des Opernhauses Z&uuml;rich. &Auml;nderungen w&auml;hrend laufender Spielzeit sind m&ouml;glicherweise nicht ber&uuml;cksichtigt, werden aber kontinuierlich aktualisiert.</p>
       <p>Diese WebApp ist als Hilfsmittel f&uuml;r den Produktionsalltag gedacht. F&uuml;r die Richtigkeit, Vollst&auml;ndigkeit und Aktualit&auml;t der Inhalte wird keine Gew&auml;hr &uuml;bernommen.</p>
-      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_190826_272" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
-      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_190826_272</p>
+      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_190826_274" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
+      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_190826_274</p>
       </div>
   </div>
 </div>
