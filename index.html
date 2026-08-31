@@ -304,6 +304,10 @@ input[type=date]::-webkit-calendar-picker-indicator { filter: invert(0.8) bright
            font-size: 13px; line-height: 1.5; color: #e8e8e8; white-space: pre-line;
            -webkit-user-select: none; user-select: none; pointer-events: none; }
 /* Rechteck beim Aufziehen eines Zeitraums in der Jahresansicht */
+#kal-dauer { display: none; position: fixed; z-index: 2260; pointer-events: none;
+             background: #1a2a2a; border: 1px solid rgba(15,232,232,0.45); border-radius: 3px;
+             padding: 2px 8px; font-size: 12px; color: #9fe8e8; white-space: nowrap;
+             transform: translateX(-50%); }
 #kal-auswahl { display: none; position: fixed; z-index: 2250; pointer-events: none;
                background: rgba(15,232,232,0.10);
                border-left: 1px solid rgba(15,232,232,0.55);
@@ -1620,7 +1624,9 @@ function showDetail(p) {
     html += "<div class='divider'></div>";
     html += "<div class='drow'><span class='dlabel'>Besetzung</span></div><div style='display:flex;flex-wrap:wrap;gap:4px;padding:2px 0 6px 0'>";
     for (var ti = 0; ti < p.team.length; ti++) {
-      html += "<span class=\"dlink\" onclick=\"searchFor('" + p.team[ti] + "')\">" + p.team[ti] + "</span>";
+      // Gesucht wird nur der Name, die Rolle in Klammern bleibt in der Anzeige
+      var tnm = String(p.team[ti]).replace(/\s*\([^)]*\)\s*/g, " ").trim().replace(/'/g, "\\'");
+      html += "<span class=\"dlink\" onclick=\"searchFor('" + tnm + "')\">" + p.team[ti] + "</span>";
     }
     html += "</div>";
   }
@@ -2933,11 +2939,46 @@ function openKalender() {
           }
           var rH = hs.getBoundingClientRect();
           var l = Math.min(startX, ev.clientX), r = Math.max(startX, ev.clientX);
+          // Nach oben an der Unterkante der Monatsleiste enden, damit das
+          // Rechteck beim Scrollen nicht in den Kopfbereich hineinragt.
+          var mrEl = document.getElementById("kal-monthrow");
+          var obenGrenze = rH.top;
+          if (mrEl) {
+            var rMr = mrEl.getBoundingClientRect();
+            if (rMr.bottom > obenGrenze) obenGrenze = rMr.bottom;
+          }
+          var untenGrenze = rH.bottom;
+          var modRect = modalEl.getBoundingClientRect();
+          if (modRect.bottom < untenGrenze) untenGrenze = modRect.bottom;
+          if (untenGrenze <= obenGrenze) { rct.style.display = "none"; return; }
           rct.style.display = "block";
           rct.style.left = l + "px";
           rct.style.width = (r - l) + "px";
-          rct.style.top = rH.top + "px";
-          rct.style.height = rH.height + "px";
+          rct.style.top = obenGrenze + "px";
+          rct.style.height = (untenGrenze - obenGrenze) + "px";
+          // Dauer der Auswahl in Wochen ueber der Monatsleiste anzeigen
+          var dEl = document.getElementById("kal-dauer");
+          if (dEl) {
+            var sc = document.getElementById("kal-scale");
+            var lc = document.getElementById("kal-labelcol");
+            var labW = lc ? lc.getBoundingClientRect().width : 0;
+            var rS = sc ? sc.getBoundingClientRect() : null;
+            var achse = rS ? (rS.width - labW) : 0;
+            if (achse > 0) {
+              var f1 = Math.max(0, Math.min(1, (l - rS.left - labW) / achse));
+              var f2 = Math.max(0, Math.min(1, (r - rS.left - labW) / achse));
+              var tage = Math.round((f2 - f1) * (window.TOTAL_KAL || 364));
+              var wo = tage / 7;
+              var txt = (tage < 7) ? (tage + (tage === 1 ? " Tag" : " Tage"))
+                      : ((Math.round(wo * 10) / 10).toString().replace(".", ",")
+                         + (Math.abs(wo - 1) < 0.05 ? " Woche" : " Wochen"));
+              dEl.textContent = txt;
+              dEl.style.display = "block";
+              var db = dEl.getBoundingClientRect();
+              dEl.style.left = ((l + r) / 2) + "px";
+              dEl.style.top = Math.max(4, obenGrenze - db.height - 5) + "px";
+            }
+          }
           return;
         }
         hs.scrollLeft = slStart - dx;
@@ -2953,6 +2994,8 @@ function openKalender() {
         document.body.style.userSelect = "";
         var rct = document.getElementById("kal-auswahl");
         if (rct) rct.style.display = "none";
+        var dEl2 = document.getElementById("kal-dauer");
+        if (dEl2) dEl2.style.display = "none";
         if (auswahl && bewegt) {
           auswahl = false;
           kalBereichZoom(Math.min(startX, ev.clientX), Math.max(startX, ev.clientX));
@@ -3411,8 +3454,8 @@ filterAktuell();
       <p style="margin-top:0">Die <strong>WebApp</strong> besteht aus einer einzigen HTML-Datei (ca. 300kb inkl. JS und CSS) ohne externe Abh&auml;ngigkeiten (kein Datenaustausch mit externen Servern oder Diensten &ndash; ausgenommen Links in der Titelzeile) und wird &uuml;ber GitHub gehostet (https://...). Sie l&auml;uft auf allen g&auml;ngigen Browsern unter MacOS, Windows, Android und iOS (bei Bedarf auch offline als lokale Html-Datei).</p>
       <p>Die Daten basieren auf den Spielplanunterlagen der technischen Direktion, des KBB sowie der Website des Opernhauses Z&uuml;rich. &Auml;nderungen w&auml;hrend laufender Spielzeit sind m&ouml;glicherweise nicht ber&uuml;cksichtigt, werden aber kontinuierlich aktualisiert.</p>
       <p>Diese WebApp ist als Hilfsmittel f&uuml;r den Produktionsalltag gedacht. F&uuml;r die Richtigkeit, Vollst&auml;ndigkeit und Aktualit&auml;t der Inhalte wird keine Gew&auml;hr &uuml;bernommen.</p>
-      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_190826_303" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
-      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_190826_303</p>
+      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_190826_306" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
+      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_190826_306</p>
       </div>
   </div>
 </div>
@@ -3436,6 +3479,7 @@ filterAktuell();
       <p style="margin:0"><span style="display:inline-block;width:9px;height:9px;background:#63f0f0;border-radius:1px;margin-right:3px;vertical-align:middle"></span><span style="display:inline-block;width:9px;height:9px;background:#f0a050;border-radius:1px;margin-right:9px;vertical-align:middle"></span>Vorstellungen Oper / Ballett</p>
     </div>
   </div>
+  <div id="kal-dauer"></div>
   <div id="kal-tip"></div>
   <div id="kal-ctx">
     <span id="kal-ctx-um" onclick="kalCtxUmschalten()">Termine</span>
