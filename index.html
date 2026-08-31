@@ -303,12 +303,18 @@ input[type=date]::-webkit-calendar-picker-indicator { filter: invert(0.8) bright
            box-shadow: 0 6px 18px rgba(0,0,0,0.6); padding: 9px 12px;
            font-size: 13px; line-height: 1.5; color: #e8e8e8; white-space: pre-line;
            -webkit-user-select: none; user-select: none; pointer-events: none; }
+/* Rechteck beim Aufziehen eines Zeitraums in der Jahresansicht */
+#kal-auswahl { display: none; position: fixed; z-index: 2250; pointer-events: none;
+               background: rgba(15,232,232,0.10);
+               border-left: 1px solid rgba(15,232,232,0.55);
+               border-right: 1px solid rgba(15,232,232,0.55); }
 #kal-ctx { display: none; position: fixed; z-index: 2300; min-width: 130px;
            background: #1a1a1a; border: 1px solid #3a3a3a; border-radius: 5px;
            box-shadow: 0 6px 18px rgba(0,0,0,0.55); overflow: hidden;
            -webkit-user-select: none; user-select: none; }
-#kal-ctx span { display: block; padding: 9px 14px; font-size: 13px; color: #ddd;
-                cursor: pointer; border-bottom: 1px solid #2a2a2a; letter-spacing: 0.04em; }
+#kal-ctx span { display: block; padding: 10px 14px 11px; font-size: 13px; color: #ddd;
+                cursor: pointer; border-bottom: 1px solid #2a2a2a; letter-spacing: 0.04em;
+                text-align: center; line-height: 1.1; }
 #kal-ctx span:last-child { border-bottom: none; }
 #kal-ctx span:hover { background: #242424; }
 #kal-ctx span.aktiv { color: #63f0f0; }
@@ -1299,10 +1305,12 @@ function render() {
       var mSp = dSp.getMonth() + 1, tSp = dSp.getDate();
       inSommerpause = (mSp === 7 && tSp > 15) || (mSp === 8 && tSp <= 15);
     }
+    // Auch ohne Produktionstreffer koennen passende Kontakte vorliegen
+    var kontHtml = kontakteZurSuche(q);
     if (inSommerpause) {
-      list.innerHTML = "<div style='padding:28px 20px;text-align:center;font-size:15px;color:#f0a050;letter-spacing:0.08em'>Sommerpause <span class='sonne-glow' style='font-size:17px'>&#9728;&#65038;</span></div>";
+      list.innerHTML = "<div style='padding:28px 20px;text-align:center;font-size:15px;color:#f0a050;letter-spacing:0.08em'>Sommerpause <span class='sonne-glow' style='font-size:17px'>&#9728;&#65038;</span></div>" + kontHtml;
     } else {
-      list.innerHTML = "<div id='empty'>Keine Treffer.</div>";
+      list.innerHTML = (kontHtml ? "" : "<div id='empty'>Keine Treffer.</div>") + kontHtml;
     }
     return;
   }
@@ -1379,7 +1387,58 @@ function render() {
     html += '<span class="row-title"' + titleStyle + '>' + p.titel + laborSuffix + '</span><span class="badge ' + bc(p.typ) + '" style="margin-left:8px">' + bl(p.typ) + '</span><span class="row-date" style="margin-left:12px">' + fmt(p.prem) + '</span><span style="display:inline-block;width:2px;height:13px;background:#a2a2a2;margin-left:6px"></span><span class="row-date" style="margin-left:4px">' + fmt(p.ete) + ' &ndash; ' + fmt(p.lv) + '</span>';
     html += "</div>";
   }
+  html += kontakteZurSuche(q);
   list.innerHTML = html;
+}
+
+// Passende Kontakte zur Sucheingabe - erscheinen unter der Produktionsliste
+function kontakteZurSuche(q) {
+  if (!q || q.length < 2 || typeof KONTAKTE === "undefined") return "";
+  var treffer = [];
+  KONTAKTE.forEach(function(g) {
+    var liste = g.personen || [];
+    // Gruppen ohne hinterlegte Kontakte beziehen ihre Namen aus den
+    // Produktionsdaten - diese muessen ebenfalls durchsuchbar sein
+    if (liste.length === 0 && g.feld) {
+      var aus = g.aus || [];
+      liste = namenAusPanel(g.feld)
+        .filter(function(n) { return aus.indexOf(n) === -1; })
+        .map(function(n) { return { name: n }; });
+    }
+    liste.forEach(function(p) {
+      var text = ((p.name || "") + " " + (p.funktion || "") + " " + g.gruppe + " "
+                + (p.mail || "") + " " + (p.tel || "")).toLowerCase();
+      var gefunden = text.indexOf(q) > -1;
+      // Telefonnummern zusaetzlich ohne Trennzeichen vergleichen, damit
+      // "442686454" oder "268 64 54" ebenfalls treffen
+      if (!gefunden && p.tel) {
+        var nurZiffern = p.tel.replace(/\(0\)/g, "").replace(/[^0-9]/g, "");
+        var suchZiffern = q.replace(/[^0-9]/g, "");
+        if (suchZiffern.length >= 3 && nurZiffern.indexOf(suchZiffern) > -1) gefunden = true;
+      }
+      if (gefunden) treffer.push({ g: g.gruppe, p: p });
+    });
+  });
+  if (!treffer.length) return "";
+  var h = "<div style='padding:18px 16px 8px'>"
+        + "<div class='sec-label' style='font-size:15px;color:#8a8a8a;margin-bottom:10px'>Kontakte</div>";
+  treffer.forEach(function(t) {
+    h += "<div style='padding:8px 0;border-bottom:1px solid #232323'>"
+       + "<div style='font-size:12px;color:#7fcfcf;letter-spacing:0.05em;text-transform:uppercase'>" + t.g + "</div>"
+       + (t.p.name ? "<div style='font-size:16px;color:#e8e8e8;margin-top:2px'>" + t.p.name + "</div>" : "")
+       + (t.p.funktion ? "<div style='font-size:13px;color:#8a8a8a'>" + t.p.funktion + "</div>" : "");
+    if (t.p.tel) {
+      var nr = t.p.tel.replace(/\(0\)/g, "").replace(/[^+0-9]/g, "");
+      h += "<div style='margin-top:4px'><a href='tel:" + nr
+         + "' style='font-size:15px;color:#ffffff;text-decoration:none'>" + t.p.tel + "</a></div>";
+    }
+    if (t.p.mail) {
+      h += "<div style='margin-top:2px'><a href='mailto:" + t.p.mail
+         + "' style='font-size:15px;color:#ffffff;text-decoration:none;overflow-wrap:anywhere'>" + t.p.mail + "</a></div>";
+    }
+    h += "</div>";
+  });
+  return h + "</div>";
 }
 
 function selectRow(idx) {
@@ -1834,33 +1893,66 @@ var KONTAKTE = [
     {tel:"+41 (0)44 268 64 00", mail:"info@opernhaus.ch"}
   ]},
   {gruppe:"KBB", personen:[
+    {name:"Adrian Gosteli", funktion:"Chefdisponent", tel:"+41 (0)44 268 64 40", mail:"adrian.gosteli@opernhaus.ch"},
     {name:"Chantal Moser", tel:"+41 (0)44 268 64 41", mail:"chantal.moser@opernhaus.ch"},
     {name:"Katarzyna Bogucka", tel:"+41 (0)44 268 64 44", mail:"katarzyna.bogucka@opernhaus.ch"},
     {name:"Katharina Alvarez", tel:"+41 (0)44 268 64 44", mail:"katharina.alvarez@opernhaus.ch"},
     {name:"allgemein", mail:"kbb@opernhaus.ch"}
   ]},
-  {gruppe:"Projektleitung", feld:"projleit", personen:[]},
-  {gruppe:"Orchestertechnik", personen:[]},
-  {gruppe:"Untermaschinerie", personen:[]},
   {gruppe:"Inspizienz", feld:"insp", personen:[]},
   {gruppe:"Regieassistenz", feld:"reasist", personen:[]},
-  {gruppe:"Technischer Dienst", personen:[]},
-  {gruppe:"Transport", personen:[]},
   {gruppe:"Dramaturgie", feld:"dram", aus:["Beate Breidenbach","Edward Kemp","Werner Hintze"], personen:[]},
-  {gruppe:"Marketing & Events", personen:[]},
-  {gruppe:"Ballettbüro", personen:[
+  {gruppe:"Ballett", personen:[
     {name:"Florian König", funktion:"Betriebsdirektion", tel:"+41 (0)44 268 64 60", mail:"florian.koenig@opernhaus.ch"},
     {name:"Mikel Jauregui", funktion:"Produktionsleitung", tel:"+41 (0)44 268 64 62", mail:"mikel.jauregui@opernhaus.ch"},
+    {name:"Daniel Bretislav Otevrel", funktion:"Ballettmeister", tel:"+41 (0)44 268 66 36", mail:"daniel.otevrel@opernhaus.ch"},
+    {name:"Jean-François Boisnon", funktion:"Ballettmeister", tel:"+41 (0)44 268 64 00", mail:"jean-francois.boisnon@opernhaus.ch"},
+    {name:"Anastacia Holden", funktion:"Ballettmeisterin / Rehearsal Director", tel:"+41 79 280 17 98", mail:"anastacia.holden@opernhaus.ch"},
+    {name:"Christophe Barwinek", funktion:"Company Pianist", mail:"barwinek@gmail.com"},
+    {name:"Luigi Largo", funktion:"Company Pianist", mail:"luigilargo@hotmail.it"},
     {name:"allgemein", mail:"ballett-zuerich@opernhaus.ch"}
+  ]},
+  {gruppe:"Marketing & Events", personen:[
+    {name:"Meret Roth", funktion:"Eventmanagerin", tel:"+41 (0)44 259 58 06", mail:"meret.roth@opernhaus.ch"},
+    {name:"Nila Chea", funktion:"Eventmanagerin", tel:"+41 (0)44 259 58 15", mail:"nila.chea@opernhaus.ch"},
+    {name:"Tosca Stocker", funktion:"Praktikantin Events", mail:"tosca.stocker@opernhaus.ch"},
+    {name:"Schu-Han Yang", funktion:"Referentin für Sponsoring", tel:"+41 (0)44 268 66 33", mail:"schu-han.yang@opernhaus.ch"},
+    {name:"Katherine Waldvogel", funktion:"Leitung Geschäftsstelle Freunde", tel:"+41 (0)44 268 64 16", mail:"katherine.waldvogel@opernhaus.ch"},
+    {name:"Corinne Amsler", funktion:"Mitarbeiterin der Geschäftsstelle", tel:"+41 (0)44 268 64 14", mail:"corinne.amsler@opernhaus.ch"},
+    {name:"Manuela Wyder", tel:"+41 (0)44 259 58 03", mail:"manuela.wyder@opernhaus.ch"},
+    {name:"Susanne Lutz", funktion:"Leiterin Marketing, Events, Medienverwertung", mail:"susanne.lutz@opernhaus.ch"},
+    {name:"Giorgia Tschanz", funktion:"Leitung Grafik", mail:"giorgia.tschanz@opernhaus.ch"},
+    {name:"Linda Schultz", funktion:"Referentin Video & Social Media", tel:"+41 (0)44 268 66 34", mail:"linda.schultz@opernhaus.ch"},
+    {name:"Öykü Demiriz", funktion:"Junior CRM-Managerin", tel:"+41 (0)44 259 58 66", mail:"oeykue.demiriz@opernhaus.ch"},
+    {name:"Loredana Wohlfahrt", funktion:"Presseassistentin", tel:"+41 (0)44 268 66 92", mail:"loredana.wohlfahrt@opernhaus.ch"},
+    {name:"Rebecca Zöller", funktion:"Führungen", tel:"+41 (0)44 268 64 18", mail:"rebecca.zoeller@opernhaus.ch"},
+    {name:"Laura Hamami", funktion:"Marketingassistentin", tel:"+41 (0)44 259 58 65", mail:"laura.hamami@opernhaus.ch"},
+    {name:"Fabienne Nydegger", funktion:"Praktikantin Events", tel:"+41 (0)44 268 58 03", mail:"fabienne.nydegger@opernhaus.ch"}
+  ]},
+  {gruppe:"Orchestertechnik", personen:[
+    {name:"Sebastian Lange", funktion:"Leiter Orchestertechnik", tel:"+41 (0)44 268 64 54", mail:"sebastian.lange@opernhaus.ch"},
+    {name:"Orchestertechnik 1", mail:"orchestertechnik.1@opernhaus.ch"},
+    {name:"Orchestertechnik 2", mail:"orchestertechnik.2@opernhaus.ch"}
+  ]},
+  {gruppe:"Untermaschinerie", personen:[]},
+  {gruppe:"Bühnentechnik", feld:"bm", personen:[]},
+  {gruppe:"Beleuchtung", feld:"licht", personen:[]},
+  {gruppe:"Projektleitung", feld:"projleit", personen:[
+    {name:"Friederike Bujnoch", funktion:"Techn. Projektleiterin", tel:"+41 (0)44 268 65 38", mail:"friederike.bujnoch@opernhaus.ch"},
+    {name:"Larissa Moreno", funktion:"Produktionsleiterin", tel:"+41 (0)44 268 66 42", mail:"larissa.moreno@opernhaus.ch"},
+    {name:"Moritz Noll", funktion:"Technischer Projektleiter", tel:"+41 (0)44 259 58 53", mail:"moritz.noll@opernhaus.ch"},
+    {name:"Susan Klimmer", funktion:"Technische Projektleiterin", tel:"+41 (0)44 268 64 87", mail:"klimmer.susan@opernhaus.ch"}
   ]},
   {gruppe:"Hausverwaltung", personen:[
     {name:"Glenn Oberholzer", tel:"+41 (0)44 268 65 40", mail:"oberholzer.glenn@opernhaus.ch"}
   ]},
-  {gruppe:"IT Helpdesk", zeit:"Mo–Fr, 08.00–20.00 Uhr", personen:[
-    {name:"Helpdesk", tel:"+41 (0)44 258 70 17", mail:"helpdesk@opernhaus.ch"}
-  ]},
+  {gruppe:"Technischer Dienst", personen:[]},
+  {gruppe:"Transport", personen:[]},
   {gruppe:"Sicherheitsbeauftragte AS/GS", personen:[
     {name:"Sandra Reck", tel:"+41 (0)44 268 64 85", mail:"sandra.reck@opernhaus.ch"}
+  ]},
+  {gruppe:"IT Helpdesk", zeit:"Mo–Fr, 08.00–20.00 Uhr", personen:[
+    {name:"Helpdesk", tel:"+41 (0)44 258 70 17", mail:"helpdesk@opernhaus.ch"}
   ]}
 ];
 
@@ -2772,7 +2864,7 @@ function openKalender() {
     (function() {
       var hs = document.getElementById("kal-hscroll");
       if (!hs || !deskt) return;
-      var zieht = false, bewegt = false, startX = 0, startY = 0, slStart = 0, stStart = 0;
+      var zieht = false, bewegt = false, auswahl = false, startX = 0, startY = 0, slStart = 0, stStart = 0;
       hs.addEventListener("mousedown", function(ev) {
         if (ev.button !== 0) return;
         // Auf Bedienelementen nicht ziehen
@@ -2781,6 +2873,8 @@ function openKalender() {
         ev.preventDefault();          // verhindert, dass eine Auswahl beginnt
         startX = ev.clientX; startY = ev.clientY;
         slStart = hs.scrollLeft; stStart = modalEl.scrollTop;
+        // In der Jahresansicht wird stattdessen ein Zeitraum aufgezogen
+        auswahl = !window.kalZoom;
       });
       document.addEventListener("mousemove", function(ev) {
         if (!zieht) return;
@@ -2795,6 +2889,23 @@ function openKalender() {
         }
         if (!bewegt) return;
         ev.preventDefault();
+        if (auswahl) {
+          // Zeitraum aufziehen: Rechteck ueber die volle Hoehe des Kalenders
+          var rct = document.getElementById("kal-auswahl");
+          if (!rct) {
+            rct = document.createElement("div");
+            rct.id = "kal-auswahl";
+            document.body.appendChild(rct);
+          }
+          var rH = hs.getBoundingClientRect();
+          var l = Math.min(startX, ev.clientX), r = Math.max(startX, ev.clientX);
+          rct.style.display = "block";
+          rct.style.left = l + "px";
+          rct.style.width = (r - l) + "px";
+          rct.style.top = rH.top + "px";
+          rct.style.height = rH.height + "px";
+          return;
+        }
         hs.scrollLeft = slStart - dx;
         modalEl.scrollTop = Math.max(0, stStart - dy);
         halteOben();
@@ -2806,6 +2917,17 @@ function openKalender() {
         document.body.style.cursor = "";
         document.body.style.webkitUserSelect = "";
         document.body.style.userSelect = "";
+        var rct = document.getElementById("kal-auswahl");
+        if (rct) rct.style.display = "none";
+        if (auswahl && bewegt) {
+          auswahl = false;
+          kalBereichZoom(Math.min(startX, ev.clientX), Math.max(startX, ev.clientX));
+          var stopp2 = function(e) { e.stopPropagation(); e.preventDefault(); };
+          document.addEventListener("click", stopp2, true);
+          setTimeout(function() { document.removeEventListener("click", stopp2, true); }, 0);
+          return;
+        }
+        auswahl = false;
         // Nach einer Ziehbewegung den folgenden Klick unterdruecken,
         // damit nicht versehentlich gezoomt wird
         if (bewegt) {
@@ -2835,7 +2957,7 @@ function openKalender() {
         ctx.style.top = Math.max(4, y) + "px";
         // Von selbst schliessen, wenn nichts ausgewaehlt wird
         if (window.kalCtxTimer) clearTimeout(window.kalCtxTimer);
-        window.kalCtxTimer = setTimeout(kalCtxSchliessen, 2000);
+        window.kalCtxTimer = setTimeout(kalCtxSchliessen, 3000);
       });
       ctx.addEventListener("mouseenter", function() {
         if (window.kalCtxTimer) { clearTimeout(window.kalCtxTimer); window.kalCtxTimer = null; }
@@ -3027,6 +3149,47 @@ function kalCtxSchliessen() {
   if (c) c.style.display = "none";
 }
 
+// Zoomt auf den mit der Maus aufgezogenen Zeitraum (nur Jahresansicht, Desktop)
+function kalBereichZoom(x1, x2) {
+  var scale = document.getElementById("kal-scale");
+  var hs = document.getElementById("kal-hscroll");
+  if (!scale || !hs) return;
+  var rS = scale.getBoundingClientRect();
+  var lc = document.getElementById("kal-labelcol");
+  var labW = lc ? lc.getBoundingClientRect().width : 0;
+  var achse = rS.width - labW;
+  if (!(achse > 0)) return;
+  var a1 = (x1 - rS.left - labW) / achse;
+  var a2 = (x2 - rS.left - labW) / achse;
+  a1 = Math.max(0, Math.min(1, a1));
+  a2 = Math.max(0, Math.min(1, a2));
+  if (a2 <= a1) return;
+  var tage = Math.round((a2 - a1) * (window.TOTAL_KAL || 364));
+  if (tage < 7) tage = 7;             // Mindestspanne gegen versehentliches Zucken
+  window.kalZoom = { bereich: true };
+  window.kalZoomTage = tage;
+  window.kalScale = kalBasisScale() * 1.35;
+  window.kalAnsicht = "termine";
+  window.kalFokusZeile = null;
+  window.kalSkipAutoScroll = true;
+  openKalender();
+  var hin = function() {
+    var hs2 = document.getElementById("kal-hscroll");
+    var s2 = document.getElementById("kal-scale");
+    if (!hs2 || !s2) return;
+    var lc2 = document.getElementById("kal-labelcol");
+    var eff = lc2 ? (lc2.getBoundingClientRect().width / 120) : 1;
+    if (!(eff > 0.05)) eff = 1;
+    var breite = (s2.offsetWidth - 120) * eff;
+    hs2.scrollLeft = Math.max(0, 120 * eff + a1 * breite - 4);
+    if (window.kalHalteOben) window.kalHalteOben();
+    if (window.kalHbarSync) window.kalHbarSync();
+  };
+  if (typeof requestAnimationFrame !== "undefined") {
+    requestAnimationFrame(function() { requestAnimationFrame(hin); });
+  } else { hin(); }
+}
+
 function kalToggleScale(ev) {
   // Nach einem langen Antippen (Tooltip) nicht zusaetzlich zoomen
   if (window.kalTipOffen) return;
@@ -3214,8 +3377,8 @@ filterAktuell();
       <p style="margin-top:0">Die <strong>WebApp</strong> besteht aus einer einzigen HTML-Datei (ca. 300kb inkl. JS und CSS) ohne externe Abh&auml;ngigkeiten (kein Datenaustausch mit externen Servern oder Diensten &ndash; ausgenommen Links in der Titelzeile) und wird &uuml;ber GitHub gehostet (https://...). Sie l&auml;uft auf allen g&auml;ngigen Browsern unter MacOS, Windows, Android und iOS (bei Bedarf auch offline als lokale Html-Datei).</p>
       <p>Die Daten basieren auf den Spielplanunterlagen der technischen Direktion, des KBB sowie der Website des Opernhauses Z&uuml;rich. &Auml;nderungen w&auml;hrend laufender Spielzeit sind m&ouml;glicherweise nicht ber&uuml;cksichtigt, werden aber kontinuierlich aktualisiert.</p>
       <p>Diese WebApp ist als Hilfsmittel f&uuml;r den Produktionsalltag gedacht. F&uuml;r die Richtigkeit, Vollst&auml;ndigkeit und Aktualit&auml;t der Inhalte wird keine Gew&auml;hr &uuml;bernommen.</p>
-      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_190826_274" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
-      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_190826_274</p>
+      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_190826_293" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
+      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_190826_293</p>
       </div>
   </div>
 </div>
