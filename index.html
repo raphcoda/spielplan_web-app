@@ -2394,18 +2394,19 @@ function openKalender() {
       var xp = (cur - START)/86400000/TOTAL*100;
       var dow = cur.getDay(); // 0=So, 1=Mo
       var isMon = (dow === 1);
-      var lineCol = isMon ? "#6e6e6e" : "#3c3c3c";
+      var lineCol = isMon ? "#7c7c7c" : "#4a4a4a";
       var lineW = isMon ? "1.5px" : "1px";
       dayLines += "<div style='position:absolute;top:0;height:100%;border-left:" + lineW + " solid " + lineCol + ";left:" + xp.toFixed(3) + "%'></div>";
       // Tageszahl mittig ueber dem Tagesabschnitt (halber Tag nach rechts, dann zentriert)
       var dnum = cur.getDate();
       var isWE = (dow === 0 || dow === 6);
       // Samstag und Sonntag etwas heller hervorheben
-      var numCol = isMon ? "#ffffff" : (isWE ? "#d8d8d8" : "#a8a8a8");
+      // Nur Montag dezent tuerkis, alle uebrigen Tage grau
+      var numCol = isMon ? "#7fbcbc" : "#a8a8a8";
       var numWeight = isMon ? "bold" : "normal";
       var halfDay = 100 / TOTAL / 2;
       // Bei weiten Zeitraeumen nur jede zweite Zahl, sonst ueberlagern sie sich
-      var zahlZeigen = !(window.kalZoomTage > 92) || (dnum % 2 === 1);
+      var zahlZeigen = !(window.kalZoomTage >= 84) || (dnum % 2 === 1);
       if (zahlZeigen) dayLines += "<div style='position:absolute;bottom:" + (window.kalZoomTage ? (deskKal ? 1 : 1) : 2) + "px;left:" + (xp + halfDay).toFixed(3) + "%;transform:translateX(-50%);font-size:" + (window.kalZoomTage ? (deskKal ? 10 : 12.5) : 15) + "px;color:" + numCol + ";font-weight:" + numWeight + ";white-space:nowrap'>" + dnum + "</div>";
       // Wochentagsbuchstabe ueber der Tageszahl - dezent und klein.
       // Am Monatsanfang und am Tag davor ausgelassen, da dort der Monatsname steht.
@@ -2413,19 +2414,20 @@ function openKalender() {
       var monatswechsel = (cur.getDate() === 1) || (cur.getDate() === 2) || (naechster.getDate() === 1);
       // Unter drei Wochen Zoomweite jeden Tag beschriften, sonst nur
       // Montag, Mittwoch, Freitag und Sonntag
-      var alleTage = (window.kalZoomTage && window.kalZoomTage < 21);
+      var alleTage = (window.kalZoomTage && window.kalZoomTage < 84);
       if (!monatswechsel && (alleTage || dow === 1 || dow === 3 || dow === 5 || dow === 0)) {
         var wtag = ["S","M","D","M","D","F","S"][dow];
+        var wtagCol = isMon ? "#7fbcbc" : "#7a7a7a";
         dayLines += "<div style='position:absolute;top:" + (deskKal ? 0 : 5) + "px;left:"
                  + (xp + halfDay).toFixed(3) + "%;transform:translateX(-50%);font-size:"
-                 + (window.kalZoomTage ? (deskKal ? 7 : 8.5) : 8.5) + "px;color:#7a7a7a;line-height:1;white-space:nowrap'>"
+                 + (window.kalZoomTage ? (deskKal ? 7 : 8.5) : 8.5) + "px;color:" + wtagCol + ";line-height:1;white-space:nowrap'>"
                  + wtag + "</div>";
       }
       // Monatsname beim 1. des Monats
       var mo = cur.getMonth();
       if (mo !== lastMonth) {
         lastMonth = mo;
-        monthLabels += "<div style='position:absolute;top:" + (window.kalZoomTage ? (deskKal ? -2 : -1) : 3) + "px;left:" + xp.toFixed(3) + "%;transform:translateX(4px);font-size:" + (deskKal ? 9 : 14) + "px;color:#63f0f0;font-weight:bold;white-space:nowrap'>" + names[mo] + "</div>";
+        monthLabels += "<div style='position:absolute;top:" + (window.kalZoomTage ? (deskKal ? -4 : -1) : 3) + "px;left:" + xp.toFixed(3) + "%;transform:translateX(4px);font-size:" + (deskKal ? 8 : 14) + "px;color:#63f0f0;font-weight:bold;letter-spacing:0.06em;white-space:nowrap'>" + (deskKal ? names[mo].toUpperCase() : names[mo]) + "</div>";
       }
       cur.setDate(cur.getDate() + 1);
     }
@@ -2443,7 +2445,7 @@ function openKalender() {
       var midX = (mo.x + nextX) / 2;
       var w = nextX - mo.x;
       return "<div style='position:absolute;top:0;height:100%;border-left:1px solid #4a4a4a;left:" + mo.x.toFixed(2) + "%'></div>"
-        + "<div style='position:absolute;top:0;height:100%;left:" + mo.x.toFixed(2) + "%;width:" + w.toFixed(2) + "%;display:flex;align-items:flex-start;justify-content:center;padding-top:4px;box-sizing:border-box;font-size:13.5px;font-weight:600;color:#e2e2e2;white-space:nowrap'>" + mo.name + "</div>";
+        + "<div style='position:absolute;top:0;height:100%;left:" + mo.x.toFixed(2) + "%;width:" + w.toFixed(2) + "%;display:flex;align-items:flex-start;justify-content:center;padding-top:4px;box-sizing:border-box;font-size:" + (deskKal ? 12 : 13.5) + "px;font-weight:600;letter-spacing:" + (deskKal ? '0.06em' : '0') + ";color:#e2e2e2;white-space:nowrap'>" + (deskKal ? mo.name.toUpperCase() : mo.name) + "</div>";
     }).join("");
   }
 
@@ -2740,7 +2742,7 @@ function openKalender() {
     var on = (window.kalExt === true);
     // Globus als SVG statt Emoji: sieht in allen Browsern gleich aus und
     // laesst sich einfaerben.
-    var farbe = on ? "#e8e8e8" : "#8a8a8a";
+    var farbe = "#e8e8e8";
     var bus = "<svg width='17' height='17' viewBox='0 0 17 17' fill='none' stroke='" + farbe
             + "' stroke-width='1.25' stroke-linecap='round' style='display:block'>"
             + "<circle cx='8.5' cy='8.5' r='6.6'/>"
@@ -2751,7 +2753,7 @@ function openKalender() {
     return "<span onclick=\"toggleKalExt()\" title='Auswärtige Produktionen ein-/ausblenden' "
       + "style='display:inline-flex;align-items:center;justify-content:center;cursor:pointer;"
       + "padding:2px 6px;border-radius:2px;border:1px solid transparent;margin-left:-6px;"
-      + "opacity:" + (on ? "1" : "0.5") + "'>" + bus + "</span>";
+      + "opacity:" + (on ? "1" : "0.55") + "'>" + bus + "</span>";
   }
   function sortZeileInhalt() {
     return "<span id='kal-sortbtns' style='display:flex;align-items:center;width:100%'>"
@@ -3497,8 +3499,8 @@ filterAktuell();
       <p style="margin-top:0">Die <strong>WebApp</strong> besteht aus einer einzigen HTML-Datei (ca. 300kb inkl. JS und CSS) ohne externe Abh&auml;ngigkeiten (kein Datenaustausch mit externen Servern oder Diensten &ndash; ausgenommen Links in der Titelzeile) und wird &uuml;ber GitHub gehostet (https://...). Sie l&auml;uft auf allen g&auml;ngigen Browsern unter MacOS, Windows, Android und iOS (bei Bedarf auch offline als lokale Html-Datei).</p>
       <p>Die Daten basieren auf den Spielplanunterlagen der technischen Direktion, des KBB sowie der Website des Opernhauses Z&uuml;rich. &Auml;nderungen w&auml;hrend laufender Spielzeit sind m&ouml;glicherweise nicht ber&uuml;cksichtigt, werden aber kontinuierlich aktualisiert.</p>
       <p>Diese WebApp ist als Hilfsmittel f&uuml;r den Produktionsalltag gedacht. F&uuml;r die Richtigkeit, Vollst&auml;ndigkeit und Aktualit&auml;t der Inhalte wird keine Gew&auml;hr &uuml;bernommen.</p>
-      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_190826_317" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
-      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_190826_317</p>
+      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_190826_324" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
+      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_190826_324</p>
       </div>
   </div>
 </div>
