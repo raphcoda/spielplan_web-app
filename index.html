@@ -52,8 +52,8 @@ input[type=date] { background: #181818; border: 1px solid #333; color: #e8e8e8; 
             font-family: 'Helvetica Neue', Arial, sans-serif; font-weight: 300;
             font-size: 16px; letter-spacing: 0.42em; color: #4a4a4a;
             line-height: 1; white-space: nowrap; pointer-events: none;
-            animation: blende-tb 29s linear infinite; }
-.ohz-txt { animation: blende-logo 29s linear infinite; }
+            animation: blende-tb 26s linear infinite; animation-delay: 1.3s; }
+.ohz-txt { animation: blende-logo 26s linear infinite; }
 /* Ein heller Schimmer wandert langsam ueber beide Zeilen, die zweite
    leicht nachlaufend. Ohne background-clip bleibt die Grundfarbe stehen. */
 /* Bei einer Hintergrundbreite von 260% liegt der helle Streifen genau
@@ -63,27 +63,22 @@ input[type=date] { background: #181818; border: 1px solid #333; color: #e8e8e8; 
 /* Hin- und Rueckweg sind eine durchgehende Bewegung. Die Zwischenschritte
    sorgen fuer gleichmaessiges Tempo, damit der Streifen am Umkehrpunkt
    nicht stehenbleibt - "ease-in-out" wuerde dort abbremsen. */
-/* Nur ein Durchlauf von rechts nach links, ohne Rueckweg. */
+/* Der Verlauf wiederholt sich alle 2400px. Wird er um genau diese Strecke
+   verschoben, ist der Zustand am Ende mit dem am Anfang identisch - der
+   Uebergang bleibt dadurch nahtlos, ohne sichtbaren Ruecksprung. */
 @keyframes blende-logo {
-  0%, 88%  { background-position: 6% 0;  animation-timing-function: ease-in; }
-  90.6%    { background-position: 28% 0; animation-timing-function: linear; }
-  95.2%    { background-position: 72% 0; animation-timing-function: ease-out; }
-  98%      { background-position: 94% 0; }
-  98.01%   { background-position: 6% 0; }
-  100%     { background-position: 6% 0; }
+  from { background-position: 0 0; }
+  to   { background-position: -2400px 0; }
 }
 @keyframes blende-tb {
-  0%, 92.5% { background-position: 6% 0;  animation-timing-function: ease-in; }
-  95.1%     { background-position: 28% 0; animation-timing-function: linear; }
-  99.7%     { background-position: 72% 0; animation-timing-function: ease-out; }
-  99.99%    { background-position: 94% 0; }
-  100%      { background-position: 6% 0; }
+  from { background-position: 0 0; }
+  to   { background-position: -2400px 0; }
 }
 @supports (-webkit-background-clip: text) or (background-clip: text) {
   .ohz-txt, .bild-ton {
-    background: linear-gradient(100deg, #4a4a4a 40%, #7fbcbc 50%, #4a4a4a 60%);
-    background-size: 260% 100%;
-    background-repeat: no-repeat;
+    background: linear-gradient(100deg, #4a4a4a 44%, #63898c 50%, #4a4a4a 56%);
+    background-size: 2400px 100%;
+    background-repeat: repeat;
     background-color: #4a4a4a;
     -webkit-background-clip: text; background-clip: text;
     -webkit-text-fill-color: transparent; color: transparent;
@@ -3520,8 +3515,8 @@ filterAktuell();
       <p style="margin-top:0">Die <strong>WebApp</strong> besteht aus einer einzigen HTML-Datei (ca. 300kb inkl. JS und CSS) ohne externe Abh&auml;ngigkeiten (kein Datenaustausch mit externen Servern oder Diensten &ndash; ausgenommen Links in der Titelzeile) und wird &uuml;ber GitHub gehostet (https://...). Sie l&auml;uft auf allen g&auml;ngigen Browsern unter MacOS, Windows, Android und iOS (bei Bedarf auch offline als lokale Html-Datei).</p>
       <p>Die Daten basieren auf den Spielplanunterlagen der technischen Direktion, des KBB sowie der Website des Opernhauses Z&uuml;rich. &Auml;nderungen w&auml;hrend laufender Spielzeit sind m&ouml;glicherweise nicht ber&uuml;cksichtigt, werden aber kontinuierlich aktualisiert.</p>
       <p>Diese WebApp ist als Hilfsmittel f&uuml;r den Produktionsalltag gedacht. F&uuml;r die Richtigkeit, Vollst&auml;ndigkeit und Aktualit&auml;t der Inhalte wird keine Gew&auml;hr &uuml;bernommen.</p>
-      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_190826_343" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
-      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_190826_343</p>
+      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_190826_346" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
+      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_190826_346</p>
       </div>
   </div>
 </div>
