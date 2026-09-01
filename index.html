@@ -2107,6 +2107,15 @@ function searchFor(name) {
     oeffneSuche();
   }
   setzeChips();
+  // Auf dem Desktop bleibt das Panel offen, die Treffer erscheinen daneben.
+  // Dort ist genug Platz fuer beides; auf schmalen Geraeten wuerde das Panel
+  // die Liste verdecken.
+  var breit = false;
+  try { breit = window.matchMedia("(min-width: 1000px) and (hover: hover) and (pointer: fine)").matches; } catch(e) {}
+  if (breit && activeIndex !== null) {
+    render();
+    return;
+  }
   activeIndex = null;
   closeDetail();
   render();
@@ -2190,7 +2199,11 @@ document.getElementById("search").addEventListener("input", function() {
   } else {
     document.body.classList.remove("party");
   }
-  activeIndex = null;
+  // Auf breiten Bildschirmen bleibt ein offenes Panel bestehen, die Treffer
+  // erscheinen in der Liste daneben.
+  var breitS = false;
+  try { breitS = window.matchMedia("(min-width: 1000px) and (hover: hover) and (pointer: fine)").matches; } catch(e) {}
+  if (!(breitS && activeIndex !== null)) activeIndex = null;
   render();
 });
 
@@ -2323,15 +2336,18 @@ function openKalender() {
 
   if (typeof window.kalKats === "undefined") { window.kalKats = {Oper:true, Ballett:true, Konzert:true, Extra:true, Event:false}; }
   if (typeof window.kalTone === "undefined") { window.kalTone = {}; }
+  // Auswaertige Produktionen (grau) ein- oder ausblenden
+  if (typeof window.kalExt === "undefined") { window.kalExt = false; }
   var prods = P.filter(function(p){
     if (p.saison !== "26/27" || !p.prem) return false;
     // Ausnahme: Werckmeister - Oerlikon (Labor, April 27) wie SF behandeln (kein Labor-Filter im Kalender)
     var istWerckmeisterLabor = (p.kat === "Labor" && p.titel === "Werckmeister - Oerlikon" && p.prem === "2027-04-22");
     if (p.kat === "Labor" && !istWerckmeisterLabor) return false;
-    if ((p.titel || "").toLowerCase().indexOf("gastspiel") > -1) return false;
+    if (evExtern(p) && !window.kalExt) return false;
     if (p.kat === "Event") {
       // nur hellweisse (im-Haus) Events, wenn Event-Kategorie aktiv; bei Ton-Filter ausblenden
-      if (!window.kalKats.Event || evExtern(p) || kalTonAktiv().length) return false;
+      if (!window.kalKats.Event || kalTonAktiv().length) return false;
+      if (evExtern(p) && !window.kalExt) return false;
       return true;
     }
     if (istWerckmeisterLabor) {
@@ -2351,7 +2367,7 @@ function openKalender() {
   // Separater KZT+SF-Block nur bei aktivem Ton-Filter (inkl. Events + Werckmeister-Labor unten statt oben)
   var kztSf = kalTonAktiv().length ? P.filter(function(p){
     if (p.saison !== "26/27" || !p.prem) return false;
-    if (p.kat === "Event") return window.kalKats.Event && !evExtern(p);
+    if (p.kat === "Event") return window.kalKats.Event && (window.kalExt || !evExtern(p));
     if (p.kat === "Labor" && p.titel === "Werckmeister - Oerlikon" && p.prem === "2027-04-22") return window.kalKats.Extra;
     return (p.kat === "Konzert" || p.kat === "Extra") && (window.kalKats[p.kat] || (zaehltAlsKzt(p) && window.kalKats.Konzert));
   }) : [];
@@ -2388,13 +2404,17 @@ function openKalender() {
       var numCol = isMon ? "#ffffff" : (isWE ? "#d8d8d8" : "#a8a8a8");
       var numWeight = isMon ? "bold" : "normal";
       var halfDay = 100 / TOTAL / 2;
-      dayLines += "<div style='position:absolute;bottom:" + (window.kalZoomTage ? (deskKal ? 1 : 1) : 2) + "px;left:" + (xp + halfDay).toFixed(3) + "%;transform:translateX(-50%);font-size:" + (window.kalZoomTage ? (deskKal ? 10 : 12.5) : 15) + "px;color:" + numCol + ";font-weight:" + numWeight + ";white-space:nowrap'>" + dnum + "</div>";
+      // Bei weiten Zeitraeumen nur jede zweite Zahl, sonst ueberlagern sie sich
+      var zahlZeigen = !(window.kalZoomTage > 92) || (dnum % 2 === 1);
+      if (zahlZeigen) dayLines += "<div style='position:absolute;bottom:" + (window.kalZoomTage ? (deskKal ? 1 : 1) : 2) + "px;left:" + (xp + halfDay).toFixed(3) + "%;transform:translateX(-50%);font-size:" + (window.kalZoomTage ? (deskKal ? 10 : 12.5) : 15) + "px;color:" + numCol + ";font-weight:" + numWeight + ";white-space:nowrap'>" + dnum + "</div>";
       // Wochentagsbuchstabe ueber der Tageszahl - dezent und klein.
       // Am Monatsanfang und am Tag davor ausgelassen, da dort der Monatsname steht.
       var naechster = new Date(cur.getTime() + 86400000);
       var monatswechsel = (cur.getDate() === 1) || (cur.getDate() === 2) || (naechster.getDate() === 1);
-      // Nur Mittwoch und Freitag beschriften - das reicht zur Orientierung
-      if (!monatswechsel && (dow === 3 || dow === 5)) {
+      // Unter drei Wochen Zoomweite jeden Tag beschriften, sonst nur
+      // Montag, Mittwoch, Freitag und Sonntag
+      var alleTage = (window.kalZoomTage && window.kalZoomTage < 21);
+      if (!monatswechsel && (alleTage || dow === 1 || dow === 3 || dow === 5 || dow === 0)) {
         var wtag = ["S","M","D","M","D","F","S"][dow];
         dayLines += "<div style='position:absolute;top:" + (deskKal ? 0 : 5) + "px;left:"
                  + (xp + halfDay).toFixed(3) + "%;transform:translateX(-50%);font-size:"
@@ -2661,7 +2681,7 @@ function openKalender() {
     + kalChip("Ballett","Bal","#f0a050")
     + kalChip("Konzert","Kzt","#a06cd5")
     + kalChip("Extra","SF","#6ce0a0")
-    + kalChip("Event","Event","#e8e8e8")
+    + kalChip("Event","Evt","#e8e8e8") + kalExtChip()
     + (deskKal ? "" : "<span class='hilfe-mob' onclick='kalHilfeZeigen()' title='Kurzanleitung Kalender'>?</span>")
     + "</div>";
 
@@ -2715,6 +2735,24 @@ function openKalender() {
   }
   // Lupe, 1.TE/1.VST und das Suchfeld als Baustein - auf dem Desktop steht
   // dieser Block in der Monatsleiste, sonst in der Zeile darunter.
+  // Chip zum Ein- und Ausblenden auswaertiger Produktionen
+  function kalExtChip() {
+    var on = (window.kalExt === true);
+    // Globus als SVG statt Emoji: sieht in allen Browsern gleich aus und
+    // laesst sich einfaerben.
+    var farbe = on ? "#e8e8e8" : "#8a8a8a";
+    var bus = "<svg width='17' height='17' viewBox='0 0 17 17' fill='none' stroke='" + farbe
+            + "' stroke-width='1.25' stroke-linecap='round' style='display:block'>"
+            + "<circle cx='8.5' cy='8.5' r='6.6'/>"
+            + "<ellipse cx='8.5' cy='8.5' rx='2.8' ry='6.6'/>"
+            + "<line x1='1.9' y1='8.5' x2='15.1' y2='8.5'/>"
+            + "</svg>";
+    // Gleiche Aussenmasse wie die uebrigen Chips, damit die Unterkanten fluchten
+    return "<span onclick=\"toggleKalExt()\" title='Auswärtige Produktionen ein-/ausblenden' "
+      + "style='display:inline-flex;align-items:center;justify-content:center;cursor:pointer;"
+      + "padding:2px 6px;border-radius:2px;border:1px solid transparent;margin-left:-6px;"
+      + "opacity:" + (on ? "1" : "0.5") + "'>" + bus + "</span>";
+  }
   function sortZeileInhalt() {
     return "<span id='kal-sortbtns' style='display:flex;align-items:center;width:100%'>"
       + "<span onclick='kalSucheToggle()' title='Produktion suchen' style='cursor:pointer;line-height:0;opacity:0.95;flex-shrink:0;margin-right:auto'>"
@@ -2970,8 +3008,7 @@ function openKalender() {
               var tage = Math.round((f2 - f1) * (window.TOTAL_KAL || 364));
               var wo = tage / 7;
               var txt = (tage < 7) ? (tage + (tage === 1 ? " Tag" : " Tage"))
-                      : ((Math.round(wo * 10) / 10).toString().replace(".", ",")
-                         + (Math.abs(wo - 1) < 0.05 ? " Woche" : " Wochen"));
+                      : ((Math.round(wo * 10) / 10).toString().replace(".", ",") + " W");
               dEl.textContent = txt;
               dEl.style.display = "block";
               var db = dEl.getBoundingClientRect();
@@ -3216,6 +3253,12 @@ function kalHilfeSchliessen() {
   if (d) d.style.display = "none";
 }
 
+function toggleKalExt() {
+  window.kalExt = !(window.kalExt === true);
+  window.kalSkipAutoScroll = true;
+  openKalender();
+}
+
 function kalCtxUmschalten() {
   var c = document.getElementById("kal-ctx");
   if (c) c.style.display = "none";
@@ -3454,8 +3497,8 @@ filterAktuell();
       <p style="margin-top:0">Die <strong>WebApp</strong> besteht aus einer einzigen HTML-Datei (ca. 300kb inkl. JS und CSS) ohne externe Abh&auml;ngigkeiten (kein Datenaustausch mit externen Servern oder Diensten &ndash; ausgenommen Links in der Titelzeile) und wird &uuml;ber GitHub gehostet (https://...). Sie l&auml;uft auf allen g&auml;ngigen Browsern unter MacOS, Windows, Android und iOS (bei Bedarf auch offline als lokale Html-Datei).</p>
       <p>Die Daten basieren auf den Spielplanunterlagen der technischen Direktion, des KBB sowie der Website des Opernhauses Z&uuml;rich. &Auml;nderungen w&auml;hrend laufender Spielzeit sind m&ouml;glicherweise nicht ber&uuml;cksichtigt, werden aber kontinuierlich aktualisiert.</p>
       <p>Diese WebApp ist als Hilfsmittel f&uuml;r den Produktionsalltag gedacht. F&uuml;r die Richtigkeit, Vollst&auml;ndigkeit und Aktualit&auml;t der Inhalte wird keine Gew&auml;hr &uuml;bernommen.</p>
-      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_190826_306" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
-      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_190826_306</p>
+      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_190826_317" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
+      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_190826_317</p>
       </div>
   </div>
 </div>
