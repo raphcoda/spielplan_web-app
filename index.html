@@ -2584,47 +2584,58 @@ function openKalender() {
          prodSegmente(p).every(function(sg){ return sg[0] === sg[1]; }));
       var terminAnsicht = (window.kalAnsicht === "termine") && !einzelTermin && p.vorstellungen && p.vorstellungen.length;
       if (terminAnsicht) {
-        // Probentermine des Produktionszeitraums als kurze graue Marken
-        [[p.prob, "Probenbeginn", "#8f8f8f", ""], [p.ete, "1. TE", "#8f8f8f", ""],
-         [p.khp, "KHP", "#f5e050", p.khpz || ""], [p.ohp, "OHP", "#f5e050", p.ohpz || ""], [p.gp, "GP", "#f5e050", p.gpz || ""]].forEach(function(m){
+        // Alle Termine des Produktionszeitraums je Tag zusammenfassen, damit
+        // pro Tag nur ein Strich mit einem gemeinsamen Tooltip entsteht.
+        var tage = {};
+        function tagEintrag(d) {
+          if (!tage[d]) tage[d] = { zeilen: [], hp: false, nurKurz: true, gelb: false, grau: false };
+          return tage[d];
+        }
+        [[p.prob, "Probenbeginn", false, ""], [p.ete, "1. TE", false, ""],
+         [p.khp, "KHP", true, p.khpz || ""], [p.ohp, "OHP", true, p.ohpz || ""],
+         [p.gp, "GP", true, p.gpz || ""]].forEach(function(m){
           if (!m[0] || !inWindow(m[0])) return;
-          var mz = m[3] ? "\n" + m[3] + "  " + m[1] : "\n" + m[1];
-          var mBest = pplanGedeckt(m[0]);
-          var mCol = (m[2] === "#f5e050" && !mBest) ? "#a59b57" : m[2];
-          var mHin = (m[2] !== "#f5e050" || mBest) ? ""
-                   : (pplanProv(m[0]) ? "\nlt. Monatsplan provisorisch" : "\nnicht bestätigt");
-          // KHP, OHP und GP zusaetzlich mit einem kleinen Punkt in der Mitte
-          // kennzeichnen - schmaler als der Strich selbst.
-          var istHP = (m[1] === "KHP" || m[1] === "OHP" || m[1] === "GP");
-          var punkt = "";
-          if (istHP) {
-            // Duenner waagrechter Strich auf halber Hoehe, von Kante zu Kante
-            punkt = "<span style='position:absolute;left:0;right:0;top:50%;height:1px;"
-                  + "transform:translateY(-50%);background:#8a8a8a'></span>";
-          }
-          // Probenbeginn nur halb so hoch wie die uebrigen Marken
-          var mCss = (m[1] === "Probenbeginn")
-                   ? STRICH_CSS.replace("height:18px", "height:9px").replace("top:3px", "top:7px")
-                   : STRICH_CSS;
-          bar += "<div style='" + mCss + mCol + ";left:calc("
-               + (xpct(m[0]) + HALFDAY).toFixed(3) + "% - " + STRICH_OFF + "px)' title='" + p.titel + "\n" + fmt(m[0]) + mz + mHin + tonZeile(p) + "'>" + punkt + "</div>";
+          var e = tagEintrag(m[0]);
+          e.zeilen.push(m[3] ? m[3] + "  " + m[1] : m[1]);
+          if (m[2]) { e.hp = true; e.gelb = true; e.nurKurz = false; }
+          else { e.grau = true; if (m[1] === "1. TE") e.nurKurz = false; }
         });
-        // Proben und Tonproben in Gelb
         (p.proben || []).forEach(function(dt, pi){
           if (!inWindow(dt)) return;
           var bl = parseProbenz(p.probenz && p.probenz[pi]);
-          var pz = bl.map(function(b){ return "\n" + b.z + (b.t ? "  " + b.t : ""); }).join("");
-          var pBest = pplanGedeckt(dt);
-          var pCol = pBest ? "#f5e050" : "#a59b57";
-          var pHin = pBest ? "" : (pplanProv(dt) ? "\nlt. Monatsplan provisorisch" : "\nnicht bestätigt");
-          // Tage mit ausschliesslich einer Tonprobe bekommen einen kurzen
-          // Strich, wie Probenbeginn und 1. TE - sie sind kein voller Probentag.
-          var nurTonP = bl.length > 0 && bl.every(function(b){ return b.t === "TonP"; });
-          var pCss = nurTonP
-                   ? STRICH_CSS.replace("height:18px", "height:9px").replace("top:3px", "top:7px")
-                   : STRICH_CSS;
-          bar += "<div style='" + pCss + pCol + ";left:calc("
-               + (xpct(dt) + HALFDAY).toFixed(3) + "% - " + STRICH_OFF + "px)' title='" + p.titel + "\n" + fmt(dt) + pz + pHin + tonZeile(p) + "'></div>";
+          var e = tagEintrag(dt);
+          e.gelb = true;
+          bl.forEach(function(b){ e.zeilen.push(b.z + (b.t ? "  " + b.t : "")); });
+          // Nur wenn ausschliesslich Tonproben anliegen, bleibt der Strich kurz
+          if (!(bl.length > 0 && bl.every(function(b){ return b.t === "TonP"; }))) e.nurKurz = false;
+        });
+        Object.keys(tage).sort().forEach(function(dt){
+          var e = tage[dt];
+          var best = pplanGedeckt(dt);
+          var gelbTon = best ? "#f5e050" : "#a59b57";
+          var col = e.gelb ? gelbTon : "#8f8f8f";
+          // Treffen Probe und graue Marke am selben Tag zusammen, wird der
+          // Strich oben grau und unten gelb geteilt.
+          var geteilt = e.gelb && e.grau;
+          var teilCss = geteilt
+            ? "background-image:linear-gradient(180deg,#8f8f8f 0,#8f8f8f 50%,"
+              + gelbTon + " 50%," + gelbTon + " 100%);"
+            : "";
+          var hin = (!e.gelb || best) ? ""
+                  : (pplanProv(dt) ? "\nlt. Monatsplan provisorisch" : "\nnicht bestätigt");
+          // Kurzer Strich bei Probenbeginn oder reiner Tonprobe
+          var css = e.nurKurz
+                  ? STRICH_CSS.replace("height:18px", "height:9px").replace("top:3px", "top:7px")
+                  : STRICH_CSS;
+          // Querstrich kennzeichnet KHP, OHP und GP
+          var quer = e.hp
+                   ? "<span style='position:absolute;left:0;right:0;top:50%;height:1px;"
+                     + "transform:translateY(-50%);background:#8a8a8a'></span>"
+                   : "";
+          bar += "<div style='" + css + col + ";" + teilCss + "left:calc("
+               + (xpct(dt) + HALFDAY).toFixed(3) + "% - " + STRICH_OFF + "px)' title='"
+               + p.titel + "\n" + fmt(dt) + "\n" + e.zeilen.join("\n") + hin + tonZeile(p)
+               + "'>" + quer + "</div>";
         });
         // Einzeltermine statt durchgehendem Balken
         p.vorstellungen.forEach(function(dt, vi){
@@ -3573,8 +3584,8 @@ filterAktuell();
       <p style="margin-top:0">Die <strong>WebApp</strong> besteht aus einer einzigen HTML-Datei (ca. 300kb inkl. JS und CSS) ohne externe Abh&auml;ngigkeiten (kein Datenaustausch mit externen Servern oder Diensten &ndash; ausgenommen Links in der Titelzeile) und wird &uuml;ber GitHub gehostet (https://...). Sie l&auml;uft auf allen g&auml;ngigen Browsern unter MacOS, Windows, Android und iOS (bei Bedarf auch offline als lokale Html-Datei).</p>
       <p>Die Daten basieren auf den Spielplanunterlagen der technischen Direktion, des KBB sowie der Website des Opernhauses Z&uuml;rich. &Auml;nderungen w&auml;hrend laufender Spielzeit sind m&ouml;glicherweise nicht ber&uuml;cksichtigt, werden aber kontinuierlich aktualisiert.</p>
       <p>Diese WebApp ist als Hilfsmittel f&uuml;r den Produktionsalltag gedacht. F&uuml;r die Richtigkeit, Vollst&auml;ndigkeit und Aktualit&auml;t der Inhalte wird keine Gew&auml;hr &uuml;bernommen.</p>
-      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_190826_376" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
-      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_190826_376</p>
+      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_190826_378" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
+      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_190826_378</p>
       </div>
   </div>
 </div>
