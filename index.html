@@ -2588,7 +2588,7 @@ function openKalender() {
         // pro Tag nur ein Strich mit einem gemeinsamen Tooltip entsteht.
         var tage = {};
         function tagEintrag(d) {
-          if (!tage[d]) tage[d] = { zeilen: [], hp: false, nurKurz: true, gelb: false, grau: false };
+          if (!tage[d]) tage[d] = { zeilen: [], hp: false, nurKurz: true, gelb: false, grau: false, vollProbe: false };
           return tage[d];
         }
         [[p.prob, "Probenbeginn", false, ""], [p.ete, "1. TE", false, ""],
@@ -2607,7 +2607,8 @@ function openKalender() {
           e.gelb = true;
           bl.forEach(function(b){ e.zeilen.push(b.z + (b.t ? "  " + b.t : "")); });
           // Nur wenn ausschliesslich Tonproben anliegen, bleibt der Strich kurz
-          if (!(bl.length > 0 && bl.every(function(b){ return b.t === "TonP"; }))) e.nurKurz = false;
+          var nurTon = bl.length > 0 && bl.every(function(b){ return b.t === "TonP"; });
+          if (!nurTon) { e.nurKurz = false; e.vollProbe = true; }
         });
         Object.keys(tage).sort().forEach(function(dt){
           var e = tage[dt];
@@ -2616,7 +2617,7 @@ function openKalender() {
           var col = e.gelb ? gelbTon : "#8f8f8f";
           // Treffen Probe und graue Marke am selben Tag zusammen, wird der
           // Strich oben grau und unten gelb geteilt.
-          var geteilt = e.gelb && e.grau;
+          var geteilt = e.gelb && e.grau && !e.vollProbe;
           var teilCss = geteilt
             ? "background-image:linear-gradient(180deg,#8f8f8f 0,#8f8f8f 50%,"
               + gelbTon + " 50%," + gelbTon + " 100%);"
@@ -3584,8 +3585,8 @@ filterAktuell();
       <p style="margin-top:0">Die <strong>WebApp</strong> besteht aus einer einzigen HTML-Datei (ca. 300kb inkl. JS und CSS) ohne externe Abh&auml;ngigkeiten (kein Datenaustausch mit externen Servern oder Diensten &ndash; ausgenommen Links in der Titelzeile) und wird &uuml;ber GitHub gehostet (https://...). Sie l&auml;uft auf allen g&auml;ngigen Browsern unter MacOS, Windows, Android und iOS (bei Bedarf auch offline als lokale Html-Datei).</p>
       <p>Die Daten basieren auf den Spielplanunterlagen der technischen Direktion, des KBB sowie der Website des Opernhauses Z&uuml;rich. &Auml;nderungen w&auml;hrend laufender Spielzeit sind m&ouml;glicherweise nicht ber&uuml;cksichtigt, werden aber kontinuierlich aktualisiert.</p>
       <p>Diese WebApp ist als Hilfsmittel f&uuml;r den Produktionsalltag gedacht. F&uuml;r die Richtigkeit, Vollst&auml;ndigkeit und Aktualit&auml;t der Inhalte wird keine Gew&auml;hr &uuml;bernommen.</p>
-      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_190826_378" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
-      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_190826_378</p>
+      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_190826_379" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
+      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_190826_379</p>
       </div>
   </div>
 </div>
