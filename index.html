@@ -314,6 +314,13 @@ input[type=date]::-webkit-calendar-picker-indicator { filter: invert(0.8) bright
 /* iOS: beim langen Antippen keine Textauswahl oder Systemvorschau im Kalender */
 #kal-hscroll { -webkit-user-select: none; user-select: none;
                -webkit-touch-callout: none; }
+/* Popup mit den Termindaten, erscheint im Zoom beim Klick auf einen Strich */
+#kal-pop { display: none; position: fixed; z-index: 2360; max-width: 340px; cursor: pointer;
+           background: #1a1a1a; border: 1px solid #5c5c5c; border-radius: 5px;
+           box-shadow: 0 8px 22px rgba(0,0,0,0.6); padding: 13px 17px 14px;
+           font-size: 16px; line-height: 1.5; color: #e8e8e8; white-space: pre-line; }
+#kal-pop b { display: block; color: #ffffff; font-weight: 500; font-size: 18px;
+             margin-bottom: 5px; }
 #kal-tip { display: none; position: fixed; z-index: 2350; max-width: 76vw;
            background: #1a1a1a; border: 1px solid #3a3a3a; border-radius: 5px;
            box-shadow: 0 6px 18px rgba(0,0,0,0.6); padding: 9px 12px;
@@ -481,7 +488,7 @@ input[type=date]::-webkit-calendar-picker-indicator { filter: invert(0.8) bright
 
 <script>
 var P = [
-  {saison:"26/27",vorstellungen:["2026-09-20","2026-09-25","2026-10-06","2026-10-18","2026-10-21","2026-10-24","2026-10-30","2027-04-02","2027-04-08","2027-04-18","2027-04-20","2027-04-23"],vzeit:["18.00","19.00","19.00","13.00","19.00","19.00","19.00","19.00","19.30","13.00","19.00","19.00"],url:"https://www.opernhaus.ch/spielplan/kalendarium/die-zauberfloete-1/2026-2027",probenz:["TeP 10:00-11:00 , P 11:00-13:30 , P 18:00-21:00","TeP 18:00-18:30 , P 18:30-21:00 , TeP 21:00-22:45","Tonprobe 12:00-13:00 , P 18:00-21:00","P 10:00-13:00 , TeP 14:00-16:00","TeP 08:00-13:00 , TeP 16:00-17:30 , P 18:00-21:00","BO1 10:00-13:00 , BO2 19:00-22:00","BO3 10:00-13:00 , BO4 19:00-22:00"],proben:["2026-08-31","2026-09-01","2026-09-02","2026-09-03","2026-09-08","2026-09-12","2026-09-15"],titel:"Die Zauberflöte",typ:"Premiere",kat:"Oper",prem:"2026-09-20",lv:"2027-04-23",prob:"2026-08-10",ete:"2026-08-29",khp:"2026-09-10",khpz:"10:30-15:30",gp:"2026-09-17",gpz:"11:00-15:00",ohp:"2026-09-16",ohpz:"11:00-15:00",bm:"Reto Landolt",licht:"Pasca/ Vera Ostfalk",ton:"Paciorek",insp:"Katharina Tschannen",graben:"gross",reasist:"Sylvia Döring",projleit:"Susan Klimmer",regie:"Finzi Pasca",dirig:"Tarmo Peltokoski",dauer:"ca. 3 Std.",komp:"Wolfgang Amadeus Mozart (1791)",dram:"Kathrin Brunner",pteam:["Gargiulo","Buzzi","Vitalini"],team:["Magnus Dietrich (Tamino)","Tobias Kehrer (Sarastro)","Regula Mühlemann (Pamina)","Jasmin Delfs (Königin der Nacht)","Johan Krogius (Papageno)","Brent Michael Smith (Sprecher)"],pause:["2026-10-30","2027-04-02"]},
+  {saison:"26/27",vorstellungen:["2026-09-20","2026-09-25","2026-10-06","2026-10-18","2026-10-21","2026-10-24","2026-10-30","2027-04-02","2027-04-08","2027-04-18","2027-04-20","2027-04-23"],vzeit:["18.00","19.00","19.00","13.00","19.00","19.00","19.00","19.00","19.30","13.00","19.00","19.00"],url:"https://www.opernhaus.ch/spielplan/kalendarium/die-zauberfloete-1/2026-2027",probenz:["TeP 10:00-11:00 , P 11:00-13:30 , P 18:00-21:00","TeP 18:00-18:30 , P 18:30-21:00 , TeP 21:00-22:45","Tonprobe 12:00-13:00 , P 18:00-21:00","P 10:00-13:00 , TeP 14:00-16:00","TeP 08:00-13:00 , TeP 16:00-17:30 , P 18:00-21:00","Tonprobe 19:00-20:00","BO1 10:00-13:00 , BO2 19:00-22:00","BO3 10:00-13:00 , BO4 19:00-22:00"],proben:["2026-08-31","2026-09-01","2026-09-02","2026-09-03","2026-09-08","2026-09-09","2026-09-12","2026-09-15"],titel:"Die Zauberflöte",typ:"Premiere",kat:"Oper",prem:"2026-09-20",lv:"2027-04-23",prob:"2026-08-10",ete:"2026-08-29",khp:"2026-09-10",khpz:"10:30-15:30",gp:"2026-09-17",gpz:"11:00-15:00",ohp:"2026-09-16",ohpz:"11:00-15:00",bm:"Reto Landolt",licht:"Pasca/ Vera Ostfalk",ton:"Paciorek",insp:"Katharina Tschannen",graben:"gross",reasist:"Sylvia Döring",projleit:"Susan Klimmer",regie:"Finzi Pasca",dirig:"Tarmo Peltokoski",dauer:"ca. 3 Std.",komp:"Wolfgang Amadeus Mozart (1791)",dram:"Kathrin Brunner",pteam:["Gargiulo","Buzzi","Vitalini"],team:["Magnus Dietrich (Tamino)","Tobias Kehrer (Sarastro)","Regula Mühlemann (Pamina)","Jasmin Delfs (Königin der Nacht)","Johan Krogius (Papageno)","Brent Michael Smith (Sprecher)"],pause:["2026-10-30","2027-04-02"]},
   {saison:"26/27",vorstellungen:["2026-09-11","2026-09-13","2026-09-16","2026-09-18","2026-09-27"],vzeit:["19.00","14.00","20.00","19.00","14.00"],url:"https://www.opernhaus.ch/spielplan/kalendarium/oiseaux-rebelles/2026-2027",probenz:["P 11:00-14:00 , P 15:00-18:00","P 11:30-14:30"],proben:["2026-09-04","2026-09-07"],titel:"Ballett - Des Oiseaux Rebelles",typ:"WA",kat:"Ballett",prem:"2026-09-11",lv:"2026-09-27",prob:"2026-09-04",ete:"2026-09-03",khp:"",gp:"",ohp:"2026-09-10",ohpz:"19:30-22:30",bm:"Marco Willi",licht:"Martin Gebhardt/ Stephan Grosse",ton:"Zdravkovic",insp:"Peter Warthmann",graben:"gross",reasist:"",projleit:"",regie:"",dirig:"Matthew Rowe",dauer:"ca. 2 Std.",komp:"",team:[]},
   {saison:"26/27",vorstellungen:["2026-09-24","2026-09-27","2026-10-01","2026-10-10","2026-10-15"],vzeit:["19.00","20.00","19.00","19.30","19.00"],url:"https://www.opernhaus.ch/spielplan/kalendarium/la-rondine/2026-2027",probenz:["P 11:00-14:00","BO1 19:00-22:00"],proben:["2026-09-18","2026-09-19"],titel:"La Rondine",typ:"WA",kat:"Oper",prem:"2026-09-24",lv:"2026-10-15",prob:"2026-09-01",ete:"2026-09-05",khp:"",gp:"",ohp:"2026-09-22",ohpz:"18:00-22:00",bm:"René Hürlimann",licht:"Elfried Roller/ Stephan Grosse",ton:"Beck",insp:"Peter Warthmann",graben:"gross",reasist:"Steven Whiting",projleit:"",regie:"Loy",dirig:"Marco Armiliato",dauer:"2 Std. 25 Min.",komp:"Giacomo Puccini (1917)",dram:"Kathrin Brunner",team:["Ermonela Jaho (Magda)","Benjamin Bernheim (Ruggero)","Sandra Hamaoui (Lisette)","Vladimir Stoyanov (Rambaldo)","Juan Francisco Gatell (Prunier)"]},
   {saison:"26/27",vorstellungen:["2026-09-26","2026-10-04","2026-10-09","2026-10-13"],vzeit:["18.30","17.00","18.00","18.00"],url:"https://www.opernhaus.ch/spielplan/kalendarium/tannhaeuser-1/2026-2027",probenz:["Tonprobe 12:00-13:00","TP 11:00-11:30"],proben:["2026-09-22","2026-09-23"],titel:"Tannhäuser",typ:"WA",kat:"Oper",prem:"2026-09-26",lv:"2026-10-13",prob:"2026-09-16",ete:"2026-09-22",khp:"",gp:"",ohp:"2026-09-23",ohpz:"11:30-17:00",bm:"René Hürlimann",licht:"Martin Gebhardt/ Stephan Grosse",ton:"Surgutschow",insp:"Katharina Kühnel",graben:"gross",reasist:"Arturo Gama",projleit:"",regie:"Arnarsson",dirig:"Markus Poschner",dauer:"ca. 4 Std. 15 Min.",komp:"Richard Wagner (1845)",dram:"Jana Beckmann",team:["Eric Cutler (Tannhäuser)","Christina Nilsson (Elisabeth)","Rachael Wilson (Venus)","Andre Schuen (Wolfram)","Christof Fischesser (Hermann)"]},
@@ -2600,7 +2607,7 @@ function openKalender() {
                    ? STRICH_CSS.replace("height:18px", "height:9px").replace("top:3px", "top:7px")
                    : STRICH_CSS;
           bar += "<div style='" + mCss + mCol + ";left:calc("
-               + (xpct(m[0]) + HALFDAY).toFixed(3) + "% - " + STRICH_OFF + "px)' title='" + p.titel + "\n" + fmt(m[0]) + mz + mHin + "'>" + punkt + "</div>";
+               + (xpct(m[0]) + HALFDAY).toFixed(3) + "% - " + STRICH_OFF + "px)' title='" + p.titel + "\n" + fmt(m[0]) + mz + mHin + tonZeile(p) + "'>" + punkt + "</div>";
         });
         // Proben und Tonproben in Gelb
         (p.proben || []).forEach(function(dt, pi){
@@ -2611,7 +2618,7 @@ function openKalender() {
           var pCol = pBest ? "#f5e050" : "#a59b57";
           var pHin = pBest ? "" : (pplanProv(dt) ? "\nlt. Monatsplan provisorisch" : "\nnicht bestätigt");
           bar += "<div style='" + STRICH_CSS + pCol + ";left:calc("
-               + (xpct(dt) + HALFDAY).toFixed(3) + "% - " + STRICH_OFF + "px)' title='" + p.titel + "\n" + fmt(dt) + pz + pHin + "'></div>";
+               + (xpct(dt) + HALFDAY).toFixed(3) + "% - " + STRICH_OFF + "px)' title='" + p.titel + "\n" + fmt(dt) + pz + pHin + tonZeile(p) + "'></div>";
         });
         // Einzeltermine statt durchgehendem Balken
         p.vorstellungen.forEach(function(dt, vi){
@@ -2659,7 +2666,7 @@ function openKalender() {
       var titelClick = (p.pidx != null && p.pidx > -1) ? " onclick='event.stopPropagation();kalOpenDetail(" + p.pidx + ")'" : "";
       var titelCursor = (p.pidx != null && p.pidx > -1) ? "cursor:pointer;" : "";
       var zoomCur = (window.kalZoom || (window.kalScale || 1) > kalBasisScale() + 0.01) ? "zoom-out" : "zoom-in";
-      return "<div class='kal-row" + (window.kalFokusZeile && window.kalFokusZeile.indexOf(p.titel) === 0 ? " kal-fokus" : "") + "' style='display:flex;align-items:center;height:24px'><div class='kal-titel'" + titelClick + " style='width:120px;flex-shrink:0;height:24px;line-height:24px;padding-right:8px;text-align:right;font-size:13px;font-weight:500;color:" + ((evExtern(p) || /gastspiel/i.test(p.titel)) ? "#8a8a8a" : "#ffffff") + ";" + titelCursor + premStyle + "white-space:nowrap;overflow:hidden;text-overflow:ellipsis;position:sticky;left:0;z-index:2;background:#1a1a1a' title='" + p.titel + (istPrem ? " (Premiere)" : "") + premZeile(p) + tonZeile(p) + "'>" + kalShort(p.titel) + "</div><div onclick='kalToggleScale(event)' style='position:relative;flex:1;height:100%;cursor:" + zoomCur + "'>" + bar + "</div></div>";
+      return "<div class='kal-row" + (window.kalFokusZeile && window.kalFokusZeile.indexOf(p.titel) === 0 ? " kal-fokus" : "") + "' style='display:flex;align-items:center;height:24px'><div class='kal-titel'" + titelClick + " style='width:120px;box-sizing:border-box;flex-shrink:0;height:24px;line-height:24px;padding-right:8px;text-align:right;font-size:13px;font-weight:500;color:" + ((evExtern(p) || /gastspiel/i.test(p.titel)) ? "#8a8a8a" : "#ffffff") + ";" + titelCursor + premStyle + "white-space:nowrap;overflow:hidden;text-overflow:ellipsis;position:sticky;left:0;z-index:2;background:#1a1a1a' title='" + p.titel + (istPrem ? " (Premiere)" : "") + premZeile(p) + tonZeile(p) + "'>" + kalShort(p.titel) + "</div><div onclick='kalToggleScale(event)' style='position:relative;flex:1;height:100%;cursor:" + zoomCur + "'>" + bar + "</div></div>";
     }).join("");
   }
   function sortByStart(list){
@@ -2682,7 +2689,7 @@ function openKalender() {
       if (!grp.length) return;
       rows += "<div style='display:flex;align-items:center;height:22px;margin-top:" + (i ? 14 : 4) + "px;"
         + "border-top:1px solid #3a3a3a'>"
-        + "<div style='width:120px;flex-shrink:0;height:22px;line-height:22px;padding-right:8px;text-align:right;font-size:13px;font-weight:500;"
+        + "<div style='width:120px;box-sizing:border-box;flex-shrink:0;height:22px;line-height:22px;padding-right:8px;text-align:right;font-size:13px;font-weight:500;"
         + "color:#63f0f0;white-space:nowrap;position:sticky;left:0;z-index:2;background:#141414'>"
         + (vorname[n] || n) + "</div><div style='flex:1'></div></div>";
       rows += buildRows(grp);
@@ -2817,7 +2824,7 @@ function openKalender() {
     var todayX = (today - START) / 86400000 / TOTAL * 100 + (100 / TOTAL / 2);
     // Position innerhalb der Achse (nach 120px Label-Spalte), Strichbreite mittig ausgeglichen
     var todayFrac = (todayX/100).toFixed(5);
-    todayLine = "<div style='position:absolute;top:0;bottom:0;left:calc(120px + (100% - 120px) * " + todayFrac + " - 1px);width:2px;background:rgba(10,125,125,0.46);z-index:1;pointer-events:none'></div>"
+    todayLine = "<div style='position:absolute;top:0;bottom:0;left:calc(120px + (100% - 120px) * " + todayFrac + " + 0.5px);width:2px;background:rgba(10,125,125,0.46);z-index:1;pointer-events:none'></div>"
       + "<div id='kal-today-date' style='position:absolute;top:" + (tlHeight + 3) + "px;left:calc(120px + (100% - 120px) * " + todayFrac + " + 5px);font-size:" + (ZOOM ? 13 : 12) + "px;letter-spacing:0.08em;color:#17b0b0;background:rgba(20,20,20,0.85);padding:1px 3px;border-radius:2px;z-index:1;pointer-events:none;white-space:nowrap'>" + today.getDate() + "." + (today.getMonth()+1) + ".</div>";
   }
   var zoomBtn = ZOOM
@@ -2856,7 +2863,7 @@ function openKalender() {
     + "<div style='flex:1'></div>"
     + "</div>"
     + rows
-    + (kztSfRows ? "<div style='display:flex;align-items:center;height:22px;margin-top:14px;border-top:1px solid #666'><div style='width:120px;flex-shrink:0;height:22px;line-height:22px;padding-right:8px;text-align:right;font-size:13px;color:#888;font-style:italic;white-space:nowrap;position:sticky;left:0;z-index:2;background:#141414'>Kzt / SF / Event</div><div style='flex:1'></div></div>" + kztSfRows : "")
+    + (kztSfRows ? "<div style='display:flex;align-items:center;height:22px;margin-top:14px;border-top:1px solid #666'><div style='width:120px;box-sizing:border-box;flex-shrink:0;height:22px;line-height:22px;padding-right:8px;text-align:right;font-size:13px;color:#888;font-style:italic;white-space:nowrap;position:sticky;left:0;z-index:2;background:#141414'>Kzt / SF / Event</div><div style='flex:1'></div></div>" + kztSfRows : "")
     + "</div></div>"
     + (function(){
         // In der Termine-Ansicht: pro gefilterter Person die Terminanzahl,
@@ -2980,6 +2987,7 @@ function openKalender() {
         var dx = ev.clientX - startX, dy = ev.clientY - startY;
         if (!bewegt && (Math.abs(dx) > 4 || Math.abs(dy) > 4)) {
           bewegt = true;
+          kalPopSchliessen();          // beim Verschieben stoert das Popup
           document.body.style.cursor = "grabbing";
           // Textauswahl waehrend des Ziehens unterbinden
           document.body.style.webkitUserSelect = "none";
@@ -3280,6 +3288,29 @@ function toggleKalExt() {
   openKalender();
 }
 
+// Zeigt die Daten eines Terminstrichs als Popup (nur im Zoom, nur Desktop)
+function kalPopZeigen(ev, text) {
+  var el = document.getElementById("kal-pop");
+  if (!el || !text) return;
+  var teile = String(text).split("\n");
+  el.innerHTML = "<b>" + teile[0] + "</b>" + teile.slice(1).join("\n");
+  el.style.display = "block";
+  var b = el.getBoundingClientRect();
+  var x = Math.min(Math.max(8, ev.clientX - b.width / 2), window.innerWidth - b.width - 8);
+  var y = ev.clientY - b.height - 12;
+  if (y < 8) y = ev.clientY + 18;
+  el.style.left = x + "px";
+  el.style.top = y + "px";
+  if (window.kalPopTimer) clearTimeout(window.kalPopTimer);
+  window.kalPopTimer = setTimeout(kalPopSchliessen, 5000);
+}
+function kalPopKlick() { kalPopSchliessen(); }
+function kalPopSchliessen() {
+  var el = document.getElementById("kal-pop");
+  if (el) el.style.display = "none";
+  if (window.kalPopTimer) { clearTimeout(window.kalPopTimer); window.kalPopTimer = null; }
+}
+
 function kalCtxUmschalten() {
   var c = document.getElementById("kal-ctx");
   if (c) c.style.display = "none";
@@ -3336,6 +3367,24 @@ function kalToggleScale(ev) {
   if (window.kalTipOffen) return;
   var istDesktop = false;
   try { istDesktop = window.matchMedia("(min-width: 1000px) and (hover: hover) and (pointer: fine)").matches; } catch(e) {}
+  // Im Zoom oeffnet ein Klick direkt auf einen Terminstrich dessen Daten,
+  // ein Klick daneben fuehrt wie bisher zurueck.
+  if (istDesktop && window.kalZoom && ev && ev.target && ev.target !== ev.currentTarget) {
+    var tr = ev.target.getAttribute && ev.target.getAttribute("title");
+    if (tr) {
+      var pop = document.getElementById("kal-pop");
+      // Zweiter Klick auf denselben Termin schliesst das Popup wieder
+      if (pop && pop.style.display === "block" && window.kalPopQuelle === ev.target) {
+        kalPopSchliessen();
+        window.kalPopQuelle = null;
+      } else {
+        window.kalPopQuelle = ev.target;
+        kalPopZeigen(ev, tr);
+      }
+      return;
+    }
+  }
+  kalPopSchliessen();
   // Zurueck zur vorherigen Ansicht, wenn die Monatsansicht schon offen ist
   if (window.kalZoom) {
     window.kalZoom = null;
@@ -3518,8 +3567,8 @@ filterAktuell();
       <p style="margin-top:0">Die <strong>WebApp</strong> besteht aus einer einzigen HTML-Datei (ca. 300kb inkl. JS und CSS) ohne externe Abh&auml;ngigkeiten (kein Datenaustausch mit externen Servern oder Diensten &ndash; ausgenommen Links in der Titelzeile) und wird &uuml;ber GitHub gehostet (https://...). Sie l&auml;uft auf allen g&auml;ngigen Browsern unter MacOS, Windows, Android und iOS (bei Bedarf auch offline als lokale Html-Datei).</p>
       <p>Die Daten basieren auf den Spielplanunterlagen der technischen Direktion, des KBB sowie der Website des Opernhauses Z&uuml;rich. &Auml;nderungen w&auml;hrend laufender Spielzeit sind m&ouml;glicherweise nicht ber&uuml;cksichtigt, werden aber kontinuierlich aktualisiert.</p>
       <p>Diese WebApp ist als Hilfsmittel f&uuml;r den Produktionsalltag gedacht. F&uuml;r die Richtigkeit, Vollst&auml;ndigkeit und Aktualit&auml;t der Inhalte wird keine Gew&auml;hr &uuml;bernommen.</p>
-      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_190826_349" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
-      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_190826_349</p>
+      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_190826_375" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
+      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_190826_375</p>
       </div>
   </div>
 </div>
@@ -3530,19 +3579,21 @@ filterAktuell();
     <div>
       <button onclick="kalHilfeSchliessen()" style="background:#181818;border:1px solid #333;border-radius:3px;color:#f0a050;cursor:pointer;font-size:15px;line-height:1.2;padding:1px 5px;float:right;position:sticky;top:0;z-index:10">close</button>
       <h3>Kalender</h3>
-      <p><b>Zoomen:</b> Klick auf eine Produktionszeile zoomt in eine Zweimonatsansicht um die angeklickte Stelle und zeigt die Einzeltermine (Terminansicht). Nochmaliger Klick zoomt wieder zur&uuml;ck.</p>
-      <p><b>Verschieben:</b> Mit gedr&uuml;ckter Maustaste l&auml;sst sich der Kalender in beide Richtungen ziehen, alternativ zu Scrollbalken.</p>
-      <p><b>Rechtsklick</b> wechselt zwischen Balken und Einzelterminen.</p>
+      <p><b>Zoomen:</b> Klick auf eine Produktionszeile zoomt in eine Zweimonatsansicht um die angeklickte Stelle und zeigt die Einzeltermine (Terminansicht). Nochmaliger Klick zoomt wieder zur&uuml;ck. Alternativ: Klicken &amp; Ziehen horizontal zoomt in den ausgew&auml;hlten Zeitraum.</p>
+      <p><b>Verschieben:</b> Mit gedr&uuml;ckter Maustaste l&auml;sst sich der Kalender im gezoomten Bereich in beide Richtungen ziehen, alternativ zu Scrollbalken.</p>
+      <p><b>PopUp:</b> Klick auf einen Terminstrich im gezoomten Kalenderbereich &ouml;ffnet ein PopUp mit Details. Nochmaliger Klick auf das PopUp-Fenster oder den Terminstrich schliesst es wieder.</p>
+      <p><b>Tooltips</b> (Roll-Over) an Balken und Terminstrichen zeigen ebenfalls jeweilige Details.</p>
+      <p><b>Rechtsklick</b> wechselt zwischen Balken und Einzelterminen. Alternativ: Buttons Termine/Balken &uuml;ber der Titelliste.</p>
       <p><b>Klick auf einen Produktionstitel</b> &ouml;ffnet das Detailpanel der Spielplanansicht.</p>
-      <p><b>Tooltips</b> an Balken und Terminstrichen zeigen jeweilige Details.</p>
       <p style="margin-top:16px"><b>Termine</b></p>
       <p style="margin:0 0 4px"><span style="display:inline-block;width:9px;height:9px;background:#8f8f8f;border-radius:1px;margin-right:9px;vertical-align:middle"></span>1.TE, Probenanfang / Probeb&uuml;hne</p>
-      <p style="margin:0 0 4px"><span style="display:inline-block;width:9px;height:9px;background:#f5e050;border-radius:1px;margin-right:9px;vertical-align:middle"></span>Proben (laut Monatsplan)</p>
-      <p style="margin:0 0 4px"><span style="display:inline-block;width:9px;height:9px;background:#a59b57;border-radius:1px;margin-right:9px;vertical-align:middle"></span>Proben (laut Saisonplan)</p>
+      <p style="margin:0 0 4px"><span style="display:inline-block;width:9px;height:9px;background:#f5e050;border-radius:1px;margin-right:9px;vertical-align:middle"></span>Proben (laut Monats- bzw. Wochenplan)</p>
+      <p style="margin:0 0 4px"><span style="display:inline-block;width:9px;height:9px;background:#a59b57;border-radius:1px;margin-right:9px;vertical-align:middle"></span>Proben (laut Saison- oder Monatsplan provisorisch)</p>
       <p style="margin:0 0 4px"><span style="display:inline-block;width:9px;height:9px;background:#ffffff;border-radius:1px;margin-right:9px;vertical-align:middle"></span>1. Vorstellung (Prem / WA)</p>
       <p style="margin:0"><span style="display:inline-block;width:9px;height:9px;background:#63f0f0;border-radius:1px;margin-right:3px;vertical-align:middle"></span><span style="display:inline-block;width:9px;height:9px;background:#f0a050;border-radius:1px;margin-right:9px;vertical-align:middle"></span>Vorstellungen Oper / Ballett</p>
     </div>
   </div>
+  <div id="kal-pop" onclick="kalPopKlick()"></div>
   <div id="kal-dauer"></div>
   <div id="kal-tip"></div>
   <div id="kal-ctx">
