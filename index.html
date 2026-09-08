@@ -320,6 +320,10 @@ input[type=date]::-webkit-calendar-picker-indicator { filter: invert(0.8) bright
 #kal-hscroll { -webkit-user-select: none; user-select: none;
                -webkit-touch-callout: none; }
 /* Popup mit den Termindaten, erscheint im Zoom beim Klick auf einen Strich */
+/* Eigene Zeiger im Kalender: als Klasse statt inline, damit die
+   Anfuehrungszeichen im SVG nicht mit dem style-Attribut kollidieren. */
+.kal-cur-frage { cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24'><circle cx='12' cy='12' r='11' fill='%23086464'/><text x='12' y='18' text-anchor='middle' font-family='Helvetica,Arial' font-size='16' font-weight='bold' fill='%23ffffff'>?</text></svg>") 12 12, help !important; }
+.kal-cur-hand { cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24'><circle cx='12' cy='12' r='11' fill='%23f0a050'/><path d='M10 18.5 L10 8.5 Q10 6.8 11.6 6.8 Q13.2 6.8 13.2 8.5 L13.2 11.5 Q13.2 9.9 14.8 9.9 Q16.4 9.9 16.4 11.5 L16.4 12.6 Q16.4 11.2 17.9 11.2 L17.9 15.6 Q17.9 18.5 15 18.5 Z' fill='none' stroke='%23ffffff' stroke-width='1.3' stroke-linejoin='round'/></svg>") 12 12, pointer !important; }
 #kal-pop { display: none; position: fixed; z-index: 2360; max-width: 340px; cursor: pointer;
            background: #1a1a1a; border: 1px solid #5c5c5c; border-radius: 5px;
            box-shadow: 0 8px 22px rgba(0,0,0,0.6), 0 2px 10px rgba(10,110,110,0.35); padding: 13px 17px 14px;
@@ -493,7 +497,7 @@ input[type=date]::-webkit-calendar-picker-indicator { filter: invert(0.8) bright
 
 <script>
 var P = [
-  {saison:"26/27",vorstellungen:["2026-09-20","2026-09-25","2026-10-06","2026-10-18","2026-10-21","2026-10-24","2026-10-30","2027-04-02","2027-04-08","2027-04-18","2027-04-20","2027-04-23"],vzeit:["18.00","19.00","19.00","13.00","19.00","19.00","19.00","19.00","19.30","13.00","19.00","19.00"],url:"https://www.opernhaus.ch/spielplan/kalendarium/die-zauberfloete-1/2026-2027",probenz:["TeP 10:00-11:00 , P 11:00-13:30 , P 18:00-21:00","TeP 18:00-18:30 , P 18:30-21:00 , TeP 21:00-22:45","Tonprobe 12:00-13:00 , P 18:00-21:00","P 10:00-13:00 , TeP 14:00-16:00","TeP 08:00-13:00 , TeP 16:00-17:30 , P 18:00-21:00","Tonprobe 19:00-20:00","BO1 10:00-13:00 , BO2 19:00-22:00","BO3 10:00-13:00 , BO4 19:00-22:00"],proben:["2026-08-31","2026-09-01","2026-09-02","2026-09-03","2026-09-08","2026-09-09","2026-09-12","2026-09-15"],titel:"Die Zauberflöte",typ:"Premiere",kat:"Oper",prem:"2026-09-20",lv:"2027-04-23",prob:"2026-08-10",ete:"2026-08-29",khp:"2026-09-10",khpz:"10:30-15:30",gp:"2026-09-17",gpz:"11:00-15:00",ohp:"2026-09-16",ohpz:"11:00-15:00",bm:"Reto Landolt",licht:"Pasca/ Vera Ostfalk",ton:"Paciorek",insp:"Katharina Tschannen",graben:"gross",reasist:"Sylvia Döring",projleit:"Susan Klimmer",regie:"Finzi Pasca",dirig:"Tarmo Peltokoski",dauer:"ca. 3 Std.",komp:"Wolfgang Amadeus Mozart (1791)",dram:"Kathrin Brunner",pteam:["Gargiulo","Buzzi","Vitalini"],team:["Magnus Dietrich (Tamino)","Tobias Kehrer (Sarastro)","Regula Mühlemann (Pamina)","Jasmin Delfs (Königin der Nacht)","Johan Krogius (Papageno)","Brent Michael Smith (Sprecher)"],pause:["2026-10-30","2027-04-02"]},
+  {saison:"26/27",vorstellungen:["2026-09-20","2026-09-25","2026-10-06","2026-10-18","2026-10-21","2026-10-24","2026-10-30","2027-04-02","2027-04-08","2027-04-18","2027-04-20","2027-04-23"],vzeit:["18.00","19.00","19.00","13.00","19.00","19.00","19.00","19.00","19.30","13.00","19.00","19.00"],url:"https://www.opernhaus.ch/spielplan/kalendarium/die-zauberfloete-1/2026-2027",probenz:["TeP 10:00-11:00 , P 11:00-13:30 , P 18:00-21:00","TeP 18:00-18:30 , P 18:30-21:00 , TeP 21:00-22:45","Tonprobe 12:00-13:00 , P 18:00-21:00","P 10:00-13:00 , TeP 14:00-16:00","Tonprobe 17:00-17:45 , P 18:00-21:00","Tonprobe 19:00-20:00","BO1 10:00-13:00 , BO2 19:00-22:00","BO3 10:00-13:00 , BO4 19:00-22:00"],proben:["2026-08-31","2026-09-01","2026-09-02","2026-09-03","2026-09-08","2026-09-09","2026-09-12","2026-09-15"],titel:"Die Zauberflöte",typ:"Premiere",kat:"Oper",prem:"2026-09-20",lv:"2027-04-23",prob:"2026-08-10",ete:"2026-08-29",khp:"2026-09-10",khpz:"10:30-15:30",gp:"2026-09-17",gpz:"11:00-15:00",ohp:"2026-09-16",ohpz:"11:00-15:00",bm:"Reto Landolt",licht:"Pasca/ Vera Ostfalk",ton:"Paciorek",insp:"Katharina Tschannen",graben:"gross",reasist:"Sylvia Döring",projleit:"Susan Klimmer",regie:"Finzi Pasca",dirig:"Tarmo Peltokoski",dauer:"ca. 3 Std.",komp:"Wolfgang Amadeus Mozart (1791)",dram:"Kathrin Brunner",pteam:["Gargiulo","Buzzi","Vitalini"],team:["Magnus Dietrich (Tamino)","Tobias Kehrer (Sarastro)","Regula Mühlemann (Pamina)","Jasmin Delfs (Königin der Nacht)","Johan Krogius (Papageno)","Brent Michael Smith (Sprecher)"],pause:["2026-10-30","2027-04-02"]},
   {saison:"26/27",vorstellungen:["2026-09-11","2026-09-13","2026-09-16","2026-09-18","2026-09-27"],vzeit:["19.00","14.00","20.00","19.00","14.00"],url:"https://www.opernhaus.ch/spielplan/kalendarium/oiseaux-rebelles/2026-2027",probenz:["P 11:00-14:00 , P 15:00-18:00","P 11:30-14:30"],proben:["2026-09-04","2026-09-07"],titel:"Ballett - Des Oiseaux Rebelles",typ:"WA",kat:"Ballett",prem:"2026-09-11",lv:"2026-09-27",prob:"2026-09-04",ete:"2026-09-03",khp:"",gp:"",ohp:"2026-09-10",ohpz:"19:30-22:30",bm:"Marco Willi",licht:"Martin Gebhardt/ Stephan Grosse",ton:"Zdravkovic / Granda",insp:"Peter Warthmann",graben:"gross",reasist:"",projleit:"",regie:"",dirig:"Matthew Rowe",dauer:"ca. 2 Std.",komp:"",team:[]},
   {saison:"26/27",vorstellungen:["2026-09-24","2026-09-27","2026-10-01","2026-10-10","2026-10-15"],vzeit:["19.00","20.00","19.00","19.30","19.00"],url:"https://www.opernhaus.ch/spielplan/kalendarium/la-rondine/2026-2027",probenz:["P 11:00-14:00","BO1 19:00-22:00"],proben:["2026-09-18","2026-09-19"],titel:"La Rondine",typ:"WA",kat:"Oper",prem:"2026-09-24",lv:"2026-10-15",prob:"2026-09-01",ete:"2026-09-05",khp:"",gp:"",ohp:"2026-09-22",ohpz:"18:00-22:00",bm:"René Hürlimann",licht:"Elfried Roller/ Stephan Grosse",ton:"Gircius",insp:"Peter Warthmann",graben:"gross",reasist:"Steven Whiting",projleit:"",regie:"Loy",dirig:"Marco Armiliato",dauer:"2 Std. 25 Min.",komp:"Giacomo Puccini (1917)",dram:"Kathrin Brunner",team:["Ermonela Jaho (Magda)","Benjamin Bernheim (Ruggero)","Sandra Hamaoui (Lisette)","Vladimir Stoyanov (Rambaldo)","Juan Francisco Gatell (Prunier)"]},
   {saison:"26/27",vorstellungen:["2026-09-26","2026-10-04","2026-10-09","2026-10-13"],vzeit:["18.30","17.00","18.00","18.00"],url:"https://www.opernhaus.ch/spielplan/kalendarium/tannhaeuser-1/2026-2027",probenz:["Tonprobe 12:00-13:00","TP 11:00-11:30"],proben:["2026-09-22","2026-09-23"],titel:"Tannhäuser",typ:"WA",kat:"Oper",prem:"2026-09-26",lv:"2026-10-13",prob:"2026-09-16",ete:"2026-09-22",khp:"",gp:"",ohp:"2026-09-23",ohpz:"11:30-17:00",bm:"René Hürlimann",licht:"Martin Gebhardt/ Stephan Grosse",ton:"Surgutschow",insp:"Katharina Kühnel",graben:"gross",reasist:"Arturo Gama",projleit:"",regie:"Arnarsson",dirig:"Markus Poschner",dauer:"ca. 4 Std. 15 Min.",komp:"Richard Wagner (1845)",dram:"Jana Beckmann",team:["Eric Cutler (Tannhäuser)","Christina Nilsson (Elisabeth)","Rachael Wilson (Venus)","Andre Schuen (Wolfram)","Christof Fischesser (Hermann)"]},
@@ -777,6 +781,7 @@ var P = [
 ,
   {saison:"26/27",vorstellungen:[],titel:"Gastspiel Edinburgh International Festival",typ:"Event",kat:"Event",prem:"2026-08-26",lv:"2026-08-26",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Reception: Embassy of Switzerland in the UK & Edinburgh International Festival & Opernhaus Zuerich",produktion:"Un ballo in maschera",tickets:"",location:"Festival Theatre, 13-29 Nicolson Street, Edinburgh EH8 9FT",chef:"Katherine Waldvogel"},
   {saison:"26/27",vorstellungen:[],titel:"Freunde des Balletts Zürich",typ:"Event",kat:"Event",prem:"2026-08-26",lv:"2026-08-26",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Season Opening Party",produktion:"",tickets:"",location:"Fischers Fritz, Seestrasse 557, 8038 Zuerich",chef:"Corinne Amsler"},
+  {saison:"26/27",vorstellungen:["2026-09-08"],vzeit:["14.15"],titel:"Spielzeitbegrüssung",typ:"Event",kat:"Event",prem:"2026-09-08",lv:"2026-09-08",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"14.15-15.45",team:[],anlass:"Spielzeitbegrüssung v.d.E.",produktion:"",tickets:"",location:"Opernhaus, Bühne",chef:""},
   {saison:"26/27",vorstellungen:[],titel:"Freunde der Oper Zürich",typ:"Event",kat:"Event",prem:"2026-09-06",lv:"2026-09-06",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Einladung der Serge Rachmaninoff Foundation - Konzert in Villa Senar - fuer hohe Kategorien FZO",produktion:"",tickets:"",location:"Villa Senar, Zinnenstrasse 6, 6353 Weggis",chef:"Katherine Waldvogel"},
   {saison:"26/27",vorstellungen:[],titel:"OHZ Events",typ:"Event",kat:"Event",prem:"2026-09-07",lv:"2026-09-07",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Ballettstunde (Einloesung Preis von stiller Auktion)",produktion:"",tickets:"",location:"Ballettsaal",chef:"Fabienne Nydegger (Meret Roth)"},
   {saison:"26/27",vorstellungen:[],titel:"Musiksommer am Zürichsee",typ:"Event",kat:"Event",prem:"2026-09-09",lv:"2026-09-09",prob:"",ete:"",khp:"",ohp:"",gp:"",bm:"",licht:"",ton:"",insp:"",reasist:"",projleit:"",graben:"",regie:"",dirig:"",komp:"",dauer:"",team:[],anlass:"Konzert des Internationalen Opernstudios",produktion:"",tickets:"",location:"Kirche Feusisberg",chef:"Cornelia Tschirky-Mueller"},
@@ -2354,7 +2359,10 @@ function openKalender() {
   // ein Finger trifft 11px kaum zuverlaessig
   var STRICH_PAD = (ZOOM && !deskKal) ? 10 : 3;
   var STRICH_OFF = (STRICH_PAD + STRICH_W / 2).toFixed(2);
-  var STRICH_CSS = "position:absolute;top:3px;width:" + STRICH_W + "px;height:18px;border-radius:1px;box-sizing:content-box;"
+  // Im Zoom oeffnet ein Klick auf den Strich das Popup - der Zeiger zeigt das an
+  var STRICH_CUR = "";   // Zeiger kommt ueber die Klasse kal-cur-frage
+  var STRICH_KL = (ZOOM && deskKal) ? "class='kal-cur-frage' " : "";
+  var STRICH_CSS = STRICH_CUR + "position:absolute;top:3px;width:" + STRICH_W + "px;height:18px;border-radius:1px;box-sizing:content-box;"
                  + "border-left:" + STRICH_PAD + "px solid transparent;border-right:" + STRICH_PAD + "px solid transparent;"
                  + "background-clip:content-box;background-color:";
   // Geclipptes Segment: gibt {l, w} in % zurueck, auf 0..100 begrenzt; oder null wenn ganz ausserhalb
@@ -2587,7 +2595,8 @@ function openKalender() {
   function segBar(seg, col, titel, dateLabel, dStart, dEnd, zeigA, zeigE) {
     if (zeigA === false) dStart = "";
     if (zeigE === false) dEnd = "";
-    var html = "<div style='position:absolute;top:5px;height:14px;border-radius:3px;opacity:1;left:" + seg.l.toFixed(2) + "%;width:" + seg.w.toFixed(2) + "%;background:" + col + "' title='" + titel + "\n" + dateLabel + "'></div>";
+    // Im Zoom oeffnet auch ein Klick auf den Balken das Popup
+    var html = "<div " + (STRICH_KL || "") + "style='position:absolute;top:5px;height:14px;border-radius:3px;opacity:1;left:" + seg.l.toFixed(2) + "%;width:" + seg.w.toFixed(2) + "%;background:" + col + "' title='" + titel + "\n" + dateLabel + "'></div>";
     // Datum am Balkenanfang/-ende, nur wenn der Balken breit genug ist
     var minW = ZOOM ? 3.6 : 7.5;      // Platz fuer beide Angaben im Balken
     var minW1 = ZOOM ? 1.9 : 4.4;     // Platz fuer eine Angabe im Balken
@@ -2678,9 +2687,9 @@ function openKalender() {
           // Querstrich kennzeichnet KHP, OHP und GP
           var quer = e.hp
                    ? "<span style='position:absolute;left:0;right:0;top:50%;height:1px;"
-                     + "transform:translateY(-50%);background:#8a8a8a'></span>"
+                     + "transform:translateY(-50%);background:#8a8a8a;pointer-events:none'></span>"
                    : "";
-          bar += "<div style='" + css + col + ";" + teilCss + "left:calc("
+          bar += "<div " + STRICH_KL + "style='" + css + col + ";" + teilCss + "left:calc("
                + (xpct(dt) + HALFDAY).toFixed(3) + "% - " + STRICH_OFF + "px)' title='"
                + p.titel + "\n" + fmt(dt) + "\n" + e.zeilen.join("\n") + hin + tonZeile(p)
                + "'>" + quer + "</div>";
@@ -2690,7 +2699,7 @@ function openKalender() {
           if (!inWindow(dt)) return;
           var istPremDatum = (dt === p.prem) && (p.typ === "Premiere" || p.typ === "WA");
           var uz = (p.vzeit && p.vzeit[vi]) ? "  " + p.vzeit[vi] : "";
-          bar += "<div style='" + STRICH_CSS
+          bar += "<div " + STRICH_KL + "style='" + STRICH_CSS
                + (istPremDatum ? "#ffffff" : col) + ";left:calc(" + (xpct(dt) + HALFDAY).toFixed(3) + "% - " + STRICH_OFF + "px)' title='"
                + p.titel + "\n" + fmt(dt) + uz + (istPremDatum ? premZeile(p) : "") + tonZeile(p) + "'></div>";
         });
@@ -2731,7 +2740,13 @@ function openKalender() {
       var titelClick = (p.pidx != null && p.pidx > -1) ? " onclick='event.stopPropagation();kalOpenDetail(" + p.pidx + ")'" : "";
       var titelCursor = (p.pidx != null && p.pidx > -1) ? "cursor:pointer;" : "";
       var zoomCur = (window.kalZoom || (window.kalScale || 1) > kalBasisScale() + 0.01) ? "zoom-out" : "zoom-in";
-      return "<div class='kal-row" + (window.kalFokusZeile && window.kalFokusZeile.indexOf(p.titel) === 0 ? " kal-fokus" : "") + "' style='display:flex;align-items:center;height:24px'><div class='kal-titel'" + titelClick + " style='width:" + labelW() + "px;box-sizing:border-box;flex-shrink:0;height:24px;line-height:24px;" + (deskKal ? "padding-right:8px;text-align:right;" : "padding-left:4px;padding-right:4px;text-align:left;") + "font-size:13px;font-weight:500;color:" + ((evExtern(p) || /gastspiel/i.test(p.titel)) ? "#8a8a8a" : "#ffffff") + ";" + titelCursor + premStyle + "white-space:nowrap;overflow:hidden;" + (deskKal ? "text-overflow:ellipsis;" : "") + "position:sticky;left:0;z-index:2;background:#1a1a1a' title='" + p.titel + (istPrem ? " (Premiere)" : "") + premZeile(p) + tonZeile(p) + "'>" + kalShort(p.titel) + "</div><div onclick='kalToggleScale(event)' style='position:relative;flex:1;height:100%;cursor:" + zoomCur + "'>" + bar + "</div></div>";
+      return "<div class='kal-row" + (window.kalFokusZeile && window.kalFokusZeile.indexOf(p.titel) === 0 ? " kal-fokus" : "") + "' style='display:flex;align-items:center;height:24px'><div class='kal-titel" + (deskKal && p.pidx != null && p.pidx > -1 ? " kal-cur-hand" : "") + "'" + titelClick + " style='width:" + labelW() + "px;box-sizing:border-box;flex-shrink:0;height:24px;line-height:24px;" + (deskKal ? "padding-right:8px;text-align:right;" : "padding-left:4px;padding-right:4px;text-align:left;") + "font-size:13px;font-weight:500;color:" + ((evExtern(p) || /gastspiel/i.test(p.titel)) ? "#8a8a8a" : "#ffffff") + ";" + titelCursor + premStyle + "white-space:nowrap;overflow:hidden;" + (deskKal ? "text-overflow:ellipsis;" : "") + "position:sticky;left:0;z-index:2;background:#1a1a1a' title='" + p.titel + (istPrem ? " (Premiere)" : "") + premZeile(p) + tonZeile(p) + "'>" + kalShort(p.titel)
+        + (deskKal && p.pidx != null && p.pidx > -1
+           ? "<span class='kal-cur-frage' onclick=\"event.stopPropagation();kalInfoPop(event," + p.pidx + ")\" "
+             + "title='Kurzinfo' style='position:absolute;right:0;top:0;bottom:0;width:50%;"
+             + "cursor:help;z-index:3'></span>"
+           : "")
+        + "</div><div onclick='kalToggleScale(event)' style='position:relative;flex:1;height:100%;cursor:" + zoomCur + "'>" + bar + "</div></div>";
     }).join("");
   }
   function sortByStart(list){
@@ -3479,6 +3494,49 @@ function toggleKalExt() {
   openKalender();
 }
 
+// Kurzinfo zur Produktion: Premiere bzw. WA und die Angaben von Ton bis Dauer
+function kalInfoPop(ev, idx) {
+  var p = P[idx];
+  if (!p) return;
+  var el = document.getElementById("kal-pop");
+  if (!el) return;
+  // Zweiter Klick auf dasselbe Feld schliesst die Kurzinfo wieder
+  if (el.style.display === "block" && window.kalInfoQuelle === idx) {
+    kalPopSchliessen();
+    window.kalInfoQuelle = null;
+    return;
+  }
+  window.kalInfoQuelle = idx;
+  function zeile(lbl, wert) {
+    return wert ? "<div style='margin-top:3px'><span style='color:#8a8a8a'>" + lbl
+                + "</span>  " + wert + "</div>" : "";
+  }
+  var kopf = "<b>" + p.titel + "</b>";
+  if (p.prem) {
+    var lbl = (p.typ === "WA") ? "WA" : (p.typ === "Premiere" ? "Premiere" : "Datum");
+    kopf += "<div style='color:#7fcfcf;margin-bottom:6px'>" + lbl + ": " + fmt(p.prem) + "</div>";
+  }
+  var h = kopf
+    + zeile("Ton", p.ton)
+    + zeile("Bühne", p.bm)
+    + zeile("Beleuchtung", p.licht)
+    + zeile("Inspizienz", p.insp)
+    + zeile("Regieassistenz", p.reasist)
+    + zeile("Projektleitung", p.projleit)
+    + zeile("Graben", p.graben)
+    + zeile("Dauer", p.dauer);
+  el.innerHTML = h;
+  el.style.display = "block";
+  var b = el.getBoundingClientRect();
+  var x = Math.min(Math.max(8, ev.clientX + 14), window.innerWidth - b.width - 8);
+  var y = Math.min(Math.max(8, ev.clientY - b.height / 2), window.innerHeight - b.height - 8);
+  el.style.left = x + "px";
+  el.style.top = y + "px";
+  window.kalPopQuelle = null;
+  if (window.kalPopTimer) clearTimeout(window.kalPopTimer);
+  window.kalPopTimer = setTimeout(kalPopSchliessen, 9000);
+}
+
 // Zeigt die Daten eines Terminstrichs als Popup (nur im Zoom, nur Desktop)
 function kalPopZeigen(ev, text) {
   var el = document.getElementById("kal-pop");
@@ -3499,6 +3557,7 @@ function kalPopKlick() { kalPopSchliessen(); }
 function kalPopSchliessen() {
   var el = document.getElementById("kal-pop");
   if (el) el.style.display = "none";
+  window.kalInfoQuelle = null;
   if (window.kalPopTimer) { clearTimeout(window.kalPopTimer); window.kalPopTimer = null; }
 }
 
@@ -3571,15 +3630,21 @@ function kalToggleScale(ev) {
   // Im Zoom oeffnet ein Klick direkt auf einen Terminstrich dessen Daten,
   // ein Klick daneben fuehrt wie bisher zurueck.
   if (istDesktop && window.kalZoom && ev && ev.target && ev.target !== ev.currentTarget) {
-    var tr = ev.target.getAttribute && ev.target.getAttribute("title");
+    var ziel = ev.target;
+    var tr = ziel.getAttribute && ziel.getAttribute("title");
+    // Safari meldet mitunter ein Kindelement als Ziel - eine Ebene hoeher suchen
+    if (!tr && ziel.parentNode && ziel.parentNode !== ev.currentTarget) {
+      ziel = ziel.parentNode;
+      tr = ziel.getAttribute && ziel.getAttribute("title");
+    }
     if (tr) {
       var pop = document.getElementById("kal-pop");
       // Zweiter Klick auf denselben Termin schliesst das Popup wieder
-      if (pop && pop.style.display === "block" && window.kalPopQuelle === ev.target) {
+      if (pop && pop.style.display === "block" && window.kalPopQuelle === ziel) {
         kalPopSchliessen();
         window.kalPopQuelle = null;
       } else {
-        window.kalPopQuelle = ev.target;
+        window.kalPopQuelle = ziel;
         kalPopZeigen(ev, tr);
       }
       return;
@@ -3659,7 +3724,30 @@ function kalToggleScale(ev) {
       if (modal2 && reihen.length) {
         var rZ = reihen[0].getBoundingClientRect();
         var mitte = rZ.top + rZ.height / 2;
-        modal2.scrollTop = Math.max(0, modal2.scrollTop + (mitte - klickY));
+        // Etwas weniger weit scrollen als exakt noetig: die Zeile landet dadurch
+        // ein Stueck tiefer, dafuer bleibt die Monatsleiste im Bild.
+        var ziel = Math.max(0, modal2.scrollTop + (mitte - klickY)
+                              - ((window.kalTlHeight || 32) + 26));
+        modal2.scrollTop = ziel;
+        // Echtes Nachscrollen erzwingen - erst dadurch rechnen die Handler mit
+        // dem neuen Layout. Ein blosser Funktionsaufruf reicht nicht.
+        if (typeof requestAnimationFrame !== "undefined") {
+          requestAnimationFrame(function() {
+            modal2.scrollTop = ziel + 1;
+            requestAnimationFrame(function() {
+              modal2.scrollTop = ziel;
+              // Nachmessen statt schaetzen: steht die Monatsleiste noch hinter
+              // dem Kopfbereich, genau um die Fehlmenge zurueckscrollen.
+              requestAnimationFrame(function() {
+                var mrEl = document.getElementById("kal-monthrow");
+                var hdEl = document.querySelector(".kal-head");
+                if (!mrEl || !hdEl) return;
+                var fehlt = hdEl.getBoundingClientRect().bottom - mrEl.getBoundingClientRect().top;
+                if (fehlt > 0) modal2.scrollTop = Math.max(0, modal2.scrollTop - fehlt - 4);
+              });
+            });
+          });
+        }
       }
     }
     if (window.kalHalteOben) window.kalHalteOben();
@@ -3778,8 +3866,8 @@ filterAktuell();
       <p style="margin-top:0">Die <strong>WebApp</strong> besteht aus einer einzigen HTML-Datei (ca. 350kb inkl. JS und CSS) ohne externe Abh&auml;ngigkeiten (kein Datenaustausch mit externen Servern oder Diensten &ndash; ausgenommen Links in der Titelzeile) und wird &uuml;ber GitHub gehostet (https://...). Sie l&auml;uft auf allen g&auml;ngigen Browsern unter MacOS, Windows, Android und iOS (bei Bedarf auch offline als lokale Html-Datei).</p>
       <p>Die Daten basieren auf den Spielplanunterlagen der technischen Direktion, des KBB sowie der Website des Opernhauses Z&uuml;rich. &Auml;nderungen w&auml;hrend laufender Spielzeit sind m&ouml;glicherweise nicht ber&uuml;cksichtigt, werden aber kontinuierlich aktualisiert.</p>
       <p>Diese WebApp ist als Hilfsmittel f&uuml;r den Produktionsalltag gedacht. F&uuml;r die Richtigkeit, Vollst&auml;ndigkeit und Aktualit&auml;t der Inhalte wird keine Gew&auml;hr &uuml;bernommen.</p>
-      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_190826_465" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
-      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_190826_465</p>
+      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_190826_484" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
+      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_190826_484</p>
       </div>
   </div>
 </div>
