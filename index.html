@@ -23,7 +23,7 @@ input[type=date] { background: #181818; border: 1px solid #333; color: #e8e8e8; 
 .kal-zoomhint { display: none; }
 .bs-desk { display: none; }
 .bs-mob  { display: inline; }
-/* Auf dem Handy wechselt das Logo alle 30 Sekunden kurz zu "BILD & TON" */
+/* Auf dem Handy wechselt das Logo alle 16 Sekunden kurz zu "TON & BILD" */
 @keyframes bt-mob-ein {
   0%, 35% { opacity: 0; }
   62%, 74% { opacity: 1; }
@@ -34,10 +34,31 @@ input[type=date] { background: #181818; border: 1px solid #333; color: #e8e8e8; 
   62%, 74% { opacity: 0; }
   100% { opacity: 1; }
 }
-.ohz-txt-mob { animation: bt-mob-aus 20s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+.ohz-txt-mob { animation: bt-mob-aus 16s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+/* Bei jedem zweiten Wechsel laeuft ein Lichtreflex von links nach rechts
+   ueber TON & BILD, solange es sichtbar ist (Zyklus 32s = zwei Wechsel;
+   TON & BILD ist im zweiten Wechsel etwa von 24s bis 30s eingeblendet).
+   Der Streifen startet links ausserhalb und bleibt rechts ausserhalb stehen.
+   Zurueckgesetzt wird er erst am Zyklusende - dort springt die Animation
+   ohne Zwischenbewegung, und TON & BILD ist in diesem Moment ausgeblendet. */
+@keyframes mob-reflex {
+  0%, 76%   { background-position: 85% 0; animation-timing-function: ease-in-out; }
+  89%, 100% { background-position: 15% 0; }
+}
+@supports (-webkit-background-clip: text) or (background-clip: text) {
+  .bild-ton-mob {
+    background: linear-gradient(100deg, #656565 0%, #656565 44%, #8fa8a9 48%,
+                #b4cfd0 50%, #8fa8a9 52%, #656565 56%, #656565 100%);
+    background-size: 300% 100%;
+    background-position: 85% 0;
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}
 .bild-ton-mob { position: absolute; right: 0; top: 0; white-space: nowrap;
                 opacity: 0; pointer-events: none;
-                animation: bt-mob-ein 20s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+                animation: bt-mob-ein 16s cubic-bezier(0.4, 0, 0.2, 1) infinite,
+                           mob-reflex 32s linear infinite; }
 @media (min-width: 1000px) and (hover: hover) and (pointer: fine) {
   .ohz-txt-mob { animation: none; }
   .bild-ton-mob { display: none; }
@@ -317,6 +338,13 @@ input[type=date]::-webkit-calendar-picker-indicator { filter: invert(0.8) bright
                 letter-spacing: 0.05em; }
 #kal-hilfe p { margin: 0 0 10px; }
 #kal-hilfe b { color: #fff; font-weight: 500; }
+/* Anleitung: mobil die Tap-Fassung, auf dem Desktop die Maus-Fassung */
+#kal-hilfe .kh-desk, #kal-hilfe .kh-desk-i { display: none; }
+@media (min-width: 1000px) and (hover: hover) and (pointer: fine) {
+  #kal-hilfe .kh-mob { display: none; }
+  #kal-hilfe .kh-desk { display: block; }
+  #kal-hilfe .kh-desk-i { display: inline; }
+}
 /* Tooltip auf Touchgeraeten: erscheint bei laengerem Antippen, da die
    title-Hinweise dort sonst nie sichtbar werden. */
 /* iOS: beim langen Antippen keine Textauswahl oder Systemvorschau im Kalender */
@@ -1373,6 +1401,24 @@ function render() {
         todayProds.push(tp);
       }
     }
+    // Proben des Tages: nur aus bestaetigten Monaten (hellgelb lt. Monats-/Wochenplan)
+    var todayProben = [];
+    if (pplanGedeckt(todayStr)) {
+      for (var hpI = 0; hpI < results.length; hpI++) {
+        var hpP = results[hpI];
+        var hpK = (hpP.proben || []).indexOf(todayStr);
+        if (hpK > -1) {
+          var hpBl = parseProbenz(hpP.probenz && hpP.probenz[hpK]);
+          if (!hpBl.length) todayProben.push({ p: hpP, z: "", t: "P" });
+          for (var hpJ = 0; hpJ < hpBl.length; hpJ++) todayProben.push({ p: hpP, z: hpBl[hpJ].z, t: hpBl[hpJ].t || "P" });
+        }
+        [["khp", "khpz", "KHP"], ["ohp", "ohpz", "OHP"], ["gp", "gpz", "GP"]].forEach(function(f) {
+          if (hpP[f[0]] === todayStr) todayProben.push({ p: hpP, z: hpP[f[1]] || "", t: f[2] });
+        });
+      }
+    }
+    // Nach Beginnzeit, Eintraege ohne Zeit zuerst
+    todayProben.sort(function(a, b) { return (a.z || "00:00") < (b.z || "00:00") ? -1 : ((a.z || "00:00") > (b.z || "00:00") ? 1 : 0); });
     var dSpH = new Date(vonEl.value);
     var mSpH = dSpH.getMonth() + 1, tSpH = dSpH.getDate();
     var inSommerH = (mSpH === 7 && tSpH > 15) || (mSpH === 8 && tSpH <= 23);
@@ -1382,14 +1428,16 @@ function render() {
     var padH = function(x){ return x < 10 ? "0" + x : "" + x; };
     var heuteDatum = jetzt.getFullYear() + "-" + padH(jetzt.getMonth()+1) + "-" + padH(jetzt.getDate());
     var istHeute = (vonEl.value === heuteDatum);
-    var blockTitel = istHeute ? "Heute" : "Vorstellung";
-    if (todayProds.length > 0 || (inSommerH && istHeute)) {
+    var blockTitel = istHeute ? "Heute \u00b7 Vorstellungen" : "Vorstellungen";
+    var probenTitel = istHeute ? "Heute \u00b7 Proben" : "Proben";
+    var kopfStil = "padding:2px 20px 4px;font-size:11px;color:#63f0f0;letter-spacing:0.1em;text-transform:uppercase;border-bottom:1px solid #222";
+    if (todayProds.length > 0 || todayProben.length > 0 || (inSommerH && istHeute)) {
       todayProds.sort(function(a, b) {
         var da = a.prem ? new Date(a.prem) : new Date(0);
         var db = b.prem ? new Date(b.prem) : new Date(0);
         return da - db;
       });
-      html += "<div style='padding:2px 20px 4px;font-size:11px;color:#63f0f0;letter-spacing:0.1em;text-transform:uppercase;border-bottom:1px solid #222'>" + blockTitel + "</div>";
+      if (todayProds.length > 0) html += "<div style='" + kopfStil + "'>" + blockTitel + "</div>";
       for (var ti = 0; ti < todayProds.length; ti++) {
         var tp = todayProds[ti];
         var tidx = P.indexOf(tp);
@@ -1402,8 +1450,21 @@ function render() {
         if (hZeit) html += "<span class=\"row-date\" style=\"margin-left:12px\">" + hZeit + "</span>";
         // Premiere bzw. Wiederaufnahme kennzeichnen
         if (tp.prem === vonEl.value && (tp.typ === "Premiere" || tp.typ === "WA"))
-          html += "<span class=\"row-date\" style=\"margin-left:10px\">" + (tp.typ === "WA" ? "WA" : "PREM") + "</span>";
+          html += "<span class=\"row-date\" style=\"margin-left:10px;color:#ffffff\">" + (tp.typ === "WA" ? "WA" : "PREM") + "</span>";
         html += "</div>";
+      }
+      // Proben des Tages: Titel, Uhrzeit, Kuerzel wie im Panel
+      if (todayProben.length > 0) {
+        html += "<div style='" + kopfStil + (todayProds.length ? ";margin-top:8px" : "") + "'>" + probenTitel + "</div>";
+        for (var hpQ = 0; hpQ < todayProben.length; hpQ++) {
+          var hpR = todayProben[hpQ];
+          var hpIdx = P.indexOf(hpR.p);
+          html += "<div class=\"row" + (hpIdx === activeIndex ? " active" : "") + "\" onclick=\"selectRow(" + hpIdx + ")\">";
+          html += "<span class=\"row-title\">" + hpR.p.titel + "</span>";
+          if (hpR.z) html += "<span class=\"row-date\" style=\"margin-left:12px\">" + hpR.z + "</span>";
+          html += "<span class=\"row-date prob-typ\" style=\"margin-left:10px;color:#bbb\">" + hpR.t + "</span>";
+          html += "</div>";
+        }
       }
       if (inSommerH) {
         html += "<div style='padding:10px 20px;font-size:13px;color:#f0a050;letter-spacing:0.08em;border-bottom:1px solid #333;background:#171717'>Sommerpause <span class='sonne-glow' style='font-size:15px'>&#9728;&#65038;</span></div>";
@@ -2526,8 +2587,8 @@ function openKalender() {
       var alleTage = (window.kalZoomTage && window.kalZoomTage < 84);
       if (!monatswechsel && (alleTage || dow === 1 || dow === 3 || dow === 5 || dow === 0)) {
         var wtag = ["S","M","D","M","D","F","S"][dow];
-        // Auf dem Desktop steht am Montag die Kalenderwoche statt des Buchstabens
-        if (deskKal && isMon) wtag = "" + kalWoche(cur);
+        // Im Zoom steht am Montag die Kalenderwoche statt des Buchstabens (Desktop und mobil)
+        if (isMon) wtag = "" + kalWoche(cur);
         var wtagCol = isMon ? "#7fbcbc" : "#7a7a7a";
         dayLines += "<div style='position:absolute;top:" + (deskKal ? (isMon ? 6 : 6.5) : 5) + "px;left:"
                  + (xp + halfDay).toFixed(3) + "%;transform:translateX(-50%);font-size:"
@@ -3922,13 +3983,13 @@ filterAktuell();
       <p style="margin-top:12px"><strong style="color:#fff">Panel:</strong> Ein Klick auf eine Produktion in der Liste &ouml;ffnet das Detailpanel mit detaillierten Angaben. Namen und Funktionen im Panel sind anklickbar und aktivieren einen Filter.</p>
       <p style="margin-top:12px">&laquo;<strong>Spielplan</strong>&raquo; oben links &ouml;ffnet den aktuellen Spielplan auf der Website des Opernhauses.</p>
       <p style="margin-top:12px">&laquo;<strong>Kalender</strong>&raquo; oben rechts &ouml;ffnet den tabellarischen Produktionskalender. Eine Kurzanleitung zur mobilen bzw. Desktop-Version befindet sich in der Kalenderansicht <span style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;box-sizing:border-box;background:#1e1e1e;color:#bbb;font-size:11px;font-weight:bold;border-top:1px solid #585858;border-left:1px solid #484848;border-bottom:1px solid #0d0d0d;border-right:1px solid #0d0d0d;border-radius:3px;vertical-align:middle;position:relative;top:-1px">?</span>.</p>
-      <p style="margin-top:12px">In der Titelzeile: <strong>Button OHZ</strong> (Handy) bzw. <strong>Probenplan</strong> (Desktop) verlinkt auf Backstage/Probenplan, <strong>Button D</strong> &ouml;ffnet einen freigegebenen Google-Drive-Ordner f&uuml;r flexiblen Datei-Upload/-Zugriff zwischen allen im Google-Tonabteilung-Account eingeloggten Ger&auml;ten und <strong>Button N</strong> eine Google-Keep-Checkliste f&uuml;r schnelle Share-Notizen oder Pendenz-Eintr&auml;ge on-the-fly. &Auml;nderungen sind f&uuml;r alle sofort einsehbar und bearbeitbar.</p>
+      <p style="margin-top:12px">In der Titelzeile: <strong>Button OHZ</strong> (Handy) bzw. <strong>Probenplan</strong> (Desktop) verlinkt auf Backstage/Probenplan, <strong>Button</strong> <span style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;box-sizing:border-box;border-radius:50%;background:#1e1e1e;border-top:1px solid #585858;border-left:1px solid #484848;border-bottom:1px solid #0d0d0d;border-right:1px solid #0d0d0d;vertical-align:middle;position:relative;top:-1px"><svg width='11' height='11' viewBox='0 0 20 20' fill='none' stroke='#bbb' stroke-width='1.5' stroke-linejoin='round' stroke-linecap='round'><path d='M3.5 7h13l-1.1 9.6H4.6Z'/><path d='M7 7V5.6a3 3 0 0 1 6 0V7'/></svg></span> &ouml;ffnet einen freigegebenen Google-Drive-Ordner f&uuml;r flexiblen Datei-Upload/-Zugriff zwischen allen im Google-Tonabteilung-Account eingeloggten Ger&auml;ten und <strong>Button</strong> <span style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;box-sizing:border-box;border-radius:50%;background:#1e1e1e;border-top:1px solid #585858;border-left:1px solid #484848;border-bottom:1px solid #0d0d0d;border-right:1px solid #0d0d0d;vertical-align:middle;position:relative;top:-1px"><svg width='11' height='11' viewBox='0 0 20 20' fill='none' stroke='#bbb' stroke-width='1.5' stroke-linejoin='round' stroke-linecap='round'><path d='M3.4 16.6l0.8-3.4L13.4 3.9a1.4 1.4 0 0 1 2 0l0.5 0.5a1.4 1.4 0 0 1 0 2L6.8 15.8Z'/><line x1='12.1' y1='5.2' x2='14.8' y2='7.9'/></svg></span> eine Google-Keep-Checkliste f&uuml;r schnelle Share-Notizen oder Pendenz-Eintr&auml;ge on-the-fly. &Auml;nderungen sind f&uuml;r alle sofort einsehbar und bearbeitbar.</p>
       <div style="height:1px;background:#4d4d4d;margin:22px 0 18px"></div>
       <p style="margin-top:0">Die <strong>WebApp</strong> besteht aus einer einzigen HTML-Datei (ca. 350kb inkl. JS und CSS) ohne externe Abh&auml;ngigkeiten (kein Datenaustausch mit externen Servern oder Diensten &ndash; ausgenommen Links in der Titelzeile) und wird &uuml;ber GitHub gehostet (https://...). Sie l&auml;uft auf allen g&auml;ngigen Browsern unter MacOS, Windows, Android und iOS (bei Bedarf auch offline als lokale Html-Datei).</p>
       <p>Die Daten basieren auf den Spielplanunterlagen der technischen Direktion, des KBB sowie der Website des Opernhauses Z&uuml;rich. &Auml;nderungen w&auml;hrend laufender Spielzeit sind m&ouml;glicherweise nicht ber&uuml;cksichtigt, werden aber kontinuierlich aktualisiert.</p>
       <p>Diese WebApp ist als Hilfsmittel f&uuml;r den Produktionsalltag gedacht. F&uuml;r die Richtigkeit, Vollst&auml;ndigkeit und Aktualit&auml;t der Inhalte wird keine Gew&auml;hr &uuml;bernommen.</p>
-      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_190826_496" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
-      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_190826_496</p>
+      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_190826_506" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
+      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_190826_506</p>
       </div>
   </div>
 </div>
@@ -3939,17 +4000,24 @@ filterAktuell();
     <div>
       <button onclick="kalHilfeSchliessen()" style="background:#181818;border:1px solid #333;border-radius:3px;color:#f0a050;cursor:pointer;font-size:15px;line-height:1.2;padding:1px 5px;float:right;position:sticky;top:0;z-index:10">close</button>
       <h3>Kalender</h3>
+      <div class="kh-mob">
+      <p><b>Zoomen:</b> Tap auf eine Produktionszeile zoomt in eine Zweimonatsansicht um diese Stelle und zeigt die Einzeltermine (Terminansicht). Nochmaliger Tap zoomt wieder zur&uuml;ck.</p>
+      <p><b>PopUp:</b> Tap &amp; Hold auf einen Terminstrich im gezoomten Kalenderbereich &ouml;ffnet ein PopUp mit Details f&uuml;r diesen Tag.</p>
+      <p><b>Tap auf einen Produktionstitel</b> &ouml;ffnet das Detailpanel der Spielplanansicht.</p>
+      </div>
+      <div class="kh-desk">
       <p><b>Zoomen:</b> Klick auf eine Produktionszeile zoomt in eine Zweimonatsansicht um die angeklickte Stelle und zeigt die Einzeltermine (Terminansicht). Nochmaliger Klick zoomt wieder zur&uuml;ck. Alternativ: Klicken &amp; Ziehen horizontal zoomt in den ausgew&auml;hlten Zeitraum.</p>
       <p><b>Verschieben:</b> Mit gedr&uuml;ckter Maustaste l&auml;sst sich der Kalender im gezoomten Bereich in beide Richtungen ziehen, alternativ zu Scrollbalken.</p>
       <p><b>PopUp:</b> Klick auf einen Terminstrich im gezoomten Kalenderbereich &ouml;ffnet ein PopUp mit Details. Nochmaliger Klick auf das PopUp-Fenster oder den Terminstrich schliesst es wieder.</p>
       <p><b>Tooltips</b> (Roll-Over) an Balken und Terminstrichen zeigen ebenfalls jeweilige Details.</p>
       <p><b>Rechtsklick</b> wechselt zwischen Balken und Einzelterminen. Alternativ: Buttons Termine/Balken &uuml;ber der Titelliste.</p>
       <p><b>Klick auf einen Produktionstitel</b> &ouml;ffnet das Detailpanel der Spielplanansicht.</p>
+      </div>
       <p style="margin-top:16px"><b>Termine</b></p>
       <p style="margin:0 0 4px"><span style="display:inline-block;width:9px;height:9px;background:#8f8f8f;border-radius:1px;margin-right:9px;vertical-align:middle"></span>1.TE, Probenanfang / Probeb&uuml;hne</p>
       <p style="margin:0 0 4px"><span style="display:inline-block;width:9px;height:9px;background:#f5e050;border-radius:1px;margin-right:9px;vertical-align:middle"></span>Proben (laut Monats- bzw. Wochenplan)</p>
       <p style="margin:0 0 4px"><span style="display:inline-block;width:9px;height:9px;background:#a59b57;border-radius:1px;margin-right:9px;vertical-align:middle"></span>Proben (laut Saison- oder Monatsplan provisorisch)</p>
-      <p style="margin:0 0 4px"><span style="display:inline-block;width:9px;height:9px;background:#ffffff;border-radius:1px;margin-right:9px;vertical-align:middle"></span>1. Vorstellung (Prem / WA)</p>
+      <p style="margin:0 0 4px"><span style="display:inline-block;width:9px;height:9px;background:#ffffff;border-radius:1px;margin-right:9px;vertical-align:middle"></span><span class="kh-desk-i">1. </span>Vorstellung (Prem / WA)</p>
       <p style="margin:0"><span style="display:inline-block;width:9px;height:9px;background:#63f0f0;border-radius:1px;margin-right:3px;vertical-align:middle"></span><span style="display:inline-block;width:9px;height:9px;background:#f0a050;border-radius:1px;margin-right:9px;vertical-align:middle"></span>Vorstellungen Oper / Ballett</p>
     </div>
   </div>
