@@ -925,6 +925,18 @@ function hauptProduktion(p) {
 
 // Zerlegt einen probenz-String in einzelne Bloecke {z: Zeit, t: Kuerzel}.
 // Wird von Panel und Kalender-Tooltip gemeinsam genutzt.
+// Wandelt "ca. 2 Std. 25 Min." in "ca. 2.25 h" um. Ohne Angabe: leerer String.
+function dauerKurz(d) {
+  if (!d) return "";
+  var t = String(d).trim();
+  var ca = "ca. ";
+  var mh = t.match(/(\d+)\s*Std/i);
+  var mm = t.match(/(\d+)\s*Min/i);
+  if (!mh && !mm) return "";
+  var h = mh ? mh[1] : "0";
+  var m = mm ? ("0" + mm[1]).slice(-2) : "";
+  return ca + h + (m ? "." + m : "") + " h";
+}
 function parseProbenz(pzRaw) {
   var out = [];
   if (!pzRaw) return out;
@@ -1451,6 +1463,9 @@ function render() {
         // Premiere bzw. Wiederaufnahme kennzeichnen
         if (tp.prem === vonEl.value && (tp.typ === "Premiere" || tp.typ === "WA"))
           html += "<span class=\"row-date\" style=\"margin-left:10px;color:#ffffff\">" + (tp.typ === "WA" ? "WA" : "PREM") + "</span>";
+        // Dauer zuletzt in Klammern, kurz als "2.25 h"
+        var hDau = dauerKurz(tp.dauer);
+        if (hDau) html += "<span class=\"row-date\" style=\"margin-left:10px\">" + hDau + "</span>";
         html += "</div>";
       }
       // Proben des Tages: Titel, Uhrzeit, Kuerzel wie im Panel
@@ -2545,7 +2560,7 @@ function openKalender() {
     var eteEff = p.ete || "", lvEff = p.lv || "";
     // Werckmeister-Labor: Balken vom Probenbeginn (01.04) bis letzte Vorstellung
     if (p.kat === "Labor" && p.titel === "Werckmeister - Oerlikon" && p.prob && p.lv) { eteEff = p.prob; lvEff = p.lv; }
-    return {titel:p.titel, kat:p.kat, typ:p.typ, ton:p.ton||"", prem:p.prem, ete:eteEff, lv:lvEff, range: !!(eteEff && lvEff), pause:p.pause||null, prob:p.prob||"", khp:p.khp||"", ohp:p.ohp||"", gp:p.gp||"", khpz:p.khpz||"", ohpz:p.ohpz||"", gpz:p.gpz||"", proben:p.proben||[], probenz:p.probenz||[], vzeit:p.vzeit||[], location:p.location||"", vorstellungen:p.vorstellungen||[], pidx:P.indexOf(p)};
+    return {titel:p.titel, kat:p.kat, typ:p.typ, ton:p.ton||"", prem:p.prem, ete:eteEff, lv:lvEff, range: !!(eteEff && lvEff), pause:p.pause||null, dauer:p.dauer||"", prob:p.prob||"", khp:p.khp||"", ohp:p.ohp||"", gp:p.gp||"", khpz:p.khpz||"", ohpz:p.ohpz||"", gpz:p.gpz||"", proben:p.proben||[], probenz:p.probenz||[], vzeit:p.vzeit||[], location:p.location||"", vorstellungen:p.vorstellungen||[], pidx:P.indexOf(p)};
   }).sort(function(a,b){
     var ka = kalSortKey(a), kb = kalSortKey(b);
     return ka < kb ? -1 : 1;
@@ -2821,6 +2836,7 @@ function openKalender() {
           if (!inWindow(dt)) return;
           var istPremDatum = (dt === p.prem) && (p.typ === "Premiere" || p.typ === "WA");
           var uz = (p.vzeit && p.vzeit[vi]) ? "  " + p.vzeit[vi] : "";
+          var vDau = dauerKurz(p.dauer); if (vDau) uz += "  " + vDau;
           bar += "<div " + STRICH_KL + "style='" + STRICH_CSS
                + (istPremDatum ? "#ffffff" : col) + ";left:calc(" + (xpct(dt) + HALFDAY).toFixed(3) + "% - " + STRICH_OFF + "px)' title='"
                + p.titel + "\n" + fmt(dt) + uz + (istPremDatum ? premZeile(p) : "") + tonZeile(p) + "'></div>";
@@ -2847,7 +2863,7 @@ function openKalender() {
         termine.forEach(function(dt, di){
           if (!inWindow(dt)) return;
           var dx = xpct(dt) + HALFDAY;
-          bar += "<div style='position:absolute;top:7px;width:11px;height:11px;transform:translateX(-50%) rotate(45deg);opacity:0.9;left:" + dx.toFixed(3) + "%;background:" + col + "' title='" + p.titel + "\n" + fmt(dt) + tonZeile(p) + "'></div>";
+          bar += "<div style='position:absolute;top:7px;width:11px;height:11px;transform:translateX(-50%) rotate(45deg);opacity:0.9;left:" + dx.toFixed(3) + "%;background:" + col + "' title='" + p.titel + "\n" + fmt(dt) + (dauerKurz(p.dauer) ? "  " + dauerKurz(p.dauer) : "") + tonZeile(p) + "'></div>";
           // Datum nur, wenn zur naechsten Raute genug Platz ist
           var platz = true;
           if (di + 1 < termine.length) {
@@ -2899,7 +2915,7 @@ function openKalender() {
   } else {
     rows = buildRows(prods);
   }
-  var kztSfMapped = kztSf.map(function(p){ var eteEff = p.ete || "", lvEff = p.lv || ""; if (p.kat === "Labor" && p.titel === "Werckmeister - Oerlikon" && p.prob && p.lv) { eteEff = p.prob; lvEff = p.lv; } return {titel:p.titel, kat:p.kat, typ:p.typ, ton:p.ton||"", prem:p.prem, ete:eteEff, lv:lvEff, range: !!(eteEff && lvEff), pause:p.pause||null, prob:p.prob||"", khp:p.khp||"", ohp:p.ohp||"", gp:p.gp||"", khpz:p.khpz||"", ohpz:p.ohpz||"", gpz:p.gpz||"", proben:p.proben||[], probenz:p.probenz||[], vzeit:p.vzeit||[], location:p.location||"", vorstellungen:p.vorstellungen||[], pidx:P.indexOf(p)}; });
+  var kztSfMapped = kztSf.map(function(p){ var eteEff = p.ete || "", lvEff = p.lv || ""; if (p.kat === "Labor" && p.titel === "Werckmeister - Oerlikon" && p.prob && p.lv) { eteEff = p.prob; lvEff = p.lv; } return {titel:p.titel, kat:p.kat, typ:p.typ, ton:p.ton||"", prem:p.prem, ete:eteEff, lv:lvEff, range: !!(eteEff && lvEff), pause:p.pause||null, dauer:p.dauer||"", prob:p.prob||"", khp:p.khp||"", ohp:p.ohp||"", gp:p.gp||"", khpz:p.khpz||"", ohpz:p.ohpz||"", gpz:p.gpz||"", proben:p.proben||[], probenz:p.probenz||[], vzeit:p.vzeit||[], location:p.location||"", vorstellungen:p.vorstellungen||[], pidx:P.indexOf(p)}; });
   var kztSfRows = kztSfMapped.length ? buildRows(sortByStart(kztSfMapped)) : "";
 
   function kalChip(kat, label, col) {
@@ -3988,8 +4004,8 @@ filterAktuell();
       <p style="margin-top:0">Die <strong>WebApp</strong> besteht aus einer einzigen HTML-Datei (ca. 350kb inkl. JS und CSS) ohne externe Abh&auml;ngigkeiten (kein Datenaustausch mit externen Servern oder Diensten &ndash; ausgenommen Links in der Titelzeile) und wird &uuml;ber GitHub gehostet (https://...). Sie l&auml;uft auf allen g&auml;ngigen Browsern unter MacOS, Windows, Android und iOS (bei Bedarf auch offline als lokale Html-Datei).</p>
       <p>Die Daten basieren auf den Spielplanunterlagen der technischen Direktion, des KBB sowie der Website des Opernhauses Z&uuml;rich. &Auml;nderungen w&auml;hrend laufender Spielzeit sind m&ouml;glicherweise nicht ber&uuml;cksichtigt, werden aber kontinuierlich aktualisiert.</p>
       <p>Diese WebApp ist als Hilfsmittel f&uuml;r den Produktionsalltag gedacht. F&uuml;r die Richtigkeit, Vollst&auml;ndigkeit und Aktualit&auml;t der Inhalte wird keine Gew&auml;hr &uuml;bernommen.</p>
-      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_190826_507" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
-      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_190826_507</p>
+      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_190826_510" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
+      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_190826_510</p>
       </div>
   </div>
 </div>
