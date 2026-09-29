@@ -45,7 +45,7 @@
       --ka:#8fe4de;
       --ka-soft:#12312f;
       --warn:#ff5c4d;
-      --brand-ink:#1d4543;
+      --brand-ink:#2a5f5c;
       --brand-shine:#8fe4de;
       --flag:#3d8a85;
       --flag-frame:#3d8a85;
@@ -69,7 +69,7 @@
     --ka:#8fe4de;
     --ka-soft:#12312f;
     --warn:#ff5c4d;
-    --brand-ink:#1d4543;
+    --brand-ink:#2a5f5c;
     --brand-shine:#8fe4de;
     --flag:#3d8a85;
     --flag-frame:#3d8a85;
@@ -97,7 +97,7 @@
       --ka:#8fe4de;
       --ka-soft:#12312f;
       --warn:#ff5c4d;
-      --brand-ink:#1d4543;
+      --brand-ink:#2a5f5c;
       --brand-shine:#8fe4de;
       --flag:#3d8a85;
       --flag-frame:#3d8a85;
@@ -125,11 +125,30 @@
     z-index:5;
     background:var(--bg);
     padding-top:10px;
-    padding-bottom:8px;
-    border-bottom:1px solid var(--line);
+    padding-bottom:14px;
     margin:0 -16px;
     padding-left:16px;
     padding-right:16px;
+  }
+  /* Trennlinie unter dem Titel: gleicher Stil wie der Streifen zwischen den Einträgen
+     (1px, Orange, läuft zu den Rändern aus, 8% eingerückt). Handy: Inhaltsbreite;
+     Desktop: Inhaltsbreite bis zum +. Seit v63 */
+  header.top::after{
+    content:"";
+    position:absolute;
+    left:calc(16px + (100% - 32px) * .08);
+    right:calc(16px + (100% - 32px) * .08);
+    bottom:0;
+    height:1px;
+    background:linear-gradient(90deg, transparent, var(--accent), transparent);
+    pointer-events:none;
+  }
+  @media (min-width:700px){
+    header.top::after{
+      right:auto;
+      left:calc(16px + min(max(420px, 33.333vw), 100% - 32px) * .08);
+      width:calc(min(max(420px, 33.333vw), 100% - 32px) * .84);
+    }
   }
   .title-row{
     display:flex;
@@ -137,11 +156,12 @@
     gap:10px;
     position:relative;
   }
+  /* Logo als Flex-Element zwischen Titel und Lupe → genau mittig im freien Raum (seit v65) */
   .brand-logo{
-    position:absolute;
-    left:50%;
-    top:50%;
-    transform:translate(-50%,-50%) scaleX(1.4);
+    flex:1 1 auto;
+    min-width:0;
+    text-align:center;
+    transform:scaleX(1.4);
     transform-origin:center;
     font-size:11px;
     font-weight:300;
@@ -151,8 +171,27 @@
     white-space:nowrap;
     pointer-events:none;
     z-index:0;
-    color:var(--brand-ink);
+    color:var(--text-dim);
+    opacity:.55;
   }
+  /* Reflexion: weicher Lichtstreif über TON & BILD, erster Lauf nach 2 s, dann alle 10 s (seit v71) */
+  .brand-text{
+    display:inline-block;
+    background:linear-gradient(100deg, var(--text-dim) 0%, var(--text-dim) 40%, #ffffff 50%, var(--text-dim) 60%, var(--text-dim) 100%);
+    background-size:300% 100%;
+    background-position:100% 0;
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    -webkit-text-fill-color:transparent;
+    animation:brandSweep 10s ease-in-out 2s infinite;
+  }
+  @keyframes brandSweep{
+    0%{ background-position:100% 0; }
+    26%{ background-position:0% 0; }
+    100%{ background-position:0% 0; }
+  }
+  @media (prefers-reduced-motion: reduce){ .brand-text{ animation:none; } }
   h1{
     font-size:22px;
     font-weight:800;
@@ -245,7 +284,6 @@
   }
   .bm-panel[hidden]{ display:none; }
   .arch-panel{ width:100%; max-height:70vh; }
-  .brand-logo{ left:40%; }
   @media (max-width:699px){ .brand-logo{ display:none; } }
 
   /* Suche */
@@ -316,7 +354,10 @@
   .overlay[hidden]{ display:none; }
 
   /* Header-Knopf Archiv (•••) */
-  .archbtn{ color:var(--text-dim); letter-spacing:1px; font-size:13px; }
+  .archbtn{ color:var(--text-dim); font-size:13px; }
+  /* Lupe · Archiv · ★ enger zusammen, + leicht abgesetzt (seit v68) */
+  #archBtn, #bmBtn{ margin-left:-4px; }
+  #addBtn{ margin-left:16px; }
   .archbtn .bm-count{ letter-spacing:normal; }
 
   /* ••• pro Notiz + Popup */
@@ -547,9 +588,21 @@
     100%{ box-shadow:var(--shadow); }
   }
 
-  main{ padding: 14px 0 calc(24px + env(safe-area-inset-bottom, 0px)); }
+  main{ padding: 9px 0 calc(24px + env(safe-area-inset-bottom, 0px)); }
 
-  ul.notes{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px; }
+  ul.notes{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:0; }
+  /* Türkiser Trennstreifen zwischen den Einträgen (--flag-frame), läuft zu den Rändern aus (seit v58, türkis seit v64) */
+  li.note + li.note{ margin-top:21px; }
+  li.note + li.note::before{
+    content:"";
+    position:absolute;
+    left:8%;
+    right:8%;
+    top:-11px;
+    height:1px;
+    background:linear-gradient(90deg, transparent, var(--flag-frame), transparent);
+    pointer-events:none;
+  }
 
   li.note{
     background:var(--surface);
@@ -670,7 +723,10 @@
     gap:4px;
     padding-top:5px;
     border-top:1px solid var(--divider);
+    flex-wrap:wrap;
+    row-gap:2px;
   }
+  .note-footer .sharebtn, .note-footer .delbtn:not(.delx){ padding:4px 5px; }
   .delbtn.delx{ padding:4px 7px; line-height:0; display:inline-flex; align-items:center; opacity:.55; }
   .delx svg{ width:17px; height:17px; display:block; }
   .note-day{
@@ -713,9 +769,9 @@
 <header class="top">
   <div class="title-row">
     <h1 id="appTitle"><span class="title-swap"><span id="titleNot" class="title-face visible">NOT</span><span id="titleTon" class="title-face">TON</span></span>ES</h1>
-    <span class="brand-logo">TON &amp; BILD</span>
+    <span class="brand-logo"><span class="brand-text">TON &amp; BILD</span></span>
     <button class="bmbtn searchbtn" id="searchBtn" aria-label="Suchen" aria-expanded="false" aria-controls="searchRow"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M15.5 15.5L21 21" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
-    <button class="bmbtn archbtn" id="archBtn" aria-label="Archiv anzeigen" aria-expanded="false" aria-controls="archPanel">•••<span class="bm-count" id="archCount"></span></button>
+    <button class="bmbtn archbtn" id="archBtn" aria-label="Archiv anzeigen" aria-expanded="false" aria-controls="archPanel"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="display:block"><rect x="3" y="4" width="18" height="5" rx="1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 9v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 13h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="bm-count" id="archCount"></span></button>
     <button class="bmbtn" id="bmBtn" aria-label="Lesezeichen anzeigen" aria-expanded="false" aria-controls="bmPanel">★<span class="bm-count" id="bmCount"></span></button>
     <button class="addbtn" id="addBtn" aria-label="Neue Notiz">+</button>
     <div class="overlay" id="overlay" hidden></div>
@@ -757,6 +813,8 @@
 
   var notes = [];
   var pendingDelete = null;
+  var ICON_PRINT = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 8V4h10v4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 17H4.5A1.5 1.5 0 0 1 3 15.5v-6A1.5 1.5 0 0 1 4.5 8h15A1.5 1.5 0 0 1 21 9.5v6a1.5 1.5 0 0 1-1.5 1.5H18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 13h10v7H7z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  var ICON_SHARE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 12H10a6 6 0 0 0-6 6v1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   var ICON_X = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
   var menuOpenId = null;
   var FLAG_OFF = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M5 4h11l-2.5 4L16 12H5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>';
@@ -1404,13 +1462,15 @@
             '<button type="button" class="delbtn confirm-yes" data-action="confirm-delete" aria-label="Nein, ganz löschen">Nein</button>' +
             '<button type="button" class="delbtn" data-action="cancel-delete" aria-label="Abbrechen">Abbrechen</button>'
           : pendingDelete === n.id ?
-            '<span class="confirm-text">Wirklich löschen?</span>' +
-            '<button type="button" class="delbtn confirm-yes" data-action="confirm-delete" aria-label="Ja, löschen">Ja</button>' +
-            '<button type="button" class="sharebtn" data-action="cancel-delete" aria-label="Abbrechen">Abbrechen</button>'
+            '<span class="confirm-text">Entfernen?</span>' +
+            '<button type="button" class="sharebtn" data-action="archive" aria-label="Archivieren">Archivieren</button>' +
+            '<button type="button" class="delbtn confirm-yes" data-action="confirm-delete" aria-label="Endgültig löschen">Löschen</button>' +
+            '<button type="button" class="delbtn delx" data-action="cancel-delete" aria-label="Abbrechen" title="Abbrechen">' + ICON_X + '</button>'
           :
             (dayLabel(n.ts) ? '<span class="note-day">' + dayLabel(n.ts) + '</span>' : '') +
             (n.locked ? '' : '<button type="button" class="delbtn delx" data-action="delete" aria-label="Notiz löschen" title="Löschen">' + ICON_X + '</button>') +
-            '<button type="button" class="morebtn" data-action="more" aria-label="Weitere Aktionen" aria-haspopup="true" aria-expanded="' + (menuOpenId === n.id) + '">•••</button>'
+            '<button type="button" class="delbtn delx" data-action="print" aria-label="Drucken" title="Drucken">' + ICON_PRINT + '</button>' +
+            '<button type="button" class="delbtn delx" data-action="share" aria-label="Per Mail teilen" title="Teilen">' + ICON_SHARE + '</button>'
           ) +
           (menuOpenId === n.id ?
             '<div class="note-menu" role="menu">' +
@@ -1556,6 +1616,7 @@
       note.archived = true;
       note.archivedAt = Date.now();
       menuOpenId = null;
+      pendingDelete = null;
       save(); renderList();
       return;
     }
@@ -1616,7 +1677,7 @@
   var titleNotEl = document.getElementById("titleNot");
   var titleTonEl = document.getElementById("titleTon");
   var TITLE_TRANSITION_MS = 2200;
-  var TITLE_FIRST_HOLD_NOT_MS = 6000;
+  var TITLE_FIRST_HOLD_NOT_MS = 2000;
   var TITLE_HOLD_NOT_MS = 10000;
   var TITLE_HOLD_TON_MS = 3000;
   function titleLoop(firstRun){
