@@ -192,12 +192,32 @@
     100%{ background-position:0% 0; }
   }
   @media (prefers-reduced-motion: reduce){ .brand-text{ animation:none; } }
+  /* Zurückpfeil vor NOTES → Spielplan (seit v75); grau wie Lupe, ohne Rahmen, grosse Tippfläche */
+  .backbtn{
+    flex:0 0 auto;
+    display:flex;
+    align-items:center;
+    background:none;
+    border:0;
+    padding:8px;
+    margin:-8px -10px -8px -8px;
+    color:var(--text-dim);
+    cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+    position:relative;
+    z-index:1;
+  }
+  .backbtn svg{ width:11px; height:18px; display:block; }
   h1{
     font-size:22px;
     font-weight:800;
     color:#ffffff;
     margin:0 auto 0 0;
     letter-spacing:.04em;
+    cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+    user-select:none;
+    -webkit-user-select:none;
     flex:0 0 auto;
     position:relative;
     z-index:1;
@@ -768,7 +788,8 @@
 <body>
 <header class="top">
   <div class="title-row">
-    <h1 id="appTitle"><span class="title-swap"><span id="titleNot" class="title-face visible">NOT</span><span id="titleTon" class="title-face">TON</span></span>ES</h1>
+    <button class="backbtn" id="backBtn" type="button" aria-label="Zurück zum Spielplan" title="Zurück zum Spielplan"><svg viewBox="0 0 11 18" aria-hidden="true"><path d="M9 1.5L2 9l7 7.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <h1 id="appTitle" title="Zurück zum Spielplan"><span class="title-swap"><span id="titleNot" class="title-face visible">NOT</span><span id="titleTon" class="title-face">TON</span></span>ES</h1>
     <span class="brand-logo"><span class="brand-text">TON &amp; BILD</span></span>
     <button class="bmbtn searchbtn" id="searchBtn" aria-label="Suchen" aria-expanded="false" aria-controls="searchRow"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M15.5 15.5L21 21" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
     <button class="bmbtn archbtn" id="archBtn" aria-label="Archiv anzeigen" aria-expanded="false" aria-controls="archPanel"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="display:block"><rect x="3" y="4" width="18" height="5" rx="1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 9v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 13h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="bm-count" id="archCount"></span></button>
@@ -1697,6 +1718,19 @@
   renderList();
   initFirebaseSync();
 })();
+
+  // Zurück zum Spielplan: Pfeil vor NOTES (v75) und der Titel selbst (v76) – Tab schliessen
+  // (aus dem Spielplan geöffnet), sonst zur Spielplan-Seite
+  (function(){
+    function back(){
+      try { window.close(); } catch(e) {}
+      setTimeout(function(){ if (!window.closed) location.href = '../'; }, 200);
+    }
+    ['backBtn','appTitle'].forEach(function(id){
+      var el = document.getElementById(id);
+      if (el) el.addEventListener('click', back);
+    });
+  })();
 </script>
 </body>
 </html>
