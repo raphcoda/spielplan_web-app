@@ -23,6 +23,7 @@ input[type=date] { background: #181818; border: 1px solid #333; color: #e8e8e8; 
 .kal-zoomhint { display: none; }
 .bs-desk { display: none; }
 .bs-mob  { display: inline; }
+.sc-desk { display: none; }
 /* Auf dem Handy wechselt das Logo alle 16 Sekunden kurz zu "TON & BILD" */
 @keyframes bt-mob-ein {
   0%, 35% { opacity: 0; }
@@ -170,7 +171,7 @@ input[type=date] { background: #181818; border: 1px solid #333; color: #e8e8e8; 
      danach das Logo, ganz rechts der Kalender-Button. Das Logo steht im HTML
      vor D/N, wird per order dahinter einsortiert. */
   .dn-btn   { order: 0; }
-  #main-h1 .ohz-logo { order: 1; margin-left: calc(32% - 132px) !important; }
+  #main-h1 .ohz-logo { order: 1; }
   #kal-btn  { order: 2; margin-left: auto; }
   /* Drive und Notizen rechteckig und gleich gross wie der Menue-Knopf (28 x 20).
      Abstand zwischen den drei Knoepfen je 12px - wie PROBENPLAN zu Menue.
@@ -182,6 +183,72 @@ input[type=date] { background: #181818; border: 1px solid #333; color: #e8e8e8; 
   /* Die beiden Wechsel-Buttons duerfen auf dem Desktop groesser sein */
   #kal-btn, .sp-btn { height: 24px !important; font-size: 12.5px !important;
                       padding: 0 12px !important; }
+  /* Titelzeile der Hauptansicht rund 20% groesser: Titel, Knoepfe, Fragezeichen
+     und KALENDER. Alles waechst nach oben - die Unterkanten, das Logo und alles
+     darunter bleiben an ihrem Platz (Innenabstand des Kopfs oben 19 -> 15px).
+     Das Logo steht unabhaengig davon in der Bildschirmmitte (siehe unten). */
+  #header { padding-top: 15px; }
+  #main-h1 #sp-titel { font-size: 21.5px !important; }
+  #main-h1 .bs-btn { height: 24px !important; font-size: 13px !important; padding: 0 10px !important;
+                     margin-left: 17px !important; }
+  #main-h1 #menu-btn { width: 34px; height: 24px; margin-left: 14px; }
+  #main-h1 #menu-btn svg { width: 18px; height: 13px; }
+  #main-h1 .dn-btn { width: 34px !important; height: 24px !important; margin-left: 14px !important; }
+  #main-h1 .dn-btn svg { width: 16px; height: 16px; }
+  #main-h1 #about-desk { width: 24px; height: 24px; font-size: 17px; margin-left: 20px; }
+  #main-h1 #kal-btn { height: 28px !important; font-size: 15px !important; padding: 0 14px !important;
+                      gap: 6px !important; }
+  #main-h1 #kal-btn .kal-pfeil { width: 20px; height: 11px; }
+  /* Dasselbe fuer die Titelzeile der Kalenderansicht: KALENDER 26/27, PROBENPLAN,
+     Fragezeichen und SPIELPLAN. Auch hier bleiben Logo und alles darunter am Platz
+     (Innenabstand des Kopfs oben 13 -> 11,5px). */
+  .kal-head { padding-top: 11.5px !important; }
+  .kal-head h2 > span:first-child { font-size: 21.5px; }
+  .kal-head .bs-btn { height: 24px !important; font-size: 13px !important; padding: 0 10px !important;
+                      margin-left: 24px !important; }
+  .kal-head #kal-hilfe-btn { width: 24px; height: 24px; font-size: 17px; margin-left: 14px; }
+  .kal-head .sp-btn { height: 28px !important; font-size: 15px !important; padding: 0 14px !important;
+                      gap: 6px !important; }
+  .kal-head .sp-btn svg { width: 20px; height: 11px; }
+  /* Logo exakt in der Bildschirmmitte, in Haupt- und Kalenderansicht. Es haengt
+     nicht mehr im Zeilenfluss, sondern wird an der halben Fensterbreite
+     ausgerichtet - unabhaengig von Schrift und Knopfbreiten. Die Sperrung
+     haengt hinter dem letzten Buchstaben eine halbe Luecke an (0,21em), die
+     wird ausgeglichen, damit die Buchstaben selbst mittig stehen. Hoehe und
+     Schriftgroesse bleiben unveraendert. In schmalen Fenstern bleibt das Logo
+     rechts neben dem Fragezeichen stehen, statt in die Knoepfe zu laufen. */
+  #main-h1, .kal-head h2 { position: relative; }
+  #main-h1 .ohz-logo, .kal-head .ohz-logo { position: absolute; top: auto; bottom: -1px;
+                                            margin-left: 0 !important;
+                                            transform: translateX(calc(-50% + 0.21em)); }
+  #main-h1 .ohz-logo { left: calc(50vw - 16px); left: max(calc(50vw - 16px), 604px); }
+  .kal-head .ohz-logo { left: calc(50vw - 20px); left: max(calc(50vw - 20px), 525px); }
+  /* Uebrige Kopfzeilen der Hauptansicht rund 15% groesser: Suchfeld, Datumszeile,
+     Aktuell/Saison, Sortierung, Sparten- und Namensfilter. */
+  #search { height: 34px; font-size: 18px; padding: 0 15px; width: 34ch; }
+  #search::placeholder { font-size: 15px; }
+  /* Das Loeschen-Zeichen neben dem Suchfeld als grosses X, gleich wie das X
+     neben den Datumsfeldern */
+  #search-clear .sc-mob { display: none; }
+  #search-clear .sc-desk { display: block; background: none; border: none; color: #f0a050;
+                           cursor: pointer; font-size: 18px; font-weight: 500; padding: 0; }
+  #search-clear { line-height: 0 !important; }
+  #such-box { gap: 6px !important; }
+  #such-lupe svg { width: 20px; height: 20px; }
+  #kopf-zeile2 { min-height: 30px !important; }
+  #filters #reset { font-size: 18px; }
+  #filters input[type=date] { height: 30px !important; font-size: 16px !important; padding: 0 11px !important; }
+  #filters > span:not(#count) { font-size: 16px !important; }
+  #filters #count { font-size: 15px; }
+  #aktuell-btn, #sz-btn { height: 29px !important; font-size: 16px !important; padding: 0 9px !important; }
+  .qbar .qtag { font-size: 16px; padding: 2px 7px; }
+  #lsort-wrap .qtag { font-size: 14px !important; padding: 1px 7px !important; }
+  #lsort-wrap > span:first-child { font-size: 20px !important; }
+  #sz-dropdown .sz-opt { font-size: 16px; }
+  /* Der Kopf ist dadurch 13px hoeher; Liste und Panel bekommen unten denselben
+     Betrag dazu, damit ihr Ende wie bisher erreichbar bleibt. */
+  #main #detail { padding-bottom: 134px; }
+  #main #list { padding-bottom: max(234px, calc(214px + env(safe-area-inset-bottom))); }
 }
 /* Gleichmaessige Abstaende in der Titelzeile auf schmalen Geraeten:
    SPiELPLAN - OHZ - Menue ... D - N - KALENDER */
@@ -214,7 +281,7 @@ input[type=date] { background: #181818; border: 1px solid #333; color: #e8e8e8; 
 #reset { background: none; border: none; color: #f0a050; cursor: pointer; font-size: 16px; font-weight: 500; padding: 0; display: none; }
 #count { margin-left: auto; color: #ccc; font-size: 13px; }
 #main { display: flex; overflow: hidden; flex: 1; min-height: 0; }
-#list { flex: 1; overflow-y: scroll; overflow-x: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; height: 100%; padding-top: 6px; padding-bottom: max(220px, calc(200px + env(safe-area-inset-bottom))); box-sizing: border-box; background: #131313; }
+#list { flex: 1; overflow-y: scroll; overflow-x: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; height: 100%; padding-top: 10px; padding-bottom: max(220px, calc(200px + env(safe-area-inset-bottom))); box-sizing: border-box; background: #131313; }
 .row { padding: 12px 20px; cursor: pointer; border-bottom: 1px solid #262626; display: flex; align-items: baseline; gap: 8px; white-space: nowrap; min-width: max-content; -webkit-tap-highlight-color: transparent; }
 .row:active { background: #161616; }
 .row.active { background: #2a2a2a; }
@@ -443,7 +510,7 @@ input[type=date]::-webkit-calendar-picker-indicator { filter: invert(0.8) bright
 #kal-tip { display: none; position: fixed; z-index: 2350; max-width: 76vw;
            background: #1a1a1a; border: 1px solid #3a3a3a; border-radius: 5px;
            box-shadow: 0 6px 18px rgba(0,0,0,0.6); padding: 9px 12px;
-           font-size: 13px; line-height: 1.5; color: #e8e8e8; white-space: pre-line;
+           font-size: 15px; line-height: 1.5; color: #e8e8e8; white-space: pre-line;
            -webkit-user-select: none; user-select: none; pointer-events: none; }
 /* Rechteck beim Aufziehen eines Zeitraums in der Jahresansicht */
 #kal-dauer { display: none; position: fixed; z-index: 2260; pointer-events: none;
@@ -539,7 +606,7 @@ input[type=date]::-webkit-calendar-picker-indicator { filter: invert(0.8) bright
     </span>
     <span id="such-box" style="display:none;align-items:center;gap:3px;">
       <input type="text" id="search" placeholder="Suche nach Produktion, Person, Funktion ...">
-      <span id="search-clear" onclick="clearSearch()" style="cursor:pointer;color:#f0a050;font-size:18px;line-height:1;flex-shrink:0;">&#x2715;</span>
+      <span id="search-clear" onclick="clearSearch()" style="cursor:pointer;color:#f0a050;font-size:18px;line-height:1;flex-shrink:0;"><span class="sc-mob">&#x2715;</span><button type="button" class="sc-desk">X</button></span>
     </span>
     <span id="tb-mob"><span>T</span><span>O</span><span>N</span><span>&amp;</span><span>B</span><span>I</span><span>L</span><span>D</span></span><a href="https://www.opernhaus.ch" target="_blank" rel="noopener noreferrer" id="ohz-logo-mob" class="ohz-logo-mob"><span class="ohz-txt-mob">OPERNHAUS Z&Uuml;RICH</span><span class="bild-ton-mob">TON &amp; BILD</span></a>
   </div>
@@ -2726,17 +2793,37 @@ function openKalender() {
   // Terminstriche: im Dreimonats-Zoom deutlich breiter fuer Uebersicht und Tooltip-Trefferflaeche.
   // STRICH_PAD = transparenter Rand je Seite (vergroessert nur die Trefferflaeche),
   // STRICH_OFF = Versatz nach links, damit der sichtbare Kern exakt auf der Tagesmitte sitzt.
-  var STRICH_W = ZOOM ? 5 : 2;
+  // Im Zoom auf dem Handy doppelt so breit (10px), weiterhin mittig im Tag
+  var STRICH_W = ZOOM ? (deskKal ? 5 : 10) : 2;
   // Im Zoom auf dem Handy die unsichtbare Trefferflaeche verbreitern -
   // ein Finger trifft 11px kaum zuverlaessig
   var STRICH_PAD = (ZOOM && !deskKal) ? 10 : 3;
   var STRICH_OFF = (STRICH_PAD + STRICH_W / 2).toFixed(2);
+  // Im Zoom auf dem Handy sind die Zeilen hoeher (30 statt 24px) und die Striche
+  // entsprechend laenger - zusammen mit dem breiteren Strich und der breiteren
+  // Trefferflaeche (30px) trifft der Finger sie beim Antippen und Halten besser.
+  // ZD = Versatz, um den alles Uebrige in der Zeile nach unten rueckt.
+  var ZH = (ZOOM && !deskKal) ? 30 : 24;
+  var ZD = (ZH - 24) / 2;
+  var STRICH_KURZ_H = Math.round((ZH - 6) / 2);
+  // Rauten (Einzeltermine): im Zoom auf dem Handy groesser (16 statt 11px Kante)
+  // und mit 3px unsichtbarem Rand als zusaetzliche Trefferflaeche; mittig in
+  // der Zeile. Das Datum daneben rueckt entsprechend nach rechts.
+  var RAUTE_GROSS = ZOOM && !deskKal;
+  var RAUTE_CSS = RAUTE_GROSS
+    ? "top:" + ((ZH - 22) / 2) + "px;width:16px;height:16px;box-sizing:content-box;border:3px solid transparent;background-clip:content-box;"
+    : "top:" + (7 + ZD) + "px;width:11px;height:11px;";
+  var RAUTE_TXT = RAUTE_GROSS ? 14 : 9;
   // Im Zoom oeffnet ein Klick auf den Strich das Popup - der Zeiger zeigt das an
   var STRICH_CUR = "";   // Zeiger kommt ueber die Klasse kal-cur-frage
   var STRICH_KL = (ZOOM && deskKal) ? "class='kal-cur-frage' " : "";
-  var STRICH_CSS = STRICH_CUR + "position:absolute;top:3px;width:" + STRICH_W + "px;height:18px;border-radius:1px;box-sizing:content-box;"
-                 + "border-left:" + STRICH_PAD + "px solid transparent;border-right:" + STRICH_PAD + "px solid transparent;"
-                 + "background-clip:content-box;background-color:";
+  function strichCss(oben, hoch) {
+    return STRICH_CUR + "position:absolute;top:" + oben + "px;width:" + STRICH_W + "px;height:" + hoch + "px;border-radius:1px;box-sizing:content-box;"
+         + "border-left:" + STRICH_PAD + "px solid transparent;border-right:" + STRICH_PAD + "px solid transparent;"
+         + "background-clip:content-box;background-color:";
+  }
+  var STRICH_CSS = strichCss(3, ZH - 6);
+  var STRICH_CSS_KURZ = strichCss(Math.floor((ZH - STRICH_KURZ_H) / 2), STRICH_KURZ_H);
   // Geclipptes Segment: gibt {l, w} in % zurueck, auf 0..100 begrenzt; oder null wenn ganz ausserhalb
   function clipSeg(a, b) {
     var l = xpct(a) + HALFDAY, r = xpct(b) + HALFDAY;
@@ -2968,7 +3055,7 @@ function openKalender() {
     if (zeigA === false) dStart = "";
     if (zeigE === false) dEnd = "";
     // Im Zoom oeffnet auch ein Klick auf den Balken das Popup
-    var html = "<div " + (STRICH_KL || "") + "style='position:absolute;top:5px;height:14px;border-radius:3px;opacity:1;left:" + seg.l.toFixed(2) + "%;width:" + seg.w.toFixed(2) + "%;background:" + col + "' title='" + titel + "\n" + dateLabel + "'></div>";
+    var html = "<div " + (STRICH_KL || "") + "style='position:absolute;top:" + (5 + ZD) + "px;height:14px;border-radius:3px;opacity:1;left:" + seg.l.toFixed(2) + "%;width:" + seg.w.toFixed(2) + "%;background:" + col + "' title='" + titel + "\n" + dateLabel + "'></div>";
     // Datum am Balkenanfang/-ende, nur wenn der Balken breit genug ist
     var minW = ZOOM ? 3.6 : 7.5;      // Platz fuer beide Angaben im Balken
     var minW1 = ZOOM ? 1.9 : 4.4;     // Platz fuer eine Angabe im Balken
@@ -2976,16 +3063,16 @@ function openKalender() {
       var fs = ZOOM ? "11px" : "10px";
       if (seg.w < minW && seg.w >= minW1 && dStart) {
         // Mittelbreit: Anfangsdatum passt in den Balken, Ende bleibt aussen
-        if (!seg.clipL) html += "<div style='position:absolute;top:7px;left:" + seg.l.toFixed(2) + "%;margin-left:3px;font-size:" + fs + ";color:#0d1a1a;font-weight:700;line-height:10px;pointer-events:none;white-space:nowrap'>" + dStart + "</div>";
-        if (dEnd && !seg.clipR) html += "<div style='position:absolute;top:7px;left:" + (seg.l + seg.w).toFixed(2) + "%;margin-left:4px;font-size:" + fs + ";color:#c4c4c4;line-height:10px;pointer-events:none;white-space:nowrap'>" + dEnd + "</div>";
+        if (!seg.clipL) html += "<div style='position:absolute;top:" + (7 + ZD) + "px;left:" + seg.l.toFixed(2) + "%;margin-left:3px;font-size:" + fs + ";color:#0d1a1a;font-weight:700;line-height:10px;pointer-events:none;white-space:nowrap'>" + dStart + "</div>";
+        if (dEnd && !seg.clipR) html += "<div style='position:absolute;top:" + (7 + ZD) + "px;left:" + (seg.l + seg.w).toFixed(2) + "%;margin-left:4px;font-size:" + fs + ";color:#c4c4c4;line-height:10px;pointer-events:none;white-space:nowrap'>" + dEnd + "</div>";
       } else if (seg.w >= minW) {
         // Breiter Balken: Datum dunkel im Balken
-        if (dStart && !seg.clipL) html += "<div style='position:absolute;top:7px;left:" + seg.l.toFixed(2) + "%;margin-left:3px;font-size:" + fs + ";color:#0d1a1a;font-weight:700;line-height:10px;pointer-events:none;white-space:nowrap'>" + dStart + "</div>";
-        if (dEnd && !seg.clipR) html += "<div style='position:absolute;top:7px;left:" + (seg.l + seg.w).toFixed(2) + "%;transform:translateX(-100%);margin-left:-3px;font-size:" + fs + ";color:#0d1a1a;font-weight:700;line-height:10px;pointer-events:none;white-space:nowrap'>" + dEnd + "</div>";
+        if (dStart && !seg.clipL) html += "<div style='position:absolute;top:" + (7 + ZD) + "px;left:" + seg.l.toFixed(2) + "%;margin-left:3px;font-size:" + fs + ";color:#0d1a1a;font-weight:700;line-height:10px;pointer-events:none;white-space:nowrap'>" + dStart + "</div>";
+        if (dEnd && !seg.clipR) html += "<div style='position:absolute;top:" + (7 + ZD) + "px;left:" + (seg.l + seg.w).toFixed(2) + "%;transform:translateX(-100%);margin-left:-3px;font-size:" + fs + ";color:#0d1a1a;font-weight:700;line-height:10px;pointer-events:none;white-space:nowrap'>" + dEnd + "</div>";
       } else {
         // Schmaler Balken: Datum hellgrau ausserhalb, links davor und rechts danach
-        if (dStart && !seg.clipL) html += "<div style='position:absolute;top:7px;left:" + seg.l.toFixed(2) + "%;transform:translateX(-100%);margin-left:-4px;font-size:" + fs + ";color:#c4c4c4;line-height:10px;pointer-events:none;white-space:nowrap'>" + dStart + "</div>";
-        if (dEnd && !seg.clipR) html += "<div style='position:absolute;top:7px;left:" + (seg.l + seg.w).toFixed(2) + "%;margin-left:4px;font-size:" + fs + ";color:#c4c4c4;line-height:10px;pointer-events:none;white-space:nowrap'>" + dEnd + "</div>";
+        if (dStart && !seg.clipL) html += "<div style='position:absolute;top:" + (7 + ZD) + "px;left:" + seg.l.toFixed(2) + "%;transform:translateX(-100%);margin-left:-4px;font-size:" + fs + ";color:#c4c4c4;line-height:10px;pointer-events:none;white-space:nowrap'>" + dStart + "</div>";
+        if (dEnd && !seg.clipR) html += "<div style='position:absolute;top:" + (7 + ZD) + "px;left:" + (seg.l + seg.w).toFixed(2) + "%;margin-left:4px;font-size:" + fs + ";color:#c4c4c4;line-height:10px;pointer-events:none;white-space:nowrap'>" + dEnd + "</div>";
       }
     }
     return html;
@@ -3053,9 +3140,7 @@ function openKalender() {
           var hin = (!e.gelb || best) ? ""
                   : (pplanProv(dt) ? "\nlt. Monatsplan provisorisch" : "\nnicht bestätigt");
           // Kurzer Strich bei Probenbeginn oder reiner Tonprobe
-          var css = e.nurKurz
-                  ? STRICH_CSS.replace("height:18px", "height:9px").replace("top:3px", "top:7px")
-                  : STRICH_CSS;
+          var css = e.nurKurz ? STRICH_CSS_KURZ : STRICH_CSS;
           // Querstrich kennzeichnet KHP, OHP und GP
           var quer = e.hp
                    ? "<span style='position:absolute;left:0;right:0;top:50%;height:1px;"
@@ -3082,7 +3167,7 @@ function openKalender() {
           var sc = clipSeg(sgm[0], sgm[1]);
           if (sc) bar += segBar(sc, col, p.titel, fmt(sgm[0]) + " – " + fmt(sgm[1]) + premZeile(p) + tonZeile(p), fmtKurz(sgm[0]), fmtKurz(sgm[1]), flP[si].a, flP[si].e);
         });
-        if (inWindow(p.prem) && (p.typ === "Premiere" || p.typ === "WA")) bar += "<div style='position:absolute;top:2px;width:2px;height:20px;background:#fff;left:calc(" + (xpct(p.prem) + HALFDAY).toFixed(3) + "% - 1px)' title='Premiere " + fmt(p.prem) + "'></div>";
+        if (inWindow(p.prem) && (p.typ === "Premiere" || p.typ === "WA")) bar += "<div style='position:absolute;top:2px;width:2px;height:" + (ZH - 4) + "px;background:#fff;left:calc(" + (xpct(p.prem) + HALFDAY).toFixed(3) + "% - 1px)' title='Premiere " + fmt(p.prem) + "'></div>";
       } else if (!einzelTermin && p.vorstellungen && p.vorstellungen.length > 1) {
         // mehrere Termine ohne Produktionszeitraum: je Block ein Balken
         var segsK = prodSegmente(p), flK = labelFlags(segsK);
@@ -3090,7 +3175,7 @@ function openKalender() {
           var scK = clipSeg(sgm[0], sgm[1]);
           if (scK) bar += segBar(scK, col, p.titel, fmt(sgm[0]) + " – " + fmt(sgm[1]) + tonZeile(p), fmtKurz(sgm[0]), fmtKurz(sgm[1]), flK[si].a, flK[si].e);
         });
-        if (inWindow(p.prem) && (p.typ === "Premiere" || p.typ === "WA")) bar += "<div style='position:absolute;top:2px;width:2px;height:20px;background:#fff;left:calc(" + (xpct(p.prem) + HALFDAY).toFixed(3) + "% - 1px)' title='" + (p.typ === "WA" ? "WA " : "Premiere ") + fmt(p.prem) + "'></div>";
+        if (inWindow(p.prem) && (p.typ === "Premiere" || p.typ === "WA")) bar += "<div style='position:absolute;top:2px;width:2px;height:" + (ZH - 4) + "px;background:#fff;left:calc(" + (xpct(p.prem) + HALFDAY).toFixed(3) + "% - 1px)' title='" + (p.typ === "WA" ? "WA " : "Premiere ") + fmt(p.prem) + "'></div>";
       } else {
         var termine = (p.vorstellungen && p.vorstellungen.length) ? p.vorstellungen.slice().sort() : (p.prem ? [p.prem] : []);
         var fsD = ZOOM ? "11px" : "10px";
@@ -3098,14 +3183,14 @@ function openKalender() {
         termine.forEach(function(dt, di){
           if (!inWindow(dt)) return;
           var dx = xpct(dt) + HALFDAY;
-          bar += "<div style='position:absolute;top:7px;width:11px;height:11px;transform:translateX(-50%) rotate(45deg);opacity:0.9;left:" + dx.toFixed(3) + "%;background:" + col + "' title='" + p.titel + "\n" + fmt(dt) + (dauerKurz(p.dauer) ? "  " + dauerKurz(p.dauer) : "") + tonZeile(p) + "'></div>";
+          bar += "<div style='position:absolute;" + RAUTE_CSS + "transform:translateX(-50%) rotate(45deg);opacity:0.9;left:" + dx.toFixed(3) + "%;background:" + col + "' title='" + p.titel + "\n" + fmt(dt) + (dauerKurz(p.dauer) ? "  " + dauerKurz(p.dauer) : "") + tonZeile(p) + "'></div>";
           // Datum nur, wenn zur naechsten Raute genug Platz ist
           var platz = true;
           if (di + 1 < termine.length) {
             var l = (new Date(termine[di+1]) - new Date(dt)) / 86400000 / TOTAL * 100;
             platz = l >= (ZOOM ? 0.8 : 6.0);
           }
-          if (platz) bar += "<div style='position:absolute;top:7px;left:" + dx.toFixed(3) + "%;margin-left:9px;font-size:" + fsD + ";color:#c4c4c4;line-height:10px;pointer-events:none;white-space:nowrap'>" + fmtKurz(dt) + "</div>";
+          if (platz) bar += "<div style='position:absolute;top:" + (7 + ZD) + "px;left:" + dx.toFixed(3) + "%;margin-left:" + RAUTE_TXT + "px;font-size:" + fsD + ";color:#c4c4c4;line-height:10px;pointer-events:none;white-space:nowrap'>" + fmtKurz(dt) + "</div>";
         });
       }
       var istPrem = (p.typ === "Premiere" && (p.kat === "Oper" || p.kat === "Ballett"));
@@ -3113,7 +3198,7 @@ function openKalender() {
       var titelClick = (p.pidx != null && p.pidx > -1) ? " onclick='event.stopPropagation();kalOpenDetail(" + p.pidx + ")'" : "";
       var titelCursor = (p.pidx != null && p.pidx > -1) ? "cursor:pointer;" : "";
       var zoomCur = (window.kalZoom || (window.kalScale || 1) > kalBasisScale() + 0.01) ? "zoom-out" : "zoom-in";
-      return "<div class='kal-row" + (window.kalFokusZeile && window.kalFokusZeile.indexOf(p.titel) === 0 ? " kal-fokus" : "") + "' style='display:flex;align-items:center;height:24px'><div class='kal-titel" + (deskKal && p.pidx != null && p.pidx > -1 ? " kal-cur-hand" : "") + "'" + titelClick + " style='width:" + labelW() + "px;box-sizing:border-box;flex-shrink:0;height:24px;line-height:24px;" + (deskKal ? "padding-right:8px;text-align:right;" : "padding-left:4px;padding-right:4px;text-align:left;") + "font-size:13px;font-weight:500;color:" + ((evExtern(p) || /gastspiel/i.test(p.titel)) ? "#8a8a8a" : "#ffffff") + ";" + titelCursor + premStyle + "white-space:nowrap;overflow:hidden;" + (deskKal ? "text-overflow:ellipsis;" : "") + "position:sticky;left:0;z-index:2;background:#1a1a1a' title='" + p.titel + (istPrem ? " (Premiere)" : "") + premZeile(p) + tonZeile(p) + "'>" + kalShort(p.titel)
+      return "<div class='kal-row" + (window.kalFokusZeile && window.kalFokusZeile.indexOf(p.titel) === 0 ? " kal-fokus" : "") + "' style='display:flex;align-items:center;height:" + ZH + "px'><div class='kal-titel" + (deskKal && p.pidx != null && p.pidx > -1 ? " kal-cur-hand" : "") + "'" + titelClick + " style='width:" + labelW() + "px;box-sizing:border-box;flex-shrink:0;height:" + ZH + "px;line-height:" + ZH + "px;" + (deskKal ? "padding-right:8px;text-align:right;" : "padding-left:4px;padding-right:4px;text-align:left;") + "font-size:13px;font-weight:500;color:" + ((evExtern(p) || /gastspiel/i.test(p.titel)) ? "#8a8a8a" : "#ffffff") + ";" + titelCursor + premStyle + "white-space:nowrap;overflow:hidden;" + (deskKal ? "text-overflow:ellipsis;" : "") + "position:sticky;left:0;z-index:2;background:#1a1a1a' title='" + p.titel + (istPrem ? " (Premiere)" : "") + premZeile(p) + tonZeile(p) + "'>" + kalShort(p.titel)
         + (deskKal && p.pidx != null && p.pidx > -1
            ? "<span class='kal-cur-frage' onclick=\"event.stopPropagation();kalInfoPop(event," + p.pidx + ")\" "
              + "title='Kurzinfo' style='position:absolute;right:0;top:0;bottom:0;width:50%;"
@@ -3155,9 +3240,9 @@ function openKalender() {
 
   function kalChip(kat, label, col) {
     var on = window.kalKats[kat];
-    return "<span onclick=\"toggleKalKat('" + kat + "')\" style='display:inline-flex;align-items:center;gap:4px;cursor:pointer;padding:2px 6px;border-radius:2px;border:1px solid " + (on ? col : "#555") + ";opacity:" + (on ? "1" : "0.55") + "'><i style='width:10px;height:10px;border-radius:2px;background:" + col + "'></i>" + label + "</span>";
+    return "<span onclick=\"toggleKalKat('" + kat + "')\" style='display:inline-flex;align-items:center;gap:4px;cursor:pointer;padding:" + (deskKal ? "2px 7px" : "2px 6px") + ";border-radius:2px;border:1px solid " + (on ? col : "#555") + ";opacity:" + (on ? "1" : "0.55") + "'><i style='width:" + (deskKal ? 12 : 10) + "px;height:" + (deskKal ? 12 : 10) + "px;border-radius:2px;background:" + col + "'></i>" + label + "</span>";
   }
-  var legend = "<div style='display:flex;gap:6px;flex-wrap:nowrap;align-items:flex-end;margin-top:13px;font-size:12px;padding-right:" + (deskKal ? 56 : 0) + "px'>"
+  var legend = "<div style='display:flex;gap:6px;flex-wrap:nowrap;align-items:flex-end;margin-top:" + (deskKal ? 19 : 13) + "px;font-size:" + (deskKal ? 14 : 12) + "px;padding-right:" + (deskKal ? 56 : 0) + "px'>"
     + kalChip("Oper","Oper","#63f0f0")
     + kalChip("Ballett","Bal","#f0a050")
     + kalChip("Konzert","Kzt","#a06cd5")
@@ -3186,7 +3271,7 @@ function openKalender() {
   function tonChip(name) {
     var on = !!(window.kalTone && window.kalTone[name]);
     var lbl = tonVorname[name] || name.slice(0,2);
-    return "<span onclick=\"toggleKalTon('" + name + "')\" title='" + name + "' style='display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:2px 6px;min-width:32px;box-sizing:border-box;border-radius:2px;border:1px solid " + (on ? "#63f0f0" : "#555") + ";color:" + (on ? "#63f0f0" : "#fff") + ";opacity:" + (on ? "1" : "0.85") + "'>" + lbl + "</span>";
+    return "<span onclick=\"toggleKalTon('" + name + "')\" title='" + name + "' style='display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:" + (deskKal ? "2px 7px" : "2px 6px") + ";min-width:" + (deskKal ? 37 : 32) + "px;box-sizing:border-box;border-radius:2px;border:1px solid " + (on ? "#63f0f0" : "#555") + ";color:" + (on ? "#63f0f0" : "#fff") + ";opacity:" + (on ? "1" : "0.85") + "'>" + lbl + "</span>";
   }
   // Counter zaehlt nur die eigentlichen Produktionen. Der Zusatzblock kztSf
   // (Konzerte/Events/SF, der bei Namensfilter zusaetzlich eingeblendet wird)
@@ -3203,12 +3288,12 @@ function openKalender() {
     aktivN.forEach(function(n){ summe += terminAnzahl(n, prods); });
     kalCountTxt = kalCount + "/" + summe + "x";
   })();
-  var tonRow = "<div style='display:flex;gap:6px;flex-wrap:nowrap;margin-top:12px;font-size:14px;align-items:center'>"
+  var tonRow = "<div style='display:flex;gap:6px;flex-wrap:nowrap;margin-top:12px;font-size:" + (deskKal ? 16 : 14) + "px;align-items:center'>"
     + allTon.map(tonChip).join("")
     + (ZOOM
         ? "<span class='kal-zoomhint' style='margin-left:calc(32% - 24px);flex-shrink:0'><button onclick='kalZoomTo(null)' style='background:#1c1c1c;border:1px solid #63f0f0;border-radius:3px;color:#ffffff;font-size:12px;cursor:pointer;padding:2px 10px;vertical-align:middle;-webkit-tap-highlight-color:transparent'>&#8594; Jahresansicht</button></span>"
         : "")
-    + "<span style='margin-left:auto;padding-left:12px;padding-right:max(0px, env(safe-area-inset-right));font-size:14px;color:#999;white-space:nowrap;flex-shrink:0'>" + kalCountTxt + "</span>"
+    + "<span style='margin-left:auto;padding-left:12px;padding-right:max(0px, env(safe-area-inset-right));font-size:" + (deskKal ? 16 : 14) + "px;color:#999;white-space:nowrap;flex-shrink:0'>" + kalCountTxt + "</span>"
     + "</div>";
 
   function ansichtBtn(modus, label) {
@@ -3224,7 +3309,7 @@ function openKalender() {
     // Globus als SVG statt Emoji: sieht in allen Browsern gleich aus und
     // laesst sich einfaerben.
     var farbe = "#e8e8e8";
-    var bus = "<svg width='17' height='17' viewBox='0 0 17 17' fill='none' stroke='" + farbe
+    var bus = "<svg width='" + (deskKal ? 20 : 17) + "' height='" + (deskKal ? 20 : 17) + "' viewBox='0 0 17 17' fill='none' stroke='" + farbe
             + "' stroke-width='1.25' stroke-linecap='round' style='display:block'>"
             + "<circle cx='8.5' cy='8.5' r='6.6'/>"
             + "<ellipse cx='8.5' cy='8.5' rx='2.8' ry='6.6'/>"
@@ -3233,7 +3318,7 @@ function openKalender() {
     // Gleiche Aussenmasse wie die uebrigen Chips, damit die Unterkanten fluchten
     return "<span onclick=\"toggleKalExt()\" title='Auswärtige Produktionen ein-/ausblenden' "
       + "style='display:inline-flex;align-items:center;justify-content:center;cursor:pointer;"
-      + "padding:2px 6px;border-radius:2px;border:1px solid transparent;margin-left:-6px;"
+      + "padding:" + (deskKal ? "2px 7px" : "2px 6px") + ";border-radius:2px;border:1px solid transparent;margin-left:-6px;"
       + "opacity:" + (on ? "1" : "0.55") + "'>" + bus + "</span>";
   }
   function sortZeileInhalt() {
@@ -4067,7 +4152,10 @@ function kalToggleScale(ev) {
   }
   // Zwei Monate im Sichtbereich
   window.kalZoom = { bereich: true };
-  window.kalZoomTage = istDesktop ? 61 : 10;   // Desktop zwei Monate, Handy zehn Tage
+  // Handy: so viele Tage, dass ein Tag mindestens so breit ist wie die
+  // Trefferflaeche eines Strichs (30px), hoechstens neun.
+  var mobTage = Math.max(6, Math.min(9, Math.floor(((window.innerWidth || 390) - labelW()) / 30)));
+  window.kalZoomTage = istDesktop ? 61 : mobTage;   // Desktop zwei Monate
   window.kalAnsicht = "termine";             // im Zoom sind Einzeltermine hilfreicher
   window.kalScale = istDesktop ? (kalBasisScale() * 1.35) : 1;    // auf dem Handy ohne zusaetzlichen Zoom
   var klickY = ev ? ev.clientY : null;
@@ -4239,8 +4327,8 @@ filterAktuell();
       <p style="margin-top:0">Die <strong>WebApp</strong> besteht aus einer einzigen HTML-Datei (ca. 350kb inkl. JS und CSS) ohne externe Abh&auml;ngigkeiten (kein Datenaustausch mit externen Servern oder Diensten &ndash; ausgenommen Links in der Titelzeile und der passwortgesch&uuml;tzte Abruf der Kontaktdaten) und wird &uuml;ber GitHub gehostet (https://...). Sie l&auml;uft auf allen g&auml;ngigen Browsern unter MacOS, Windows, Android und iOS (bei Bedarf auch offline als lokale Html-Datei).</p>
       <p>Die Daten basieren auf den Spielplanunterlagen der technischen Direktion, des KBB sowie der Website des Opernhauses Z&uuml;rich. &Auml;nderungen w&auml;hrend laufender Spielzeit sind m&ouml;glicherweise nicht ber&uuml;cksichtigt, werden aber kontinuierlich aktualisiert.</p>
       <p>Diese WebApp ist als Hilfsmittel f&uuml;r den Produktionsalltag gedacht. F&uuml;r die Richtigkeit, Vollst&auml;ndigkeit und Aktualit&auml;t der Inhalte wird keine Gew&auml;hr &uuml;bernommen.</p>
-      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_051026_0910" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
-      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_051026_0910</p>
+      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_051026_1211" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
+      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_051026_1211</p>
       </div>
   </div>
 </div>
