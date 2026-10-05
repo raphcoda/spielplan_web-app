@@ -170,9 +170,14 @@ input[type=date] { background: #181818; border: 1px solid #333; color: #e8e8e8; 
      danach das Logo, ganz rechts der Kalender-Button. Das Logo steht im HTML
      vor D/N, wird per order dahinter einsortiert. */
   .dn-btn   { order: 0; }
-  #main-h1 .ohz-logo { order: 1; margin-left: calc(32% - 114px) !important; }
+  #main-h1 .ohz-logo { order: 1; margin-left: calc(32% - 132px) !important; }
   #kal-btn  { order: 2; margin-left: auto; }
-  #dbtn.dn-btn { margin-left: 12px !important; }
+  /* Drive und Notizen rechteckig und gleich gross wie der Menue-Knopf (28 x 20).
+     Abstand zwischen den drei Knoepfen je 12px - wie PROBENPLAN zu Menue.
+     Das Logo rueckt um die gewonnene Breite (18px) nach, bleibt also am Platz. */
+  #main-h1 .dn-btn { width: 28px !important; height: 20px !important; border-radius: 3px !important;
+                     margin-left: 12px !important; margin-right: 0 !important; }
+  #main-h1 #about-desk { margin-left: 17px; }
   .kal-pfeil { display: block !important; }
   /* Die beiden Wechsel-Buttons duerfen auf dem Desktop groesser sein */
   #kal-btn, .sp-btn { height: 24px !important; font-size: 12.5px !important;
@@ -4234,8 +4239,8 @@ filterAktuell();
       <p style="margin-top:0">Die <strong>WebApp</strong> besteht aus einer einzigen HTML-Datei (ca. 350kb inkl. JS und CSS) ohne externe Abh&auml;ngigkeiten (kein Datenaustausch mit externen Servern oder Diensten &ndash; ausgenommen Links in der Titelzeile und der passwortgesch&uuml;tzte Abruf der Kontaktdaten) und wird &uuml;ber GitHub gehostet (https://...). Sie l&auml;uft auf allen g&auml;ngigen Browsern unter MacOS, Windows, Android und iOS (bei Bedarf auch offline als lokale Html-Datei).</p>
       <p>Die Daten basieren auf den Spielplanunterlagen der technischen Direktion, des KBB sowie der Website des Opernhauses Z&uuml;rich. &Auml;nderungen w&auml;hrend laufender Spielzeit sind m&ouml;glicherweise nicht ber&uuml;cksichtigt, werden aber kontinuierlich aktualisiert.</p>
       <p>Diese WebApp ist als Hilfsmittel f&uuml;r den Produktionsalltag gedacht. F&uuml;r die Richtigkeit, Vollst&auml;ndigkeit und Aktualit&auml;t der Inhalte wird keine Gew&auml;hr &uuml;bernommen.</p>
-      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_041026_1747" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
-      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_041026_1747</p>
+      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_051026_0910" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
+      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_051026_0910</p>
       </div>
   </div>
 </div>
