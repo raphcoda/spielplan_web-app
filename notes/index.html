@@ -711,6 +711,63 @@
     font-size:14.5px;
     padding:40px 20px;
   }
+
+  /* ---- Dateiübertragung (seit v78): Datei-Anhang am Eintrag, Ablegefläche, Hinweis, Bildansicht ---- */
+  .note-file{
+    display:flex; align-items:center; gap:10px;
+    width:calc(100% + 24px); margin:0 -12px; padding:9px 12px;
+    background:var(--note-band); border:0; border-top:1px solid var(--divider);
+    color:var(--text); font:inherit; text-align:left; text-decoration:none;
+    cursor:pointer; -webkit-tap-highlight-color:transparent;
+  }
+  /* Titel eines Datei-Eintrags in Türkis → klar von normalen Notizen unterscheidbar */
+  .note-text.is-file{ color:var(--ka); font-weight:600; }
+  .nf-icon{
+    flex:0 0 auto; width:34px; height:34px; border-radius:8px;
+    border:1px solid var(--line); background:var(--surface-2); color:var(--ka);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .nf-icon svg{ width:18px; height:18px; display:block; }
+  .nf-body{ flex:1 1 auto; min-width:0; }
+  .nf-name{ display:block; font-size:15px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .nf-sub{ display:block; font-size:12.5px; color:var(--text-dim); margin-top:1px; }
+  .nf-go{ flex:0 0 auto; font-size:13px; font-weight:700; color:var(--ka); }
+  .note-file.loading{ opacity:.6; cursor:progress; }
+  .bm-full .note-file{ width:100%; margin:8px 0 0; border:1px solid var(--line); border-radius:8px; }
+  .drop-overlay{
+    position:fixed; inset:0; z-index:50; background:rgba(0,0,0,.74);
+    display:flex; align-items:center; justify-content:center; pointer-events:none; padding:24px;
+  }
+  .drop-overlay[hidden]{ display:none; }
+  /* Ablegefläche als grosser Kreis (seit v79) */
+  .drop-box{
+    width:min(340px, 80vmin); height:min(340px, 80vmin); border-radius:50%; padding:0 40px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;
+    border:2px dashed var(--ka); background:rgba(18,49,47,.6); color:var(--text);
+  }
+  .drop-box b{ display:block; font-size:34px; font-weight:800; letter-spacing:.01em; margin-bottom:12px; }
+  .drop-box span{ font-size:13.5px; line-height:1.45; color:var(--text-dim); }
+  .toast{
+    position:fixed; left:50%; bottom:calc(22px + env(safe-area-inset-bottom, 0px)); transform:translateX(-50%);
+    z-index:60; background:var(--surface-2); border:1px solid var(--line); color:var(--text);
+    font-size:14px; padding:10px 16px; border-radius:10px; box-shadow:var(--shadow);
+    max-width:calc(100% - 32px); text-align:center;
+  }
+  .toast.err{ border-color:var(--warn); color:var(--warn); }
+  .toast[hidden]{ display:none; }
+  /* Vollbild-Ansicht für Dateien (Bild, PDF am Desktop, Text, Audio, Video) */
+  .file-view{ position:fixed; inset:0; z-index:55; background:#000; display:flex; flex-direction:column; }
+  .file-view[hidden]{ display:none; }
+  .fv-stage{ flex:1 1 auto; min-height:0; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+  .fv-stage img, .fv-stage video{ width:100%; height:100%; object-fit:contain; display:block; }
+  .fv-stage iframe{ width:100%; height:100%; border:0; background:#fff; display:block; }
+  .fv-stage pre{ width:100%; height:100%; margin:0; padding:16px; overflow:auto; white-space:pre-wrap; word-wrap:break-word;
+    color:var(--text); font-size:14px; line-height:1.45; font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  .fv-stage audio{ width:min(520px, 90%); }
+  .fv-bar{ flex:0 0 auto; display:flex; align-items:center; gap:16px; font-size:14px; color:var(--text-dim);
+    padding:10px 16px calc(10px + env(safe-area-inset-bottom, 0px)); background:var(--surface); border-top:1px solid var(--line); }
+  .fv-bar span{ flex:1 1 auto; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .fv-bar a, .fv-bar button{ flex:0 0 auto; background:none; border:0; font:inherit; font-weight:700; color:var(--ka); text-decoration:none; cursor:pointer; padding:6px 2px; }
 </style>
 </head>
 <body>
@@ -738,6 +795,9 @@
 <main id="main"></main>
 <div class="overlay menu-overlay" id="menuOverlay" hidden></div>
 <div id="printArea" aria-hidden="true"></div>
+<div class="drop-overlay" id="dropOverlay" hidden><div class="drop-box"><b>Schmeiss rein</b><span>wird als neuer Eintrag<br>„Einwurf“ hochgeladen<br>max. 5 MB</span></div></div>
+<div class="file-view" id="fileView" hidden><div class="fv-stage" id="fvStage"></div><div class="fv-bar"><span id="fvName"></span><a id="fvSave" href="#">Speichern</a><button type="button" id="fvClose">Schliessen</button></div></div>
+<div class="toast" id="toast" role="status" hidden></div>
 
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js"></script>
@@ -811,7 +871,10 @@
       if(cur[id] !== lastSynced[id]){ updates[id] = JSON.parse(cur[id]); changed = true; }
     });
     Object.keys(lastSynced).forEach(function(id){
-      if(!(id in cur)){ updates[id] = null; changed = true; }
+      if(!(id in cur)){
+        updates[id] = null; changed = true;
+        try{ var gone = JSON.parse(lastSynced[id]); if(gone && gone.file && gone.file.id) removeStoredFile(gone.file.id); }catch(e){}
+      }
     });
     lastSynced = cur;
     if(!changed || !fbEnabled) return;
@@ -858,6 +921,230 @@
       renderList();
     });
   }
+
+
+  // ---- Dateiübertragung (seit v78) ----
+  // Datei per Drag & Drop (Desktop) → Inhalt base64 unter sharedFiles/<fileId>, dazu ein neuer
+  // Eintrag "Einwurf" mit note.file = {id,name,type,size}. Der Inhalt wird erst beim
+  // Antippen geladen (liegt bewusst NICHT unter sharedNotes, sonst lädt jedes Gerät alles mit).
+  var FILE_MAX = 5 * 1024 * 1024;
+  var FILE_PATH = "sharedFiles";
+  var FILE_NOTE_TEXT = "Einwurf";
+  var localFiles = {};   // fileId -> Datensatz, nur wenn Firebase nicht verfügbar ist (z. B. Vorschau)
+  var fileUrls = {};     // fileId -> blob-URL (bereits geladen)
+  var fileBlobs = {};    // fileId -> Blob (für die Textansicht)
+  var fileLoading = {};  // fileId -> true während des Ladens
+  var ICON_FILE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M14 3v5h5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>';
+  var ICON_IMG = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="9" cy="10" r="1.6" fill="currentColor"/><path d="M4.5 17l5-4.5 3.5 3 2.5-2 4 3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/></svg>';
+
+  function fmtSize(b){
+    if(b < 1024) return b + " B";
+    if(b < 1024 * 1024) return Math.round(b / 1024) + " KB";
+    return (b / 1024 / 1024).toFixed(1).replace(".", ",") + " MB";
+  }
+  // PDF lässt sich nur am Desktop zuverlässig eingebettet anzeigen (iPhone zeigt eingebettet nur
+  // Seite 1, Android gar nichts) → am Handy öffnet der PDF-Betrachter des Geräts
+  var canEmbedPdf = (navigator.pdfViewerEnabled === true) && !!(window.matchMedia && window.matchMedia("(hover:hover) and (pointer:fine)").matches);
+  // Welche Dateien die App selbst im Vollbild zeigen kann: "img" | "video" | "audio" | "text" | "pdf" | ""
+  function viewKind(f){
+    var t = String(f.type || "").toLowerCase(), nm = String(f.name || "").toLowerCase();
+    if(/^image\/(png|jpe?g|gif|webp|bmp|avif|svg\+xml)$/.test(t)) return "img";
+    if(/^video\/(mp4|webm|quicktime)$/.test(t)) return "video";
+    if(/^audio\//.test(t)) return "audio";
+    if(t === "application/pdf" || /\.pdf$/.test(nm)) return canEmbedPdf ? "pdf" : "";
+    if(/^text\/(plain|csv|markdown|xml)$/.test(t) || t === "application/json" || /\.(txt|csv|md|log|json|xml)$/.test(nm)) return "text";
+    return "";
+  }
+
+  var toastEl = document.getElementById("toast"), toastTimer = null;
+  function toast(msg, isErr, ms){
+    if(!toastEl) return;
+    clearTimeout(toastTimer);
+    toastEl.textContent = msg;
+    toastEl.classList.toggle("err", !!isErr);
+    toastEl.hidden = false;
+    if(ms !== 0) toastTimer = setTimeout(function(){ toastEl.hidden = true; }, ms || (isErr ? 6000 : 2600));
+  }
+
+  function fileChipHtml(n){
+    var f = n.file;
+    if(!f) return "";
+    var url = fileUrls[f.id], kind = viewKind(f), img = (kind === "img");
+    var inner =
+      '<span class="nf-icon">' + (img ? ICON_IMG : ICON_FILE) + '</span>' +
+      '<span class="nf-body"><span class="nf-name">' + esc(f.name) + '</span>' +
+      '<span class="nf-sub">' + esc(fmtSize(f.size || 0)) + (fileLoading[f.id] ? ' · lädt …' : '') + '</span></span>' +
+      '<span class="nf-go">' + (kind ? 'Ansehen' : (url ? 'Öffnen' : 'Laden')) + '</span>';
+    // Bereits geladene Nicht-Bild-Datei: echter Link → öffnet/speichert auch dort, wo der Browser
+    // ein automatisches Öffnen nach dem Laden unterdrückt (zweites Antippen)
+    if(url && !kind){
+      return '<a class="note-file" href="' + url + '" download="' + esc(f.name) + '" title="' + esc(f.name) + '">' + inner + '</a>';
+    }
+    return '<button type="button" class="note-file' + (fileLoading[f.id] ? ' loading' : '') + '" data-file-open="' + n.id + '" title="' + esc(f.name) + '">' + inner + '</button>';
+  }
+
+  function b64ToBlob(b64, type){
+    var bin = atob(b64), len = bin.length, u8 = new Uint8Array(len);
+    for(var i = 0; i < len; i++) u8[i] = bin.charCodeAt(i);
+    return new Blob([u8], { type: type || "application/octet-stream" });
+  }
+  function fetchFileRecord(fid){
+    if(localFiles[fid]) return Promise.resolve(localFiles[fid]);
+    if(fbEnabled && db) return db.ref(FILE_PATH + "/" + fid).once("value").then(function(snap){ return snap.val(); });
+    return Promise.resolve(null);
+  }
+  var fileView = document.getElementById("fileView"), fvStage = document.getElementById("fvStage");
+  function closeFileView(){
+    if(!fileView || fileView.hidden) return;
+    fileView.hidden = true;
+    fvStage.innerHTML = "";   // stoppt auch Audio/Video
+  }
+  function showFile(f){
+    var url = fileUrls[f.id];
+    if(!url) return;
+    var kind = viewKind(f);
+    if(kind){
+      // In der App im Vollbild (ganzer Bildschirm des jeweiligen Geräts, Inhalt eingepasst)
+      fvStage.innerHTML = "";
+      var el;
+      if(kind === "img"){ el = document.createElement("img"); el.alt = f.name; el.src = url; }
+      else if(kind === "video"){ el = document.createElement("video"); el.controls = true; el.setAttribute("playsinline", ""); el.src = url; }
+      else if(kind === "audio"){ el = document.createElement("audio"); el.controls = true; el.src = url; }
+      else if(kind === "pdf"){ el = document.createElement("iframe"); el.title = f.name; el.src = url; }
+      else {
+        el = document.createElement("pre"); el.textContent = "lädt …";
+        var bl = fileBlobs[f.id];
+        if(bl){
+          var fr = new FileReader();
+          fr.onload = function(){ el.textContent = String(fr.result || ""); };
+          fr.readAsText(bl);
+        }
+      }
+      fvStage.appendChild(el);
+      if(toastEl){ clearTimeout(toastTimer); toastEl.hidden = true; }
+      document.getElementById("fvName").textContent = f.name;
+      var sv = document.getElementById("fvSave");
+      sv.href = url; sv.setAttribute("download", f.name);
+      fileView.hidden = false;
+      return;
+    }
+    // Alles andere (und PDF am Handy): an das Gerät übergeben → dessen Betrachter öffnet es
+    var a = document.createElement("a");
+    a.href = url; a.download = f.name; a.style.display = "none";
+    document.body.appendChild(a);
+    try{ a.click(); }catch(e){}
+    setTimeout(function(){ a.remove(); }, 0);
+  }
+  function rerenderAll(){ if(isEditing()){ deferredRemote = true; } else { renderList(); } }
+  function openNoteFile(noteId){
+    var n = notes.find(function(x){ return x.id === String(noteId); });
+    if(!n || !n.file) return;
+    var f = n.file;
+    if(fileUrls[f.id]){ showFile(f); return; }
+    if(fileLoading[f.id]) return;
+    fileLoading[f.id] = true; rerenderAll();
+    fetchFileRecord(f.id).then(function(rec){
+      delete fileLoading[f.id];
+      if(!rec || !rec.data){ toast("Datei nicht gefunden – evtl. bereits gelöscht.", true); rerenderAll(); return; }
+      fileBlobs[f.id] = b64ToBlob(rec.data, rec.type || f.type);
+      fileUrls[f.id] = URL.createObjectURL(fileBlobs[f.id]);
+      rerenderAll();
+      showFile(f);
+    }).catch(function(){
+      delete fileLoading[f.id];
+      toast("Datei konnte nicht geladen werden (Verbindung?).", true);
+      rerenderAll();
+    });
+  }
+  if(fileView){
+    fileView.addEventListener("click", function(e){
+      if(e.target.closest("#fvSave")) return;
+      // Schliessen über den Knopf oder Tipp auf das Bild / die freie Fläche (nicht auf PDF, Text, Player)
+      if(e.target.closest("#fvClose") || e.target === fvStage || e.target.tagName === "IMG") closeFileView();
+    });
+    document.addEventListener("keydown", function(e){ if(e.key === "Escape") closeFileView(); });
+  }
+  // Klick auf einen Datei-Anhang (Liste, Lesezeichen, Archiv)
+  function handleFileClick(e){
+    var el = e.target.closest("[data-file-open]");
+    if(!el) return false;
+    e.stopPropagation();
+    openNoteFile(el.getAttribute("data-file-open"));
+    return true;
+  }
+  function removeStoredFile(fid){
+    if(fileUrls[fid]){ try{ URL.revokeObjectURL(fileUrls[fid]); }catch(e){} delete fileUrls[fid]; }
+    delete fileBlobs[fid];
+    delete localFiles[fid];
+    if(fbEnabled && db){ try{ db.ref(FILE_PATH + "/" + fid).remove(); }catch(e){} }
+  }
+
+  function readBase64(file){
+    return new Promise(function(resolve, reject){
+      var r = new FileReader();
+      r.onload = function(){ var str = String(r.result); resolve(str.slice(str.indexOf(",") + 1)); };
+      r.onerror = function(){ reject(r.error || new Error("read")); };
+      r.readAsDataURL(file);
+    });
+  }
+  function withTimeout(p, ms){
+    return new Promise(function(resolve, reject){
+      var t = setTimeout(function(){ reject(new Error("timeout")); }, ms);
+      p.then(function(v){ clearTimeout(t); resolve(v); }, function(err){ clearTimeout(t); reject(err); });
+    });
+  }
+  function uploadFile(file){
+    if(file.size > FILE_MAX){
+      toast("„" + file.name + "“ ist zu gross (" + fmtSize(file.size) + ") – maximal 5 MB.", true);
+      return Promise.resolve(false);
+    }
+    toast("Lädt hoch: " + file.name + " …", false, 0);
+    return readBase64(file).then(function(b64){
+      if(!b64){ throw new Error("leer"); }
+      var fid = nextId();
+      var rec = { name: file.name, type: file.type || "application/octet-stream", size: file.size, ts: Date.now(), data: b64 };
+      var online = fbEnabled && db;
+      var put = online ? withTimeout(db.ref(FILE_PATH + "/" + fid).set(rec), 60000) : Promise.resolve();
+      if(!online) localFiles[fid] = rec;
+      return put.then(function(){
+        // Eintrag erst anlegen, wenn die Datei sicher gespeichert ist
+        notes.push({ id: nextId(), kuerzel: "", text: FILE_NOTE_TEXT, done: false, ts: Date.now(),
+                     file: { id: fid, name: rec.name, type: rec.type, size: rec.size } });
+        save(); rerenderAll();
+        toast(online ? "Hochgeladen: " + file.name : "Nur lokal gespeichert (keine Verbindung zur Datenbank): " + file.name, !online);
+        return true;
+      });
+    }).catch(function(err){
+      toast(err && err.message === "leer"
+        ? "„" + file.name + "“ ist leer oder ein Ordner – nicht hochgeladen."
+        : "Upload fehlgeschlagen: " + file.name + " (Verbindung oder Firebase-Regel prüfen).", true);
+      return false;
+    });
+  }
+  function uploadFiles(list){
+    var files = Array.prototype.slice.call(list || []);
+    var chain = Promise.resolve();
+    files.forEach(function(f){ chain = chain.then(function(){ return uploadFile(f); }); });
+    return chain;
+  }
+  // Drag & Drop auf das ganze Fenster (nur echte Dateien, keine Textauswahl)
+  (function(){
+    var ov = document.getElementById("dropOverlay"), depth = 0;
+    function hasFiles(e){
+      var t = e.dataTransfer && e.dataTransfer.types;
+      if(!t) return false;
+      for(var i = 0; i < t.length; i++){ if(t[i] === "Files") return true; }
+      return false;
+    }
+    window.addEventListener("dragenter", function(e){ if(!hasFiles(e)) return; e.preventDefault(); depth++; if(ov) ov.hidden = false; });
+    window.addEventListener("dragover", function(e){ if(!hasFiles(e)) return; e.preventDefault(); try{ e.dataTransfer.dropEffect = "copy"; }catch(x){} });
+    window.addEventListener("dragleave", function(e){ if(!hasFiles(e)) return; depth = Math.max(0, depth - 1); if(depth === 0 && ov) ov.hidden = true; });
+    window.addEventListener("drop", function(e){
+      if(!hasFiles(e)) return;
+      e.preventDefault(); depth = 0; if(ov) ov.hidden = true;
+      uploadFiles(e.dataTransfer.files);
+    });
+  })();
 
   function esc(s){
     return String(s || "").replace(/[&<>"]/g, function(c){
@@ -932,7 +1219,7 @@
         } else if(n.hidden && bmExpanded === n.id){
           html += '<div class="bm-sub bm-full">' +
             (n.kuerzel || n.ts ? '<div class="bm-meta">' + esc(n.kuerzel || "") + (n.kuerzel ? ' · ' : '') + esc(formatTs(n.ts)) + '</div>' : '') +
-            '<div class="bm-fulltext">' + (n.text ? linkify(esc(n.text)) : '(leere Notiz)') + '</div>' +
+            '<div class="bm-fulltext">' + (n.text ? linkify(esc(n.text)) : '(leere Notiz)') + '</div>' + fileChipHtml(n) +
             '<div class="bm-actions"><button type="button" class="sharebtn" data-bm-unhide="' + n.id + '">Wieder in Liste einblenden</button></div>' +
           '</div>';
         }
@@ -967,6 +1254,7 @@
   bmPanel.addEventListener("click", function(e){
     e.stopPropagation();
     if(e.target.closest("a")) return;
+    if(handleFileClick(e)) return;
     function byId(attr, el){
       var id = String(el.getAttribute(attr));
       return notes.find(function(n){ return n.id === id; });
@@ -1068,7 +1356,7 @@
           html += '<div class="bm-sub bm-full">' +
             '<div class="bm-meta">' + (n.kuerzel ? esc(n.kuerzel) + ' · ' : '') + esc(formatTs(n.ts)) +
               (n.archivedAt ? ' · archiviert ' + esc(formatTs(n.archivedAt)) : '') + '</div>' +
-            '<div class="bm-fulltext">' + (n.text ? linkify(esc(n.text)) : '(leere Notiz)') + '</div>' +
+            '<div class="bm-fulltext">' + (n.text ? linkify(esc(n.text)) : '(leere Notiz)') + '</div>' + fileChipHtml(n) +
             '<div class="bm-actions">' +
               '<button type="button" class="sharebtn" data-arch-restore="' + n.id + '">Wiederherstellen</button>' +
               '<button type="button" class="sharebtn" data-arch-print="' + n.id + '">Drucken</button>' +
@@ -1096,6 +1384,7 @@
   archPanel.addEventListener("click", function(e){
     e.stopPropagation();
     if(e.target.closest("a")) return;
+    if(handleFileClick(e)) return;
     function byId(attr, el){
       var id = String(el.getAttribute(attr));
       return notes.find(function(n){ return n.id === id; });
@@ -1167,7 +1456,7 @@
       html += '<div class="p-note">' +
         '<div class="p-meta">' + esc(n.kuerzel || "–") + ' · ' + esc(formatTsFull(n.ts)) +
           (tags.length ? ' <span class="p-tags">· ' + esc(tags.join(" · ")) + '</span>' : '') + '</div>' +
-        '<div class="p-text">' + esc(n.text || "") + '</div>' +
+        '<div class="p-text">' + esc(n.text || "") + (n.file ? '\nDatei: ' + esc(n.file.name) + ' (' + esc(fmtSize(n.file.size || 0)) + ')' : '') + '</div>' +
       '</div>';
     });
     area.innerHTML = html;
@@ -1282,7 +1571,7 @@
     return terms;
   }
   function noteMatches(n, terms){
-    var hay = norm((n.text || "") + " " + (n.kuerzel || ""));
+    var hay = norm((n.text || "") + " " + (n.kuerzel || "") + (n.file ? " " + n.file.name + " datei" : ""));
     for(var i = 0; i < terms.length; i++){
       var t = terms[i];
       if(t.type === "range"){ if(!rangeMatches(t.a, t.b, n.ts)) return false; continue; }
@@ -1403,7 +1692,8 @@
           '<button type="button" class="note-flag' + (n.flag ? ' on' : '') + '" data-action="toggle-flag" aria-label="' + (n.flag ? 'Markierung entfernen' : 'Lila markieren') + '" aria-pressed="' + (n.flag ? 'true' : 'false') + '">' + (n.flag ? FLAG_ON : FLAG_OFF) + '</button>' +
           '<button type="button" class="note-bm' + (n.bookmark ? ' on' : '') + '" data-action="toggle-bm" aria-label="' + (n.bookmark ? 'Lesezeichen entfernen' : 'Als Lesezeichen merken') + '" aria-pressed="' + (n.bookmark ? 'true' : 'false') + '">' + (n.bookmark ? '★' : '☆') + '</button>' +
         '</div>' +
-        '<div class="note-text' + (n.text ? '' : ' placeholder') + '" data-field="text" tabindex="0" role="button" aria-label="Notiz bearbeiten">' + (n.text ? linkify(esc(n.text)) : "Notiz eingeben…") + '</div>' +
+        '<div class="note-text' + (n.text ? '' : ' placeholder') + (n.file ? ' is-file' : '') + '" data-field="text" tabindex="0" role="button" aria-label="Notiz bearbeiten">' + (n.text ? linkify(esc(n.text)) : "Notiz eingeben…") + '</div>' +
+        fileChipHtml(n) +
         '<div class="note-footer">' +
           (pendingDelete === n.id && pendingDeleteStage === "keep" ?
             '<span class="confirm-text">In Lesezeichen behalten?</span>' +
@@ -1531,6 +1821,7 @@
 
   document.getElementById("main").addEventListener("click", function(e){
     if(e.target.closest("a")) return;
+    if(handleFileClick(e)) return;
     var so = e.target.closest("[data-search-open]");
     if(so){
       e.stopPropagation();
@@ -1610,7 +1901,7 @@
       menuOpenId = null;
       renderList();
       var subject = encodeURIComponent("NOTES Webapp Weiterleitung");
-      var body = encodeURIComponent((note.kuerzel || "?") + " (" + formatTs(note.ts) + "):\n\n" + (note.text || ""));
+      var body = encodeURIComponent((note.kuerzel || "?") + " (" + formatTs(note.ts) + "):\n\n" + (note.text || "") + (note.file ? "\n\nDatei (in der NOTES-App): " + note.file.name : ""));
       window.location.href = "mailto:?subject=" + subject + "&body=" + body;
     }
   });
