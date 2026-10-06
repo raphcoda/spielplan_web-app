@@ -33,6 +33,7 @@
     --divider:rgba(255,255,255,.05);
     --note-band:rgba(0,0,0,.16);
     --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -10px rgba(0,0,0,.5);
+    --deco:#6e6e6e;   /* Zier-Szene (Basketballer), seit v82 */
     color-scheme: dark;
   }
 
@@ -753,9 +754,10 @@
     .drop-hint{
       display:block; position:fixed; top:50%; z-index:0; pointer-events:none;
       left:calc(max(420px, 33.333vw) + 32px + (100vw - max(420px, 33.333vw) - 32px) / 2);
-      transform:translate(-50%, -50%); max-width:calc(100vw - max(420px, 33.333vw) - 80px);
-      color:var(--text-dim); opacity:.4; font-size:14px; letter-spacing:.04em; text-align:center;
+      transform:translate(-50%, -50%); white-space:nowrap;   /* einzeilig, sonst bricht der Text in schmalen Fenstern um (und die Szene entfällt) */
+      color:var(--text-dim); font-size:18px; letter-spacing:.04em; text-align:center;   /* 18px seit v83 (vorher 14px) */
     }
+    .drop-hint-text{ opacity:.4; }
     .drop-overlay:not([hidden]) ~ .drop-hint{ display:none; }
   }
   @media print{ .drop-hint{ display:none !important; } }
@@ -799,6 +801,31 @@
   .gate-err{ font-size:14px; color:var(--warn); margin-top:10px; min-height:20px; }
   .gate-hint{ font-size:13px; line-height:1.45; color:var(--text-dim); margin-top:8px; }
   .gate-user{ position:absolute; width:1px; height:1px; opacity:0; pointer-events:none; }
+
+  /* ---- Zier-Szene „Basketballer“ auf dem Hochladen-Hinweis (seit v82, Entwurf aus dem Ablaufplan-Chat) ---- */
+  /* Zier-Szene „Basketballer": läuft auf einer Textzeile und stopft den Ball in den Korb dahinter */
+  .korb-wirt{ position:relative; }                       /* das Element, in dem die Szene liegt (z. B. die Ablagefläche) */
+  .bpk{ position:absolute; width:0; height:0; pointer-events:none; transform-origin:0 0; }
+  .bpk-fig{ position:absolute; left:0; bottom:0; width:22px; height:20px; will-change:transform; }
+  .bpk-flip{ display:block; width:100%; height:100%; }
+  .bpk-fig.flip .bpk-flip{ transform:scaleX(-1); }
+  .bpk svg{ display:block; overflow:visible; }
+  .bpk-fig svg{ width:100%; height:100%; transform-origin:12.5px 0; }
+  .bpk-st{ stroke:var(--deco, #6e6e6e); stroke-width:2; stroke-linecap:round; stroke-linejoin:round; fill:none; }
+  .bpk-hd{ fill:var(--deco, #6e6e6e); }
+  .bpk-pose{ display:none; }
+  .bpk-ball{ position:absolute; left:0; bottom:0; width:5px; height:5px; border-radius:50%; background:var(--accent, #eda868); will-change:transform; }
+  .bpk-hoop{ position:absolute; }
+  .bpk-hoop path{ stroke:var(--deco, #6e6e6e); stroke-width:2; stroke-linecap:round; fill:none; }
+  .bpk-hoop .bpk-net{ transform-origin:14px 14px; }
+  .bpk-hoop .bpk-net path{ stroke-width:.8; }
+  .bpk-lA{ transform-origin:11px 12px; animation:bpkSw .42s ease-in-out infinite; }
+  .bpk-lB{ transform-origin:11px 12px; animation:bpkSw .42s ease-in-out infinite reverse; }
+  .bpk-aA{ transform-origin:11px 7.5px; animation:bpkSa .42s ease-in-out infinite reverse; }
+  .bpk-pump{ transform-origin:11px 7.5px; animation:bpkPump .3s ease-in-out infinite; }
+  @keyframes bpkSw{ 0%,100%{ transform:rotate(30deg); } 50%{ transform:rotate(-30deg); } }
+  @keyframes bpkSa{ 0%,100%{ transform:rotate(36deg); } 50%{ transform:rotate(-36deg); } }
+  @keyframes bpkPump{ 0%,100%{ transform:rotate(-8deg); } 50%{ transform:rotate(12deg); } }
 </style>
 </head>
 <body>
@@ -827,7 +854,7 @@
 <div class="overlay menu-overlay" id="menuOverlay" hidden></div>
 <div id="printArea" aria-hidden="true"></div>
 <div class="drop-overlay" id="dropOverlay" hidden><div class="drop-box"><b>Schmeiss rein</b><span>wird als neuer Eintrag<br>„Einwurf“ hochgeladen<br>max. 5 MB</span></div></div>
-<div class="drop-hint" aria-hidden="true">Schieb drauf zum Hochladen</div>
+<div class="drop-hint" id="dropHint" aria-hidden="true"><span class="drop-hint-text" id="dropHintText">Schieb drauf zum Hochladen</span></div>
 <div class="file-view" id="fileView" hidden><div class="fv-stage" id="fvStage"></div><div class="fv-bar"><span id="fvName"></span><a id="fvSave" href="#">Speichern</a><button type="button" id="fvClose">Schliessen</button></div></div>
 <div class="toast" id="toast" role="status" hidden></div>
 <div class="gate" id="gate" hidden><form class="gate-box" id="gateForm" autocomplete="on">
@@ -2058,6 +2085,155 @@
       var el = document.getElementById(id);
       if (el) el.addEventListener('click', back);
     });
+  })();
+
+  // ---- Zier-Szene „Basketballer“ (seit v82): läuft auf dem Hinweis „Schieb drauf zum Hochladen“ ----
+  // Nur sichtbar, wenn der Hinweis sichtbar ist (Desktop mit Maus, ab 820px). Wird entfernt, sobald
+  // der Hinweis verdeckt/ausgeblendet ist (Ziehen, Login-Schirm, Vollbild-Ansicht, schmales Fenster).
+  (function(){
+    // Zier-Szene „Basketballer" (Variante B, Dunking).
+    // korbSzene(wirt, text, opt): wirt = Element mit position:relative, in dem die Szene liegt;
+    // text = Element mit der Textzeile, auf der das Männchen läuft (einzeilig); opt.s = Massstab (Standard 0.66),
+    // opt.t0 = Startzeit (performance.now()), damit die Szene beim Neuzeichnen nicht von vorn beginnt.
+    // Die Schleife endet von selbst, sobald die Szene nicht mehr im Dokument hängt. Rückgabe: das Szenen-Element oder null.
+    var KORB_T = 5600;
+    var KORB_FIG = (function(){
+      var head = '<circle class="bpk-hd" cx="11" cy="3" r="2.6"/><line class="bpk-st" x1="11" y1="5.4" x2="11" y2="12"/>';
+      function P(d){ return head + '<path class="bpk-st" d="' + d + '"/>'; }
+      var poses = {
+        run: head + '<line class="bpk-st bpk-aA" x1="11" y1="7.5" x2="11" y2="12"/><line class="bpk-st bpk-pump" x1="11" y1="7.5" x2="15.5" y2="10.5"/>' +
+             '<line class="bpk-st bpk-lA" x1="11" y1="12" x2="11" y2="19.3"/><line class="bpk-st bpk-lB" x1="11" y1="12" x2="11" y2="19.3"/>',
+        duck: '<g transform="translate(0 4)"><circle class="bpk-hd" cx="12" cy="3.4" r="2.6"/><line class="bpk-st" x1="12" y1="5.8" x2="11" y2="10.5"/>' +
+              '<path class="bpk-st" d="M11.6 7.5 L16 7 M11.6 7.5 L15.5 9 M11 10.5 L15 12.6 L11.5 15.3 M11 10.5 L14 13.6 L9.5 15.3"/></g>',
+        dunk: P('M11 7.5 L13.5 1 M11 7.5 L7 9.5 M11 12 L14.5 14.5 L12 18 M11 12 L8 15 L6.5 18.5'),
+        hang: P('M11 7.5 L12 .2 M11 7.5 L13.2 .4 M11 12 L10 19.3 M11 12 L12 19.3'),
+        flex: P('M11 7.5 L6.5 7.5 L6 3.5 M11 7.5 L15.5 7.5 L16 3.5 M11 12 L8.5 19.3 M11 12 L13.5 19.3'),
+        // seit v84 (Fehlwurf): sad1 = steht mit hängendem Kopf und hängenden Armen, sad2 = auf die Knie gesackt
+        sad1: '<circle class="bpk-hd" cx="12.7" cy="5.1" r="2.6"/><path class="bpk-st" d="M11.7 7.4 L11 12.6 M11.5 8.6 L10.2 13.8 M11.5 8.6 L13 13.8 M11 12.6 L9.6 19.3 M11 12.6 L12.4 19.3"/>',
+        sad2: '<circle class="bpk-hd" cx="13.9" cy="9.6" r="2.6"/><path class="bpk-st" d="M12.3 11.2 L10 15.8 M11.8 12.2 L11.2 17.6 M11.8 12.2 L14 17.8 M10 15.8 L14.6 18.9 L8.4 19.3"/>'
+      };
+      return '<span class="bpk-fig"><span class="bpk-flip"><svg viewBox="0 0 22 20">' + Object.keys(poses).map(function(k){
+        return '<g class="bpk-pose" data-pose="' + k + '">' + poses[k] + '</g>'; }).join("") + '</svg></span></span>';
+    })();
+    function korbSzene(wirt, text, opt){
+      opt = opt || {};
+      if(!wirt || !text || !text.firstChild) return null;
+      if(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return null;
+      var dr = wirt.getBoundingClientRect(), rg = document.createRange();
+      rg.selectNodeContents(text);
+      var tr = rg.getBoundingClientRect(), cs = getComputedStyle(text), fs = parseFloat(cs.fontSize) || 13;
+      if(!tr.width || tr.height > fs * 2.2) return null;            // umbrochene Zeile: keine Szene
+      var asc = fs * .93, cap = fs * .72;
+      try{
+        var cx = document.createElement("canvas").getContext("2d");
+        cx.font = cs.fontStyle + " " + cs.fontWeight + " " + cs.fontSize + " " + cs.fontFamily;
+        var mt = cx.measureText("H");
+        if(mt.fontBoundingBoxAscent) asc = mt.fontBoundingBoxAscent;
+        if(mt.actualBoundingBoxAscent) cap = mt.actualBoundingBoxAscent;
+      }catch(e){}
+      var s = opt.s || 0.66, t0 = opt.t0 != null ? opt.t0 : performance.now(), lead = 16;   // die Szene beginnt 16px vor dem Text
+      var gh = cap / s;                                             // Höhe der Grossbuchstaben in Szenen-Einheiten (Boden der Figur → Grundlinie)
+      var x0 = lead / s, x1 = x0 + tr.width / s;                    // Textanfang / Textende
+      var hl = x1 + 4 / s - 24, rimX = hl + 14.25;                  // Korbständer 4px hinter dem Text, der Ring ragt über die letzten Buchstaben
+      var layer = document.createElement("span");
+      layer.className = "bpk"; layer.setAttribute("aria-hidden", "true");
+      layer.style.left = (tr.left - dr.left - wirt.clientLeft - lead).toFixed(1) + "px";
+      layer.style.top = (tr.top + asc - cap - dr.top - wirt.clientTop).toFixed(1) + "px";
+      layer.style.transform = "scale(" + s + ")";
+      var H = 48 + gh;
+      layer.innerHTML = '<svg class="bpk-hoop" width="28" height="' + H.toFixed(1) + '" viewBox="0 0 28 ' + H.toFixed(1) + '" style="left:' + hl.toFixed(1) + 'px;bottom:' + (-gh).toFixed(1) + 'px;transform-origin:24px ' + H.toFixed(1) + 'px">' +
+        '<path d="M24 ' + H.toFixed(1) + ' L24 10 M24 12 L20 12"/><path d="M20 3 L20 17" style="stroke-width:2.2"/><path d="M8.5 14 L20 14" style="stroke-width:1.6"/>' +
+        '<g class="bpk-net"><path d="M9.5 14.5 L11.5 21.5 M18.5 14.5 L16.5 21.5 M12.5 14.5 L13.2 21.5 M15.5 14.5 L14.8 21.5 M10.3 17.5 L17.7 17.5"/></g></svg>' +
+        KORB_FIG + '<span class="bpk-ball"></span>';
+      wirt.appendChild(layer);
+      var fig = layer.querySelector(".bpk-fig"), svg = fig.querySelector("svg"), hoop = layer.querySelector(".bpk-hoop"),
+          net = layer.querySelector(".bpk-net"), ball = layer.querySelector(".bpk-ball"), poses = {}, cur = null;
+      Array.prototype.forEach.call(layer.querySelectorAll(".bpk-pose"), function(g){ poses[g.dataset.pose] = g; });
+      function seg(p, a, b){ return p <= a ? 0 : p >= b ? 1 : (p - a) / (b - a); }
+      function lerp(a, b, k){ return a + (b - a) * k; }
+      var G = 2.5, xs = x0 - 4 / s - 11, xon = x0 + 5 / s - 11, take = Math.max(hl - 50, xon + 12), hx = hl - 4, hy = 14;
+      (function tick(){
+        if(!layer.isConnected) return;                              // Szene entfernt → Schleife endet
+        var t = performance.now() - t0, p = (t % KORB_T) / KORB_T, k;
+        var x = take, y = 0, pose = "duck", flip = false, rot = 0, bx = 0, by = 0, nt = 0, shake = 0;
+        // Seit v84 läuft ein Vierer-Zyklus: Runde 1 Dunk (wie bisher), 2 Sprungwurf mit Treffer, 3 Dunk, 4 Sprungwurf daneben
+        var runde = Math.floor(t / KORB_T) % 4, wurf = runde % 2 === 1, daneben = runde === 3;
+        if(wurf){
+          var sx = Math.max(hl - 78, xon + 12), ry = 31.8;             // Wurfposition etwas weiter weg vom Korb; ry = Ballhöhe am höchsten Punkt des Sprungs
+          x = sx;
+          if(p < .08){ k = p / .08; x = lerp(xs, xon, k); y = lerp(-gh, 0, k) + Math.sin(k * Math.PI) * 5; pose = "dunk"; bx = x + 13.8; by = y + 21.8; }   // hüpft auf den Text
+          else if(p < .34){ k = seg(p, .08, .34); x = lerp(xon, sx, k * k * .35 + k * .65); pose = "run"; bx = x + 18; by = G + Math.abs(Math.sin(t / 210 * Math.PI)) * 8; }   // dribbelt
+          else if(p < .39){ bx = x + 17; by = 9; }                                                                                                             // geht in die Knie
+          else if(p < .57){ k = seg(p, .39, .57); y = Math.sin(k * Math.PI) * 10; pose = "dunk"; bx = x + 13.8; by = y + 21.8; }                              // springt hoch
+          else if(p < .63){ }                                                                                                                                  // landet in der Hocke
+          else if(!daneben){ pose = "flex"; }                                                                                                                  // Treffer: Pose
+          else if(p < .74){ pose = "sad1"; }                                                                                                                   // daneben: lässt Kopf und Arme hängen
+          else { pose = "sad2"; }                                                                                                                              // … und sackt auf die Knie
+          if(p >= .48){                                                                                                                                        // Ball ist geworfen
+            if(daneben){
+              var fx = rimX - 6.5;                                                                                                                             // vordere Ringkante
+              if(p < .62){ k = seg(p, .48, .62); bx = lerp(sx + 13.8, fx, k); by = lerp(ry, 36, k) + Math.sin(k * Math.PI) * 15; }                             // fliegt im Bogen
+              else if(p < .76){ k = seg(p, .62, .76); bx = lerp(fx, fx - 26, k); by = lerp(36, G, k * k) + Math.sin(k * Math.PI) * 9; shake = Math.sin(k * 7 * Math.PI) * 2.5 * (1 - k); }   // prallt vom Ring ab
+              else { k = seg(p, .76, .95); bx = fx - 26 - k * 9; by = G + Math.abs(Math.sin(k * 3 * Math.PI)) * 7 * (1 - k) * (1 - k); }                       // hüpft weg
+            }
+            else if(p < .62){ k = seg(p, .48, .62); bx = lerp(sx + 13.8, rimX, k); by = lerp(ry, 35, k) + Math.sin(k * Math.PI) * 15; }                        // fliegt im Bogen
+            else if(p < .67){ k = seg(p, .62, .67); bx = rimX; by = lerp(35, G, k * k); nt = Math.sin(k * Math.PI); shake = Math.sin(k * 3 * Math.PI) * 1.2 * (1 - k); }   // fällt durchs Netz
+            else { k = seg(p, .67, .9); bx = rimX - k * 4; by = G + Math.abs(Math.sin(k * 4 * Math.PI)) * 9 * (1 - k) * (1 - k); }                             // hüpft aus
+          }
+        } else {
+          if(p < .08){ k = p / .08; x = lerp(xs, xon, k); y = lerp(-gh, 0, k) + Math.sin(k * Math.PI) * 5; pose = "dunk"; bx = x + 13.8; by = y + 21.8; }   // hüpft vor dem Text auf den Text
+          else if(p < .34){ k = seg(p, .08, .34); x = lerp(xon, take, k * k * .35 + k * .65); pose = "run"; bx = x + 18; by = G + Math.abs(Math.sin(t / 210 * Math.PI)) * 8; }   // dribbelt über den Text
+          else if(p < .39){ bx = x + 17; by = 9; }                                                                                                             // geht in die Knie
+          else if(p < .54){ k = seg(p, .39, .54); x = lerp(take, hx, k); y = lerp(0, hy, k) + Math.sin(k * Math.PI) * 9; pose = "dunk"; bx = x + 13.8; by = y + 21.8; }   // Absprung
+          else if(p < .77){ k = seg(p, .54, .77); x = hx; y = hy; pose = "hang"; rot = Math.sin(k * 5 * Math.PI) * 16 * (1 - k); shake = Math.sin(k * 9 * Math.PI) * 3 * (1 - k) * (1 - k); }   // hängt am Ring
+          else if(p < .82){ k = seg(p, .77, .82); x = hx; y = hy * (1 - k * k); pose = "hang"; }                                                               // lässt los
+          else if(p < .86){ x = hx; flip = true; }                                                                                                             // landet in der Hocke
+          else { x = hx; pose = "flex"; }                                                                                                                      // Pose
+          if(p >= .54){
+            if(p < .60){ k = seg(p, .54, .60); bx = rimX; by = lerp(34, G, k * k); nt = Math.sin(k * Math.PI); }
+            else { k = seg(p, .60, .86); bx = rimX - k * 4; by = G + Math.abs(Math.sin(k * 4 * Math.PI)) * 9 * (1 - k) * (1 - k); }
+          }
+        }
+        if(cur !== pose){ if(cur) poses[cur].style.display = ""; poses[pose].style.display = "inline"; cur = pose; }
+        fig.classList.toggle("flip", flip);
+        fig.style.transform = "translate(" + x.toFixed(1) + "px," + (-y).toFixed(1) + "px)";
+        svg.style.transform = rot ? "rotate(" + rot.toFixed(1) + "deg)" : "";
+        ball.style.transform = "translate(" + (bx - 2.5).toFixed(1) + "px," + (-(by - 2.5)).toFixed(1) + "px)";
+        net.style.transform = nt ? "scaleY(" + (1 + nt * .3).toFixed(2) + ")" : "";
+        hoop.style.transform = shake ? "rotate(" + shake.toFixed(1) + "deg)" : "";
+        var op = p < .03 ? p / .03 : p > .95 ? (1 - p) / .05 : 1;
+        fig.style.opacity = ball.style.opacity = op.toFixed(2);     // der Korb bleibt stehen, nur Figur und Ball blenden
+        requestAnimationFrame(tick);
+      })();
+      return layer;
+    }
+
+    var wirt = document.getElementById("dropHint"), zeile = document.getElementById("dropHintText");
+    if(!wirt || !zeile) return;
+    var szene = null, start = null, timer = null;
+    var decker = ["dropOverlay", "gate", "fileView"].map(function(id){ return document.getElementById(id); }).filter(Boolean);
+    function hinweisSichtbar(){
+      if(getComputedStyle(wirt).display === "none") return false;
+      for(var i = 0; i < decker.length; i++){ if(!decker[i].hidden) return false; }
+      return true;
+    }
+    function weg(){ if(szene){ szene.remove(); szene = null; } }
+    function aktualisieren(neuMessen){
+      if(!hinweisSichtbar()){ weg(); return; }
+      if(szene && !neuMessen) return;
+      weg();
+      if(start === null) start = performance.now();
+      // Massstab 0.86 = 0.66 × 1,3 (seit v83). Rückgabe null bei umbrochener Zeile / „Bewegung reduzieren“
+      szene = korbSzene(wirt, zeile, { s: 0.86, t0: start });
+    }
+    function spaeter(){ clearTimeout(timer); timer = setTimeout(function(){ aktualisieren(true); }, 150); }
+    window.addEventListener("resize", spaeter);
+    if(window.MutationObserver){
+      var mo = new MutationObserver(function(){ aktualisieren(false); });
+      decker.forEach(function(el){ mo.observe(el, { attributes: true, attributeFilter: ["hidden"] }); });
+    }
+    if(document.fonts && document.fonts.ready && document.fonts.ready.then){ document.fonts.ready.then(function(){ aktualisieren(true); }); }
+    aktualisieren(true);
   })();
 </script>
 </body>
