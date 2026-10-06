@@ -1405,6 +1405,44 @@
   .ts-input:focus{ outline:none; border-color:var(--field-focus); background:var(--surface); }
   /* ---- Desktop breit: drei Spalten Bühne | Tonregie | Technik ---- */
   .col-head{ display:none; }
+  /* ---- Bühnenplan (BP): PDF pro Produktion ---- */
+  .bp-btn{
+    flex:0 0 auto; height:24px; min-width:34px; padding:0 8px; border-radius:7px;
+    border:1px solid #5a5a5a; background:#2a2a2a; color:#b0b0b0;
+    font:inherit; font-size:12px; font-weight:800; letter-spacing:.06em; line-height:1; text-decoration:none;
+    display:flex; align-items:center; justify-content:center; cursor:pointer; -webkit-tap-highlight-color:transparent;
+  }
+  .bp-btn.voll{ border-color:var(--ka); color:var(--ka); background:transparent; }
+  .bp-btn.laedt{ opacity:.55; }
+  .bp-btn.ziel{ border-style:dashed; border-color:var(--ka); color:var(--ka); }
+  .bp-btn:disabled{ opacity:.35; cursor:default; }
+  .col-head .bp-btn{ margin-right:14px; }
+  .bv-row .bp-btn{ margin-left:auto; }
+  .bp-pop{
+    position:absolute; right:0; top:100%; margin-top:2px; z-index:8; width:min(290px, 100%);
+    background:var(--surface); border:1px solid var(--line); border-radius:12px; box-shadow:0 14px 40px rgba(0,0,0,.6); padding:12px;
+  }
+  .bp-pop h4{ margin:0 0 8px; font-size:14px; font-weight:700; color:var(--text); }
+  .bp-drop{
+    display:block; width:100%; font:inherit; font-size:13px; line-height:1.4; text-align:center; color:var(--text-dim);
+    background:none; border:1.5px dashed #6a6a6a; border-radius:10px; padding:20px 10px; cursor:pointer;
+  }
+  .bp-drop b{ color:var(--text); }
+  .bp-drop.ziel{ border-color:var(--ka); background:var(--ka-soft); }
+  .bp-file{ display:flex; align-items:center; gap:8px; margin-top:10px; font-size:13px; color:var(--text); }
+  .bp-file .bp-name{ flex:1 1 auto; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .bp-file .bp-size{ flex:0 0 auto; color:var(--text-dim); font-size:12px; }
+  .bp-acts{ display:flex; gap:8px; margin-top:8px; align-items:center; }
+  .bp-acts span{ flex:1 1 auto; font-size:13px; color:var(--text); }
+  .bp-acts button{ font:inherit; font-size:12px; font-weight:700; height:28px; padding:0 10px; border-radius:7px; border:1px solid var(--field-line); background:var(--surface-2); color:var(--text); cursor:pointer; }
+  .bp-acts button.warn{ border-color:var(--warn); color:var(--warn); background:transparent; }
+  .file-view{ position:fixed; inset:0; z-index:70; background:#000; display:flex; flex-direction:column; }
+  .file-view[hidden]{ display:none; }
+  .fv-stage{ flex:1 1 auto; min-height:0; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+  .fv-stage iframe{ width:100%; height:100%; border:0; background:#fff; display:block; }
+  .fv-bar{ flex:0 0 auto; display:flex; align-items:center; gap:16px; font-size:14px; color:var(--text-dim); background:#111; padding:8px 16px calc(8px + env(safe-area-inset-bottom, 0px)); }
+  .fv-bar span{ flex:1 1 auto; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .fv-bar a, .fv-bar button{ flex:0 0 auto; background:none; border:0; font:inherit; font-weight:700; color:var(--ka); text-decoration:none; cursor:pointer; padding:6px 2px; }
   /* ---- Schloss: nur für die ganze Produktion ---- */
   .cue-foot{ display:flex; align-items:center; gap:8px; margin-top:2px; }
   .cue-foot .note-add{ margin-top:0; align-self:auto; }
@@ -1484,6 +1522,16 @@
   @media (max-width: 350px){ /* sehr schmale Handys: Zeile bleibt einzeilig in der Karte */
     .bv-row .bv-lbl{ font-size:13px; margin-right:2px; }
     .bv-row .amp-ch{ padding:0 9px; }
+  }
+  @media (max-width: 385px){ /* mit BP-Knopf wird es eng: Abstände knapper, damit alles in der Karte bleibt */
+    .bv-row.mit-bp{ gap:6px; }
+    .bv-row.mit-bp .bv-lbl{ margin-right:0; }
+    .bv-row.mit-bp .amp-ch{ padding:0 9px; }
+    .bv-row.mit-bp .bp-btn{ padding:0 6px; min-width:30px; }
+  }
+  @media (max-width: 350px){
+    .bv-row.mit-bp .bv-lbl{ font-size:12px; }
+    .bv-row.mit-bp .amp-ch{ padding:0 7px; }
   }
   .deskbtn{ display:none; }
   .exportbtn.mobbtn{ margin-right:10px; }
@@ -1708,6 +1756,8 @@
 <main id="main"></main>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <div id="lockDlg" hidden></div>
+<div class="file-view" id="fileView" hidden><div class="fv-stage" id="fvStage"></div><div class="fv-bar"><span id="fvName"></span><a id="fvSave" href="#">Speichern</a><button type="button" id="fvClose">Schliessen</button></div></div>
+<input type="file" id="bpFile" accept="application/pdf,.pdf" hidden>
 <div id="printView" aria-hidden="true"></div>
 
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
@@ -1992,6 +2042,7 @@
       return '<section class="art-col" data-art="' + a.id + '">' +
         '<div class="col-head"><span class="col-title">' + esc(a.label) + '</span>' +
           '<span class="col-deco">' + (COL_DECO[a.id] || '') + '</span>' +
+          (a.id === "buehne" ? '<button type="button" class="bp-btn" data-col-action="bp" aria-label="Bühnenplan" title="Bühnenplan (PDF)">BP</button>' : '') +
           '<button type="button" class="exportbtn col-print" data-col-action="print" aria-label="' + esc(a.label) + ' drucken" title="' + esc(a.label) + ' drucken">' + PRINT_SVG + '</button>' +
           '<button type="button" class="exportbtn col-export" data-col-action="export" aria-label="' + esc(a.label) + ' als Excel exportieren" title="' + esc(a.label) + ' als Excel exportieren">' + TABLE_SVG + '</button>' +
           (a.sheet ? '' : '<button type="button" class="addbtn col-add" data-col-action="add" aria-label="Neuer Eintrag ' + esc(a.label) + '">+</button>') +
@@ -2023,6 +2074,7 @@
     if(add) add.disabled = !currentProdId || !artCfg(id).ready || !!artCfg(id).sheet;
     if(exp) exp.disabled = !currentProdId || !artCfg(id).ready;
     if(prt) prt.disabled = !currentProdId || !artCfg(id).ready;
+    if(id === "buehne") renderBpHead(col);
   }
   // Spalte wird aktiv (Klick/Fokus hinein): offenen Entwurf der bisherigen Spalte übernehmen
   function activateArt(id){
@@ -2344,6 +2396,7 @@
 
   function selectProduction(id){
     setOpenLock(null);
+    bpPopOpen = false; bpConfirm = false;
     currentProdId = id || null;
     cues = (currentProdId && cuesByProd[currentProdId]) || [];
     if(currentProdId && !cuesByProd[currentProdId]) cuesByProd[currentProdId] = cues;
@@ -2850,6 +2903,8 @@
   function confirmDeleteProduction(id){
     deletingProdId = null;
     deleteStage = "choose";
+    var goneProd = productions.find(function(p){ return p.id === id; });
+    if(goneProd && goneProd.bp) bpRemoveStored(goneProd.bp.id);
     productions = productions.filter(function(p){ return p.id !== id; });
     saveProductions();
     ARTS.forEach(function(a){
@@ -2887,7 +2942,7 @@
       var wasReady = fbChan("prods").ready;
       var val = fbFirst("prods", FB_ROOT + "/productions", snap.val());
       var before = currentProd();
-      var sigBefore = before ? JSON.stringify([!!before.lock, before.bv || ""]) : "";
+      var sigBefore = before ? JSON.stringify([!!before.lock, before.bv || "", before.bp ? before.bp.id : ""]) : "";
       productions = prodsFromVal(val);
       fbChan("prods").last = flatProds(productions);
       try{ localStorage.setItem(PRODUCTIONS_KEY, JSON.stringify(productions)); }catch(e){}
@@ -2900,7 +2955,7 @@
         return;
       }
       var after = currentProd();
-      var sigAfter = after ? JSON.stringify([!!after.lock, after.bv || ""]) : "";
+      var sigAfter = after ? JSON.stringify([!!after.lock, after.bv || "", after.bp ? after.bp.id : ""]) : "";
       // Namensfeld im Menü (Umbenennen / Neu) nicht unter den Fingern neu zeichnen
       if(!(prodPickerOpen && (renamingProdId || addingProduction))) renderProdPicker();
       else renderProdLock();
@@ -3327,6 +3382,7 @@
     document.getElementById("main").addEventListener(type, function(e){
       if(!e.target.closest || !prodBlocked()) return;
       if(!e.target.closest(".tech-sheet, .bv-row")) return;
+      if(e.target.closest(".bp-btn")) return; // Bühnenplan ansehen ist immer erlaubt
       e.stopPropagation();
       if(type === "click"){ e.preventDefault(); lockedHint(true); }
       else if(type === "mousedown" && e.target.closest("select, button")) e.preventDefault();
@@ -3341,6 +3397,254 @@
     ts.querySelectorAll("select").forEach(function(el){ el.disabled = true; });
   }
 
+  // ---- Bühnenplan (BP): eine PDF pro Produktion ----
+  // Ablegen am Desktop (Spaltenansicht): BP-Knopf im Spaltenkopf Bühne -> Feld zum Hineinziehen/Auswählen.
+  // Der Inhalt liegt base64 unter ablaufplan/files/<fileId> (wird erst beim Ansehen geladen, wie die Dateien
+  // der Notizen-App); an der Produktion steht nur prod.bp = { id, name, size, t }.
+  // Knopf: Desktop immer da (grau = leer, türkis = Plan abgelegt); Handy nur, wenn ein Plan abgelegt ist.
+  // Ansehen: Desktop im Vollbild in der App; am Handy öffnet der PDF-Betrachter des Geräts.
+  var BP_MAX = 5 * 1024 * 1024;
+  var bpPopOpen = false, bpConfirm = false, bpBusy = false;
+  var bpLocal = {};    // fileId -> Datensatz, nur wenn Firebase nicht verfügbar ist (z. B. Vorschau)
+  var bpUrls = {};     // fileId -> blob-URL (bereits geladen)
+  var bpLoading = {};  // fileId -> true während des Ladens
+  var canEmbedPdf = (navigator.pdfViewerEnabled === true) && !!(window.matchMedia && window.matchMedia("(hover:hover) and (pointer:fine)").matches);
+  function fmtSize(b){
+    if(b < 1024) return b + " B";
+    if(b < 1024 * 1024) return Math.round(b / 1024) + " KB";
+    return (b / 1024 / 1024).toFixed(1).replace(".", ",") + " MB";
+  }
+  function bpPath(fid){ return FB_ROOT + "/files/" + fid; }
+  function bpRemoveStored(fid){
+    if(bpUrls[fid]){ try{ URL.revokeObjectURL(bpUrls[fid]); }catch(e){} delete bpUrls[fid]; }
+    delete bpLocal[fid];
+    if(fbEnabled && db){ try{ db.ref(bpPath(fid)).remove(); }catch(e){} }
+  }
+  // Handy: Knopf in der Zeile Bühnenverstärkung. Ist die Datei schon geladen, ist er ein echter Link –
+  // so öffnet der Betrachter des Geräts auch dort, wo ein automatisches Öffnen nach dem Laden unterdrückt wird.
+  function bpViewBtnHtml(f){
+    var url = bpUrls[f.id];
+    if(url && !canEmbedPdf){
+      return '<a class="bp-btn voll" href="' + url + '" download="' + esc(f.name) + '" title="Bühnenplan öffnen" aria-label="Bühnenplan öffnen">BP</a>';
+    }
+    return '<button type="button" class="bp-btn voll' + (bpLoading[f.id] ? ' laedt' : '') + '" data-action="bp-view" title="Bühnenplan ansehen" aria-label="Bühnenplan ansehen">' + (bpLoading[f.id] ? '…' : 'BP') + '</button>';
+  }
+  // Desktop: Knopf im Spaltenkopf + aufgeklapptes Feld
+  function renderBpHead(col){
+    col = col || colEl("buehne");
+    if(!col) return;
+    var head = col.querySelector(".col-head"), btn = head.querySelector(".bp-btn");
+    if(!btn) return;
+    var p = currentProd(), f = p && p.bp;
+    if(!p) bpPopOpen = false;
+    btn.disabled = !p;
+    btn.classList.toggle("voll", !!f);
+    btn.setAttribute("aria-expanded", bpPopOpen ? "true" : "false");
+    btn.title = f ? "Bühnenplan: " + f.name : "Bühnenplan ablegen (PDF)";
+    var pop = head.querySelector(".bp-pop");
+    if(!bpPopOpen){ if(pop) pop.remove(); return; }
+    var h = '<h4>Bühnenplan</h4>' +
+      '<button type="button" class="bp-drop" data-bp="choose"' + (bpBusy ? ' disabled' : '') + '>' +
+        (bpBusy ? 'lädt hoch …' : '<b>PDF hierher ziehen</b><br>oder klicken und auswählen' + (f ? '<br>(ersetzt den abgelegten Plan)' : '')) + '</button>';
+    if(f){
+      h += '<div class="bp-file"><span class="bp-name" title="' + esc(f.name) + '">' + esc(f.name) + '</span><span class="bp-size">' + esc(fmtSize(f.size || 0)) + '</span></div>' +
+        (bpConfirm
+          ? '<div class="bp-acts"><span>Plan wirklich entfernen?</span><button type="button" class="warn" data-bp="remove-yes">Ja</button><button type="button" data-bp="remove-no">Abbrechen</button></div>'
+          : '<div class="bp-acts"><span></span><button type="button" data-bp="view">' + (bpLoading[f.id] ? 'lädt …' : 'Ansehen') + '</button><button type="button" data-bp="remove">Entfernen</button></div>');
+    }
+    if(!pop){ pop = document.createElement("div"); pop.className = "bp-pop"; head.appendChild(pop); }
+    pop.innerHTML = h;
+  }
+  function bpRefresh(){ if(isCols()) renderBpHead(); else if(!editing) renderList(); }
+  function readBase64(file){
+    return new Promise(function(resolve, reject){
+      var r = new FileReader();
+      r.onload = function(){ var str = String(r.result); resolve(str.slice(str.indexOf(",") + 1)); };
+      r.onerror = function(){ reject(r.error || new Error("read")); };
+      r.readAsDataURL(file);
+    });
+  }
+  function withTimeout(pr, ms){
+    return new Promise(function(resolve, reject){
+      var t = setTimeout(function(){ reject(new Error("timeout")); }, ms);
+      Promise.resolve(pr).then(function(v){ clearTimeout(t); resolve(v); }, function(err){ clearTimeout(t); reject(err); });
+    });
+  }
+  function bpUpload(file){
+    var p = currentProd();
+    if(!p || !file || bpBusy) return;
+    if(prodBlocked()){ lockedHint(true); return; }
+    var isPdf = file.type === "application/pdf" || /\.pdf$/i.test(file.name || "");
+    if(!isPdf){ showToast("Bitte eine PDF-Datei ablegen", 3500, true); return; }
+    if(file.size > BP_MAX){ showToast("Zu gross (" + fmtSize(file.size) + ") – maximal 5 MB", 4500, true); return; }
+    var prodId = p.id;
+    bpBusy = true; renderBpHead();
+    showToast("Bühnenplan lädt hoch …", 60000);
+    readBase64(file).then(function(b64){
+      if(!b64) throw new Error("leer");
+      var fid = "f" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+      var rec = { name: file.name, type: "application/pdf", size: file.size, ts: Date.now(), data: b64 };
+      var online = fbEnabled && db;
+      var put = online ? withTimeout(db.ref(bpPath(fid)).set(rec), 60000) : Promise.resolve();
+      if(!online) bpLocal[fid] = rec;
+      return put.then(function(){
+        // erst eintragen, wenn die Datei sicher gespeichert ist
+        var pr = productions.find(function(x){ return x.id === prodId; });
+        if(!pr){ bpRemoveStored(fid); return; }
+        var old = pr.bp;
+        pr.bp = { id: fid, name: file.name, size: file.size, t: Date.now() };
+        pr.upd = Date.now();
+        if(openLock && openLock.prodId === prodId) pr.chg = { k: openLock.k, t: Date.now() };
+        try{ bpUrls[fid] = URL.createObjectURL(file); }catch(e){}
+        saveProductions();
+        if(old && old.id) bpRemoveStored(old.id);
+        showToast(online ? "Bühnenplan abgelegt" : "Nur lokal abgelegt (keine Verbindung zur Datenbank)", online ? 2400 : 4500, !online);
+      });
+    }).catch(function(err){
+      showToast(err && err.message === "leer" ? "Die Datei ist leer – nicht abgelegt" : "Ablegen fehlgeschlagen (Verbindung prüfen)", 4500, true);
+    }).then(function(){
+      bpBusy = false; bpConfirm = false;
+      renderProdPicker(); bpRefresh();
+    });
+  }
+  function bpRemove(){
+    var p = currentProd();
+    if(!p || !p.bp) return;
+    if(prodBlocked()){ lockedHint(true); return; }
+    var old = p.bp;
+    delete p.bp;
+    p.upd = Date.now();
+    if(prodOpen()) p.chg = { k: openLock.k, t: Date.now() };
+    saveProductions();
+    bpRemoveStored(old.id);
+    bpConfirm = false;
+    renderProdPicker(); bpRefresh();
+    showToast("Bühnenplan entfernt", 2000);
+  }
+  function b64ToBlob(b64, type){
+    var bin = atob(b64), len = bin.length, u8 = new Uint8Array(len);
+    for(var i = 0; i < len; i++) u8[i] = bin.charCodeAt(i);
+    return new Blob([u8], { type: type || "application/pdf" });
+  }
+  var fileView = document.getElementById("fileView"), fvStage = document.getElementById("fvStage");
+  function closeFileView(){
+    if(fileView.hidden) return;
+    fileView.hidden = true;
+    fvStage.innerHTML = "";
+  }
+  function bpShow(f){
+    var url = bpUrls[f.id];
+    if(!url) return;
+    if(canEmbedPdf){
+      // Desktop: im Vollbild in der App
+      fvStage.innerHTML = "";
+      var el = document.createElement("iframe");
+      el.title = f.name; el.src = url;
+      fvStage.appendChild(el);
+      document.getElementById("fvName").textContent = f.name;
+      var sv = document.getElementById("fvSave");
+      sv.href = url; sv.setAttribute("download", f.name);
+      fileView.hidden = false;
+      return;
+    }
+    // Handy: an das Gerät übergeben -> dessen PDF-Betrachter öffnet den Plan im Vollbild
+    var a = document.createElement("a");
+    a.href = url; a.download = f.name; a.style.display = "none";
+    document.body.appendChild(a);
+    try{ a.click(); }catch(e){}
+    setTimeout(function(){ a.remove(); }, 0);
+  }
+  function bpView(){
+    var p = currentProd(), f = p && p.bp;
+    if(!f) return;
+    if(bpUrls[f.id]){ bpShow(f); return; }
+    if(bpLoading[f.id]) return;
+    bpLoading[f.id] = true; bpRefresh();
+    showToast("Bühnenplan lädt …", 60000);
+    var get = bpLocal[f.id] ? Promise.resolve(bpLocal[f.id])
+      : (fbEnabled && db) ? withTimeout(db.ref(bpPath(f.id)).once("value").then(function(snap){ return snap.val(); }), 60000)
+      : Promise.resolve(null);
+    get.then(function(rec){
+      delete bpLoading[f.id];
+      if(!rec || !rec.data){ showToast("Bühnenplan nicht gefunden – evtl. entfernt", 4000, true); bpRefresh(); return; }
+      bpUrls[f.id] = URL.createObjectURL(b64ToBlob(rec.data, rec.type));
+      document.getElementById("toast").classList.remove("show");
+      bpRefresh();
+      var now = currentProd();
+      if(now && now.bp && now.bp.id === f.id) bpShow(f);
+    }).catch(function(){
+      delete bpLoading[f.id];
+      showToast("Bühnenplan konnte nicht geladen werden (Verbindung?)", 4500, true);
+      bpRefresh();
+    });
+  }
+  fileView.addEventListener("click", function(e){
+    if(e.target.closest("#fvSave")) return;
+    if(e.target.closest("#fvClose") || e.target === fvStage) closeFileView();
+  });
+  document.addEventListener("keydown", function(e){
+    if(e.key !== "Escape") return;
+    if(!fileView.hidden){ closeFileView(); return; }
+    if(bpPopOpen){ bpPopOpen = false; bpConfirm = false; renderBpHead(); }
+  });
+  // Handy-Knopf (in der Zeile Bühnenverstärkung)
+  document.getElementById("main").addEventListener("click", function(e){
+    if(e.target.closest && e.target.closest('[data-action="bp-view"]')) bpView();
+  });
+  // Feld im Spaltenkopf
+  document.getElementById("main").addEventListener("click", function(e){
+    var b = e.target.closest && e.target.closest(".bp-pop [data-bp]");
+    if(!b) return;
+    var act = b.dataset.bp;
+    if(act === "choose"){ if(prodBlocked()){ lockedHint(true); return; } var inp = document.getElementById("bpFile"); inp.value = ""; inp.click(); }
+    else if(act === "view") bpView();
+    else if(act === "remove"){ if(prodBlocked()){ lockedHint(true); return; } bpConfirm = true; renderBpHead(); }
+    else if(act === "remove-no"){ bpConfirm = false; renderBpHead(); }
+    else if(act === "remove-yes") bpRemove();
+  });
+  document.getElementById("bpFile").addEventListener("change", function(){
+    if(this.files && this.files[0]) bpUpload(this.files[0]);
+  });
+  // Klick ausserhalb schliesst das Feld
+  document.addEventListener("click", function(e){
+    if(!bpPopOpen || bpBusy) return;
+    if(e.target.closest && e.target.closest(".bp-pop, .bp-btn, #bpFile")) return;
+    bpPopOpen = false; bpConfirm = false; renderBpHead();
+  }, true);   // in der Capture-Phase: die Knöpfe im Feld werden beim Antippen neu gezeichnet und hingen sonst schon nicht mehr im Dokument
+  // Hineinziehen: auf den BP-Knopf oder ins aufgeklappte Feld. Dateien, die daneben landen, öffnet der
+  // Browser nicht (sonst wäre die App weg).
+  (function(){
+    function hasFiles(e){
+      var t = e.dataTransfer && e.dataTransfer.types;
+      if(!t) return false;
+      for(var i = 0; i < t.length; i++) if(t[i] === "Files") return true;
+      return false;
+    }
+    function zone(e){ return e.target.closest ? e.target.closest('.art-col[data-art="buehne"] .bp-btn, .bp-pop') : null; }
+    function mark(on){
+      Array.prototype.forEach.call(document.querySelectorAll(".bp-btn.ziel, .bp-drop.ziel"), function(x){ x.classList.remove("ziel"); });
+      if(!on) return;
+      var d = document.querySelector(".bp-pop .bp-drop"), b = document.querySelector('.art-col[data-art="buehne"] .bp-btn');
+      if(d) d.classList.add("ziel"); else if(b) b.classList.add("ziel");
+    }
+    window.addEventListener("dragover", function(e){
+      if(!hasFiles(e)) return;
+      e.preventDefault();
+      var z = isCols() && currentProdId ? zone(e) : null;
+      e.dataTransfer.dropEffect = z ? "copy" : "none";
+      mark(!!z);
+    });
+    window.addEventListener("dragleave", function(e){ if(!e.relatedTarget) mark(false); });
+    window.addEventListener("drop", function(e){
+      if(!hasFiles(e)) return;
+      e.preventDefault();
+      mark(false);
+      if(!isCols() || !currentProdId || !zone(e)) return;
+      var f = e.dataTransfer.files && e.dataTransfer.files[0];
+      if(f){ bpPopOpen = true; bpUpload(f); }
+    });
+  })();
+
   // Bühnenverstärkung (pro Produktion gespeichert: prod.bv = "ja" | "nein" | nicht gesetzt)
   function currentProd(){ return productions.find(function(p){ return p.id === currentProdId; }) || null; }
   function bvLabel(){
@@ -3352,7 +3656,9 @@
     function b(val, txt){
       return '<button type="button" class="amp-ch' + (v === val ? ' on' : '') + '" data-action="bv" data-v="' + val + '" aria-pressed="' + (v === val ? 'true' : 'false') + '">' + txt + '</button>';
     }
-    return '<div class="bv-row"><span class="bv-lbl">Bühnenverstärkung</span>' + b("ja", "Ja") + b("nein", "Nein") + '</div>';
+    var mitBp = !isCols() && p && p.bp;
+    return '<div class="bv-row' + (mitBp ? ' mit-bp' : '') + '"><span class="bv-lbl">Bühnenverstärkung</span>' + b("ja", "Ja") + b("nein", "Nein") +
+      (mitBp ? bpViewBtnHtml(p.bp) : '') + '</div>';
   }
   // Amps: Lücke nach „Portal alle“ so setzen, dass PrSub bündig über dem rechten Rand der unteren
   // Knöpfe (PT1AB … Mon3/4) endet; mindestens AMP_ALL_GAP, nie breiter als das Feld.
@@ -4480,10 +4786,12 @@
     if(b.dataset.colAction === "add") addCue();
     else if(b.dataset.colAction === "export") exportExcel(b);
     else if(b.dataset.colAction === "print") printView([currentArt]);
+    else if(b.dataset.colAction === "bp"){ bpPopOpen = !bpPopOpen; bpConfirm = false; renderBpHead(); }
   });
   // Fensterbreite wechselt zwischen Spalten und Einzelansicht
   function onColsChange(){
     if(editing) commitEdit(true);
+    bpPopOpen = false; bpConfirm = false;
     if(!isCols()) mainEl.innerHTML = "";
     updateWalker();
     renderArtPicker();
