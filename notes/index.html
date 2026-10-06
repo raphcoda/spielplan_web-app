@@ -747,6 +747,18 @@
   }
   .drop-box b{ display:block; font-size:34px; font-weight:800; letter-spacing:.01em; margin-bottom:12px; }
   .drop-box span{ font-size:13.5px; line-height:1.45; color:var(--text-dim); }
+  /* Dezenter Hinweis auf der freien Fläche rechts (nur Desktop mit Maus, seit v81) */
+  .drop-hint{ display:none; }
+  @media (min-width:820px) and (hover:hover) and (pointer:fine){
+    .drop-hint{
+      display:block; position:fixed; top:50%; z-index:0; pointer-events:none;
+      left:calc(max(420px, 33.333vw) + 32px + (100vw - max(420px, 33.333vw) - 32px) / 2);
+      transform:translate(-50%, -50%); max-width:calc(100vw - max(420px, 33.333vw) - 80px);
+      color:var(--text-dim); opacity:.4; font-size:14px; letter-spacing:.04em; text-align:center;
+    }
+    .drop-overlay:not([hidden]) ~ .drop-hint{ display:none; }
+  }
+  @media print{ .drop-hint{ display:none !important; } }
   .toast{
     position:fixed; left:50%; bottom:calc(22px + env(safe-area-inset-bottom, 0px)); transform:translateX(-50%);
     z-index:60; background:var(--surface-2); border:1px solid var(--line); color:var(--text);
@@ -768,6 +780,25 @@
     padding:10px 16px calc(10px + env(safe-area-inset-bottom, 0px)); background:var(--surface); border-top:1px solid var(--line); }
   .fv-bar span{ flex:1 1 auto; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .fv-bar a, .fv-bar button{ flex:0 0 auto; background:none; border:0; font:inherit; font-weight:700; color:var(--ka); text-decoration:none; cursor:pointer; padding:6px 2px; }
+
+  /* ---- Team-Login (seit v80): erscheint nur, wenn die Datenbank eine Anmeldung verlangt ---- */
+  .gate{ position:fixed; inset:0; z-index:80; background:var(--bg); display:flex; align-items:center; justify-content:center; padding:24px; }
+  .gate[hidden]{ display:none; }
+  .gate-box{ width:min(340px, 100%); text-align:center; margin:0; }
+  .gate-title{ font-size:30px; font-weight:800; letter-spacing:.04em; color:#fff; }
+  .gate-brand{ font-size:11px; font-weight:300; color:var(--text-dim); opacity:.55; transform:scaleX(1.4); margin:6px 0 30px; }
+  .gate-line{ height:1px; background:linear-gradient(90deg, transparent, var(--accent), transparent); margin:0 8% 30px; }
+  .gate-label{ display:block; font-size:13px; font-weight:600; letter-spacing:.05em; text-transform:uppercase; color:var(--text-dim); margin-bottom:8px; }
+  .gate-input{ width:100%; font:inherit; font-size:19px; text-align:center; letter-spacing:.12em; color:var(--text);
+    background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:12px; outline:none; }
+  .gate-input:focus{ border-color:var(--accent); }
+  .gate-input.err{ border-color:var(--warn); }
+  .gate-btn{ width:100%; margin-top:12px; font:inherit; font-size:16px; font-weight:700; color:var(--accent-ink);
+    background:var(--accent); border:0; border-radius:10px; padding:12px; cursor:pointer; }
+  .gate-btn:disabled{ opacity:.6; cursor:progress; }
+  .gate-err{ font-size:14px; color:var(--warn); margin-top:10px; min-height:20px; }
+  .gate-hint{ font-size:13px; line-height:1.45; color:var(--text-dim); margin-top:8px; }
+  .gate-user{ position:absolute; width:1px; height:1px; opacity:0; pointer-events:none; }
 </style>
 </head>
 <body>
@@ -796,11 +827,22 @@
 <div class="overlay menu-overlay" id="menuOverlay" hidden></div>
 <div id="printArea" aria-hidden="true"></div>
 <div class="drop-overlay" id="dropOverlay" hidden><div class="drop-box"><b>Schmeiss rein</b><span>wird als neuer Eintrag<br>„Einwurf“ hochgeladen<br>max. 5 MB</span></div></div>
+<div class="drop-hint" aria-hidden="true">Schieb drauf zum Hochladen</div>
 <div class="file-view" id="fileView" hidden><div class="fv-stage" id="fvStage"></div><div class="fv-bar"><span id="fvName"></span><a id="fvSave" href="#">Speichern</a><button type="button" id="fvClose">Schliessen</button></div></div>
 <div class="toast" id="toast" role="status" hidden></div>
+<div class="gate" id="gate" hidden><form class="gate-box" id="gateForm" autocomplete="on">
+  <div class="gate-title">NOTES</div><div class="gate-brand">TON &amp; BILD</div><div class="gate-line"></div>
+  <input class="gate-user" type="email" name="username" autocomplete="username" id="gateUser" tabindex="-1" readonly aria-hidden="true">
+  <label class="gate-label" for="gateCode">Team-Code</label>
+  <input class="gate-input" id="gateCode" type="password" name="password" autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go">
+  <button class="gate-btn" id="gateBtn" type="submit">Anmelden</button>
+  <div class="gate-err" id="gateErr" role="alert"></div>
+  <div class="gate-hint">Nur einmal pro Gerät nötig.<br>Danach bleibt dieses Gerät angemeldet.</div>
+</form></div>
 
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 <script>
 (function(){
   var STORAGE_KEY = "notizen.notes.v1";
@@ -893,35 +935,102 @@
     return !!(ae && (ae.classList.contains("note-text-input") || ae.classList.contains("note-kuerzel-input")));
   }
 
+  // ---- Team-Login (seit v80) ----
+  // Die App fragt nur dann nach dem Team-Code, wenn die Datenbank den Zugriff verweigert
+  // (Regeln verlangen Anmeldung). Solange die Regeln offen sind, ändert sich nichts.
+  // Der Code steht NICHT im Programm: er ist das Passwort des Team-Kontos in Firebase
+  // Authentication und wird dort geprüft. Die Anmeldung bleibt pro Browser/Gerät gespeichert.
+  var TEAM_EMAIL = "team@notizen-webapp-ton.firebaseapp.com";
+  var auth = null, syncAttached = false, deniedRetries = 0;
+  var gateEl = document.getElementById("gate"), gateCode = document.getElementById("gateCode"),
+      gateBtn = document.getElementById("gateBtn"), gateErr = document.getElementById("gateErr");
+  function showGate(msg){
+    if(!gateEl) return;
+    var u = document.getElementById("gateUser"); if(u) u.value = TEAM_EMAIL;
+    gateErr.textContent = msg || "";
+    gateCode.classList.toggle("err", !!msg);
+    gateBtn.disabled = false;
+    if(gateEl.hidden){ gateEl.hidden = false; setTimeout(function(){ try{ gateCode.focus(); }catch(e){} }, 50); }
+  }
+  function hideGate(){ if(gateEl && !gateEl.hidden){ gateEl.hidden = true; gateCode.value = ""; gateErr.textContent = ""; gateCode.classList.remove("err"); } }
+  function authErrorText(err){
+    var c = (err && err.code) || "";
+    if(c === "auth/wrong-password" || c === "auth/invalid-credential" || c === "auth/invalid-login-credentials" || c === "auth/user-not-found") return "Der Code stimmt nicht.";
+    if(c === "auth/too-many-requests") return "Zu viele Versuche – bitte später nochmals probieren.";
+    if(c === "auth/network-request-failed") return "Keine Verbindung – bitte nochmals probieren.";
+    if(c === "auth/operation-not-allowed" || c === "auth/user-disabled") return "Der Team-Login ist in Firebase noch nicht eingerichtet.";
+    return "Anmeldung nicht möglich.";
+  }
+  if(gateEl){
+    document.getElementById("gateForm").addEventListener("submit", function(e){
+      e.preventDefault();
+      var code = gateCode.value;
+      if(!code){ showGate("Bitte den Team-Code eingeben."); return; }
+      if(!auth || !auth.signInWithEmailAndPassword){ showGate("Anmeldung nicht verfügbar – Seite neu laden."); return; }
+      gateBtn.disabled = true; gateErr.textContent = ""; gateCode.classList.remove("err");
+      auth.signInWithEmailAndPassword(TEAM_EMAIL, code).then(function(){
+        deniedRetries = 0;
+        attachSync();   // der Schirm verschwindet, sobald die Datenbank antwortet
+      }).catch(function(err){ showGate(authErrorText(err)); });
+    });
+  }
+
+  function onRemote(snap){
+    hideGate(); deniedRetries = 0;
+    var remote = notesFromSnapshot(snap.val());
+    if(!fbReady){
+      fbReady = true;
+      // Offline/vor dem Verbinden gemachte Änderungen nachreichen
+      var ups = {}, any = false;
+      Object.keys(pendingLocal).forEach(function(id){ ups[id] = pendingLocal[id]; any = true; });
+      Object.keys(pendingDeleted).forEach(function(id){ ups[id] = null; any = true; });
+      pendingLocal = {}; pendingDeleted = {};
+      if(any){
+        remote = remote.filter(function(n){ return !(n.id in ups); });
+        Object.keys(ups).forEach(function(id){ if(ups[id]) remote.push(ups[id]); });
+        db.ref("sharedNotes").update(ups);
+      }
+    }
+    notes = remote;
+    lastSynced = snapshotMap(notes);
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(notes)); }catch(e){}
+    if(isEditing()){ deferredRemote = true; return; }
+    renderList();
+  }
+  function attachSync(){
+    if(syncAttached || !db) return;
+    syncAttached = true;
+    db.ref("sharedNotes").on("value", onRemote, function(){
+      // Zugriff verweigert: Regeln verlangen eine Anmeldung (oder die Anmeldung ist abgelaufen)
+      syncAttached = false; fbReady = false;
+      try{ db.ref("sharedNotes").off("value", onRemote); }catch(e){}
+      if(auth && auth.currentUser && deniedRetries < 2){
+        // angemeldet, aber (noch) abgelehnt → kurz warten und nochmals versuchen
+        deniedRetries++;
+        setTimeout(attachSync, 1200);
+        return;
+      }
+      showGate(auth && auth.currentUser ? "Kein Zugriff – bitte den Team-Code nochmals eingeben." : "");
+    });
+  }
   function initFirebaseSync(){
     if(!fbEnabled) return;
     try{
       firebase.initializeApp(firebaseConfig);
       db = firebase.database();
     }catch(e){ fbEnabled = false; return; }
-    db.ref("sharedNotes").on("value", function(snap){
-      var remote = notesFromSnapshot(snap.val());
-      if(!fbReady){
-        fbReady = true;
-        // Offline/vor dem Verbinden gemachte Änderungen nachreichen
-        var ups = {}, any = false;
-        Object.keys(pendingLocal).forEach(function(id){ ups[id] = pendingLocal[id]; any = true; });
-        Object.keys(pendingDeleted).forEach(function(id){ ups[id] = null; any = true; });
-        pendingLocal = {}; pendingDeleted = {};
-        if(any){
-          remote = remote.filter(function(n){ return !(n.id in ups); });
-          Object.keys(ups).forEach(function(id){ if(ups[id]) remote.push(ups[id]); });
-          db.ref("sharedNotes").update(ups);
-        }
-      }
-      notes = remote;
-      lastSynced = snapshotMap(notes);
-      try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(notes)); }catch(e){}
-      if(isEditing()){ deferredRemote = true; return; }
-      renderList();
-    });
+    try{ auth = (typeof firebase.auth === "function") ? firebase.auth() : null; }catch(e){ auth = null; }
+    if(auth && auth.onAuthStateChanged){
+      // Erst die gespeicherte Anmeldung dieses Geräts abwarten, dann verbinden
+      var first = true;
+      auth.onAuthStateChanged(function(user){
+        if(first){ first = false; attachSync(); return; }
+        if(user) attachSync();
+      });
+    } else {
+      attachSync();
+    }
   }
-
 
   // ---- Dateiübertragung (seit v78) ----
   // Datei per Drag & Drop (Desktop) → Inhalt base64 unter sharedFiles/<fileId>, dazu ein neuer
