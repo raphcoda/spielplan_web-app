@@ -678,6 +678,8 @@
   .note-footer .sharebtn, .note-footer .delbtn:not(.delx){ padding:4px 5px; }
   .delbtn.delx{ padding:4px 7px; line-height:0; display:inline-flex; align-items:center; opacity:.55; }
   .delx svg{ width:17px; height:17px; display:block; }
+  /* ✕ (Löschen) etwas heller als die übrigen grauen Symbole (seit v86) */
+  .delbtn.delx.delx-del{ opacity:.85; }
   .note-day{
     margin-right:auto;
     font-size:13px;
@@ -723,6 +725,30 @@
   }
   /* Titel eines Datei-Eintrags in Türkis → klar von normalen Notizen unterscheidbar */
   .note-text.is-file{ color:var(--ka); font-weight:600; }
+  /* Vorschaubild im Datei-Chip (Fotos/Bilder, seit v85) */
+  .nf-icon.nf-thumb{ padding:0; overflow:hidden; }
+  .nf-thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+  /* Mehrere Anhänge pro Notiz (seit v86): Fotos als Bildstreifen, Dateien als Zeilen */
+  .nf-photos{ display:flex; flex-wrap:wrap; gap:10px; width:calc(100% + 24px); margin:0 -12px; padding:10px 12px;
+    background:var(--note-band); border-top:1px solid var(--divider); }
+  .nf-ph{ position:relative; flex:0 0 auto; width:68px; height:68px; }
+  .nf-ph-open{ width:100%; height:100%; padding:0; border:1px solid var(--line); border-radius:9px; overflow:hidden;
+    background:var(--surface-2); color:var(--ka); display:flex; align-items:center; justify-content:center; cursor:pointer;
+    -webkit-tap-highlight-color:transparent; }
+  .nf-ph-open img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .nf-ph-open svg{ width:22px; height:22px; }
+  .nf-ph-open.loading{ opacity:.55; cursor:progress; }
+  .nf-rm{ flex:0 0 auto; background:none; border:0; color:var(--text-dim); opacity:.7; padding:6px 2px 6px 8px; line-height:0; cursor:pointer;
+    -webkit-tap-highlight-color:transparent; }
+  .nf-rm svg{ width:15px; height:15px; display:block; }
+  .nf-ph .nf-rm{ position:absolute; top:-7px; right:-7px; width:22px; height:22px; padding:0; border-radius:50%; opacity:1;
+    background:var(--surface-2); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; }
+  .nf-ph .nf-rm svg{ width:12px; height:12px; }
+  .nf-row{ display:flex; align-items:center; width:calc(100% + 24px); margin:0 -12px; padding-right:10px;
+    background:var(--note-band); border-top:1px solid var(--divider); }
+  .nf-row .note-file{ width:auto; margin:0; flex:1 1 auto; min-width:0; background:none; border-top:0; }
+  .bm-full .nf-photos, .bm-full .nf-row{ width:100%; margin:8px 0 0; border:1px solid var(--line); border-radius:8px; }
+  .bm-full .nf-row .note-file{ margin:0; border:0; }
   .nf-icon{
     flex:0 0 auto; width:34px; height:34px; border-radius:8px;
     border:1px solid var(--line); background:var(--surface-2); color:var(--ka);
@@ -857,6 +883,8 @@
 <div class="drop-hint" id="dropHint" aria-hidden="true"><span class="drop-hint-text" id="dropHintText">Schieb drauf zum Hochladen</span></div>
 <div class="file-view" id="fileView" hidden><div class="fv-stage" id="fvStage"></div><div class="fv-bar"><span id="fvName"></span><a id="fvSave" href="#">Speichern</a><button type="button" id="fvClose">Schliessen</button></div></div>
 <div class="toast" id="toast" role="status" hidden></div>
+<input type="file" id="pickFile" hidden tabindex="-1" aria-hidden="true">
+<input type="file" id="pickPhoto" accept="image/*" capture="environment" hidden tabindex="-1" aria-hidden="true">
 <div class="gate" id="gate" hidden><form class="gate-box" id="gateForm" autocomplete="on">
   <div class="gate-title">NOTES</div><div class="gate-brand">TON &amp; BILD</div><div class="gate-line"></div>
   <input class="gate-user" type="email" name="username" autocomplete="username" id="gateUser" tabindex="-1" readonly aria-hidden="true">
@@ -942,7 +970,8 @@
     Object.keys(lastSynced).forEach(function(id){
       if(!(id in cur)){
         updates[id] = null; changed = true;
-        try{ var gone = JSON.parse(lastSynced[id]); if(gone && gone.file && gone.file.id) removeStoredFile(gone.file.id); }catch(e){}
+        // Notiz endgültig gelöscht → alle ihre Dateien aus dem Speicher löschen (gibt den Platz in Firebase frei)
+        try{ noteFiles(JSON.parse(lastSynced[id])).forEach(function(f){ removeStoredFile(f.id); }); }catch(e){}
       }
     });
     lastSynced = cur;
@@ -1061,11 +1090,21 @@
 
   // ---- Dateiübertragung (seit v78) ----
   // Datei per Drag & Drop (Desktop) → Inhalt base64 unter sharedFiles/<fileId>, dazu ein neuer
-  // Eintrag "Einwurf" mit note.file = {id,name,type,size}. Der Inhalt wird erst beim
+  // Eintrag "Einwurf" mit note.files = [{id,name,type,size,…}]. Der Inhalt wird erst beim
   // Antippen geladen (liegt bewusst NICHT unter sharedNotes, sonst lädt jedes Gerät alles mit).
   var FILE_MAX = 5 * 1024 * 1024;
   var FILE_PATH = "sharedFiles";
   var FILE_NOTE_TEXT = "Einwurf";
+  // Anhänge an einer Notiz (Upload-Knopf / Foto, seit v85) – Grenzen hier anpassen.
+  // (Der Einwurf per Drag & Drop am Desktop bleibt bei FILE_MAX.)
+  var ATTACH_MAX = 5 * 1024 * 1024;   // Datei über den Upload-Knopf: bis 5 MB (seit v86, vorher 1 MB)
+  var PHOTO_MAX = 1 * 1024 * 1024;    // Foto: wird auf höchstens 1 MB verkleinert
+  var MAX_PHOTOS = 3, MAX_FILES = 3;  // pro Notiz (seit v86 mehrere Anhänge)
+  var pendingRemove = null;           // { id, fid } – Rückfrage „Foto/Datei entfernen?“
+  var PHOTO_EDGE = 1600;      // längere Seite eines verkleinerten Fotos in Pixel
+  var pickTarget = null;      // id der Notiz, für die gerade eine Datei/ein Foto gewählt wird
+  var ICON_UPLOAD = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5V4.5M7.5 8.5L12 4l4.5 4.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 14.5v3.5a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-3.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  var ICON_CAM = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8.5A1.5 1.5 0 0 1 5.5 7H8l1.4-2.2h5.2L16 7h2.5A1.5 1.5 0 0 1 20 8.5v9A1.5 1.5 0 0 1 18.5 19h-13A1.5 1.5 0 0 1 4 17.5Z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.4" fill="none" stroke="currentColor" stroke-width="1.9"/></svg>';
   var localFiles = {};   // fileId -> Datensatz, nur wenn Firebase nicht verfügbar ist (z. B. Vorschau)
   var fileUrls = {};     // fileId -> blob-URL (bereits geladen)
   var fileBlobs = {};    // fileId -> Blob (für die Textansicht)
@@ -1102,21 +1141,60 @@
     if(ms !== 0) toastTimer = setTimeout(function(){ toastEl.hidden = true; }, ms || (isErr ? 6000 : 2600));
   }
 
-  function fileChipHtml(n){
-    var f = n.file;
-    if(!f) return "";
-    var url = fileUrls[f.id], kind = viewKind(f), img = (kind === "img");
+  // Vorschaubild kommt aus der gemeinsamen Datenbank → nur ein reines Bild-data:-URL zulassen
+  function thumbOk(t){ return typeof t === "string" && t.length < 24000 && /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+\/=]+$/.test(t); }
+  // Anhänge einer Notiz als Liste. Seit v86 liegen sie in note.files (mehrere); ältere Einträge haben
+  // genau einen in note.file. Aus der Datenbank kann eine Liste auch als Objekt zurückkommen.
+  function noteFiles(n){
+    if(!n) return [];
+    var l = n.files;
+    if(l && !Array.isArray(l) && typeof l === "object") l = Object.keys(l).map(function(k){ return l[k]; });
+    l = Array.isArray(l) ? l : (n.file ? [n.file] : []);
+    return l.filter(function(f){ return f && typeof f === "object" && f.id; });
+  }
+  function fileKind(f){ return f.kind || (/^Foto \d/.test(f.name || "") ? "photo" : "file"); }
+  function countKind(n, kind){ return noteFiles(n).filter(function(f){ return fileKind(f) === kind; }).length; }
+  // Türkiser Titel nur für Einwurf-Einträge (nicht für Notizen, an die etwas angehängt wurde)
+  function isEinwurf(n){
+    var l = noteFiles(n);
+    return l.length > 0 && (n.text === FILE_NOTE_TEXT || l.some(function(f){ return f.einwurf; }));
+  }
+  var ICON_X_SMALL = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>';
+  function fileRowHtml(n, f, mitEntfernen){
+    var url = fileUrls[f.id], kind = viewKind(f), img = (kind === "img"), key = n.id + "|" + f.id;
     var inner =
-      '<span class="nf-icon">' + (img ? ICON_IMG : ICON_FILE) + '</span>' +
+      (thumbOk(f.thumb) ? '<span class="nf-icon nf-thumb"><img src="' + f.thumb + '" alt=""></span>'
+                        : '<span class="nf-icon">' + (img ? ICON_IMG : ICON_FILE) + '</span>') +
       '<span class="nf-body"><span class="nf-name">' + esc(f.name) + '</span>' +
       '<span class="nf-sub">' + esc(fmtSize(f.size || 0)) + (fileLoading[f.id] ? ' · lädt …' : '') + '</span></span>' +
       '<span class="nf-go">' + (kind ? 'Ansehen' : (url ? 'Öffnen' : 'Laden')) + '</span>';
     // Bereits geladene Nicht-Bild-Datei: echter Link → öffnet/speichert auch dort, wo der Browser
     // ein automatisches Öffnen nach dem Laden unterdrückt (zweites Antippen)
-    if(url && !kind){
-      return '<a class="note-file" href="' + url + '" download="' + esc(f.name) + '" title="' + esc(f.name) + '">' + inner + '</a>';
+    var chip = (url && !kind)
+      ? '<a class="note-file" href="' + url + '" download="' + esc(f.name) + '" title="' + esc(f.name) + '">' + inner + '</a>'
+      : '<button type="button" class="note-file' + (fileLoading[f.id] ? ' loading' : '') + '" data-file-open="' + key + '" title="' + esc(f.name) + '">' + inner + '</button>';
+    return '<div class="nf-row">' + chip +
+      (mitEntfernen ? '<button type="button" class="nf-rm" data-file-remove="' + key + '" aria-label="Datei entfernen" title="Datei entfernen">' + ICON_X_SMALL + '</button>' : '') + '</div>';
+  }
+  // Alle Anhänge eines Eintrags: Fotos nebeneinander als Bildstreifen, Dateien als Zeilen darunter
+  function attachmentsHtml(n, nurLesen){
+    var l = noteFiles(n);
+    if(!l.length) return "";
+    var mitEntfernen = !nurLesen && !n.locked;
+    var fotos = l.filter(function(f){ return fileKind(f) === "photo"; }), rest = l.filter(function(f){ return fileKind(f) !== "photo"; });
+    var html = "";
+    if(fotos.length){
+      html += '<div class="nf-photos">' + fotos.map(function(f){
+        var key = n.id + "|" + f.id;
+        return '<span class="nf-ph">' +
+          '<button type="button" class="nf-ph-open' + (fileLoading[f.id] ? ' loading' : '') + '" data-file-open="' + key + '" aria-label="Foto ansehen" title="' + esc(f.name) + ' · ' + esc(fmtSize(f.size || 0)) + '">' +
+            (thumbOk(f.thumb) ? '<img src="' + f.thumb + '" alt="">' : ICON_IMG) + '</button>' +
+          (mitEntfernen ? '<button type="button" class="nf-rm" data-file-remove="' + key + '" aria-label="Foto entfernen" title="Foto entfernen">' + ICON_X_SMALL + '</button>' : '') +
+        '</span>';
+      }).join("") + '</div>';
     }
-    return '<button type="button" class="note-file' + (fileLoading[f.id] ? ' loading' : '') + '" data-file-open="' + n.id + '" title="' + esc(f.name) + '">' + inner + '</button>';
+    rest.forEach(function(f){ html += fileRowHtml(n, f, mitEntfernen); });
+    return html;
   }
 
   function b64ToBlob(b64, type){
@@ -1172,10 +1250,17 @@
     setTimeout(function(){ a.remove(); }, 0);
   }
   function rerenderAll(){ if(isEditing()){ deferredRemote = true; } else { renderList(); } }
-  function openNoteFile(noteId){
-    var n = notes.find(function(x){ return x.id === String(noteId); });
-    if(!n || !n.file) return;
-    var f = n.file;
+  function findAttachment(key){
+    var i = String(key).indexOf("|"), nid = i < 0 ? String(key) : String(key).slice(0, i), fid = i < 0 ? null : String(key).slice(i + 1);
+    var n = notes.find(function(x){ return x.id === nid; });
+    if(!n) return null;
+    var l = noteFiles(n), f = fid ? l.find(function(x){ return String(x.id) === fid; }) : l[0];
+    return f ? { note: n, file: f } : null;
+  }
+  function openNoteFile(key){
+    var hit = findAttachment(key);
+    if(!hit) return;
+    var f = hit.file;
     if(fileUrls[f.id]){ showFile(f); return; }
     if(fileLoading[f.id]) return;
     fileLoading[f.id] = true; rerenderAll();
@@ -1192,6 +1277,18 @@
       rerenderAll();
     });
   }
+  // Einen einzelnen Anhang von der Notiz lösen und aus dem Speicher löschen
+  function removeAttachment(key){
+    var hit = findAttachment(key);
+    if(!hit || hit.note.locked) return;
+    var n = hit.note, fid = hit.file.id;
+    n.files = noteFiles(n).filter(function(x){ return x.id !== fid; });
+    delete n.file;
+    if(!n.files.length) delete n.files;
+    save(); rerenderAll();
+    removeStoredFile(fid);
+    toast((fileKind(hit.file) === "photo" ? "Foto" : "Datei") + " entfernt.");
+  }
   if(fileView){
     fileView.addEventListener("click", function(e){
       if(e.target.closest("#fvSave")) return;
@@ -1206,6 +1303,18 @@
     if(!el) return false;
     e.stopPropagation();
     openNoteFile(el.getAttribute("data-file-open"));
+    return true;
+  }
+  // Klick auf das kleine ✕ an einem Anhang → Rückfrage in der Fusszeile des Eintrags
+  function handleFileRemoveClick(e){
+    var el = e.target.closest("[data-file-remove]");
+    if(!el) return false;
+    e.stopPropagation();
+    var key = el.getAttribute("data-file-remove"), hit = findAttachment(key);
+    if(!hit || hit.note.locked) return true;
+    pendingDelete = null;
+    pendingRemove = { id: hit.note.id, fid: hit.file.id, foto: fileKind(hit.file) === "photo" };
+    renderList();
     return true;
   }
   function removeStoredFile(fid){
@@ -1229,34 +1338,172 @@
       p.then(function(v){ clearTimeout(t); resolve(v); }, function(err){ clearTimeout(t); reject(err); });
     });
   }
-  function uploadFile(file){
-    if(file.size > FILE_MAX){
-      toast("„" + file.name + "“ ist zu gross (" + fmtSize(file.size) + ") – maximal 5 MB.", true);
-      return Promise.resolve(false);
-    }
-    toast("Lädt hoch: " + file.name + " …", false, 0);
-    return readBase64(file).then(function(b64){
+  // Bild laden (EXIF-Drehung wird vom Browser berücksichtigt) und auf eine Zeichenfläche verkleinern
+  function loadImage(file){
+    return new Promise(function(resolve, reject){
+      var url = URL.createObjectURL(file), img = new Image();
+      img.onload = function(){ resolve({ img: img, url: url }); };
+      img.onerror = function(){ URL.revokeObjectURL(url); reject(new Error("bild")); };
+      img.src = url;
+    });
+  }
+  function drawScaled(img, edge){
+    var w = img.naturalWidth || img.width, h = img.naturalHeight || img.height;
+    var k = Math.min(1, edge / Math.max(w, h));
+    var c = document.createElement("canvas");
+    c.width = Math.max(1, Math.round(w * k)); c.height = Math.max(1, Math.round(h * k));
+    var g = c.getContext("2d");
+    g.fillStyle = "#fff"; g.fillRect(0, 0, c.width, c.height);   // transparente PNGs bekommen weissen Grund
+    g.drawImage(img, 0, 0, c.width, c.height);
+    return c;
+  }
+  function canvasBlob(c, q){
+    return new Promise(function(resolve, reject){
+      if(!c.toBlob){ reject(new Error("bild")); return; }
+      c.toBlob(function(bl){ bl ? resolve(bl) : reject(new Error("bild")); }, "image/jpeg", q);
+    });
+  }
+  // Kleines Vorschaubild (liegt direkt an der Notiz, damit es ohne Laden der Datei erscheint)
+  function makeThumb(img){
+    try{
+      var w = img.naturalWidth || img.width, h = img.naturalHeight || img.height, side = Math.min(w, h), c = document.createElement("canvas");
+      c.width = c.height = 92;
+      var g = c.getContext("2d");
+      g.fillStyle = "#fff"; g.fillRect(0, 0, 92, 92);
+      g.drawImage(img, (w - side) / 2, (h - side) / 2, side, side, 0, 0, 92, 92);
+      var t = c.toDataURL("image/jpeg", .7);
+      return thumbOk(t) ? t : "";
+    }catch(e){ return ""; }
+  }
+  // Foto/Bild verkleinern: längere Seite PHOTO_EDGE, JPEG; falls nötig weiter verkleinern, bis es unter max liegt
+  function shrinkImage(file, max){
+    return loadImage(file).then(function(r){
+      var thumb = makeThumb(r.img), steps = [[PHOTO_EDGE, .82], [PHOTO_EDGE, .68], [1280, .7], [1024, .65], [800, .6]], i = 0;
+      function next(){
+        var st = steps[i++];
+        return canvasBlob(drawScaled(r.img, st[0]), st[1]).then(function(bl){
+          if(bl.size <= max || i >= steps.length) return bl;
+          return next();
+        });
+      }
+      return next().then(function(bl){ URL.revokeObjectURL(r.url); return { blob: bl, thumb: thumb }; },
+                         function(err){ URL.revokeObjectURL(r.url); throw err; });
+    });
+  }
+  function thumbFor(file){
+    if(!/^image\/(jpeg|png|gif|webp|bmp|avif)$/i.test(file.type || "")) return Promise.resolve("");
+    return loadImage(file).then(function(r){ var t = makeThumb(r.img); URL.revokeObjectURL(r.url); return t; }, function(){ return ""; });
+  }
+  function pad2f(n){ return n < 10 ? "0" + n : "" + n; }
+  function photoName(){
+    var d = new Date();
+    return "Foto " + pad2f(d.getDate()) + "." + pad2f(d.getMonth() + 1) + ". " + pad2f(d.getHours()) + "." + pad2f(d.getMinutes()) + ".jpg";
+  }
+  // Inhalt speichern (Firebase oder – ohne Verbindung – lokal). Ergebnis: die Angaben für einen Eintrag in note.files
+  function storeFile(blob, name, type, thumb){
+    return readBase64(blob).then(function(b64){
       if(!b64){ throw new Error("leer"); }
       var fid = nextId();
-      var rec = { name: file.name, type: file.type || "application/octet-stream", size: file.size, ts: Date.now(), data: b64 };
+      var rec = { name: name, type: type || "application/octet-stream", size: blob.size, ts: Date.now(), data: b64 };
       var online = fbEnabled && db;
       var put = online ? withTimeout(db.ref(FILE_PATH + "/" + fid).set(rec), 60000) : Promise.resolve();
       if(!online) localFiles[fid] = rec;
       return put.then(function(){
-        // Eintrag erst anlegen, wenn die Datei sicher gespeichert ist
-        notes.push({ id: nextId(), kuerzel: "", text: FILE_NOTE_TEXT, done: false, ts: Date.now(),
-                     file: { id: fid, name: rec.name, type: rec.type, size: rec.size } });
-        save(); rerenderAll();
-        toast(online ? "Hochgeladen: " + file.name : "Nur lokal gespeichert (keine Verbindung zur Datenbank): " + file.name, !online);
-        return true;
+        var meta = { id: fid, name: rec.name, type: rec.type, size: rec.size };
+        if(thumb) meta.thumb = thumb;
+        return { meta: meta, online: online };
       });
-    }).catch(function(err){
-      toast(err && err.message === "leer"
-        ? "„" + file.name + "“ ist leer oder ein Ordner – nicht hochgeladen."
-        : "Upload fehlgeschlagen: " + file.name + " (Verbindung oder Firebase-Regel prüfen).", true);
-      return false;
     });
   }
+  function uploadFehler(err, name){
+    var m = err && err.message;
+    toast(m === "leer" ? "„" + name + "“ ist leer oder ein Ordner – nicht hochgeladen."
+        : m === "bild" ? "Das Bild konnte nicht verarbeitet werden."
+        : "Upload fehlgeschlagen: " + name + " (Verbindung oder Firebase-Regel prüfen).", true);
+    return false;
+  }
+  // Einwurf (Drag & Drop am Desktop): neue Notiz „Einwurf“ mit der Datei
+  function uploadFile(file){
+    if(file.size > FILE_MAX){
+      toast("„" + file.name + "“ ist zu gross (" + fmtSize(file.size) + ") – maximal " + fmtSize(FILE_MAX) + ".", true);
+      return Promise.resolve(false);
+    }
+    toast("Lädt hoch: " + file.name + " …", false, 0);
+    return thumbFor(file).then(function(thumb){
+      return storeFile(file, file.name, file.type, thumb);
+    }).then(function(r){
+      // Eintrag erst anlegen, wenn die Datei sicher gespeichert ist
+      r.meta.einwurf = true; r.meta.kind = "file";
+      notes.push({ id: nextId(), kuerzel: "", text: FILE_NOTE_TEXT, done: false, ts: Date.now(), files: [r.meta] });
+      save(); rerenderAll();
+      toast(r.online ? "Hochgeladen: " + file.name : "Nur lokal gespeichert (keine Verbindung zur Datenbank): " + file.name, !r.online);
+      return true;
+    }).catch(function(err){ return uploadFehler(err, file.name); });
+  }
+  // Datei oder Foto an eine bestehende Notiz hängen (Knöpfe am Eintrag). Seit v86 bis zu MAX_PHOTOS Fotos
+  // und MAX_FILES Dateien pro Notiz. Fotos werden immer auf höchstens PHOTO_MAX verkleinert; Dateien
+  // dürfen bis ATTACH_MAX gross sein (zu grosse Bilder werden statt Ablehnung verkleinert).
+  function attachToNote(noteId, file, alsFoto){
+    var name = alsFoto ? photoName() : file.name, kind = alsFoto ? "photo" : "file";
+    var istBild = /^image\/(jpeg|png|webp|bmp|avif|heic|heif)$/i.test(file.type || "");
+    var prep;
+    if(alsFoto || (istBild && file.size > ATTACH_MAX)){
+      var grenze = alsFoto ? PHOTO_MAX : ATTACH_MAX;
+      toast((alsFoto ? "Foto wird verkleinert" : "Bild wird verkleinert") + " und hochgeladen …", false, 0);
+      prep = shrinkImage(file, grenze).then(function(r){
+        if(r.blob.size > grenze) throw new Error("gross");
+        if(!alsFoto) name = name.replace(/\.[^.]+$/, "") + ".jpg";
+        return { blob: r.blob, type: "image/jpeg", thumb: r.thumb };
+      });
+    } else {
+      if(file.size > ATTACH_MAX){
+        toast("„" + file.name + "“ ist zu gross (" + fmtSize(file.size) + ") – maximal " + fmtSize(ATTACH_MAX) + ".", true);
+        return Promise.resolve(false);
+      }
+      toast("Lädt hoch: " + file.name + " …", false, 0);
+      prep = thumbFor(file).then(function(t){ return { blob: file, type: file.type, thumb: t }; });
+    }
+    return prep.then(function(pr){ return storeFile(pr.blob, name, pr.type, pr.thumb); }).then(function(r){
+      var n = notes.find(function(x){ return x.id === String(noteId); });
+      if(!n){ removeStoredFile(r.meta.id); toast("Der Eintrag wurde inzwischen gelöscht – nichts angehängt.", true); return false; }
+      if(countKind(n, kind) >= (alsFoto ? MAX_PHOTOS : MAX_FILES)){   // inzwischen von einem anderen Gerät gefüllt
+        removeStoredFile(r.meta.id); toast(vollText(kind), true); return false;
+      }
+      r.meta.kind = kind;
+      n.files = noteFiles(n).concat([r.meta]);
+      delete n.file;                                                  // altes Einzel-Feld (v78–v85) in die Liste überführt
+      save(); rerenderAll();
+      toast(r.online ? (alsFoto ? "Foto angehängt" : "Angehängt: " + name) + " (" + fmtSize(r.meta.size) + ")"
+                     : "Nur lokal gespeichert (keine Verbindung zur Datenbank): " + name, !r.online);
+      return true;
+    }).catch(function(err){
+      if(err && err.message === "gross"){ toast("Das Bild ist auch verkleinert noch zu gross.", true); return false; }
+      return uploadFehler(err, name);
+    });
+  }
+  function vollText(kind){
+    return kind === "photo" ? "Höchstens " + MAX_PHOTOS + " Fotos pro Notiz – zuerst eines entfernen."
+                            : "Höchstens " + MAX_FILES + " Dateien pro Notiz – zuerst eine entfernen.";
+  }
+  // Auswahlfenster / Kamera öffnen (muss direkt im Klick passieren)
+  function pickFor(noteId, kind){
+    var inp = document.getElementById(kind === "photo" ? "pickPhoto" : "pickFile");
+    if(!inp) return;
+    pickTarget = { id: String(noteId), kind: kind };
+    inp.value = "";
+    inp.click();
+  }
+  ["pickFile", "pickPhoto"].forEach(function(id){
+    var inp = document.getElementById(id);
+    if(!inp) return;
+    inp.addEventListener("change", function(){
+      var f = inp.files && inp.files[0], t = pickTarget;
+      pickTarget = null;
+      if(!f || !t) return;
+      attachToNote(t.id, f, t.kind === "photo");
+      inp.value = "";
+    });
+  });
   function uploadFiles(list){
     var files = Array.prototype.slice.call(list || []);
     var chain = Promise.resolve();
@@ -1355,7 +1602,7 @@
         } else if(n.hidden && bmExpanded === n.id){
           html += '<div class="bm-sub bm-full">' +
             (n.kuerzel || n.ts ? '<div class="bm-meta">' + esc(n.kuerzel || "") + (n.kuerzel ? ' · ' : '') + esc(formatTs(n.ts)) + '</div>' : '') +
-            '<div class="bm-fulltext">' + (n.text ? linkify(esc(n.text)) : '(leere Notiz)') + '</div>' + fileChipHtml(n) +
+            '<div class="bm-fulltext">' + (n.text ? linkify(esc(n.text)) : '(leere Notiz)') + '</div>' + attachmentsHtml(n, true) +
             '<div class="bm-actions"><button type="button" class="sharebtn" data-bm-unhide="' + n.id + '">Wieder in Liste einblenden</button></div>' +
           '</div>';
         }
@@ -1492,7 +1739,7 @@
           html += '<div class="bm-sub bm-full">' +
             '<div class="bm-meta">' + (n.kuerzel ? esc(n.kuerzel) + ' · ' : '') + esc(formatTs(n.ts)) +
               (n.archivedAt ? ' · archiviert ' + esc(formatTs(n.archivedAt)) : '') + '</div>' +
-            '<div class="bm-fulltext">' + (n.text ? linkify(esc(n.text)) : '(leere Notiz)') + '</div>' + fileChipHtml(n) +
+            '<div class="bm-fulltext">' + (n.text ? linkify(esc(n.text)) : '(leere Notiz)') + '</div>' + attachmentsHtml(n, true) +
             '<div class="bm-actions">' +
               '<button type="button" class="sharebtn" data-arch-restore="' + n.id + '">Wiederherstellen</button>' +
               '<button type="button" class="sharebtn" data-arch-print="' + n.id + '">Drucken</button>' +
@@ -1592,7 +1839,7 @@
       html += '<div class="p-note">' +
         '<div class="p-meta">' + esc(n.kuerzel || "–") + ' · ' + esc(formatTsFull(n.ts)) +
           (tags.length ? ' <span class="p-tags">· ' + esc(tags.join(" · ")) + '</span>' : '') + '</div>' +
-        '<div class="p-text">' + esc(n.text || "") + (n.file ? '\nDatei: ' + esc(n.file.name) + ' (' + esc(fmtSize(n.file.size || 0)) + ')' : '') + '</div>' +
+        '<div class="p-text">' + esc(n.text || "") + noteFiles(n).map(function(f){ return '\n' + (fileKind(f) === 'photo' ? 'Foto: ' : 'Datei: ') + esc(f.name) + ' (' + esc(fmtSize(f.size || 0)) + ')'; }).join('') + '</div>' +
       '</div>';
     });
     area.innerHTML = html;
@@ -1707,7 +1954,7 @@
     return terms;
   }
   function noteMatches(n, terms){
-    var hay = norm((n.text || "") + " " + (n.kuerzel || "") + (n.file ? " " + n.file.name + " datei" : ""));
+    var hay = norm((n.text || "") + " " + (n.kuerzel || "") + noteFiles(n).map(function(f){ return " " + f.name + (fileKind(f) === "photo" ? " foto" : " datei"); }).join(""));
     for(var i = 0; i < terms.length; i++){
       var t = terms[i];
       if(t.type === "range"){ if(!rangeMatches(t.a, t.b, n.ts)) return false; continue; }
@@ -1828,14 +2075,18 @@
           '<button type="button" class="note-flag' + (n.flag ? ' on' : '') + '" data-action="toggle-flag" aria-label="' + (n.flag ? 'Markierung entfernen' : 'Lila markieren') + '" aria-pressed="' + (n.flag ? 'true' : 'false') + '">' + (n.flag ? FLAG_ON : FLAG_OFF) + '</button>' +
           '<button type="button" class="note-bm' + (n.bookmark ? ' on' : '') + '" data-action="toggle-bm" aria-label="' + (n.bookmark ? 'Lesezeichen entfernen' : 'Als Lesezeichen merken') + '" aria-pressed="' + (n.bookmark ? 'true' : 'false') + '">' + (n.bookmark ? '★' : '☆') + '</button>' +
         '</div>' +
-        '<div class="note-text' + (n.text ? '' : ' placeholder') + (n.file ? ' is-file' : '') + '" data-field="text" tabindex="0" role="button" aria-label="Notiz bearbeiten">' + (n.text ? linkify(esc(n.text)) : "Notiz eingeben…") + '</div>' +
-        fileChipHtml(n) +
+        '<div class="note-text' + (n.text ? '' : ' placeholder') + (isEinwurf(n) ? ' is-file' : '') + '" data-field="text" tabindex="0" role="button" aria-label="Notiz bearbeiten">' + (n.text ? linkify(esc(n.text)) : "Notiz eingeben…") + '</div>' +
+        attachmentsHtml(n) +
         '<div class="note-footer">' +
           (pendingDelete === n.id && pendingDeleteStage === "keep" ?
             '<span class="confirm-text">In Lesezeichen behalten?</span>' +
             '<button type="button" class="sharebtn" data-action="keep-bm" aria-label="Ja, nur aus Liste ausblenden">Ja</button>' +
             '<button type="button" class="delbtn confirm-yes" data-action="confirm-delete" aria-label="Nein, ganz löschen">Nein</button>' +
             '<button type="button" class="delbtn" data-action="cancel-delete" aria-label="Abbrechen">Abbrechen</button>'
+          : pendingRemove && pendingRemove.id === n.id ?
+            '<span class="confirm-text">' + (pendingRemove.foto ? 'Foto' : 'Datei') + ' entfernen?</span>' +
+            '<button type="button" class="delbtn confirm-yes" data-action="remove-yes" aria-label="Ja, entfernen">Ja</button>' +
+            '<button type="button" class="delbtn delx" data-action="remove-no" aria-label="Abbrechen" title="Abbrechen">' + ICON_X + '</button>'
           : pendingDelete === n.id ?
             '<span class="confirm-text">Entfernen?</span>' +
             '<button type="button" class="sharebtn" data-action="archive" aria-label="Archivieren">Archivieren</button>' +
@@ -1843,7 +2094,9 @@
             '<button type="button" class="delbtn delx" data-action="cancel-delete" aria-label="Abbrechen" title="Abbrechen">' + ICON_X + '</button>'
           :
             (dayLabel(n.ts) ? '<span class="note-day">' + dayLabel(n.ts) + '</span>' : '') +
-            (n.locked ? '' : '<button type="button" class="delbtn delx" data-action="delete" aria-label="Notiz löschen" title="Löschen">' + ICON_X + '</button>') +
+            (n.locked ? '' : '<button type="button" class="delbtn delx delx-del" data-action="delete" aria-label="Notiz löschen" title="Löschen">' + ICON_X + '</button>') +
+            (n.locked ? '' : '<button type="button" class="delbtn delx" data-action="attach-file" aria-label="Datei anhängen" title="Datei anhängen (max. ' + fmtSize(ATTACH_MAX) + ')">' + ICON_UPLOAD + '</button>' +
+                             '<button type="button" class="delbtn delx" data-action="attach-photo" aria-label="Foto machen und anhängen" title="Foto anhängen">' + ICON_CAM + '</button>') +
             '<button type="button" class="delbtn delx" data-action="print" aria-label="Drucken" title="Drucken">' + ICON_PRINT + '</button>' +
             '<button type="button" class="delbtn delx" data-action="share" aria-label="Per Mail teilen" title="Teilen">' + ICON_SHARE + '</button>'
           ) +
@@ -1957,6 +2210,7 @@
 
   document.getElementById("main").addEventListener("click", function(e){
     if(e.target.closest("a")) return;
+    if(handleFileRemoveClick(e)) return;
     if(handleFileClick(e)) return;
     var so = e.target.closest("[data-search-open]");
     if(so){
@@ -2001,6 +2255,26 @@
       printNotes([note], "Notiz");
       return;
     }
+    if(btn.dataset.action === "attach-file" || btn.dataset.action === "attach-photo"){
+      e.stopPropagation();
+      if(note.locked) return;
+      var kind = btn.dataset.action === "attach-photo" ? "photo" : "file";
+      pendingDelete = null; pendingRemove = null;
+      if(countKind(note, kind) >= (kind === "photo" ? MAX_PHOTOS : MAX_FILES)){ toast(vollText(kind), true); renderList(); return; }
+      pickFor(id, kind);
+      return;
+    }
+    if(btn.dataset.action === "remove-yes"){
+      e.stopPropagation();
+      var rm = pendingRemove; pendingRemove = null;
+      if(rm) removeAttachment(rm.id + "|" + rm.fid); else renderList();
+      return;
+    }
+    if(btn.dataset.action === "remove-no"){
+      e.stopPropagation();
+      pendingRemove = null; renderList();
+      return;
+    }
     if(btn.dataset.action === "toggle-lock"){
       note.locked = !note.locked;
       pendingDelete = null;
@@ -2012,6 +2286,7 @@
       note.bookmark = !note.bookmark;
       save(); renderList();
     } else if(btn.dataset.action === "delete"){
+      pendingRemove = null;
       pendingDelete = id;
       pendingDeleteStage = "confirm";
       renderList();
@@ -2037,7 +2312,7 @@
       menuOpenId = null;
       renderList();
       var subject = encodeURIComponent("NOTES Webapp Weiterleitung");
-      var body = encodeURIComponent((note.kuerzel || "?") + " (" + formatTs(note.ts) + "):\n\n" + (note.text || "") + (note.file ? "\n\nDatei (in der NOTES-App): " + note.file.name : ""));
+      var body = encodeURIComponent((note.kuerzel || "?") + " (" + formatTs(note.ts) + "):\n\n" + (note.text || "") + (noteFiles(note).length ? "\n\nAnhänge (in der NOTES-App): " + noteFiles(note).map(function(f){ return f.name; }).join(", ") : ""));
       window.location.href = "mailto:?subject=" + subject + "&body=" + body;
     }
   });
