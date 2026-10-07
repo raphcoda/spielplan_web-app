@@ -1412,12 +1412,13 @@
     font:inherit; font-size:12px; font-weight:800; letter-spacing:.06em; line-height:1; text-decoration:none;
     display:flex; align-items:center; justify-content:center; cursor:pointer; -webkit-tap-highlight-color:transparent;
   }
-  .bp-btn.voll{ border-color:var(--ka); color:var(--ka); background:transparent; }
+  .bp-btn, .bp-pop{ --bp:#6fb1f5; --bp-soft:#16263a; }   /* Blau nur für den Bühnenplan – kommt sonst in der App nicht vor */
+  .bp-btn.voll{ border-color:var(--bp); color:var(--bp); background:transparent; }
   .bp-btn.laedt{ opacity:.55; }
-  .bp-btn.ziel{ border-style:dashed; border-color:var(--ka); color:var(--ka); }
+  .bp-btn.ziel{ border-style:dashed; border-color:var(--bp); color:var(--bp); }
   .bp-btn:disabled{ opacity:.35; cursor:default; }
   .col-head .bp-btn{ margin-right:14px; }
-  .bv-row .bp-btn{ margin-left:auto; }
+  .bv-row .bp-btn{ margin-left:auto; height:28px; padding:0 12px; border-radius:6px; font-size:13px; font-weight:700; letter-spacing:0; }   /* Handy: gleich gross wie Ja/Nein */
   .bp-pop{
     position:absolute; right:0; top:100%; margin-top:2px; z-index:8; width:min(290px, 100%);
     background:var(--surface); border:1px solid var(--line); border-radius:12px; box-shadow:0 14px 40px rgba(0,0,0,.6); padding:12px;
@@ -1428,7 +1429,7 @@
     background:none; border:1.5px dashed #6a6a6a; border-radius:10px; padding:20px 10px; cursor:pointer;
   }
   .bp-drop b{ color:var(--text); }
-  .bp-drop.ziel{ border-color:var(--ka); background:var(--ka-soft); }
+  .bp-drop.ziel{ border-color:var(--bp); background:var(--bp-soft); }
   .bp-file{ display:flex; align-items:center; gap:8px; margin-top:10px; font-size:13px; color:var(--text); }
   .bp-file .bp-name{ flex:1 1 auto; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .bp-file .bp-size{ flex:0 0 auto; color:var(--text-dim); font-size:12px; }
@@ -1527,14 +1528,39 @@
     .bv-row.mit-bp{ gap:6px; }
     .bv-row.mit-bp .bv-lbl{ margin-right:0; }
     .bv-row.mit-bp .amp-ch{ padding:0 9px; }
-    .bv-row.mit-bp .bp-btn{ padding:0 6px; min-width:30px; }
+    .bv-row.mit-bp .bp-btn{ padding:0 9px; min-width:30px; }
   }
   @media (max-width: 350px){
     .bv-row.mit-bp .bv-lbl{ font-size:12px; }
-    .bv-row.mit-bp .amp-ch{ padding:0 7px; }
+    .bv-row.mit-bp .amp-ch, .bv-row.mit-bp .bp-btn{ padding:0 7px; }
   }
   .deskbtn{ display:none; }
   .exportbtn.mobbtn{ margin-right:10px; }
+  /* ---- Kurzinfo: eingekreistes kursives i links neben dem Drucker ---- */
+  .exportbtn.infobtn{ width:22px; margin-right:8px; color:#8a8a8a; }   /* sichtbarer Abstand i → Drucker = Drucker → Plus (23px) */
+  .infobtn span{
+    width:18px; height:18px; border:1.5px solid currentColor; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-family:Georgia, "Times New Roman", serif; font-style:italic; font-weight:700; font-size:12.5px; line-height:1;
+  }
+  #infoDlg{
+    position:fixed; inset:0; z-index:60; display:flex; align-items:center; justify-content:center;
+    background:rgba(0,0,0,.62); padding:16px;
+  }
+  #infoDlg[hidden]{ display:none; }
+  .info-panel{
+    width:min(440px, 100%); max-height:100%; overflow:auto; -webkit-overflow-scrolling:touch;
+    background:var(--surface); border:1px solid var(--line); border-radius:16px; box-shadow:0 18px 50px rgba(0,0,0,.6);
+    padding:18px 20px 14px; color:var(--text); font-size:14px; line-height:1.45;
+  }
+  .info-panel h3{ margin:0 0 4px; font-size:17px; font-weight:700; }
+  .info-panel h4{ margin:14px 0 4px; font-size:13px; font-weight:800; letter-spacing:.05em; text-transform:uppercase; color:var(--accent); }
+  .info-panel ul{ margin:0; padding-left:18px; }
+  .info-panel li{ margin:3px 0; }
+  .info-panel li b{ font-weight:700; }
+  .info-panel .info-close{
+    display:block; width:100%; margin-top:16px; height:40px; border-radius:12px; border:1px solid var(--field-line);
+    background:none; color:var(--text); font:inherit; font-size:15px; font-weight:600; cursor:pointer;
+  }
   /* Export-Knöpfe vorerst ausgeblendet (Funktionen bleiben im Code) */
   #exportBtn, #exportAllBtn, #numbersBtn, .col-export{ display:none !important; }
   #printView{ display:none; }
@@ -1556,6 +1582,7 @@
     #prodLockBtn{ order:2; }
     header.top .walk-lane{ order:3; }
     #exportAllBtn{ order:4; }
+    #infoBtn{ order:4; width:28px; margin-right:7px; }   /* links vom Drucker; sichtbarer Abstand wie Drucker → Lupe (25px) */
     #printBtn{ order:5; margin-right:6px; }
     #searchBtn{ order:6; }
     header.top .search-row{ order:7; flex:1 1 100%; }
@@ -1734,6 +1761,7 @@
     <button class="exportbtn deskbtn" id="exportAllBtn" aria-label="Gesamtexport als Excel" title="Gesamtexport (Bühne, Tonregie, Technik) als Excel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="11" rx="1.5"/><path d="M3.5 7.5h17M9.5 3.5v11M15 3.5v11"/><path d="M12 15.5v5.5M9 18.5l3 3 3-3"/></svg></button>
     <button class="exportbtn deskbtn" id="printBtn" aria-label="Alles drucken" title="Alles drucken (Bühne, Tonregie, Technik)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.5 8.5V4h9v4.5"/><path d="M7.5 17H5a1.5 1.5 0 0 1-1.5-1.5v-5.5A1.5 1.5 0 0 1 5 8.5h14a1.5 1.5 0 0 1 1.5 1.5v5.5A1.5 1.5 0 0 1 19 17h-2.5"/><path d="M7.5 14h9v6h-9z"/></svg></button>
     <button class="exportbtn searchbtn" id="searchBtn" aria-label="Suchen" title="Suchen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L20 20"/></svg></button>
+    <button class="exportbtn infobtn" id="infoBtn" aria-label="Kurzinfo" title="Kurzinfo"><span aria-hidden="true">i</span></button>
     <button class="exportbtn mobbtn" id="printArtBtn" aria-label="Drucken" title="Drucken"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.5 8.5V4h9v4.5"/><path d="M7.5 17H5a1.5 1.5 0 0 1-1.5-1.5v-5.5A1.5 1.5 0 0 1 5 8.5h14a1.5 1.5 0 0 1 1.5 1.5v5.5A1.5 1.5 0 0 1 19 17h-2.5"/><path d="M7.5 14h9v6h-9z"/></svg></button>
     <button class="exportbtn" id="numbersBtn" aria-label="Tabelle für Numbers exportieren" title="Tabelle für Numbers exportieren (Bühne, Tonregie, Technik)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="11" rx="1.5"/><path d="M3.5 7.5h17M9.5 3.5v11M15 3.5v11"/><path d="M12 15.5v5.5M9 18.5l3 3 3-3"/></svg></button>
     <button class="exportbtn" id="exportBtn" aria-label="Ablauf als Excel exportieren" title="Als Excel exportieren"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 17v3h16v-3"/></svg></button>
@@ -1756,6 +1784,27 @@
 <main id="main"></main>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <div id="lockDlg" hidden></div>
+<div id="infoDlg" hidden><div class="info-panel" role="dialog" aria-modal="true" aria-labelledby="infoTitle">
+  <h3 id="infoTitle">Kurzinfo Ablaufplan</h3>
+  <h4>Drucken</h4>
+  <ul>
+    <li><b>Desktop, obere Zeile:</b> druckt den Gesamtablaufplan mit Bühne, Tonregie und Technik.</li>
+    <li><b>Desktop, Drucker im Bereich:</b> druckt nur diesen Bereich – Bühne, Tonregie oder Technik.</li>
+    <li><b>Handy:</b> druckt den Bereich, der gerade angezeigt wird.</li>
+    <li>Das PDF sollte zur Produktionsdokumentation auf dem Server abgelegt werden.</li>
+  </ul>
+  <h4>Bühnenplan (BP)</h4>
+  <ul>
+    <li><b>Desktop:</b> Über den Knopf BP im Bereich Bühne einen Bühnenplan als PDF hochladen (max. 5 MB), ansehen, ersetzen oder entfernen.</li>
+    <li><b>Handy:</b> Der Knopf BP erscheint im Bereich Bühne nur, wenn ein Bühnenplan hochgeladen wurde. Antippen öffnet den Plan.</li>
+  </ul>
+  <h4>Schloss</h4>
+  <ul>
+    <li>Mit dem Schloss neben der Produktion wird die ganze Produktion gesperrt.</li>
+    <li>Zum Entsperren braucht es den vierstelligen Code und das Namenskürzel.</li>
+  </ul>
+  <button type="button" class="info-close" id="infoClose">Schliessen</button>
+</div></div>
 <div class="file-view" id="fileView" hidden><div class="fv-stage" id="fvStage"></div><div class="fv-bar"><span id="fvName"></span><a id="fvSave" href="#">Speichern</a><button type="button" id="fvClose">Schliessen</button></div></div>
 <input type="file" id="bpFile" accept="application/pdf,.pdf" hidden>
 <div id="printView" aria-hidden="true"></div>
@@ -2988,10 +3037,14 @@
     return t !== null && t !== undefined && !isNaN(t);
   }
 
+  // Gelb nur die ganzen Wörter „Pause“ und „Abbau“, egal wie geschrieben (pause / Pause / PAUSE); die Schreibweise
+  // bleibt wie getippt. Nicht in Ableitungen oder Zusammensetzungen (abbauen, Umbaupause, Pausenumbau bleiben normal).
+  // Ohne Lookbehind, damit es auch auf älteren iPhones läuft: das Zeichen davor wird mitgefangen und zurückgegeben.
+  var GELB_RE = /(^|[^A-Za-z\u00C0-\u024F])(pause|abbau)(?![A-Za-z\u00C0-\u024F])/gi;
   function highlightPause(escapedText){
-    // Nur in Grossbuchstaben hervorheben: PAUSE gelb, ENDE grün
+    // ENDE grün weiterhin nur in Grossbuchstaben
     return escapedText
-      .replace(/\bPAUSE\b/g, '<span class="pause-hl">PAUSE</span>')
+      .replace(GELB_RE, function(m, vor, w){ return vor + '<span class="pause-hl">' + w + '</span>'; })
       .replace(/\bENDE\b/g, '<span class="ende-hl">ENDE</span>');
   }
 
@@ -4424,7 +4477,7 @@
 
   // ---- Drucken: schwarz auf weiss, drei Tabellen nebeneinander (A4 quer) ----
   var PRINT_CSS =
-    '.pv{ color:#000; background:#fff; font-family:Arial, Helvetica, sans-serif; font-size:12pt; line-height:1.3; }' +
+    '.pv{ color:#000; background:#fff; font-family:Arial, Helvetica, sans-serif; font-size:10pt; line-height:1.3; }' +
     '.pv *{ color:#000 !important; background:transparent !important; box-shadow:none !important; }' +
     /* Kopf in einer Zeile: Titel links · Datum Mitte · Produktion rechtsbündig */
     '.pv-head{ display:grid; grid-template-columns:minmax(max-content,1fr) auto minmax(max-content,1fr); align-items:baseline; column-gap:6mm; border-bottom:1.5pt solid #000; padding-bottom:2mm; margin-bottom:4mm; }' +
@@ -4440,7 +4493,12 @@
     '.pv-prod b{ font-weight:700; }' +
     '.pv-cols{ display:flex; gap:5mm; align-items:flex-start; }' +
     '.pv-col{ flex:1 1 0; min-width:0; }' +
-    '.pv-col h2{ font-size:12pt; font-weight:700; text-transform:uppercase; letter-spacing:.05em; margin:0 0 1.5mm; }' +
+    // Gesamtdruck: Technik etwas schmaler als ein Drittel (7 %), Tonregie deutlich (ohne Bild/Szene 19 %, mit 12 %), Bühne bekommt den Rest
+    '.pv:not(.pv-single) .pv-col-technik{ flex:0 0 calc((100% - 10mm) / 3 * .93); }' +
+    '.pv:not(.pv-single) .pv-col-tonregie{ flex:0 0 calc((100% - 10mm) / 3 * .81); }' +
+    '.pv:not(.pv-single) .pv-col-tonregie.mit-bild{ flex:0 0 calc((100% - 10mm) / 3 * .876); }' +
+    '.pv .pv-waslbl{ white-space:nowrap; }' +
+    '.pv-col h2{ font-size:10pt; font-weight:700; text-transform:uppercase; letter-spacing:.05em; margin:0 0 1.5mm; }' +
     '.pv table{ width:100%; border-collapse:collapse; table-layout:fixed; }' +
     '.pv th{ text-align:left; font-weight:700; border-bottom:1pt solid #000; padding:1mm 1mm; background:#e6e6e6 !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }' +
     '.pv td{ vertical-align:top; padding:1mm 1mm; border-bottom:.5pt solid #999; word-wrap:break-word; }' +
@@ -4454,12 +4512,13 @@
     '.pv .pv-sub td{ border:none; padding:.5mm 2mm .2mm 0; white-space:normal; vertical-align:top; }' +
     '.pv .pv-item{ display:block; padding-left:4mm; text-indent:-4mm; }' +
     '.pv .pv-dash{ display:inline-block; width:4mm; text-indent:0; }' +
-    '.pv:not(.pv-single) .pv-sub th{ font-size:10pt; }' +
+    '.pv:not(.pv-single) .pv-sub th{ font-size:9pt; }' +
     '.pv .pv-off, .pv .pv-off *{ color:#777 !important; }' +
     '.pv .pause-hl, .pv .ende-hl, .pv .excl{ font-weight:700; }' +
     '.pv .pv-note{ margin-top:3mm; border:.5pt solid #999; padding:1.5mm; white-space:pre-wrap; }' +
     '.pv .pv-empty{ font-style:italic; }' +
-    '.pv .pv-bv{ margin:0 0 2.5mm; font-size:12pt; }' +
+    '.pv .pv-bv{ margin:0 0 2.5mm; font-size:1em; }' +
+    '.pv-col h2 .pv-bvh{ margin-left:9mm; font-weight:400; text-transform:none; letter-spacing:0; }' +
     '.pv .pv-chg{ font-size:8.5pt; font-style:italic; color:#444; }' +
     '.pv p.pv-chg{ margin:1.5mm 0 0; text-align:right; }' +
     /* Einzelne Kategorie: A4 hoch, volle Breite, etwas grössere Schrift */
@@ -4478,10 +4537,20 @@
     var bl = under ? "B/Sz" : "Bild/Sz.";
     var cols = tonX ? ["KA", "Akt", bl, "Zeit", "Was"] : ["Zeit", "KA", "Akt", bl, "Wo"];
     var w;
-    if(tonX) w = textCol ? ["8%", "6%", "10%", "8%", "17%", "51%"] : ["13%", "11%", "13%", "13%", "50%"];
-    else w = under ? ["12%", "9%", "10%", "13%", "11%", "45%"] : ["9%", "8%", "6%", "10%", "7%", "60%"];
+    if(tonX) w = textCol ? ["8%", "6%", "10%", "8%", "17%", "51%"] : ["11%", "9%", "11.5%", "13%", "55.5%"];
+    // Bühne im Gesamtdruck: feste Breiten in mm (= die bisherigen Breiten), die Textspalte nimmt den Rest der verbreiterten Spalte
+    else w = under ? ["10.7mm", "8mm", "8.9mm", "11.6mm", "9.8mm", ""] : ["9%", "8%", "6%", "10%", "7%", "60%"];
     if(textCol) cols = cols.concat(["Eintrag"]);
-    var h = '<table><colgroup>' + w.map(function(x){ return '<col style="width:' + x + '">'; }).join("") + '</colgroup>' +
+    // Spalte Bild/Szene nur drucken, wenn mindestens ein Eintrag etwas drin stehen hat; ihre Breite bekommt die Textspalte
+    var bi = tonX ? 2 : 3, hasBild = cues.some(function(c){ return String(c.bild || "").trim(); });
+    if(!hasBild){
+      cols.splice(bi, 1);
+      // im schmalen Gesamtdruck bekommen auch Zeit und KA etwas mehr, damit „-0.30“ und dreistellige KA nicht umbrechen
+      if(tonX) w = textCol ? ["8%", "6%", "8%", "17%", "61%"] : ["13%", "10%", "14%", "63%"];
+      else w = under ? ["12.5mm", "9.8mm", "8mm", "9.8mm", ""] : ["9%", "8%", "6%", "7%", "70%"];
+    }
+    var wi = cols.indexOf("Was");
+    var h = '<table><colgroup>' + w.map(function(x){ return x ? '<col style="width:' + x + '">' : '<col>'; }).join("") + '</colgroup>' +
       '<thead><tr>' + cols.map(function(c, i){ return '<th' + (textCol && i === cols.length - 1 ? ' class="pv-txt"' : '') + '>' + c + '</th>'; }).join("") + '</tr></thead>';
     cues.forEach(function(c){
       var tStr = hasTime(c.time) ? formatElapsed(c.time) : "";
@@ -4491,11 +4560,14 @@
       var text = [c.task ? highlightTask(esc(c.task)) : ""].concat((c.notes || []).filter(function(n){ return n.text; }).map(function(n){ return esc("– " + n.text + (n.done ? "  ✓" : "")); }))
         .filter(Boolean).join("\n");
       if(c.chg && c.chg.k) text += (text ? "\n" : "") + '<span class="pv-chg">' + esc(chgText(c.chg, true)) + '</span>';
+      if(!hasBild) vals.splice(bi, 1);
       var cells = vals.map(function(v){ return '<td><b>' + esc(v) + '</b></td>'; });
       if(textCol){
         cells.push('<td class="pv-txt">' + text + '</td>');
       } else {
-        cells[4] = '<td class="pv-wastext">' + (vals[4] ? '<b>' + esc(vals[4]) + '</b>' + (text ? '\n' : '') : '') + text + '</td>';
+        // „Verstärkung · LZ-Inspi“ / „Einspielung · LZ-Inspi“ bleiben in einer Zeile; eigene (lange) Beschreibungen dürfen umbrechen
+        var lblCls = (!c.was || WAS_OPTIONS.indexOf(c.was) >= 0) ? ' class="pv-waslbl"' : '';
+        cells[wi] = '<td class="pv-wastext">' + (vals[wi] ? '<b' + lblCls + '>' + esc(vals[wi]) + '</b>' + (text ? '\n' : '') : '') + text + '</td>';
       }
       h += '<tbody><tr class="pv-row">' + cells.join("") + '</tr></tbody>';
     });
@@ -4537,7 +4609,7 @@
     TECH_CATS.forEach(function(cat){
       var t = tech[cat.id] || {};
       var val = (t.on && cat.id === "amps") ? ampPrintText(t) : techCatValue(cat, t);
-      var cell = t.on ? (esc(val) || "an") : "aus";
+      var cell = t.on ? (esc(val) || "an") : (cat.id === "mipo" ? "–" : "aus");   // Mipo nicht gewählt: Strich (= keine Mipos) statt „aus“
       if(t.on && cat.id === "mipo") cell = mipoPrintTable(cat, t) || "an";
       h += '<tr class="pv-text' + (t.on ? '' : ' pv-off') + '"><td><b>' + esc(cat.label) + '</b></td><td>' + cell + '</td></tr>';
     });
@@ -4560,9 +4632,12 @@
       '</div><div class="pv-cols">';
     ARTS.forEach(function(a){
       if(!a.ready || artIds.indexOf(a.id) < 0) return;
-      html += '<section class="pv-col"><h2>' + esc(a.label) + '</h2>' +
-        (a.id === "buehne" && bvLabel() ? '<p class="pv-bv">Bühnenverstärkung: <b>' + bvLabel() + '</b></p>' : '') +
-        withArt(a.id, function(){ return isSheetArt() ? printTechTable() : printCueTable(placeField() === "was", !single); }) +
+      // Bühnenverstärkung: im Gesamtdruck neben der Überschrift „Bühne“ (so beginnen alle drei Tabellen auf gleicher Höhe),
+      // im Einzeldruck (ohne Spaltenüberschrift) als eigene Zeile über der Tabelle
+      var bv = a.id === "buehne" && bvLabel() ? 'Bühnenverstärkung: <b>' + bvLabel() + '</b>' : '';
+      var tbl = withArt(a.id, function(){ return isSheetArt() ? printTechTable() : printCueTable(placeField() === "was", !single); });
+      html += '<section class="pv-col pv-col-' + a.id + (tbl.indexOf(">B/Sz<") >= 0 ? ' mit-bild' : '') + '"><h2>' + esc(a.label) + (bv && !single ? '<span class="pv-bvh">' + bv + '</span>' : '') + '</h2>' +
+        (bv && single ? '<p class="pv-bv">' + bv + '</p>' : '') + tbl +
       '</section>';
     });
     return html + '</div></div>';
@@ -4602,6 +4677,14 @@
   }
   document.getElementById("printBtn").addEventListener("click", function(){ printView(); });
   document.getElementById("printArtBtn").addEventListener("click", function(){ printView([currentArt]); });
+  // Kurzinfo (i links neben dem Drucker): schliesst per Knopf, Klick daneben oder Escape
+  (function(){
+    var dlg = document.getElementById("infoDlg"), btn = document.getElementById("infoBtn");
+    function close(){ if(dlg.hidden) return; dlg.hidden = true; try{ btn.focus(); }catch(e){} }
+    btn.addEventListener("click", function(){ dlg.hidden = false; dlg.firstElementChild.scrollTop = 0; try{ document.getElementById("infoClose").focus(); }catch(e){} });
+    dlg.addEventListener("click", function(e){ if(e.target === dlg || e.target.closest("#infoClose")) close(); });
+    document.addEventListener("keydown", function(e){ if(e.key === "Escape" && !dlg.hidden){ e.stopPropagation(); close(); } }, true);
+  })();
 
   // ---- Technik-Datenblatt: an/aus + Eingaben ----
   mainEl.addEventListener("click", function(e){
