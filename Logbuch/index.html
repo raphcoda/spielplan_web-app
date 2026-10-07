@@ -65,7 +65,7 @@ h1 { font-size: 18px; font-weight: 500; color: #fff; line-height: 1.1; }
   100% { background-position: 270% 0; }
 }
 
-.header-aktionen { grid-column: 3; justify-self: end; display: flex; align-items: center; gap: 8px; flex-wrap: nowrap; }
+.header-aktionen { grid-column: 3; justify-self: end; display: flex; align-items: center; gap: 6px; flex-wrap: nowrap; }
 
 .btn3d {
   display: inline-flex; align-items: center; justify-content: center; gap: 6px;
@@ -75,6 +75,18 @@ h1 { font-size: 18px; font-weight: 500; color: #fff; line-height: 1.1; }
   border-top: 1px solid #585858; border-left: 1px solid #484848;
   border-bottom: 1px solid #0d0d0d; border-right: 1px solid #0d0d0d;
 }
+.info-i {
+  display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+  width: 18px; height: 18px; border-radius: 50%; border: 1px solid #6a6a6a; color: #8a8a8a;
+  font-family: Georgia, 'Times New Roman', serif; font-style: italic; font-size: 12px; line-height: 1;
+  cursor: pointer; position: absolute; top: 0; left: 0; visibility: hidden; -webkit-tap-highlight-color: transparent; user-select: none;
+}
+.info-i:active { color: #bbb; border-color: #999; }
+.info-text { font-size: 14px; line-height: 1.5; color: #d0d0d0; }
+.info-text ul { margin: 12px 0 0 18px; }
+.info-text li { margin-bottom: 8px; }
+.info-text b { color: #fff; }
+.info-version { margin-top: 16px; padding-top: 12px; border-top: 1px solid #2c2c2c; font-size: 11px; color: #777; letter-spacing: 0.03em; }
 .btn3d:active { filter: brightness(0.85); }
 .btn3d.btn-text { font-size: 9px; letter-spacing: 0.02em; }
 .btn3d svg { display: block; width: 12px; height: 12px; }
@@ -340,6 +352,24 @@ textarea:focus, .auswahl-feld:focus, #waehlSuche:focus { border-color: #4db8b8; 
 ::-webkit-scrollbar-thumb { background: #666; border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: #777; }
 * { scrollbar-width: thin; scrollbar-color: #666 #181818; }
+@media (max-width: 400px) { .eyebrow, .eyebrow-glanz { letter-spacing: 0.07em; } }
+
+/* ---------- Mobil: "Ton & Bild" unter LOGBUCH ---------- */
+.logo-sub { display: none; position: relative; margin-top: 2px; }
+.ls-grau, .ls-glanz { display: flex; justify-content: space-between; font-size: 8px; font-weight: 600; text-transform: uppercase; line-height: 1; }
+.ls-grau { color: #555; }
+.ls-glanz {
+  position: absolute; top: 0; left: 0; right: 0; pointer-events: none;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.6) 50%, transparent 100%);
+  background-repeat: no-repeat; background-size: 55% 100%; background-position: -170% 0;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: glanzsweep 8s linear infinite;
+}
+@media (max-width: 899px) {
+  .eyebrow-wrap { display: none; }
+  .logo-sub { display: block; }
+  #header { padding-top: 15px; padding-bottom: 9px; }
+}
 </style>
 </head>
 <body>
@@ -351,6 +381,10 @@ textarea:focus, .auswahl-feld:focus, #waehlSuche:focus { border-color: #4db8b8; 
     <div class="logo-wrap">
       <div class="logo-kicker" id="logoKicker"><span>T</span><span>E</span><span>C</span><span>H</span><span>N</span><span>I</span><span>S</span><span>C</span><span>H</span><span>E</span><span>S</span></div>
       <h1>LOGBUCH</h1>
+      <div class="logo-sub" id="logoSub">
+        <div class="ls-grau"><span>T</span><span>O</span><span>N</span><span>&amp;</span><span>B</span><span>I</span><span>L</span><span>D</span></div>
+        <div class="ls-glanz" aria-hidden="true"><span>T</span><span>O</span><span>N</span><span>&amp;</span><span>B</span><span>I</span><span>L</span><span>D</span></div>
+      </div>
     </div>
     <div class="eyebrow-wrap">
       <div class="eyebrow">Ton &amp; Bild</div>
@@ -364,6 +398,7 @@ textarea:focus, .auswahl-feld:focus, #waehlSuche:focus { border-color: #4db8b8; 
       <span class="btn3d btn-text" id="pdfBtn" title="Als PDF exportieren">PDF</span>
     </div>
   </div>
+  <span class="info-i" id="infoBtn" title="Info" role="button" aria-label="Info">i</span>
 </div>
 
 <div class="qbar" id="statusfilter">
@@ -453,6 +488,22 @@ textarea:focus, .auswahl-feld:focus, #waehlSuche:focus { border-color: #4db8b8; 
     <div class="griff"></div>
     <h2>Wer hat geändert?</h2>
     <div id="personListe" class="status-liste"></div>
+  </div>
+</div>
+
+<div class="blatt-hinter blatt-hoch" id="infoHinter">
+  <div class="blatt">
+    <div class="griff"></div>
+    <h2>Technisches Logbuch Ton &amp; Bild</h2>
+    <div class="info-text">
+      Zur Erfassung von Pendenzen und Störungen im Tonbetrieb. Alle Einträge sind auf allen Geräten sofort sichtbar und bearbeitbar.
+      <ul>
+        <li><b>Status:</b> Erfasst, In Arbeit, Erledigt. Zum Ändern auf den Status tippen und das eigene Namenskürzel wählen.</li>
+        <li><b>CSV-Export:</b> Button CSV in der Titelzeile. Die Tabelle enthält alle Einträge, ist spaltenweise sortierbar und kann zur Archivierung auf dem Server abgelegt werden.</li>
+        <li><b>PDF-Export:</b> Button PDF in der Titelzeile. Das PDF folgt den gesetzten Filtern. Beispiel: Filter «Erfasst» und Art «Tonregie» ergibt nur erfasste Einträge der Art Tonregie.</li>
+      </ul>
+      <div class="info-version">V_Ton_LB_A_07.10.26_09:45</div>
+    </div>
   </div>
 </div>
 
@@ -837,6 +888,7 @@ function archivEndgueltigLoeschen(i){
   zeichne();
 }
 document.getElementById("archivBtn").onclick = archivOeffnen;
+document.getElementById("infoBtn").onclick = function(){ document.getElementById("infoHinter").classList.add("offen"); };
 
 document.getElementById("statusfilter").addEventListener("click", function(ev){
   var p = ev.target.closest(".qtag");
@@ -1219,17 +1271,46 @@ function csvExportieren(){
 document.getElementById("csvBtn").onclick = csvExportieren;
 document.getElementById("pdfBtn").onclick = pdfExportieren;
 
+function infoMittig(){
+  var hd = document.getElementById("header"), i = document.getElementById("infoBtn"),
+      arch = document.getElementById("archivBtn"), h1 = document.querySelector(".logo-wrap h1");
+  if (!hd || !i || !arch || !h1) return;
+  var hr = hd.getBoundingClientRect(), ar = arch.getBoundingClientRect();
+  var links = h1.getBoundingClientRect().right;                 // rechter Rand von LOGBUCH
+  var sub = document.getElementById("logoSub");
+  if (sub && sub.offsetParent !== null){
+    links = Math.max(links, sub.getBoundingClientRect().right);
+  } else {
+    var eb = document.querySelector(".eyebrow");               // Desktop: Ton & Bild in der Titelzeile
+    if (eb && eb.offsetParent !== null){
+      var rg = document.createRange(); rg.selectNodeContents(eb);
+      links = Math.max(links, rg.getBoundingClientRect().right);
+    }
+  }
+  var mitte = (links + ar.left) / 2;
+  var w = i.offsetWidth || 18, hh = i.offsetHeight || 18;
+  i.style.left = Math.round(mitte - hr.left - w / 2) + "px";
+  i.style.top = Math.round(ar.top + ar.height / 2 - hr.top - hh / 2) + "px";
+  i.style.visibility = "visible";
+}
+
 function logoKickerAusrichten(){
   var h1 = document.querySelector(".logo-wrap h1");
   var kicker = document.getElementById("logoKicker");
   if (!h1 || !kicker) return;
   kicker.style.width = h1.getBoundingClientRect().width + "px";
+  var sub = document.getElementById("logoSub");
+  if (sub) sub.style.width = h1.getBoundingClientRect().width + "px";
 }
 
 artfilterZeichnen();
 zeichne();
 dbVerbinden();
 logoKickerAusrichten();
+infoMittig();
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ logoKickerAusrichten(); infoMittig(); });
+window.addEventListener("load", infoMittig);
+window.addEventListener("resize", infoMittig);
 window.addEventListener("resize", zeichne);
 window.addEventListener("resize", logoKickerAusrichten);
 
