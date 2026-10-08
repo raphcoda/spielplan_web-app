@@ -721,6 +721,7 @@
     -webkit-tap-highlight-color:transparent;
   }
   .sharebtn{ color:var(--ka); }
+  .sharebtn.is-off{ color:var(--text-dim); opacity:.45; }   /* „Extern“ abgeschaltet (v95) */
   .confirm-text.ct-share{ color:var(--text-dim); }   /* Teilen-Rückfrage neutral, nicht rot (seit v92) */
   .confirm-text{
     font-size:14px;
@@ -1144,6 +1145,8 @@
   // Teilen (seit v92): Rückfrage „Im Team / Extern“. Extern = Teilen-Menü des Geräts mit Text und
   // den Anhängen als echte Dateien. Liest die Dateien nur (Firebase oder Zwischenspeicher im Gerät),
   // schreibt NICHTS nach Firebase – der Speicherbedarf der Datenbank bleibt gleich.
+  // „Extern“ teilen vorerst abgeschaltet (v95) – erst nach Einrichtung des Team-Logins auf true setzen
+  var EXTERN_SHARE_ENABLED = false;
   var pendingShare = null;            // { id, stage:"choose"|"loading"|"ready", files:[File], skipped:[Namen], token }
   var PHOTO_EDGE = 1600;      // längere Seite eines verkleinerten Fotos in Pixel
   var pickTarget = null;      // id der Notiz, für die gerade eine Datei/ein Foto gewählt wird
@@ -2588,7 +2591,7 @@
             :
               '<span class="confirm-text ct-share">Teilen?</span>' +
               '<button type="button" class="sharebtn" data-action="share-team" aria-label="Im Team per Mail teilen">Im Team</button>' +
-              '<button type="button" class="sharebtn" data-action="share-ext" aria-label="Extern teilen, mit Anhängen">Extern</button>' +
+              '<button type="button" class="sharebtn' + (EXTERN_SHARE_ENABLED ? '' : ' is-off') + '" data-action="share-ext" aria-label="Extern teilen' + (EXTERN_SHARE_ENABLED ? ', mit Anhängen' : ' – noch nicht eingerichtet') + '">Extern</button>' +
               '<button type="button" class="delbtn abbr-tk" data-action="share-cancel">Abbrechen</button>')
           : pendingDelete === n.id ?
             '<span class="confirm-text">Löschen?</span>' +
@@ -2825,6 +2828,7 @@
       pendingShare = null; renderList();
       shareTeamMail(note);
     } else if(btn.dataset.action === "share-ext"){
+      if(!EXTERN_SHARE_ENABLED){ toast("Extern teilen wird noch eingerichtet – vorerst nur „Im Team“."); return; }
       startExternalShare(note);
     } else if(btn.dataset.action === "share-send"){
       var ps = pendingShare;
