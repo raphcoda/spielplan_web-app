@@ -1046,7 +1046,8 @@
     white-space:pre-wrap;
     -webkit-tap-highlight-color:transparent;
   }
-  .note-text::before{ content:"– "; }
+  .note-dash{ flex:0 0 auto; font-size:19px; line-height:1.4; font-weight:700; color:var(--text-dim); }
+  .note-confirm{ list-style:none; margin:2px 0 4px; }
   .note-text.checked{ color:var(--text-dim); }
   .note-text.placeholder{ color:var(--text-dim); font-style:italic; }
   .note-text-input{
@@ -1425,8 +1426,22 @@
   .bp-btn.laedt{ opacity:.55; }
   .bp-btn.ziel{ border-style:dashed; border-color:var(--bp); color:var(--bp); }
   .bp-btn:disabled{ opacity:.35; cursor:default; }
-  .col-head .bp-btn{ margin-right:14px; }
-  .bv-row .bp-btn{ margin-left:auto; height:28px; padding:0 12px; border-radius:6px; font-size:13px; font-weight:700; letter-spacing:0; }   /* Handy: gleich gross wie Ja/Nein */
+  /* ---- Fotos (nur Bühne): Kamera-Knopf gleich gross wie BP, grau = keine Fotos, grün = Fotos ---- */
+  .foto-btn{
+    flex:0 0 auto; height:24px; min-width:34px; padding:0 8px; border-radius:7px;
+    border:1px solid #5a5a5a; background:#2a2a2a; color:#b0b0b0; font:inherit;
+    display:flex; align-items:center; justify-content:center; cursor:pointer; -webkit-tap-highlight-color:transparent;
+  }
+  .foto-btn svg{ width:16px; height:16px; display:block; }
+  .foto-btn.voll{ border-color:#6fd08c; color:#6fd08c; background:transparent; }
+  .foto-btn.ziel{ border-style:dashed; border-color:#6fd08c; color:#6fd08c; }
+  .foto-btn:disabled{ opacity:.35; cursor:default; }
+  .col-head .bp-btn, .col-head .foto-btn{ width:38px; padding:0; }
+  .col-head .bp-btn{ margin-right:6px; }
+  .col-head .foto-btn{ margin-right:14px; }
+  .bv-row .bv-right{ margin-left:auto; display:flex; align-items:center; gap:8px; }
+  .bv-row .bp-btn, .bv-row .foto-btn{ height:28px; width:44px; min-width:0; padding:0; border-radius:6px; font-size:13px; font-weight:700; letter-spacing:0; }   /* Handy: gleich hoch wie Ja/Nein */
+  .bv-row .foto-btn svg{ width:18px; height:18px; }
   .bp-pop{
     position:absolute; right:0; top:100%; margin-top:2px; z-index:8; width:min(290px, 100%);
     background:var(--surface); border:1px solid var(--line); border-radius:12px; box-shadow:0 14px 40px rgba(0,0,0,.6); padding:12px;
@@ -1532,15 +1547,20 @@
     .bv-row .bv-lbl{ font-size:13px; margin-right:2px; }
     .bv-row .amp-ch{ padding:0 9px; }
   }
-  @media (max-width: 385px){ /* mit BP-Knopf wird es eng: Abstände knapper, damit alles in der Karte bleibt */
+  @media (max-width: 440px){ /* BP und Foto zusammen: Schrift und Abstände knapper, damit alles in der Karte bleibt */
     .bv-row.mit-bp{ gap:6px; }
-    .bv-row.mit-bp .bv-lbl{ margin-right:0; }
+    .bv-row.mit-bp .bv-lbl{ font-size:13px; margin-right:0; }
     .bv-row.mit-bp .amp-ch{ padding:0 9px; }
-    .bv-row.mit-bp .bp-btn{ padding:0 9px; min-width:30px; }
+    .bv-row.mit-bp .bv-right{ gap:6px; }
+    .bv-row.mit-bp .bp-btn, .bv-row.mit-bp .foto-btn{ width:38px; }
   }
   @media (max-width: 350px){
-    .bv-row.mit-bp .bv-lbl{ font-size:12px; }
-    .bv-row.mit-bp .amp-ch, .bv-row.mit-bp .bp-btn{ padding:0 7px; }
+    .bv-row.mit-bp{ gap:5px; }
+    .bv-row.mit-bp .bv-right{ gap:4px; }
+    .bv-row.mit-bp .bv-lbl{ font-size:11px; }
+    .bv-row.mit-bp .amp-ch{ padding:0 7px; }
+    .bv-row.mit-bp .bp-btn, .bv-row.mit-bp .foto-btn{ width:32px; }
+    .bv-row.mit-bp .foto-btn svg{ width:16px; height:16px; }
   }
   .deskbtn{ display:none; }
   .exportbtn.mobbtn{ margin-right:10px; }
@@ -1550,6 +1570,96 @@
     width:18px; height:18px; border:1.5px solid currentColor; border-radius:50%; display:flex; align-items:center; justify-content:center;
     font-family:Georgia, "Times New Roman", serif; font-style:italic; font-weight:700; font-size:12.5px; line-height:1;
   }
+  /* ---- Archiv (Desktop): Feld unter dem Archiv-Knopf ---- */
+  .arch-pop{
+    position:absolute; top:calc(100% + 2px); z-index:30; width:390px; max-height:70vh; overflow:auto;
+    background:var(--surface); border:1px solid var(--line); border-radius:12px; box-shadow:0 14px 40px rgba(0,0,0,.6); padding:12px;
+  }
+  .arch-pop[hidden]{ display:none; }
+  .arch-pop h4{ margin:0 0 8px; font-size:14px; font-weight:700; color:var(--text); }
+  .arch-empty{ margin:2px 0 4px; font-size:13px; color:var(--text-dim); }
+  .arch-item{
+    display:flex; align-items:baseline; gap:10px; width:100%; text-align:left; font:inherit; font-size:15px; font-weight:600;
+    color:var(--text-dim); background:none; border:none; border-radius:8px; padding:7px 8px; cursor:pointer;
+  }
+  .arch-item:hover{ background:var(--surface-2); color:var(--text); }
+  .arch-name{ flex:1 1 auto; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .arch-upd{ flex:0 0 auto; font-size:12px; font-weight:500; color:var(--text-dim); }
+  .arch-ask{ margin:2px 0 6px; padding:8px; border-radius:10px; background:var(--surface-2); }
+  .arch-ask.del{ background:var(--warn-soft); }
+  .arch-ask-t{ font-size:14px; font-weight:600; color:var(--text); margin-bottom:8px; overflow-wrap:anywhere; }
+  .arch-btns{ display:flex; flex-wrap:wrap; gap:6px; }
+  .arch-btns button{ font:inherit; font-size:13px; font-weight:700; height:30px; padding:0 10px; border-radius:7px; cursor:pointer;
+    border:1px solid var(--field-line); background:var(--surface); color:var(--text); }
+  .arch-btns .arch-ok{ border-color:var(--accent); background:var(--accent); color:var(--accent-ink); }
+  .arch-btns .arch-warn{ border-color:var(--warn); color:var(--warn); background:transparent; }
+  .arch-btns .arch-warn.full{ background:var(--warn); color:#fff; }
+  .arch-btns .arch-no{ border:none; background:none; color:var(--text-dim); }
+  /* ---- Fotos: Liste (Handy als Blatt von unten, Desktop in der Mitte) ---- */
+  #fotoDlg{ position:fixed; inset:0; z-index:62; background:rgba(0,0,0,.62); display:flex; align-items:flex-end; justify-content:center; }
+  #fotoDlg[hidden]{ display:none; }
+  .foto-panel{
+    width:100%; max-height:88vh; overflow:auto; -webkit-overflow-scrolling:touch; background:var(--surface);
+    border-top:1px solid var(--line); border-radius:18px 18px 0 0; box-shadow:0 -10px 40px rgba(0,0,0,.6);
+    padding:14px 16px calc(16px + env(safe-area-inset-bottom, 0px)); color:var(--text);
+  }
+  @media (min-width: 700px){
+    #fotoDlg{ align-items:center; }
+    .foto-panel{ width:460px; border:1px solid var(--line); border-radius:16px; max-height:84vh; }
+  }
+  .foto-head{ display:flex; align-items:center; gap:10px; margin:0 0 12px; }
+  .foto-head h3{ margin:0; font-size:16px; font-weight:700; flex:1 1 auto; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .foto-head h3 span{ color:var(--text-dim); font-weight:600; font-size:13px; margin-left:4px; }
+  .foto-head button{ flex:0 0 auto; background:none; border:none; font:inherit; font-size:14px; font-weight:700; color:var(--ka); cursor:pointer; padding:4px 2px; }
+  .foto-head button.foto-dl{ color:var(--text-dim); font-weight:600; font-size:13px; }
+  .foto-add{ display:flex; gap:8px; margin:0 0 12px; }
+  .foto-add button{
+    flex:1 1 0; height:44px; border-radius:12px; font:inherit; font-size:15px; font-weight:800; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; gap:8px; border:1px solid var(--line); background:none; color:var(--text);
+  }
+  .foto-add button.main{ border:none; background:var(--accent); color:var(--accent-ink); }
+  .foto-add button svg{ width:20px; height:20px; }
+  .foto-drop{
+    display:block; width:100%; margin:0 0 12px; font:inherit; font-size:13px; line-height:1.4; text-align:center; color:var(--text-dim);
+    background:none; border:1.5px dashed #6a6a6a; border-radius:10px; padding:16px 10px; cursor:pointer;
+  }
+  .foto-drop b{ color:var(--text); }
+  .foto-drop.ziel{ border-color:#6fd08c; background:#16301f; }
+  .foto-max{ font-size:13px; color:var(--text-dim); margin:0 0 12px; }
+  .foto-list{ list-style:none; margin:0; padding:0; }
+  .foto-item{ display:flex; align-items:center; gap:10px; padding:7px 0; border-top:1px solid var(--line); }
+  .foto-thumb{
+    flex:0 0 auto; width:64px; height:48px; border-radius:7px; border:1px solid #3a3a3a; background:#2a2a2a center/cover no-repeat;
+    padding:0; cursor:zoom-in; display:flex; align-items:center; justify-content:center; color:#777; font-size:11px;
+  }
+  .foto-cap{
+    flex:1 1 auto; min-width:0; height:36px; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--text);
+    font:inherit; font-size:16px; padding:0 10px;
+  }
+  .foto-cap:focus{ outline:none; border-color:var(--accent); }
+  .foto-cap[readonly]{ border-color:transparent; background:none; padding-left:2px; }
+  .foto-del{ flex:0 0 auto; background:none; border:none; color:var(--text-dim); font-size:13px; padding:6px 4px; opacity:.6; cursor:pointer; }
+  .foto-confirm{ list-style:none; margin:2px 0 6px; }
+  .foto-del-all{ display:block; margin:14px 0 0 auto; background:none; border:none; font:inherit; font-size:13px; font-weight:700; color:var(--warn); cursor:pointer; padding:4px 0; }
+  .foto-all-confirm{ margin-top:12px; }
+  .foto-empty{ font-size:13px; color:var(--text-dim); margin:4px 0 2px; }
+  .foto-hint{ font-size:12px; color:var(--text-dim); margin:10px 0 0; line-height:1.4; }
+  .foto-busy{ font-size:13px; color:var(--text-dim); margin:0 0 10px; }
+  /* Vollbild */
+  #imgView{ position:fixed; inset:0; z-index:75; background:#000; display:flex; flex-direction:column; }
+  #imgView[hidden]{ display:none; }
+  .iv-stage{ flex:1 1 auto; min-height:0; position:relative; display:flex; align-items:center; justify-content:center; overflow:hidden; touch-action:pinch-zoom; }
+  .iv-stage img{ max-width:100%; max-height:100%; object-fit:contain; display:block; user-select:none; -webkit-user-drag:none; }
+  .iv-load{ color:#888; font-size:14px; }
+  .iv-nav{ position:absolute; top:50%; transform:translateY(-50%); width:42px; height:42px; border-radius:50%; border:none;
+    background:rgba(255,255,255,.14); color:#fff; font-size:24px; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+  .iv-prev{ left:10px; } .iv-next{ right:10px; }
+  .iv-nav[hidden]{ display:none; }
+  .iv-bar{ flex:0 0 auto; display:flex; align-items:center; gap:12px; background:#111; padding:10px 16px calc(12px + env(safe-area-inset-bottom, 0px)); }
+  .iv-cap{ flex:1 1 auto; min-width:0; font-size:15px; font-weight:600; color:#eee; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .iv-n{ flex:0 0 auto; font-size:13px; color:#999; }
+  .iv-bar .iv-ico{ font-size:20px; line-height:1; padding:4px 6px; }
+  .iv-bar button{ flex:0 0 auto; background:none; border:0; font:inherit; font-weight:700; color:var(--ka); cursor:pointer; padding:6px 2px; }
   #infoDlg{
     position:fixed; inset:0; z-index:60; display:flex; align-items:center; justify-content:center;
     background:rgba(0,0,0,.62); padding:16px;
@@ -1590,10 +1700,12 @@
     #prodLockBtn{ order:2; }
     header.top .walk-lane{ order:3; }
     #exportAllBtn{ order:4; }
-    #infoBtn{ order:4; width:28px; margin-right:7px; }   /* links vom Drucker; sichtbarer Abstand wie Drucker → Lupe (25px) */
-    #printBtn{ order:5; margin-right:6px; }
-    #searchBtn{ order:6; }
-    header.top .search-row{ order:7; flex:1 1 100%; }
+    #infoBtn{ order:4; width:28px; margin-right:7px; }   /* i · Archiv · Drucker: sichtbare Abstände je ca. 25px wie Drucker → Lupe */
+    #archBtn{ order:5; margin-right:6px; }
+    #archBtn.active{ color:var(--text); }
+    #printBtn{ order:6; margin-right:6px; }
+    #searchBtn{ order:7; }
+    header.top .search-row{ order:8; flex:1 1 100%; }
     .deskbtn{ display:flex; }
     header.top .brand-logo{ top:29px; }
     #artPicker, #addBtn, #exportBtn{ display:none !important; }
@@ -1770,6 +1882,8 @@
     <button class="exportbtn deskbtn" id="exportAllBtn" aria-label="Gesamtexport als Excel" title="Gesamtexport (Bühne, Tonregie, Technik) als Excel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="11" rx="1.5"/><path d="M3.5 7.5h17M9.5 3.5v11M15 3.5v11"/><path d="M12 15.5v5.5M9 18.5l3 3 3-3"/></svg></button>
     <button class="exportbtn deskbtn" id="printBtn" aria-label="Alles drucken" title="Alles drucken (Bühne, Tonregie, Technik)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.5 8.5V4h9v4.5"/><path d="M7.5 17H5a1.5 1.5 0 0 1-1.5-1.5v-5.5A1.5 1.5 0 0 1 5 8.5h14a1.5 1.5 0 0 1 1.5 1.5v5.5A1.5 1.5 0 0 1 19 17h-2.5"/><path d="M7.5 14h9v6h-9z"/></svg></button>
     <button class="exportbtn searchbtn" id="searchBtn" aria-label="Suchen" title="Suchen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L20 20"/></svg></button>
+    <button class="exportbtn deskbtn" id="archBtn" aria-label="Archiv" title="Archivierte Produktionen" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="4" rx="1"/><path d="M5 8.5v10a1.5 1.5 0 0 0 1.5 1.5h11a1.5 1.5 0 0 0 1.5-1.5v-10"/><path d="M10 12.5h4"/></svg></button>
+    <div class="arch-pop" id="archPop" hidden></div>
     <button class="exportbtn infobtn" id="infoBtn" aria-label="Kurzinfo" title="Kurzinfo"><span aria-hidden="true">i</span></button>
     <button class="exportbtn mobbtn" id="printArtBtn" aria-label="Drucken" title="Drucken"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.5 8.5V4h9v4.5"/><path d="M7.5 17H5a1.5 1.5 0 0 1-1.5-1.5v-5.5A1.5 1.5 0 0 1 5 8.5h14a1.5 1.5 0 0 1 1.5 1.5v5.5A1.5 1.5 0 0 1 19 17h-2.5"/><path d="M7.5 14h9v6h-9z"/></svg></button>
     <button class="exportbtn" id="numbersBtn" aria-label="Tabelle für Numbers exportieren" title="Tabelle für Numbers exportieren (Bühne, Tonregie, Technik)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="11" rx="1.5"/><path d="M3.5 7.5h17M9.5 3.5v11M15 3.5v11"/><path d="M12 15.5v5.5M9 18.5l3 3 3-3"/></svg></button>
@@ -1807,6 +1921,13 @@
     <li><b>Desktop:</b> Über den Knopf BP im Bereich Bühne einen Bühnenplan als PDF hochladen (max. 5 MB), ansehen, ersetzen oder entfernen.</li>
     <li><b>Handy:</b> Der Knopf BP erscheint im Bereich Bühne nur, wenn ein Bühnenplan hochgeladen wurde. Antippen öffnet den Plan.</li>
   </ul>
+  <h4>Fotos (Kamera-Symbol, Bühne)</h4>
+  <ul>
+    <li>Grau = noch keine Fotos, grün = Fotos vorhanden. Bis zu 10 Fotos pro Produktion, jedes mit kurzer Beschriftung.</li>
+    <li><b>Handy:</b> Antippen öffnet die Kamera bzw. die Fotoliste. <b>Desktop:</b> Fotos auf das Kamera-Symbol ziehen oder anklicken. Der Dateiname wird als Beschriftung übernommen.</li>
+    <li>Im Vollbild: ⤓ lädt nur dieses Foto herunter, ↗ öffnet es in einem neuen Tab (dort zoomen).</li>
+    <li>„Alle herunterladen“ speichert alle Fotos als ZIP – zur Ablage auf dem Server.</li>
+  </ul>
   <h4>Schloss</h4>
   <ul>
     <li>Mit dem Schloss neben der Produktion wird die ganze Produktion gesperrt.</li>
@@ -1816,6 +1937,10 @@
 </div></div>
 <div class="file-view" id="fileView" hidden><div class="fv-stage" id="fvStage"></div><div class="fv-bar"><span id="fvName"></span><a id="fvSave" href="#">Speichern</a><button type="button" id="fvClose">Schliessen</button></div></div>
 <input type="file" id="bpFile" accept="application/pdf,.pdf" hidden>
+<input type="file" id="fotoCam" accept="image/*" capture="environment" hidden>
+<input type="file" id="fotoPick" accept="image/*" multiple hidden>
+<div id="fotoDlg" hidden><div class="foto-panel" role="dialog" aria-modal="true" aria-label="Fotos"></div></div>
+<div id="imgView" hidden><div class="iv-stage" id="ivStage"><button type="button" class="iv-nav iv-prev" id="ivPrev" aria-label="Vorheriges Foto">‹</button><button type="button" class="iv-nav iv-next" id="ivNext" aria-label="Nächstes Foto">›</button></div><div class="iv-bar"><span class="iv-cap" id="ivCap"></span><span class="iv-n" id="ivN"></span><button type="button" class="iv-ico" id="ivDl" title="Dieses Foto herunterladen" aria-label="Dieses Foto herunterladen">⤓</button><button type="button" class="iv-ico" id="ivTab" title="In neuem Tab öffnen (zum Zoomen)" aria-label="In neuem Tab öffnen">↗</button><button type="button" id="ivClose">Schliessen</button></div></div>
 <div id="printView" aria-hidden="true"></div>
 
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
@@ -2126,7 +2251,8 @@
       return '<section class="art-col" data-art="' + a.id + '">' +
         '<div class="col-head"><span class="col-title">' + esc(a.label) + '</span>' +
           '<span class="col-deco">' + (COL_DECO[a.id] || '') + '</span>' +
-          (a.id === "buehne" ? '<button type="button" class="bp-btn" data-col-action="bp" aria-label="Bühnenplan" title="Bühnenplan (PDF)">BP</button>' : '') +
+          (a.id === "buehne" ? '<button type="button" class="bp-btn" data-col-action="bp" aria-label="Bühnenplan" title="Bühnenplan (PDF)">BP</button>' +
+            '<button type="button" class="foto-btn" data-col-action="foto" aria-label="Fotos" title="Fotos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8.5h3l1.6-2.5h6.8L17 8.5h3a1 1 0 0 1 1 1V18a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5a1 1 0 0 1 1-1z"/><circle cx="12" cy="13.5" r="3.4"/></svg></button>' : '') +
           '<button type="button" class="exportbtn col-print" data-col-action="print" aria-label="' + esc(a.label) + ' drucken" title="' + esc(a.label) + ' drucken">' + PRINT_SVG + '</button>' +
           '<button type="button" class="exportbtn col-export" data-col-action="export" aria-label="' + esc(a.label) + ' als Excel exportieren" title="' + esc(a.label) + ' als Excel exportieren">' + TABLE_SVG + '</button>' +
           (a.sheet ? '' : '<button type="button" class="addbtn col-add" data-col-action="add" aria-label="Neuer Eintrag ' + esc(a.label) + '">+</button>') +
@@ -2158,7 +2284,7 @@
     if(add) add.disabled = !currentProdId || !artCfg(id).ready || !!artCfg(id).sheet;
     if(exp) exp.disabled = !currentProdId || !artCfg(id).ready;
     if(prt) prt.disabled = !currentProdId || !artCfg(id).ready;
-    if(id === "buehne") renderBpHead(col);
+    if(id === "buehne"){ renderBpHead(col); renderFotoHead(col); }
   }
   // Spalte wird aktiv (Klick/Fokus hinein): offenen Entwurf der bisherigen Spalte übernehmen
   function activateArt(id){
@@ -2227,6 +2353,7 @@
   var deletingProdId = null;
   var deleteStage = "choose"; // "choose" (Archivieren/Löschen) | "confirm" (Sicher löschen?)
   var archiveOpen = false;
+  var archOpen = false, archPick = null, archStage = "";   // Archiv-Feld oben (Desktop)
   var deletingCueKey = null; // "<prodId>:<cueId>" — Eintrag mit offener Lösch-Bestätigung
   var openPicker = null; // { id, field: "akt" | "loc" }
 
@@ -2297,7 +2424,10 @@
     (list || []).forEach(function(p){
       var c = canonVal(p);
       if(!c || !c.id) return;
-      Object.keys(c).forEach(function(k){ m[c.id + "/" + k] = JSON.stringify(c[k]); });
+      Object.keys(c).forEach(function(k){
+        if(k === "fotos" && c.fotos && typeof c.fotos === "object") Object.keys(c.fotos).forEach(function(fid){ m[c.id + "/fotos/" + fid] = JSON.stringify(c.fotos[fid]); });
+        else m[c.id + "/" + k] = JSON.stringify(c[k]);
+      });
     });
     return m;
   }
@@ -2492,6 +2622,7 @@
   function selectProduction(id){
     setOpenLock(null);
     bpPopOpen = false; bpConfirm = false;
+    if(window.closeFotoDlg) closeFotoDlg();
     currentProdId = id || null;
     cues = (currentProdId && cuesByProd[currentProdId]) || [];
     if(currentProdId && !cuesByProd[currentProdId]) cuesByProd[currentProdId] = cues;
@@ -2812,6 +2943,7 @@
   }
 
   function renderProdPicker(){
+    if(archOpen && window.renderArchPop) setTimeout(window.renderArchPop, 0);
     var wrap = document.getElementById("prodPicker");
     if(!wrap) return;
     var current = productions.find(function(p){ return p.id === currentProdId; });
@@ -3000,6 +3132,7 @@
     deleteStage = "choose";
     var goneProd = productions.find(function(p){ return p.id === id; });
     if(goneProd && goneProd.bp) bpRemoveStored(goneProd.bp.id);
+    if(goneProd && goneProd.fotos) Object.keys(goneProd.fotos).forEach(fotoRemoveStored);
     productions = productions.filter(function(p){ return p.id !== id; });
     saveProductions();
     ARTS.forEach(function(a){
@@ -3037,7 +3170,7 @@
       var wasReady = fbChan("prods").ready;
       var val = fbFirst("prods", FB_ROOT + "/productions", snap.val());
       var before = currentProd();
-      var sigBefore = before ? JSON.stringify([!!before.lock, before.bv || "", before.bp ? before.bp.id : ""]) : "";
+      var sigBefore = before ? JSON.stringify([!!before.lock, before.bv || "", before.bp ? before.bp.id : "", canonJson(before.fotos || {})]) : "";
       productions = prodsFromVal(val);
       fbChan("prods").last = flatProds(productions);
       try{ localStorage.setItem(PRODUCTIONS_KEY, JSON.stringify(productions)); }catch(e){}
@@ -3050,11 +3183,11 @@
         return;
       }
       var after = currentProd();
-      var sigAfter = after ? JSON.stringify([!!after.lock, after.bv || "", after.bp ? after.bp.id : ""]) : "";
+      var sigAfter = after ? JSON.stringify([!!after.lock, after.bv || "", after.bp ? after.bp.id : "", canonJson(after.fotos || {})]) : "";
       // Namensfeld im Menü (Umbenennen / Neu) nicht unter den Fingern neu zeichnen
       if(!(prodPickerOpen && (renamingProdId || addingProduction))) renderProdPicker();
       else renderProdLock();
-      if(sigAfter !== sigBefore){ updateAddBtnState(); if(!editing) renderList(); }
+      if(sigAfter !== sigBefore){ updateAddBtnState(); if(!editing) renderList(); if(window.renderFotoDlg) renderFotoDlg(); }
     });
     attachCuesListener(currentProdId);
   }
@@ -3212,6 +3345,14 @@
     renderList();
   }
 
+  // Punkte unter einem Eintrag: nur ein Strich davor (nichts zum Abhaken); ✕ fragt erst „Punkt löschen? Ja / Nein“
+  var noteDelAsk = null;   // „EintragId:PunktId“
+  function noteDelAskHtml(cueId, noteId){
+    if(noteDelAsk !== cueId + ":" + noteId) return "";
+    return '<li class="cue-confirm note-confirm"><span class="cue-confirm-text">Punkt löschen?</span>' +
+      '<button type="button" class="prod-dd-confirm-yes" data-action="note-del-yes" data-note-id="' + noteId + '">Ja</button>' +
+      '<button type="button" class="prod-dd-confirm-no" data-action="note-del-no" data-note-id="' + noteId + '">Nein</button></li>';
+  }
   function renderNotes(c){
     var notes = c.notes || [];
     var html = "";
@@ -3219,10 +3360,10 @@
       html += '<ul class="note-list">';
       notes.forEach(function(n){
         html += '<li class="note-item" data-note-id="' + n.id + '">' +
-          '<button type="button" class="note-check' + (n.done ? ' checked' : '') + '" data-action="toggle-note" data-note-id="' + n.id + '" aria-label="Erledigt">' + (n.done ? "✓" : "") + '</button>' +
-          '<button type="button" class="note-text' + (n.done ? ' checked' : '') + (n.text ? '' : ' placeholder') + '" data-field="note" data-note-id="' + n.id + '" aria-label="Punkt bearbeiten">' + (n.text ? esc(n.text) : "Punkt eingeben…") + '</button>' +
+          '<span class="note-dash" aria-hidden="true">–</span>' +
+          '<button type="button" class="note-text' + (n.text ? '' : ' placeholder') + '" data-field="note" data-note-id="' + n.id + '" aria-label="Punkt bearbeiten">' + (n.text ? esc(n.text) : "Punkt eingeben…") + '</button>' +
           '<button type="button" class="note-del" data-action="delete-note" data-note-id="' + n.id + '" aria-label="Punkt löschen">✕</button>' +
-        '</li>';
+        '</li>' + noteDelAskHtml(c.id, n.id);
       });
       html += '</ul>';
     }
@@ -3298,10 +3439,10 @@
       html += '<ul class="note-list">';
       d.notes.forEach(function(n){
         html += '<li class="note-item" data-note-id="' + n.id + '">' +
-          '<button type="button" class="note-check' + (n.done ? ' checked' : '') + '" data-action="toggle-note" data-note-id="' + n.id + '" aria-label="Erledigt">' + (n.done ? "✓" : "") + '</button>' +
+          '<span class="note-dash" aria-hidden="true">–</span>' +
           '<input type="text" class="note-text-input" data-edit="note" data-note-id="' + n.id + '" value="' + esc(n.text) + '" placeholder="Punkt eingeben…">' +
           '<button type="button" class="note-del" data-action="delete-note" data-note-id="' + n.id + '" aria-label="Punkt löschen">✕</button>' +
-        '</li>';
+        '</li>' + noteDelAskHtml(editing ? editing.id : null, n.id);
       });
       html += '</ul>';
     }
@@ -3481,7 +3622,7 @@
     document.getElementById("main").addEventListener(type, function(e){
       if(!e.target.closest || !prodBlocked()) return;
       if(!e.target.closest(".tech-sheet, .bv-row")) return;
-      if(e.target.closest(".bp-btn")) return; // Bühnenplan ansehen ist immer erlaubt
+      if(e.target.closest(".bp-btn, .foto-btn")) return; // Bühnenplan und Fotos ansehen ist immer erlaubt
       e.stopPropagation();
       if(type === "click"){ e.preventDefault(); lockedHint(true); }
       else if(type === "mousedown" && e.target.closest("select, button")) e.preventDefault();
@@ -3720,6 +3861,7 @@
       return false;
     }
     function zone(e){ return e.target.closest ? e.target.closest('.art-col[data-art="buehne"] .bp-btn, .bp-pop') : null; }
+    function fzone(e){ return e.target.closest ? e.target.closest('.art-col[data-art="buehne"] .foto-btn, #fotoDlg .foto-panel') : null; }
     function mark(on){
       Array.prototype.forEach.call(document.querySelectorAll(".bp-btn.ziel, .bp-drop.ziel"), function(x){ x.classList.remove("ziel"); });
       if(!on) return;
@@ -3730,17 +3872,457 @@
       if(!hasFiles(e)) return;
       e.preventDefault();
       var z = isCols() && currentProdId ? zone(e) : null;
-      e.dataTransfer.dropEffect = z ? "copy" : "none";
+      var fz = currentProdId && !z ? fzone(e) : null;
+      e.dataTransfer.dropEffect = (z || fz) ? "copy" : "none";
       mark(!!z);
+      fotoMark(fz);
     });
-    window.addEventListener("dragleave", function(e){ if(!e.relatedTarget) mark(false); });
+    window.addEventListener("dragleave", function(e){ if(!e.relatedTarget){ mark(false); fotoMark(null); } });
     window.addEventListener("drop", function(e){
       if(!hasFiles(e)) return;
       e.preventDefault();
-      mark(false);
+      mark(false); fotoMark(null);
+      if(currentProdId && fzone(e) && !zone(e)){ fotoAddFiles(e.dataTransfer.files); return; }
       if(!isCols() || !currentProdId || !zone(e)) return;
       var f = e.dataTransfer.files && e.dataTransfer.files[0];
       if(f){ bpPopOpen = true; bpUpload(f); }
+    });
+  })();
+
+
+  // ================= Fotos (nur Bühne) =================
+  // Pro Produktion höchstens 10 Fotos. Jedes Foto wird auf dem Gerät auf 1920 px (längere Kante) und höchstens 1 MB
+  // verkleinert (JPEG) und unter ablaufplan/files/<id> gespeichert, dazu ein kleines Vorschaubild unter <id>_t.
+  // An der Produktion steht nur die Liste prod.fotos = { <id>: { t: Beschriftung, ts, o: Reihenfolge } }.
+  // Löschen (Foto oder ganze Produktion) entfernt die Dateien wieder aus Firebase. Fotos erscheinen nicht im Druck.
+  var FOTO_MAX = 10, FOTO_EDGE = 1920, FOTO_BYTES = 1024 * 1024, FOTO_THUMB = 320;
+  var CAM_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8.5h3l1.6-2.5h6.8L17 8.5h3a1 1 0 0 1 1 1V18a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5a1 1 0 0 1 1-1z"/><circle cx="12" cy="13.5" r="3.4"/></svg>';
+  var fotoOpen = false, fotoAsk = null, fotoBusy = 0, fotoFocus = null, fotoDlPending = false;
+  var fotoThumbs = {}, fotoFull = {}, fotoLocal = {}, fotoLoading = {};
+  function prodFotos(p){
+    var m = (p && p.fotos) || {};
+    return Object.keys(m).map(function(id){ var f = m[id] || {}; return { id: id, t: f.t || "", ts: f.ts || 0, o: f.o == null ? f.ts || 0 : f.o }; })
+      .sort(function(a, b){ return (a.o - b.o) || (a.ts - b.ts); });
+  }
+  function fotoBtnHtml(p){
+    var n = prodFotos(p).length;
+    return '<button type="button" class="foto-btn' + (n ? ' voll' : '') + '" data-action="foto-open" aria-label="Fotos' + (n ? ' (' + n + ')' : '') + '" title="Fotos">' + CAM_SVG + '</button>';
+  }
+  function renderFotoHead(col){
+    col = col || colEl("buehne");
+    if(!col) return;
+    var btn = col.querySelector(".col-head .foto-btn");
+    if(!btn) return;
+    var p = currentProd(), n = prodFotos(p).length;
+    btn.disabled = !p;
+    btn.classList.toggle("voll", !!n);
+    btn.title = n ? n + (n === 1 ? " Foto" : " Fotos") : "Fotos (hierher ziehen oder klicken)";
+  }
+  function fotoRefresh(){
+    if(isCols()) renderFotoHead(); else if(!editing) renderList();
+    renderFotoDlg();
+  }
+  function fotoRemoveStored(fid){
+    [fid, fid + "_t"].forEach(function(k){
+      if(fotoThumbs[k]){ try{ URL.revokeObjectURL(fotoThumbs[k]); }catch(e){} }
+      if(fotoFull[k]){ try{ URL.revokeObjectURL(fotoFull[k]); }catch(e){} }
+      delete fotoThumbs[k]; delete fotoFull[k]; delete fotoLocal[k];
+      if(fbEnabled && db){ try{ db.ref(bpPath(k)).remove(); }catch(e){} }
+    });
+  }
+  function fotoTouch(p){
+    p.upd = Date.now();
+    if(prodOpen()) p.chg = { k: openLock.k, t: Date.now() };
+  }
+  // Knopf: Handy ohne Fotos -> Kamera direkt; sonst die Liste
+  function fotoTap(){
+    var p = currentProd();
+    if(!p) return;
+    if(!isCols() && !prodFotos(p).length && !prodBlocked()){ fotoPick(true); return; }
+    openFotoDlg();
+  }
+  function fotoPick(camera){
+    var inp = document.getElementById(camera ? "fotoCam" : "fotoPick");
+    inp.value = "";
+    inp.click();
+  }
+  function openFotoDlg(){ fotoOpen = true; fotoAsk = null; renderFotoDlg(); }
+  window.closeFotoDlg = function(){ fotoOpen = false; fotoAsk = null; fotoFocus = null; var d = document.getElementById("fotoDlg"); d.hidden = true; d.firstElementChild.innerHTML = ""; };
+  function fotoThumbHtml(f){
+    var u = fotoThumbs[f.id];
+    return '<button type="button" class="foto-thumb" data-foto="view" data-id="' + esc(f.id) + '"' + (u ? ' style="background-image:url(' + u + ')"' : '') + ' aria-label="Foto ansehen">' + (u ? '' : '…') + '</button>';
+  }
+  window.renderFotoDlg = function(){
+    var dlg = document.getElementById("fotoDlg"), panel = dlg.firstElementChild;
+    if(!fotoOpen){ dlg.hidden = true; return; }
+    var p = currentProd();
+    if(!p){ closeFotoDlg(); return; }
+    // nicht unter den Fingern neu zeichnen, solange eine Beschriftung getippt wird
+    var ae = document.activeElement;
+    if(ae && ae.classList && ae.classList.contains("foto-cap") && panel.contains(ae)){ fotoDlPending = true; return; }
+    var list = prodFotos(p), n = list.length, blocked = prodBlocked(), room = FOTO_MAX - n - fotoBusy;
+    var h = '<div class="foto-head"><h3>Fotos<span>' + n + ' / ' + FOTO_MAX + '</span></h3>' +
+      (n ? '<button type="button" class="foto-dl" data-foto="download">Alle herunterladen</button>' : '') +
+      '<button type="button" data-foto="close">Schliessen</button></div>';
+    if(fotoBusy) h += '<p class="foto-busy">' + fotoBusy + (fotoBusy === 1 ? ' Foto wird' : ' Fotos werden') + ' gespeichert …</p>';
+    if(!blocked){
+      if(room <= 0) h += '<p class="foto-max">Maximal ' + FOTO_MAX + ' Fotos – zum Hinzufügen erst eines löschen.</p>';
+      else if(isCols()) h += '<button type="button" class="foto-drop" data-foto="pick"><b>Fotos hierher ziehen</b><br>oder klicken und auswählen (mehrere möglich)</button>';
+      else h += '<div class="foto-add"><button type="button" class="main" data-foto="camera">' + CAM_SVG + 'Foto aufnehmen</button><button type="button" data-foto="pick">Aus Galerie</button></div>';
+    }
+    if(!n && !fotoBusy) h += '<p class="foto-empty">Noch keine Fotos.</p>';
+    h += '<ul class="foto-list">';
+    list.forEach(function(f){
+      h += '<li class="foto-item">' + fotoThumbHtml(f) +
+        '<input type="text" class="foto-cap" data-id="' + esc(f.id) + '" value="' + esc(f.t) + '" placeholder="Beschriftung, z. B. Bühne links…" maxlength="80" autocomplete="off" spellcheck="false" enterkeyhint="done"' + (blocked ? ' readonly' : '') + '>' +
+        (blocked ? '' : '<button type="button" class="foto-del" data-foto="del" data-id="' + esc(f.id) + '" aria-label="Foto löschen">✕</button>') + '</li>';
+      if(fotoAsk === f.id) h += '<li class="cue-confirm foto-confirm"><span class="cue-confirm-text">Foto löschen?</span>' +
+        '<button type="button" class="prod-dd-confirm-yes" data-foto="del-yes" data-id="' + esc(f.id) + '">Ja</button>' +
+        '<button type="button" class="prod-dd-confirm-no" data-foto="del-no">Nein</button></li>';
+    });
+    h += '</ul>';
+    if(n && !blocked){
+      h += fotoAsk === "*"
+        ? '<div class="cue-confirm foto-all-confirm"><span class="cue-confirm-text">Alle ' + n + (n === 1 ? ' Foto' : ' Fotos') + ' löschen?</span>' +
+          '<button type="button" class="prod-dd-confirm-yes" data-foto="all-yes">Ja</button><button type="button" class="prod-dd-confirm-no" data-foto="del-no">Nein</button></div>'
+        : '<button type="button" class="foto-del-all" data-foto="all">Alle Fotos löschen</button>';
+    }
+    if(n) h += '<p class="foto-hint">' + (isCols() ? 'Bild anklicken = Vollbild · Text anklicken = Beschriftung ändern.' : 'Bild antippen = Vollbild · Text antippen = Beschriftung ändern.') + (blocked ? ' Produktion gesperrt – nur ansehen und herunterladen.' : '') + '</p>';
+    panel.innerHTML = h;
+    dlg.hidden = false;
+    fotoDlPending = false;
+    list.forEach(function(f){ fotoLoadThumb(f.id); });
+    if(fotoFocus){
+      var inp = panel.querySelector('.foto-cap[data-id="' + fotoFocus + '"]');
+      fotoFocus = null;
+      if(inp){ inp.focus(); try{ inp.scrollIntoView({ block: "nearest" }); }catch(e){} }
+    }
+  };
+  function fotoMark(z){
+    var b = document.querySelector('.art-col[data-art="buehne"] .foto-btn'), d = document.querySelector("#fotoDlg .foto-drop");
+    if(b) b.classList.toggle("ziel", !!z && !d);
+    if(d) d.classList.toggle("ziel", !!z);
+  }
+  function b64ToUrl(b64, type){ return URL.createObjectURL(b64ToBlob(b64, type || "image/jpeg")); }
+  function fotoGet(key){
+    if(fotoLocal[key]) return Promise.resolve(fotoLocal[key]);
+    if(!(fbEnabled && db)) return Promise.resolve(null);
+    return withTimeout(db.ref(bpPath(key)).once("value").then(function(snap){ return snap.val(); }), 60000);
+  }
+  function fotoLoadThumb(fid){
+    if(fotoThumbs[fid] || fotoLoading[fid + "_t"]) return;
+    fotoLoading[fid + "_t"] = true;
+    fotoGet(fid + "_t").then(function(rec){
+      delete fotoLoading[fid + "_t"];
+      if(!rec || !rec.data) return;
+      fotoThumbs[fid] = b64ToUrl(rec.data, rec.type);
+      var b = document.querySelector('#fotoDlg .foto-thumb[data-id="' + fid + '"]');
+      if(b){ b.style.backgroundImage = "url(" + fotoThumbs[fid] + ")"; b.textContent = ""; }
+    }).catch(function(){ delete fotoLoading[fid + "_t"]; });
+  }
+  function fotoLoadFull(fid){
+    if(fotoFull[fid]) return Promise.resolve(fotoFull[fid]);
+    return fotoGet(fid).then(function(rec){
+      if(!rec || !rec.data) throw new Error("fehlt");
+      fotoFull[fid] = b64ToUrl(rec.data, rec.type);
+      return fotoFull[fid];
+    });
+  }
+  // Bild verkleinern: längere Kante höchstens FOTO_EDGE, JPEG höchstens FOTO_BYTES; dazu Vorschaubild
+  function fotoDecode(file){
+    if(window.createImageBitmap){
+      return createImageBitmap(file, { imageOrientation: "from-image" }).catch(function(){ return fotoDecodeImg(file); });
+    }
+    return fotoDecodeImg(file);
+  }
+  function fotoDecodeImg(file){
+    return new Promise(function(resolve, reject){
+      var url = URL.createObjectURL(file), img = new Image();
+      img.onload = function(){ resolve(img); setTimeout(function(){ URL.revokeObjectURL(url); }, 1000); };
+      img.onerror = function(){ URL.revokeObjectURL(url); reject(new Error("format")); };
+      img.src = url;
+    });
+  }
+  function fotoCanvasBlob(src, edge, quality){
+    var w = src.width, h = src.height, sc = Math.min(1, edge / Math.max(w, h));
+    var cw = Math.max(1, Math.round(w * sc)), ch = Math.max(1, Math.round(h * sc));
+    var cv = document.createElement("canvas"); cv.width = cw; cv.height = ch;
+    var cx = cv.getContext("2d"); cx.fillStyle = "#000"; cx.fillRect(0, 0, cw, ch); cx.drawImage(src, 0, 0, cw, ch);
+    return new Promise(function(resolve, reject){
+      cv.toBlob(function(b){ b ? resolve({ blob: b, w: cw, h: ch }) : reject(new Error("canvas")); }, "image/jpeg", quality);
+    });
+  }
+  function fotoPrepare(file){
+    return fotoDecode(file).then(function(src){
+      var qs = [0.85, 0.78, 0.7, 0.6, 0.5, 0.4];
+      function tryQ(i){
+        return fotoCanvasBlob(src, FOTO_EDGE, qs[i]).then(function(r){
+          if(r.blob.size <= FOTO_BYTES || i === qs.length - 1) return r;
+          return tryQ(i + 1);
+        });
+      }
+      return Promise.all([tryQ(0), fotoCanvasBlob(src, FOTO_THUMB, 0.7)]).then(function(rs){
+        try{ if(src.close) src.close(); }catch(e){}
+        return Promise.all([readBase64(rs[0].blob), readBase64(rs[1].blob)]).then(function(b){
+          return { full: b[0], thumb: b[1], w: rs[0].w, h: rs[0].h, size: rs[0].blob.size, fullBlob: rs[0].blob, thumbBlob: rs[1].blob };
+        });
+      });
+    });
+  }
+  // Dateiname → Beschriftung („Bühne links Mikro.jpg“ → „Bühne links Mikro“); Kamera-Namen bleiben leer
+  function fotoNameCaption(name){
+    var n = String(name || "").replace(/\.[a-z0-9]{2,5}$/i, "").replace(/^\d{2}_(?=\D)/, "").replace(/_/g, " ").replace(/\s+/g, " ").trim();
+    if(!n) return "";
+    if(/^(img|dsc|dscn|dscf|dji|gopr|pxl|mvimg|pano|vid|sam|cimg|p\d|image|photo|foto|bild|screenshot|bildschirmfoto|whatsapp image|signal)[\s\-]*[\d\s\-.,:()]*$/i.test(n)) return "";
+    if(/^(img|dsc|pxl|mvimg|screenshot|bildschirmfoto|whatsapp image)[\s\-]*\d/i.test(n)) return "";
+    if(/^[\d\s\-.:()]+$/.test(n)) return "";
+    return n.slice(0, 80);
+  }
+  function fotoAddFiles(fileList){
+    var p = currentProd();
+    if(!p) return;
+    if(prodBlocked()){ lockedHint(true); return; }
+    var files = Array.prototype.filter.call(fileList || [], function(f){ return /^image\//.test(f.type) || /\.(jpe?g|png|heic|heif|webp|gif)$/i.test(f.name || ""); });
+    if(!files.length){ showToast("Bitte Fotos (Bilddateien) wählen", 3000, true); return; }
+    var room = FOTO_MAX - prodFotos(p).length - fotoBusy;
+    if(room <= 0){ showToast("Maximal " + FOTO_MAX + " Fotos pro Produktion", 3500, true); return; }
+    var skipped = Math.max(0, files.length - room);
+    files = files.slice(0, room);
+    var prodId = p.id, done = 0, failed = 0, lastId = null;
+    fotoBusy += files.length;
+    fotoOpen = true; renderFotoDlg();
+    // nacheinander, damit das Handy nicht mehrere grosse Bilder gleichzeitig im Speicher hat
+    files.reduce(function(chain, file){
+      return chain.then(function(){
+        return fotoPrepare(file).then(function(r){
+          var fid = "g" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7), ts = Date.now();
+          var online = fbEnabled && db;
+          var put = online
+            ? withTimeout(Promise.all([
+                db.ref(bpPath(fid)).set({ name: file.name || "", type: "image/jpeg", size: r.size, w: r.w, h: r.h, ts: ts, data: r.full }),
+                db.ref(bpPath(fid + "_t")).set({ type: "image/jpeg", data: r.thumb })
+              ]), 90000)
+            : Promise.resolve();
+          if(!online){ fotoLocal[fid] = { type: "image/jpeg", data: r.full }; fotoLocal[fid + "_t"] = { type: "image/jpeg", data: r.thumb }; }
+          return put.then(function(){
+            var pr = productions.find(function(x){ return x.id === prodId; });
+            if(!pr){ fotoRemoveStored(fid); return; }
+            var max = 0; prodFotos(pr).forEach(function(f){ if(f.o > max) max = f.o; });
+            pr.fotos = pr.fotos || {};
+            pr.fotos[fid] = { t: fotoNameCaption(file.name), ts: ts, o: max + 1 };
+            fotoTouch(pr);
+            try{ fotoThumbs[fid] = URL.createObjectURL(r.thumbBlob); fotoFull[fid] = URL.createObjectURL(r.fullBlob); }catch(e){}
+            saveProductions();
+            done++; lastId = fid;
+          });
+        }).catch(function(err){ failed++; }).then(function(){ fotoBusy--; fotoRefresh(); });
+      });
+    }, Promise.resolve()).then(function(){
+      if(done && !failed && !skipped) showToast(done === 1 ? "Foto gespeichert – jetzt beschriften" : done + " Fotos gespeichert", 2600);
+      else if(failed) showToast(failed + (failed === 1 ? " Foto" : " Fotos") + " nicht gespeichert (Format oder Verbindung prüfen)", 4500, true);
+      else if(skipped) showToast("Maximal " + FOTO_MAX + " Fotos – " + skipped + " nicht übernommen", 4500, true);
+      if(!(fbEnabled && db) && done) showToast("Nur auf diesem Gerät gespeichert (keine Verbindung)", 4500, true);
+      if(lastId && currentProdId === prodId){ fotoFocus = lastId; fotoOpen = true; renderFotoDlg(); }
+    });
+  }
+  function fotoDelete(fid){
+    var p = currentProd();
+    if(!p || !p.fotos || !p.fotos[fid]) return;
+    if(prodBlocked()){ lockedHint(true); return; }
+    delete p.fotos[fid];
+    if(!Object.keys(p.fotos).length) delete p.fotos;
+    fotoTouch(p);
+    saveProductions();
+    fotoRemoveStored(fid);
+    fotoAsk = null;
+    fotoRefresh();
+    showToast("Foto gelöscht", 1800);
+  }
+  function fotoDeleteAll(){
+    var p = currentProd();
+    if(!p || !p.fotos) return;
+    if(prodBlocked()){ lockedHint(true); return; }
+    var ids = Object.keys(p.fotos), n = ids.length;
+    delete p.fotos;
+    fotoTouch(p);
+    saveProductions();
+    ids.forEach(fotoRemoveStored);
+    fotoAsk = null;
+    fotoRefresh();
+    showToast(n + (n === 1 ? " Foto" : " Fotos") + " gelöscht", 2000);
+  }
+  function fotoSetCaption(fid, text){
+    var p = currentProd();
+    if(!p || !p.fotos || !p.fotos[fid] || prodBlocked()) return;
+    text = String(text || "").trim().slice(0, 80);
+    if((p.fotos[fid].t || "") === text) return;
+    p.fotos[fid].t = text;
+    fotoTouch(p);
+    saveProductions();
+  }
+  // ---- Alle Fotos als ZIP (ohne Komprimierung – JPEG lässt sich ohnehin kaum verkleinern) ----
+  var CRC_T = null;
+  function crc32(u8){
+    if(!CRC_T){ CRC_T = new Uint32Array(256); for(var n = 0; n < 256; n++){ var c = n; for(var k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; CRC_T[n] = c >>> 0; } }
+    var crc = 0xFFFFFFFF;
+    for(var i = 0; i < u8.length; i++) crc = CRC_T[(crc ^ u8[i]) & 0xFF] ^ (crc >>> 8);
+    return (crc ^ 0xFFFFFFFF) >>> 0;
+  }
+  function makeZip(entries){ // entries: [{ name, data: Uint8Array }]
+    var enc = new TextEncoder(), parts = [], central = [], offset = 0, now = new Date();
+    var dosTime = (now.getHours() << 11) | (now.getMinutes() << 5) | (now.getSeconds() >> 1);
+    var dosDate = ((now.getFullYear() - 1980) << 9) | ((now.getMonth() + 1) << 5) | now.getDate();
+    entries.forEach(function(en){
+      var nm = enc.encode(en.name), crc = crc32(en.data), sz = en.data.length;
+      var lh = new DataView(new ArrayBuffer(30));
+      lh.setUint32(0, 0x04034b50, true); lh.setUint16(4, 20, true); lh.setUint16(6, 0x0800, true); lh.setUint16(8, 0, true);
+      lh.setUint16(10, dosTime, true); lh.setUint16(12, dosDate, true); lh.setUint32(14, crc, true);
+      lh.setUint32(18, sz, true); lh.setUint32(22, sz, true); lh.setUint16(26, nm.length, true); lh.setUint16(28, 0, true);
+      parts.push(new Uint8Array(lh.buffer), nm, en.data);
+      var ch = new DataView(new ArrayBuffer(46));
+      ch.setUint32(0, 0x02014b50, true); ch.setUint16(4, 20, true); ch.setUint16(6, 20, true); ch.setUint16(8, 0x0800, true); ch.setUint16(10, 0, true);
+      ch.setUint16(12, dosTime, true); ch.setUint16(14, dosDate, true); ch.setUint32(16, crc, true); ch.setUint32(20, sz, true); ch.setUint32(24, sz, true);
+      ch.setUint16(28, nm.length, true); ch.setUint16(30, 0, true); ch.setUint16(32, 0, true); ch.setUint16(34, 0, true); ch.setUint16(36, 0, true);
+      ch.setUint32(38, 0, true); ch.setUint32(42, offset, true);
+      central.push(new Uint8Array(ch.buffer), nm);
+      offset += 30 + nm.length + sz;
+    });
+    var cdSize = central.reduce(function(a, b){ return a + b.length; }, 0);
+    var end = new DataView(new ArrayBuffer(22));
+    end.setUint32(0, 0x06054b50, true); end.setUint16(8, entries.length, true); end.setUint16(10, entries.length, true);
+    end.setUint32(12, cdSize, true); end.setUint32(16, offset, true);
+    return new Blob(parts.concat(central, [new Uint8Array(end.buffer)]), { type: "application/zip" });
+  }
+  function b64ToU8(b64){ var bin = atob(b64), u8 = new Uint8Array(bin.length); for(var i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i); return u8; }
+  function fotoDownloadAll(){
+    var p = currentProd();
+    if(!p) return;
+    var list = prodFotos(p);
+    if(!list.length) return;
+    showToast("Fotos werden zusammengestellt …", 60000);
+    var used = {};
+    Promise.all(list.map(function(f){ return fotoGet(f.id); })).then(function(recs){
+      var entries = [];
+      recs.forEach(function(rec, i){
+        if(!rec || !rec.data) return;
+        var base = String(list[i].t || "Foto").replace(/[\\\/:*?"<>|\u0000-\u001f]+/g, " ").replace(/\s+/g, " ").trim().slice(0, 60) || "Foto";
+        var nm = (i + 1 < 10 ? "0" : "") + (i + 1) + "_" + base;
+        while(used[nm]) nm += "_";
+        used[nm] = true;
+        entries.push({ name: nm + ".jpg", data: b64ToU8(rec.data) });
+      });
+      if(!entries.length) throw new Error("leer");
+      var d = new Date(), day = d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate());
+      var safeP = String(p.name || "Produktion").replace(/[\\\/:*?"<>|]+/g, "").replace(/\s+/g, "_");
+      return saveFile("Fotos_" + safeP + "_" + day + ".zip", makeZip(entries)).then(function(){
+        showToast(entries.length + (entries.length === 1 ? " Foto" : " Fotos") + " heruntergeladen", 2600);
+      });
+    }).catch(function(){ showToast("Herunterladen fehlgeschlagen (Verbindung prüfen)", 4500, true); });
+  }
+  // ---- Vollbild ----
+  var ivList = [], ivIdx = 0;
+  function fotoView(fid){
+    ivList = prodFotos(currentProd());
+    ivIdx = Math.max(0, ivList.findIndex(function(f){ return f.id === fid; }));
+    document.getElementById("imgView").hidden = false;
+    ivShow();
+  }
+  function ivShow(){
+    var f = ivList[ivIdx];
+    if(!f){ ivClose(); return; }
+    var st = document.getElementById("ivStage");
+    Array.prototype.forEach.call(st.querySelectorAll("img, .iv-load"), function(x){ x.remove(); });
+    document.getElementById("ivCap").textContent = f.t || "Ohne Beschriftung";
+    document.getElementById("ivN").textContent = (ivIdx + 1) + " / " + ivList.length;
+    document.getElementById("ivPrev").hidden = ivList.length < 2;
+    document.getElementById("ivNext").hidden = ivList.length < 2;
+    var ld = document.createElement("span"); ld.className = "iv-load"; ld.textContent = "Foto lädt …";
+    st.insertBefore(ld, st.firstChild);
+    var want = f.id;
+    fotoLoadFull(f.id).then(function(url){
+      if(document.getElementById("imgView").hidden || !ivList[ivIdx] || ivList[ivIdx].id !== want) return;
+      var img = document.createElement("img"); img.src = url; img.alt = f.t || "Foto";
+      ld.remove(); st.insertBefore(img, st.firstChild);
+    }).catch(function(){ ld.textContent = "Foto nicht gefunden – evtl. gelöscht"; });
+  }
+  function ivFileName(f, i){
+    var base = String(f.t || "").replace(/[\\\/:*?"<>|\u0000-\u001f]+/g, " ").replace(/\s+/g, " ").trim().slice(0, 80);
+    return (base || ("Foto_" + (i + 1 < 10 ? "0" : "") + (i + 1))) + ".jpg";
+  }
+  function ivDownload(){
+    var f = ivList[ivIdx]; if(!f) return;
+    var nm = ivFileName(f, ivIdx);
+    fotoLoadFull(f.id).then(function(url){ return fetch(url); }).then(function(r){ return r.blob(); })
+      .then(function(b){ return saveFile(nm, b); })
+      .then(function(){ showToast("„" + nm + "“ heruntergeladen", 2400); })
+      .catch(function(){ showToast("Herunterladen fehlgeschlagen (Verbindung prüfen)", 4500, true); });
+  }
+  function ivOpenTab(){
+    var f = ivList[ivIdx]; if(!f) return;
+    var w = null;
+    if(fotoFull[f.id]){ w = window.open(fotoFull[f.id], "_blank"); if(!w) showToast("Neuer Tab wurde vom Browser blockiert", 3500, true); return; }
+    try{ w = window.open("", "_blank"); }catch(e){}
+    fotoLoadFull(f.id).then(function(url){ if(w) w.location.href = url; else showToast("Neuer Tab wurde vom Browser blockiert", 3500, true); })
+      .catch(function(){ try{ if(w) w.close(); }catch(e){} showToast("Foto nicht gefunden", 3500, true); });
+  }
+  function ivStep(d){ if(ivList.length < 2) return; ivIdx = (ivIdx + d + ivList.length) % ivList.length; ivShow(); }
+  function ivClose(){ document.getElementById("imgView").hidden = true; Array.prototype.forEach.call(document.querySelectorAll("#ivStage img"), function(x){ x.remove(); }); }
+  (function(){
+    var iv = document.getElementById("imgView"), sx = null, sy = null, multi = false;
+    document.getElementById("ivPrev").addEventListener("click", function(e){ e.stopPropagation(); ivStep(-1); });
+    document.getElementById("ivNext").addEventListener("click", function(e){ e.stopPropagation(); ivStep(1); });
+    document.getElementById("ivClose").addEventListener("click", ivClose);
+    document.getElementById("ivDl").addEventListener("click", function(e){ e.stopPropagation(); ivDownload(); });
+    document.getElementById("ivTab").addEventListener("click", function(e){ e.stopPropagation(); ivOpenTab(); });
+    iv.addEventListener("touchstart", function(e){ multi = e.touches.length > 1; if(!multi){ sx = e.touches[0].clientX; sy = e.touches[0].clientY; } }, { passive: true });
+    iv.addEventListener("touchend", function(e){
+      if(multi || sx == null || (window.visualViewport && window.visualViewport.scale > 1.05)){ sx = null; return; }
+      var t = e.changedTouches[0], dx = t.clientX - sx, dy = t.clientY - sy; sx = null;
+      if(Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) ivStep(dx < 0 ? 1 : -1);
+    }, { passive: true });
+    document.addEventListener("keydown", function(e){
+      if(iv.hidden) return;
+      if(e.key === "Escape"){ e.stopPropagation(); ivClose(); }
+      else if(e.key === "ArrowRight"){ ivStep(1); } else if(e.key === "ArrowLeft"){ ivStep(-1); }
+    }, true);
+  })();
+  // ---- Bedienung der Liste ----
+  (function(){
+    var dlg = document.getElementById("fotoDlg"), panel = dlg.firstElementChild;
+    document.getElementById("fotoCam").addEventListener("change", function(){ if(this.files && this.files.length) fotoAddFiles(this.files); });
+    document.getElementById("fotoPick").addEventListener("change", function(){ if(this.files && this.files.length) fotoAddFiles(this.files); });
+    document.getElementById("main").addEventListener("click", function(e){
+      if(e.target.closest && e.target.closest('.bv-row [data-action="foto-open"]')) fotoTap();
+    });
+    dlg.addEventListener("click", function(e){
+      if(e.target === dlg){ closeFotoDlg(); return; }
+      var b = e.target.closest("[data-foto]");
+      if(!b) return;
+      var a = b.dataset.foto, id = b.dataset.id;
+      if(a === "close") closeFotoDlg();
+      else if(a === "camera") fotoPick(true);
+      else if(a === "pick") fotoPick(false);
+      else if(a === "download") fotoDownloadAll();
+      else if(a === "view") fotoView(id);
+      else if(a === "del"){ fotoAsk = fotoAsk === id ? null : id; renderFotoDlg(); }
+      else if(a === "del-no"){ fotoAsk = null; renderFotoDlg(); }
+      else if(a === "del-yes") fotoDelete(id);
+      else if(a === "all"){ fotoAsk = "*"; renderFotoDlg(); }
+      else if(a === "all-yes") fotoDeleteAll();
+    });
+    panel.addEventListener("keydown", function(e){
+      if(e.key === "Enter" && e.target.classList.contains("foto-cap")){ e.preventDefault(); e.target.blur(); }
+    });
+    panel.addEventListener("focusout", function(e){
+      if(!e.target.classList || !e.target.classList.contains("foto-cap")) return;
+      fotoSetCaption(e.target.dataset.id, e.target.value);
+      if(fotoDlPending) setTimeout(function(){ var ae = document.activeElement; if(!(ae && ae.classList && ae.classList.contains("foto-cap"))) renderFotoDlg(); }, 0);
+    });
+    document.addEventListener("keydown", function(e){
+      if(e.key === "Escape" && fotoOpen && document.getElementById("imgView").hidden){
+        var ae = document.activeElement; if(ae && ae.classList && ae.classList.contains("foto-cap")) ae.blur();
+        closeFotoDlg();
+      }
     });
   })();
 
@@ -3755,9 +4337,10 @@
     function b(val, txt){
       return '<button type="button" class="amp-ch' + (v === val ? ' on' : '') + '" data-action="bv" data-v="' + val + '" aria-pressed="' + (v === val ? 'true' : 'false') + '">' + txt + '</button>';
     }
-    var mitBp = !isCols() && p && p.bp;
-    return '<div class="bv-row' + (mitBp ? ' mit-bp' : '') + '"><span class="bv-lbl">Bühnenverstärkung</span>' + b("ja", "Ja") + b("nein", "Nein") +
-      (mitBp ? bpViewBtnHtml(p.bp) : '') + '</div>';
+    // Handy: „Bühnenverstärk.“ + rechts BP (nur mit Plan) und Foto (immer); Desktop: ausgeschrieben, Knöpfe im Spaltenkopf
+    var phone = !isCols() && p, mitBp = phone && p.bp;
+    return '<div class="bv-row' + (mitBp ? ' mit-bp' : '') + '"><span class="bv-lbl">' + (phone ? 'Bühnenverstärk.' : 'Bühnenverstärkung') + '</span>' + b("ja", "Ja") + b("nein", "Nein") +
+      (phone ? '<span class="bv-right">' + (mitBp ? bpViewBtnHtml(p.bp) : '') + fotoBtnHtml(p) + '</span>' : '') + '</div>';
   }
   // Amps: Lücke nach „Portal alle“ so setzen, dass PrSub bündig über dem rechten Rand der unteren
   // Knöpfe (Be1AB … Mon3/4 und PT-Fix … LArray) endet; mindestens AMP_ALL_GAP, nie breiter als das Feld.
@@ -4039,8 +4622,14 @@
         }
         return;
       }
-      if(action === "delete-note"){
+      if(action === "delete-note" || action === "note-del-yes" || action === "note-del-no"){
         var did = Number(btn.dataset.noteId);
+        var dn = editing.draft.notes.find(function(x){ return x.id === did; });
+        var inp = document.querySelector('[data-edit="note"][data-note-id="' + did + '"]');
+        if(dn && inp) dn.text = inp.value;   // gerade Getipptes mitnehmen
+        if(action === "note-del-no"){ noteDelAsk = null; renderList(); return; }
+        if(action === "delete-note" && dn && String(dn.text || "").trim()){ noteDelAsk = editing.id + ":" + did; renderList(); return; }
+        noteDelAsk = null;
         editing.draft.notes = editing.draft.notes.filter(function(x){ return x.id !== did; });
         renderList();
         return;
@@ -4061,6 +4650,13 @@
 
     // gesperrt: nur Abhaken (Eintrag und Punkte) bleibt möglich
     if(cue && cueBlocked(cue) && action !== "toggle-done" && action !== "toggle-note"){ renderList(); lockedHint(); return; }
+    if(action !== "delete-note" && action !== "note-del-yes") noteDelAsk = null;
+    if(cue && action === "delete-note"){
+      var askN = (cue.notes || []).find(function(n){ return n.id === Number(btn.dataset.noteId); });
+      if(askN && String(askN.text || "").trim() && noteDelAsk !== cue.id + ":" + askN.id){ noteDelAsk = cue.id + ":" + askN.id; renderList(); return; }
+    }
+    if(action === "note-del-no"){ renderList(); return; }
+    if(action === "note-del-yes"){ action = "delete-note"; noteDelAsk = null; }
     if(cue && (action === "move-up" || action === "move-down" || action === "delete-note")) stampCue(cue);
 
     if(action === "delete"){
@@ -4201,7 +4797,7 @@
       if(c.task) mergedTextRow(c.task);
       (c.notes || []).forEach(function(n){
         if(!n.text) return;
-        mergedTextRow("– " + n.text + (n.done ? "  ✓" : ""));
+        mergedTextRow("– " + n.text);
       });
     });
     return wb;
@@ -4233,7 +4829,7 @@
         // Zeit als Zahl h.mm (z. B. 1.17) – so sortiert sie richtig, auch bei negativen Zeiten
         var zeit = hasTime(c.time) ? Number(formatElapsed(c.time)) : "";
         var text = [c.task || ""].concat((c.notes || []).filter(function(n){ return n.text; }).map(function(n){
-          return "– " + n.text + (n.done ? "  ✓" : "");
+          return "– " + n.text;
         })).filter(Boolean).join("\n");
         var ka = numOrText(c.ka), akt = numOrText(c.akt), bild = numOrText(c.bild);
         return tonX
@@ -4597,7 +5193,7 @@
       var vals = tonX
         ? [c.ka || "", c.akt || "", c.bild || "", tStr, [c.was || "", c.inspilz ? "LZ-Inspi" : ""].filter(Boolean).join(" · ")]
         : [tStr, c.ka || "", c.akt || "", c.bild || "", printLoc(c.loc)];
-      var text = [c.task ? highlightTask(esc(c.task)) : ""].concat((c.notes || []).filter(function(n){ return n.text; }).map(function(n){ return esc("– " + n.text + (n.done ? "  ✓" : "")); }))
+      var text = [c.task ? highlightTask(esc(c.task)) : ""].concat((c.notes || []).filter(function(n){ return n.text; }).map(function(n){ return esc("– " + n.text); }))
         .filter(Boolean).join("\n");
       if(c.chg && c.chg.k) text += (text ? "\n" : "") + '<span class="pv-chg">' + esc(chgText(c.chg, true)) + '</span>';
       if(!hasBild) vals.splice(bi, 1);
@@ -4722,6 +5318,75 @@
   }
   document.getElementById("printBtn").addEventListener("click", function(){ printView(); });
   document.getElementById("printArtBtn").addEventListener("click", function(){ printView([currentArt]); });
+  // Archiv (Desktop): Liste der archivierten Produktionen; Antippen fragt „Zurück in die Produktionsliste / Löschen / Abbrechen“
+  (function(){
+    var btn = document.getElementById("archBtn"), pop = document.getElementById("archPop");
+    function place(){
+      var x = btn.offsetLeft + btn.offsetWidth - pop.offsetWidth;
+      pop.style.left = Math.max(8, x) + "px";
+    }
+    window.renderArchPop = function(){
+      btn.classList.toggle("active", archOpen);
+      btn.setAttribute("aria-expanded", archOpen ? "true" : "false");
+      if(!archOpen){ pop.hidden = true; pop.innerHTML = ""; return; }
+      var arch = productions.filter(function(p){ return p.archived; })
+        .sort(function(a, b){ return String(a.name).localeCompare(String(b.name), "de", { sensitivity: "base" }); });
+      if(archPick && !arch.some(function(p){ return p.id === archPick; })){ archPick = null; archStage = ""; }
+      var h = '<h4>Archiv</h4>';
+      if(!arch.length) h += '<p class="arch-empty">Keine Produktionen im Archiv.</p>';
+      arch.forEach(function(p){
+        var pid = esc(p.id), nm = esc(p.name);
+        if(archPick === p.id && archStage === "del"){
+          h += '<div class="arch-ask del"><div class="arch-ask-t">„' + nm + '“ endgültig löschen? Alle Einträge' + (p.bp ? ' und der Bühnenplan' : '') + ' gehen verloren.</div>' +
+            '<div class="arch-btns"><button type="button" class="arch-warn full" data-arch="del-yes" data-id="' + pid + '">Endgültig löschen</button>' +
+            '<button type="button" class="arch-no" data-arch="cancel">Abbrechen</button></div></div>';
+        } else if(archPick === p.id){
+          h += '<div class="arch-ask"><div class="arch-ask-t">„' + nm + '“</div>' +
+            '<div class="arch-btns"><button type="button" class="arch-ok" data-arch="restore" data-id="' + pid + '">Zurück in die Produktionsliste</button>' +
+            '<button type="button" class="arch-warn" data-arch="del" data-id="' + pid + '">Löschen</button>' +
+            '<button type="button" class="arch-no" data-arch="cancel">Abbrechen</button></div></div>';
+        } else {
+          h += '<button type="button" class="arch-item" data-arch="pick" data-id="' + pid + '"><span class="arch-name">' + nm + '</span>' +
+            (p.upd ? '<span class="arch-upd">' + esc(fmtUpd(p.upd)) + '</span>' : '') + '</button>';
+        }
+      });
+      pop.innerHTML = h;
+      pop.hidden = false;
+      place();
+    };
+    function locked(id){
+      var p = productions.find(function(x){ return x.id === id; });
+      return !!(p && p.lock && !(openLock && openLock.type === "prod" && openLock.prodId === p.id));
+    }
+    btn.addEventListener("click", function(){
+      archOpen = !archOpen; archPick = null; archStage = "";
+      renderArchPop();
+    });
+    pop.addEventListener("click", function(e){
+      e.stopPropagation();
+      var b = e.target.closest("[data-arch]");
+      if(!b) return;
+      var a = b.dataset.arch, id = b.dataset.id;
+      if(a === "pick"){ archPick = id; archStage = ""; }
+      else if(a === "cancel"){ archPick = null; archStage = ""; }
+      else if(a === "restore" || a === "del" || a === "del-yes"){
+        if(locked(id)){ showToast("Gesperrt – erst Schloss öffnen", 2600); return; }
+        var p = productions.find(function(x){ return x.id === id; }), nm = p ? p.name : "";
+        if(a === "del"){ archStage = "del"; }
+        else if(a === "restore"){ archPick = null; archStage = ""; setArchived(id, false); showToast("„" + nm + "“ ist wieder in der Produktionsliste", 2600); }
+        else { archPick = null; archStage = ""; confirmDeleteProduction(id); showToast("„" + nm + "“ gelöscht", 2400); }
+      }
+      renderArchPop();
+    });
+    document.addEventListener("click", function(e){
+      if(!archOpen || e.target.closest("#archPop, #archBtn")) return;
+      archOpen = false; archPick = null; archStage = ""; renderArchPop();
+    }, true);
+    document.addEventListener("keydown", function(e){
+      if(e.key === "Escape" && archOpen){ archOpen = false; archPick = null; archStage = ""; renderArchPop(); }
+    });
+    window.addEventListener("resize", function(){ if(archOpen) place(); });
+  })();
   // Kurzinfo (i links neben dem Drucker): schliesst per Knopf, Klick daneben oder Escape
   (function(){
     var dlg = document.getElementById("infoDlg"), btn = document.getElementById("infoBtn");
@@ -4927,6 +5592,7 @@
     else if(b.dataset.colAction === "export") exportExcel(b);
     else if(b.dataset.colAction === "print") printView([currentArt]);
     else if(b.dataset.colAction === "bp"){ bpPopOpen = !bpPopOpen; bpConfirm = false; renderBpHead(); }
+    else if(b.dataset.colAction === "foto"){ bpPopOpen = false; bpConfirm = false; renderBpHead(); fotoTap(); }
   });
   // Fensterbreite wechselt zwischen Spalten und Einzelansicht
   function onColsChange(){
@@ -5051,5 +5717,6 @@
   initFirebaseSync();
 })();
 </script>
+
 </body>
 </html>
