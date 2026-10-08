@@ -1377,6 +1377,14 @@
   .amp-chs{ display:flex; flex-direction:column; gap:5px; }
   .amp-row{ display:flex; flex-wrap:wrap; gap:5px; }
   .amp-item{ display:inline-flex; align-items:center; gap:3px; }
+  .amp-row.grouped{ column-gap:16px; row-gap:5px; justify-content:space-between; }   /* zweite Gruppe rechtsbündig → Reihen bündig mit dem Feldrand */
+  .amp-row.row-portal{ column-gap:4px; }   /* Portal alle · PrO–PrSub · LArray: gleiche Abstände (verteilt), mindestens 4px */
+  .amp-grp{ display:inline-flex; flex-wrap:wrap; gap:5px; }
+  .amp-c-besch{ --amp-c:#6fb1f5; }    /* Beschallung, Monitore: blau */
+  .amp-c-larray{ --amp-c:#f0c419; }   /* Line Array: gelb */
+  .amp-c-pt{ --amp-c:#6fd08c; }       /* Portaltürme: grün */
+  .amp-item .amp-ch.on{ border-color:var(--amp-c, var(--ka)); color:var(--amp-c, var(--ka)); }
+  .amp-item .amp-lsp{ border-color:var(--amp-c, var(--ka)); }
   .amp-ch{
     font: inherit; font-size:12px; font-weight:700;
     height:26px; padding:0 7px; border-radius:6px;
@@ -1861,20 +1869,32 @@
   // ---- Technik: ein Datenblatt pro Produktion (kein Ablauf mit KA/Zeit) ----
   // Gespeichert wie ein Ablauf mit genau einem Eintrag: cues = [{ id:1, tech:{ amps:{on,v}, …, mipo:{on,nr,att} } }]
   var TECH_GROUPS = [
-    [ { id: "amps", label: "Amps", fields: [ { k: "bem", label: "Bemerkungen" } ] },
+    [ { id: "amps", label: "Amps", fields: [ { k: "bem", label: "Bemerkungen", list: true, itemsOnly: true } ] },
       { id: "audiofields", label: "Audiofields" },
       { id: "playback", label: "Playback", opts: ["QLab", "Ableton"] } ],
     [ { id: "mics", label: "Mics" },
       { id: "mipo", label: "Mipo", inline: true, fields: [ { k: "nr", label: "Nr. / Freq. / Mic", list: true, itemsOnly: true }, { k: "att", label: "Attenuation", list: true, itemsOnly: true } ] },
-      { id: "extra", label: "Extra" } ]
+      { id: "extra", label: "Extra", fields: [ { k: "v", label: "", list: true, itemsOnly: true, listKey: "items" } ] } ]
   ];
   var TECH_CATS = TECH_GROUPS[0].concat(TECH_GROUPS[1]);
   // Amps: kleine Kanal-Knöpfe; bei einigen zusätzlich Auswahl des Lautsprechertyps
   var AMP_ROWS = [
     ["PrO", "PrM", "PrU", "PrSub"],
-    ["PT1AB", "PT2AB", "LArray", "Be1AB", "Be2AB", "Mon1/2", "Mon3/4"]
+    ["Be1AB", "Be2AB", "Mon1/2", "Mon3/4"],
+    ["PT-Fix", "PT1AB", "PT2AB", "LArray"]
   ];
-  var AMP_WITH_LSP = { "PT2AB": true, "Be1AB": true, "Be2AB": true, "Mon1/2": true, "Mon3/4": true };
+  // Gruppen in Reihe 2 und 3: vor diesen Kanälen beginnt eine neue Gruppe (mit Abstand). Gruppen bleiben beim
+  // Umbrechen (Handy) zusammen und beginnen dann bündig links.
+  var AMP_GROUP_START = { "Mon1/2": true, "LArray": true };
+  // Farbcode (eingeschaltet): Portal türkis, Beschallung + Monitore blau, LArray gelb, Portaltürme grün
+  function ampColor(id){
+    if(/^Pr/.test(id)) return "portal";
+    if(/^(Be|Mon)/.test(id)) return "besch";
+    if(id === "LArray") return "larray";
+    if(/^PT/.test(id)) return "pt";
+    return "portal";
+  }
+  var AMP_WITH_LSP = { "PT1AB": true, "PT2AB": true, "Be1AB": true, "Be2AB": true, "Mon1/2": true, "Mon3/4": true };
   var LSP_TYPES = ["E4", "E8", "E12", "Y7P", "YSUB"];
   function ampChannelsText(t){
     var ch = (t && t.ch) || {};
@@ -1924,13 +1944,8 @@
   // Felder, die nur noch Listenpunkte haben (Mipo, Extra): früheren Feldtext zeilenweise als Punkte übernehmen
   function migrateMipo(tech){
     if(!tech) return;
-    // Extra: wieder ein normales Textfeld – frühere Unterpunkte als Zeilen anhängen
-    var ex = tech.extra;
-    if(ex && ex.items){
-      var lines = ex.items.map(function(x){ return String(x.text || "").trim(); }).filter(Boolean);
-      if(lines.length) ex.v = [String(ex.v || "").trim()].concat(lines).filter(Boolean).join("\n");
-      delete ex.items;
-    }
+    // Amps-Bemerkungen und Extra sind seit v184 Listenpunkte („+ Punkt“, Strich davor): früherer Text wird
+    // unten zeilenweise zu Punkten (Extra: Liste „items“, Bemerkungen: „bemItems“)
     TECH_CATS.forEach(function(cat){
       var m = tech[cat.id];
       if(!m) return;
@@ -1950,8 +1965,21 @@
   }
   function migrateAmps(tech){
     var a = tech && tech.amps;
-    if(a && a.bem == null && (a.v || a.besch)){
-      a.bem = [a.v, a.besch].filter(function(x){ return String(x || "").trim(); }).join(" / ");
+    if(a && (a.v || a.besch)){
+      if(a.bem == null && !a.bemItems) a.bem = [a.v, a.besch].filter(function(x){ return String(x || "").trim(); }).join(" / ");
+      delete a.v; delete a.besch;   // sonst würden sie nach der Umstellung auf Punkte immer wieder neu übernommen
+    }
+    // Portaltürme neu (v182): das bisherige „PT1AB“ heisst jetzt „PT-Fix“ (ohne Lautsprecher), das bisherige „PT2AB“
+    // wird zu „PT1AB“, „PT2AB“ ist neu. Einmalig umschreiben; die Marke ptv = 2 zeigt, dass es schon die neue Belegung ist.
+    if(a && a.ptv !== 2){
+      var ch = a.ch;
+      if(ch && typeof ch === "object"){
+        var oldFix = ch.PT1AB, old2 = ch.PT2AB;
+        delete ch.PT1AB; delete ch.PT2AB;
+        if(oldFix) ch["PT-Fix"] = { on: !!oldFix.on };
+        if(old2) ch.PT1AB = old2;
+      }
+      a.ptv = 2;
     }
   }
   function sheetCue(){
@@ -1984,17 +2012,18 @@
           var ch = t.ch || {};
           html += '<div class="amp-chs">';
           AMP_ROWS.forEach(function(row, ri){
-            html += '<div class="amp-row">';
+            html += '<div class="amp-row grouped' + (ri === 0 ? ' row-portal' : '') + '">';
             if(ri === 0){
               // „Portal alle“: eigener Schalter (t.portalAll). An = die Einzelknöpfe PrO, PrM, PrU, PrSub
               // verschwinden, in Druck/Export steht nur „Portal alle“. Aus = Einzelknöpfe wie gewohnt.
               var allOn = !!t.portalAll;
-              html += '<span class="amp-item amp-all"><button type="button" class="amp-ch' + (allOn ? ' on' : '') + '" data-action="amp-all" aria-pressed="' + (allOn ? 'true' : 'false') + '">Portal alle</button></span>';
+              html += '<span class="amp-grp">' + '<span class="amp-item amp-all"><button type="button" class="amp-ch' + (allOn ? ' on' : '') + '" data-action="amp-all" aria-pressed="' + (allOn ? 'true' : 'false') + '">Portal alle</button></span>' + '</span>';
               if(allOn){ html += '</div>'; return; }
             }
-            row.forEach(function(id){
+            row.forEach(function(id, ii){
               var c = ch[id] || {};
-              html += '<span class="amp-item">' +
+              if(ii === 0 || AMP_GROUP_START[id]) html += (ii ? '</span>' : '') + '<span class="amp-grp">';
+              html += '<span class="amp-item amp-c-' + ampColor(id) + '">' +
                 '<button type="button" class="amp-ch' + (c.on ? ' on' : '') + '" data-action="amp-ch" data-ch="' + esc(id) + '" aria-pressed="' + (c.on ? 'true' : 'false') + '">' + esc(id) + '</button>';
               if(c.on && AMP_WITH_LSP[id]){
                 html += '<select class="amp-lsp" data-amp-lsp="' + esc(id) + '" aria-label="Lautsprecher für ' + esc(id) + '">' +
@@ -2004,7 +2033,7 @@
               }
               html += '</span>';
             });
-            html += '</div>';
+            html += '</span></div>';
           });
           html += '</div>';
         }
@@ -2231,7 +2260,18 @@
   //         ablaufplan/cues/technik/<prodId>/1/tech/<kategorie>   (Technik: je Kategorie einzeln)
   // Jeder Kanal (Produktionsliste bzw. Art+Produktion) merkt sich den zuletzt bekannten Server-Stand (last)
   // und schickt nur die Unterschiede. Vor dem ersten Server-Stand gemachte Änderungen warten in pending.
-  function canonVal(v){ // wie Firebase speichert: null/undefined, leere Listen und leere Objekte entfallen; Schlüssel sortiert
+  // Firebase erlaubt in Schlüsseln kein . # $ [ ] / – Kanalnamen wie „Mon1/2“ werden beim Schreiben kodiert
+  // (Mon1%2F2) und beim Lesen zurückübersetzt. Ohne das lehnt Firebase den ganzen Amps-Eintrag ab.
+  function fbKeyEnc(k){ return String(k).replace(/[%.#$\[\]\/]/g, function(c){ return "%" + c.charCodeAt(0).toString(16).toUpperCase(); }); }
+  function fbKeyDec(k){ return String(k).replace(/%(25|2E|23|24|5B|5D|2F)/g, function(m, h){ return String.fromCharCode(parseInt(h, 16)); }); }
+  function fbDecodeKeys(v){
+    if(Array.isArray(v)) return v.map(fbDecodeKeys);
+    if(!v || typeof v !== "object") return v;
+    var out = {};
+    Object.keys(v).forEach(function(k){ out[fbKeyDec(k)] = fbDecodeKeys(v[k]); });
+    return out;
+  }
+  function canonVal(v){ // wie Firebase speichert: null/undefined, leere Listen und leere Objekte entfallen; Schlüssel sortiert und kodiert
     if(v === null || v === undefined) return undefined;
     if(typeof v === "number" && isNaN(v)) return undefined;
     if(Array.isArray(v)){
@@ -2240,7 +2280,7 @@
     }
     if(typeof v === "object"){
       var out = {}, n = 0;
-      Object.keys(v).sort().forEach(function(k){ var c = canonVal(v[k]); if(c !== undefined){ out[k] = c; n++; } });
+      Object.keys(v).sort().forEach(function(k){ var c = canonVal(v[k]); if(c !== undefined){ out[fbKeyEnc(k)] = c; n++; } });
       return n ? out : undefined;
     }
     return v;
@@ -2320,7 +2360,7 @@
   function cuesFromVal(artId, val){
     var sheet = !!artCfg(artId).sheet;
     var list = fbEntries(val).map(function(e){
-      var c = e[1];
+      var c = fbDecodeKeys(e[1]);
       if(c.id == null) c.id = e[0];
       c.id = Number(c.id);
       if(sheet){ if(!c.tech || typeof c.tech !== "object") c.tech = {}; }
@@ -3714,26 +3754,20 @@
       (mitBp ? bpViewBtnHtml(p.bp) : '') + '</div>';
   }
   // Amps: Lücke nach „Portal alle“ so setzen, dass PrSub bündig über dem rechten Rand der unteren
-  // Knöpfe (PT1AB … Mon3/4) endet; mindestens AMP_ALL_GAP, nie breiter als das Feld.
+  // Knöpfe (Be1AB … Mon3/4 und PT-Fix … LArray) endet; mindestens AMP_ALL_GAP, nie breiter als das Feld.
   var AMP_ALL_GAP = 12;
+  // LArray steht oben rechts in der Portal-Reihe (Portal alle · PrO–PrSub · LArray, gleiche Abstände). Passt es dort nicht
+  // in eine Zeile (schmale Spalte), kommt es wie vorher ans Ende der Portalturm-Reihe – so bleibt es bei drei Reihen.
   function alignAmpRows(root){
     (root || document).querySelectorAll(".amp-chs").forEach(function(box){
       var rows = box.querySelectorAll(".amp-row");
-      var all = rows[0] && rows[0].querySelector(".amp-all");
-      if(!all || !rows[1]) return;
-      var first = all.nextElementSibling, last = rows[0].lastElementChild;
-      if(!first || !last) return;
-      first.style.marginLeft = "";
-      var natural = last.getBoundingClientRect().right;
-      if(!natural) return; // nicht sichtbar
-      // sehr schmales Feld: Zeile bricht ohnehin um -> keine Lücke, normal umbrechen lassen
-      if(Math.abs(last.getBoundingClientRect().top - all.getBoundingClientRect().top) > 4) return;
-      var target = 0;
-      rows[1].querySelectorAll(".amp-item").forEach(function(it){ target = Math.max(target, it.getBoundingClientRect().right); });
-      var room = rows[0].getBoundingClientRect().right - natural;   // Platz bis zum Feldrand
-      var gap = Math.min(Math.max(AMP_ALL_GAP, target - natural), Math.floor(room));
-      if(gap > 0) first.style.marginLeft = gap + "px";
-      if(Math.abs(last.getBoundingClientRect().top - all.getBoundingClientRect().top) > 4) first.style.marginLeft = "";
+      if(rows.length < 3) return;
+      var la = box.querySelector('[data-ch="LArray"]'), grp = la && la.closest(".amp-grp");
+      if(!grp) return;
+      rows[0].appendChild(grp);
+      var first = rows[0].firstElementChild;
+      if(!first || !first.getBoundingClientRect().width) return;   // nicht sichtbar
+      if(Math.abs(grp.getBoundingClientRect().top - first.getBoundingClientRect().top) > 4) rows[2].appendChild(grp);
     });
   }
   function renderArtInto(main){
@@ -4574,7 +4608,7 @@
     return h + '</table>';
   }
   // Amps im Druck: Kanäle gruppiert, je Gruppe eine Zeile, dann Bemerkungen
-  var AMP_PRINT_LINES = [["PrO", "PrM", "PrU", "PrSub"], ["PT1AB", "PT2AB"], ["LArray"], ["Be1AB", "Be2AB"], ["Mon1/2", "Mon3/4"]];
+  var AMP_PRINT_LINES = [["PrO", "PrM", "PrU", "PrSub"], ["PT-Fix", "PT1AB", "PT2AB"], ["LArray"], ["Be1AB", "Be2AB"], ["Mon1/2", "Mon3/4"]];
   function ampPrintText(t){
     var ch = (t && t.ch) || {};
     var lines = AMP_PRINT_LINES.map(function(grp, gi){
@@ -4583,8 +4617,13 @@
         return id + (AMP_WITH_LSP[id] && ch[id].lsp ? " (" + ch[id].lsp + ")" : "");
       }).join(", ");
     }).filter(Boolean);
-    var bem = String((t && t.bem) || "").trim();
-    if(bem){ if(lines.length) lines.push(""); lines.push("Bemerkungen: " + bem); } // Leerzeile davor
+    // Bemerkungen (Listenpunkte): ein Punkt in derselben Zeile, mehrere untereinander mit Strich; Leerzeile davor
+    var bem = fieldItems(t, { k: "bem", list: true });
+    if(bem.length){
+      if(lines.length) lines.push("");
+      if(bem.length === 1) lines.push("Bemerkungen: " + bem[0]);
+      else lines.push.apply(lines, ["Bemerkungen:"].concat(bem.map(function(x){ return "– " + x; })));
+    }
     return lines.join("\n");
   }
   // Mipo im Druck: zwei Spalten nebeneinander, Punkt für Punkt gepaart (Mic ↔ Attenuation)
