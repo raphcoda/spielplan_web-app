@@ -370,6 +370,53 @@ textarea:focus, .auswahl-feld:focus, #waehlSuche:focus { border-color: #4db8b8; 
   .logo-sub { display: block; }
   #header { padding-top: 15px; padding-bottom: 9px; }
 }
+/* ---------- Anhänge (Dateien & Fotos) ---------- */
+.icon-btn svg { width: 12px; height: 12px; }
+.nf-photos { display: flex; flex-wrap: wrap; gap: 10px; padding: 10px 0 4px; margin-bottom: 4px; }
+.nf-ph { position: relative; width: 68px; height: 68px; flex: 0 0 auto; }
+.nf-ph-open { width: 100%; height: 100%; padding: 0; border: 1px solid #3a3a3a; border-radius: 9px; overflow: hidden; background: #262626; color: #4db8b8; display: flex; align-items: center; justify-content: center; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.nf-ph-open img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.nf-ph-open svg { width: 22px; height: 22px; }
+.nf-ph-open.loading, .note-file.loading { opacity: .55; cursor: progress; }
+.nf-rm { position: absolute; top: -8px; right: -8px; width: 24px; height: 24px; border-radius: 50%; background: #262626; border: 1px solid #3a3a3a; color: #aaa; display: flex; align-items: center; justify-content: center; padding: 0; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.nf-rm svg { width: 12px; height: 12px; }
+.nf-row { display: flex; align-items: center; gap: 10px; border: 1px solid #3a3a3a; border-radius: 8px; padding: 8px 10px; margin: 6px 0 6px; background: #202020; }
+.nf-row .nf-rm { position: static; width: auto; height: auto; border: 0; background: none; padding: 4px; }
+.note-file { flex: 1 1 auto; min-width: 0; display: flex; align-items: center; gap: 10px; background: none; border: 0; padding: 0; margin: 0; font: inherit; color: inherit; text-align: left; text-decoration: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.nf-icon { flex: 0 0 auto; width: 34px; height: 34px; border-radius: 8px; border: 1px solid #3a3a3a; background: #262626; color: #4db8b8; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.nf-icon svg { width: 18px; height: 18px; }
+.nf-icon img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.nf-body { flex: 1; min-width: 0; }
+.nf-name { display: block; font-size: 15px; font-weight: 600; color: #eee; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nf-sub { display: block; font-size: 12.5px; color: #9a9a9a; }
+.nf-go { font-size: 13px; font-weight: 700; color: #4db8b8; flex: 0 0 auto; }
+.row-foot { flex-wrap: nowrap; }
+.row-foot .aenderung { white-space: nowrap; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.fuss-frage { font-size: 14px; color: #e06666; font-weight: 600; white-space: nowrap; }
+.fuss-btn { font-size: 13px; font-weight: 700; padding: 3px 10px; border-radius: 6px; border: 1px solid #3a3a3a; background: #1e1e1e; color: #ddd; cursor: pointer; white-space: nowrap; -webkit-tap-highlight-color: transparent; }
+.fuss-btn.ja { color: #e06666; border-color: #7a3a3a; }
+@media (hover:hover) and (pointer:fine) { .icon-btn.kamera { display: none; } }
+#hinweis { position: fixed; left: 50%; top: 33vh; transform: translate(-50%, -50%); z-index: 60; background: #262626; border: 1.5px solid #4db8b8; color: #f5f5f5; font-size: 16.5px; font-weight: 600; line-height: 1.35; padding: 14px 20px; border-radius: 12px; box-shadow: 0 10px 34px rgba(0,0,0,.6); width: max-content; max-width: min(420px, calc(100% - 40px)); text-align: center; }
+#hinweis.err { border-color: #e06666; color: #e06666; }
+#hinweis[hidden] { display: none; }
+.besen-text { font-size: 15px; line-height: 1.5; color: #d0d0d0; margin: 4px 0 14px; }
+.besen-text b { color: #fff; }
+.besen-opt { display: block; width: 100%; text-align: left; padding: 12px 14px; margin-bottom: 10px; border-radius: 10px; border: 1px solid #3a3a3a; background: #202020; color: #eee; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.besen-opt small { display: block; font-weight: 400; color: #9a9a9a; font-size: 13px; margin-top: 2px; }
+.besen-opt.rot { border-color: #7a3a3a; }
+.besen-opt.rot b { color: #e06666; }
+.besen-opt:disabled { opacity: .4; cursor: default; }
+.besen-abbr { text-align: center; padding: 12px; color: #aaa; font-weight: 600; font-size: 15px; cursor: pointer; }
+.file-view { position: fixed; inset: 0; z-index: 55; background: #000; display: flex; flex-direction: column; }
+.file-view[hidden] { display: none; }
+.fv-stage { flex: 1 1 auto; min-height: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.fv-stage img, .fv-stage video { width: 100%; height: 100%; object-fit: contain; display: block; }
+.fv-stage iframe { width: 100%; height: 100%; border: 0; background: #fff; display: block; }
+.fv-stage pre { width: 100%; height: 100%; margin: 0; padding: 16px; overflow: auto; white-space: pre-wrap; word-wrap: break-word; color: #eee; font-size: 14px; line-height: 1.45; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+.fv-stage audio { width: min(520px, 90%); }
+.fv-bar { flex: 0 0 auto; display: flex; align-items: center; gap: 16px; font-size: 14px; color: #9a9a9a; padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px)); background: #1c1c1c; border-top: 1px solid #333; }
+.fv-bar span { flex: 1 1 auto; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fv-bar a, .fv-bar button { flex: 0 0 auto; background: none; border: 0; font: inherit; font-weight: 700; color: #4db8b8; text-decoration: none; cursor: pointer; padding: 6px 2px; }
 </style>
 </head>
 <body>
@@ -391,6 +438,7 @@ textarea:focus, .auswahl-feld:focus, #waehlSuche:focus { border-color: #4db8b8; 
       <div class="eyebrow-glanz" aria-hidden="true">Ton &amp; Bild</div>
     </div>
     <div class="header-aktionen">
+      <span class="btn3d" id="besenBtn" title="Erledigte aufräumen" role="button" aria-label="Erledigte aufräumen"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 3l-7.5 7.5"/><path d="M9.5 8.5l6 6-1.2 1.6H6.4L4 20h0c-.2-4 1.3-7.600 4.200-10.500z" transform="translate(1 0)"/><path d="M9 13l3 3M6.500 16.500l2.500 2.500"/></svg></span>
       <span class="btn3d" id="archivBtn" title="Archiv">
         <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="14" height="3.5" rx="1"/><path d="M4 7.5v8a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-8"/><path d="M8 11h4"/></svg>
       </span>
@@ -501,8 +549,10 @@ textarea:focus, .auswahl-feld:focus, #waehlSuche:focus { border-color: #4db8b8; 
         <li><b>Status:</b> Erfasst, In Arbeit, Erledigt. Zum Ändern auf den Status tippen und das eigene Namenskürzel wählen.</li>
         <li><b>CSV-Export:</b> Button CSV in der Titelzeile. Die Tabelle enthält alle Einträge, ist spaltenweise sortierbar und kann zur Archivierung auf dem Server abgelegt werden.</li>
         <li><b>PDF-Export:</b> Button PDF in der Titelzeile. Das PDF folgt den gesetzten Filtern. Beispiel: Filter «Erfasst» und Art «Tonregie» ergibt nur erfasste Einträge der Art Tonregie.</li>
+        <li><b>Fotos und Dateien:</b> Am Eintrag mit dem Pfeil-Symbol Dateien (bis 5 MB, bis 10) anhängen, am Handy mit der Kamera Fotos aufnehmen (bis 3). Antippen öffnet sie, das ✕ entfernt sie nach Rückfrage.</li>
+        <li><b>Besen:</b> Räumt erledigte Einträge auf, entweder nur deren Fotos und Dateien oder die Einträge samt Anhängen. Archivierte bleiben unberührt.</li>
       </ul>
-      <div class="info-version">V_Ton_LB_A_07.10.26_09:45</div>
+      <div class="info-version">V_Ton_LB_A_08.10.26_18:30</div>
     </div>
   </div>
 </div>
@@ -527,6 +577,22 @@ textarea:focus, .auswahl-feld:focus, #waehlSuche:focus { border-color: #4db8b8; 
     </div>
   </div>
 </div>
+
+<div class="blatt-hinter" id="besenHinter">
+  <div class="blatt">
+    <div class="griff"></div>
+    <h2>Erledigte aufräumen</h2>
+    <div class="besen-text" id="besenText"></div>
+    <button type="button" class="besen-opt" id="besenNurAnhang"><span>Nur Fotos und Dateien löschen</span><small>Die Einträge bleiben, nur die Anhänge verschwinden. Gibt Speicherplatz frei.</small></button>
+    <button type="button" class="besen-opt rot" id="besenAlles"><b>Einträge samt Anhängen löschen</b><small id="besenAllesSub"></small></button>
+    <div class="besen-abbr" id="besenAbbr">Abbrechen</div>
+  </div>
+</div>
+
+<div class="file-view" id="fileView" hidden><div class="fv-stage" id="fvStage"></div><div class="fv-bar"><span id="fvName"></span><a id="fvSave" href="#">Speichern</a><button type="button" id="fvClose">Schliessen</button></div></div>
+<div id="hinweis" role="status" hidden></div>
+<input type="file" id="pickFile" multiple hidden tabindex="-1" aria-hidden="true">
+<input type="file" id="pickPhoto" accept="image/*" capture="environment" hidden tabindex="-1" aria-hidden="true">
 
 <div class="gate" id="gate" hidden><form class="gate-box" id="gateForm" autocomplete="on">
   <div class="gate-title">LOGBUCH</div><div class="gate-brand">TON &amp; BILD</div><div class="gate-line"></div>
@@ -570,7 +636,7 @@ var FIREBASE_CONFIG = {
 var TEAM_LOGIN = false;
 var TEAM_EMAIL = "team@notizen-webapp-ton.firebaseapp.com";
 var DB_PFAD = "logbuch/eintraege";
-var dbRef = null;
+var dbRef = null, dbRoot = null;
 
 function dbBereit(){ return !!dbRef; }
 function dbFehler(err){
@@ -582,18 +648,26 @@ function eintragSauber(e){
   ["zeit","txt","art","prod","status","von","rot","statusVon","statusZeit","archiviert"].forEach(function(k){
     if (e[k] !== undefined && e[k] !== null) o[k] = e[k];
   });
+  var fl = dateien(e).map(function(f){
+    var m = { id: f.id, name: f.name, type: f.type || "", size: f.size || 0, ts: f.ts || 0, kind: fileKind(f) };
+    if (thumbOk(f.thumb)) m.thumb = f.thumb;
+    return m;
+  });
+  if (fl.length) o.files = fl;
   return o;
 }
 function neueId(){
   return dbRef ? dbRef.push().key : "lokal" + Date.now() + Math.random().toString(36).slice(2, 6);
 }
 function speichere(e){
-  if (!dbRef) return;
   if (!e.id) e.id = neueId();
+  if (!dbRef) return;
   dbRef.child(e.id).set(eintragSauber(e)).catch(dbFehler);
 }
 function entferne(e){
-  if (!dbRef || !e || !e.id) return;
+  if (!e) return;
+  dateien(e).forEach(function(f){ dateiLoeschen(f.id); });   // Inhalte der Anhänge mit entfernen
+  if (!dbRef || !e.id) return;
   dbRef.child(e.id).remove().catch(dbFehler);
 }
 var fbAuth = null, syncAktiv = false, abgelehnt = 0;
@@ -660,7 +734,8 @@ function dbVerbinden(){
   if (!window.firebase || !FIREBASE_CONFIG.databaseURL) return;
   try {
     firebase.initializeApp(FIREBASE_CONFIG);
-    dbRef = firebase.database().ref(DB_PFAD);
+    dbRoot = firebase.database();
+    dbRef = dbRoot.ref(DB_PFAD);
   } catch (err) { dbFehler(err); return; }
   if (!TEAM_LOGIN){ dbAnhaengen(); return; }
   try { fbAuth = (typeof firebase.auth === "function") ? firebase.auth() : null; } catch (e) { fbAuth = null; }
@@ -739,6 +814,432 @@ function inAnsicht(e){
   return e.status===filter;
 }
 
+/* =====================================================================
+   Anhänge: Fotos und Dateien an Einträgen (Inhalt getrennt unter logbuchFiles/<id>)
+   ===================================================================== */
+var FILE_PATH = "logbuchFiles";
+var ATTACH_MAX = 5 * 1024 * 1024;     // Datei: bis 5 MB
+var PHOTO_MAX  = 3 * 1024 * 1024;     // Foto: höchstens 3 MB
+var PHOTO_EDGE = 3000;                // längere Seite in Pixel
+var MAX_PHOTOS = 3, MAX_FILES = 10;   // pro Eintrag
+var pendingRemove = null;             // { id, fid, foto }
+var pickTarget = null;
+var localFiles = {}, fileUrls = {}, fileBlobs = {}, fileLoading = {};
+var ICON_UPLOAD = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5V4.5M7.5 8.5L12 4l4.5 4.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 14.5v3.5a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-3.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+var ICON_CAM = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8.5A1.5 1.5 0 0 1 5.5 7H8l1.4-2.2h5.2L16 7h2.5A1.5 1.5 0 0 1 20 8.5v9A1.5 1.5 0 0 1 18.5 19h-13A1.5 1.5 0 0 1 4 17.5Z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.4" fill="none" stroke="currentColor" stroke-width="1.9"/></svg>';
+var ICON_FILE = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M14 3v5h5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>';
+var ICON_IMG = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="9" cy="10" r="1.6" fill="currentColor"/><path d="M4.5 17l5-4.5 3.5 3 2.5-2 4 3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/></svg>';
+var ICON_X_SMALL = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>';
+
+function attr(s){ return String(s == null ? "" : s).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/'/g,"&#39;").replace(/</g,"&lt;"); }
+function nextId(){ return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+function fmtSize(b){
+  if (b < 1024) return b + " B";
+  if (b < 1024 * 1024) return Math.round(b / 1024) + " KB";
+  return (b / 1024 / 1024).toFixed(1).replace(".", ",") + " MB";
+}
+function thumbOk(t){ return typeof t === "string" && t.length < 24000 && /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+\/=]+$/.test(t); }
+function dateien(e){
+  if (!e) return [];
+  var l = e.files;
+  if (l && !Array.isArray(l) && typeof l === "object") l = Object.keys(l).map(function(k){ return l[k]; });
+  l = Array.isArray(l) ? l : [];
+  return l.filter(function(f){ return f && typeof f === "object" && f.id; });
+}
+function fileKind(f){ return f.kind || (/^Foto \d/.test(f.name || "") ? "photo" : "file"); }
+function countKind(e, kind){ return dateien(e).filter(function(f){ return fileKind(f) === kind; }).length; }
+
+var canEmbedPdf = (navigator.pdfViewerEnabled === true) && !!(window.matchMedia && window.matchMedia("(hover:hover) and (pointer:fine)").matches);
+function viewKind(f){
+  var t = String(f.type || "").toLowerCase(), nm = String(f.name || "").toLowerCase();
+  if (/^image\/(png|jpe?g|gif|webp|bmp|avif|svg\+xml)$/.test(t)) return "img";
+  if (/^video\/(mp4|webm|quicktime)$/.test(t)) return "video";
+  if (/^audio\//.test(t)) return "audio";
+  if (t === "application/pdf" || /\.pdf$/.test(nm)) return canEmbedPdf ? "pdf" : "";
+  if (/^text\/(plain|csv|markdown|xml)$/.test(t) || t === "application/json" || /\.(txt|csv|md|log|json|xml)$/.test(nm)) return "text";
+  return "";
+}
+
+var hinweisEl = document.getElementById("hinweis"), hinweisTimer = null;
+function hinweis(msg, istFehler, ms){
+  if (!hinweisEl) return;
+  clearTimeout(hinweisTimer);
+  hinweisEl.textContent = String(msg).replace(/ …$/, " …");
+  hinweisEl.classList.toggle("err", !!istFehler);
+  hinweisEl.hidden = false;
+  if (ms !== 0) hinweisTimer = setTimeout(function(){ hinweisEl.hidden = true; }, ms || (istFehler ? 6000 : 2600));
+}
+
+function dateiZeileHtml(e, f){
+  var kind = viewKind(f), url = fileUrls[f.id], key = attr(e.id + "|" + f.id);
+  var inner = (thumbOk(f.thumb) ? '<span class="nf-icon"><img src="' + f.thumb + '" alt=""></span>'
+                                : '<span class="nf-icon">' + (kind === "img" ? ICON_IMG : ICON_FILE) + '</span>')
+    + '<span class="nf-body"><span class="nf-name">' + esc(f.name || "") + '</span><span class="nf-sub">' + esc(fmtSize(f.size || 0)) + (fileLoading[f.id] ? " · lädt …" : "") + '</span></span>'
+    + '<span class="nf-go">' + (kind ? "Ansehen" : (url ? "Öffnen" : "Laden")) + '</span>';
+  var chip = (url && !kind)
+    ? '<a class="note-file" href="' + url + '" download="' + attr(f.name) + '">' + inner + '</a>'
+    : '<button type="button" class="note-file' + (fileLoading[f.id] ? " loading" : "") + '" data-file-open="' + key + '" title="' + attr(f.name) + '">' + inner + '</button>';
+  return '<div class="nf-row">' + chip + '<button type="button" class="nf-rm" data-file-remove="' + key + '" aria-label="Datei entfernen" title="Datei entfernen">' + ICON_X_SMALL + '</button></div>';
+}
+function anhaengeHtml(e){
+  var l = dateien(e);
+  if (!l.length) return "";
+  var fotos = l.filter(function(f){ return fileKind(f) === "photo"; }), rest = l.filter(function(f){ return fileKind(f) !== "photo"; });
+  var h = "";
+  if (fotos.length){
+    h += '<div class="nf-photos">' + fotos.map(function(f){
+      var key = attr(e.id + "|" + f.id);
+      return '<span class="nf-ph"><button type="button" class="nf-ph-open' + (fileLoading[f.id] ? " loading" : "") + '" data-file-open="' + key + '" aria-label="Foto ansehen" title="' + attr(f.name) + ' · ' + attr(fmtSize(f.size || 0)) + '">'
+        + (thumbOk(f.thumb) ? '<img src="' + f.thumb + '" alt="">' : ICON_IMG) + '</button>'
+        + '<button type="button" class="nf-rm" data-file-remove="' + key + '" aria-label="Foto entfernen" title="Foto entfernen">' + ICON_X_SMALL + '</button></span>';
+    }).join("") + '</div>';
+  }
+  rest.forEach(function(f){ h += dateiZeileHtml(e, f); });
+  return h;
+}
+
+function b64ToBlob(b64, type){
+  var bin = atob(b64), len = bin.length, u8 = new Uint8Array(len);
+  for (var i = 0; i < len; i++) u8[i] = bin.charCodeAt(i);
+  return new Blob([u8], { type: type || "application/octet-stream" });
+}
+function fetchFileRecord(fid){
+  if (localFiles[fid]) return Promise.resolve(localFiles[fid]);
+  if (dbRoot) return dbRoot.ref(FILE_PATH + "/" + fid).once("value").then(function(snap){ return snap.val(); });
+  return Promise.resolve(null);
+}
+function dateiLoeschen(fid){
+  if (fileUrls[fid]){ try{ URL.revokeObjectURL(fileUrls[fid]); }catch(x){} delete fileUrls[fid]; }
+  delete fileBlobs[fid]; delete localFiles[fid];
+  if (dbRoot){ try{ dbRoot.ref(FILE_PATH + "/" + fid).remove().catch(function(){}); }catch(x){} }
+}
+
+var fileView = document.getElementById("fileView"), fvStage = document.getElementById("fvStage");
+function closeFileView(){
+  if (!fileView || fileView.hidden) return;
+  fileView.hidden = true; fvStage.innerHTML = "";
+}
+function showFile(f){
+  var url = fileUrls[f.id]; if (!url) return;
+  var kind = viewKind(f);
+  if (kind){
+    fvStage.innerHTML = "";
+    var el;
+    if (kind === "img"){ el = document.createElement("img"); el.alt = f.name; el.src = url; }
+    else if (kind === "video"){ el = document.createElement("video"); el.controls = true; el.setAttribute("playsinline", ""); el.src = url; }
+    else if (kind === "audio"){ el = document.createElement("audio"); el.controls = true; el.src = url; }
+    else if (kind === "pdf"){ el = document.createElement("iframe"); el.title = f.name; el.src = url; }
+    else {
+      el = document.createElement("pre"); el.textContent = "lädt …";
+      var bl = fileBlobs[f.id];
+      if (bl){ var fr = new FileReader(); fr.onload = function(){ el.textContent = String(fr.result || ""); }; fr.readAsText(bl); }
+    }
+    fvStage.appendChild(el);
+    if (hinweisEl){ clearTimeout(hinweisTimer); hinweisEl.hidden = true; }
+    document.getElementById("fvName").textContent = f.name;
+    var sv = document.getElementById("fvSave"); sv.href = url; sv.setAttribute("download", f.name);
+    fileView.hidden = false;
+    return;
+  }
+  var a = document.createElement("a");
+  a.href = url; a.download = f.name; a.style.display = "none";
+  document.body.appendChild(a);
+  try{ a.click(); }catch(x){}
+  setTimeout(function(){ a.remove(); }, 0);
+}
+if (fileView){
+  fileView.addEventListener("click", function(ev){
+    if (ev.target.closest("#fvSave")) return;
+    if (ev.target.closest("#fvClose") || ev.target === fvStage || ev.target.tagName === "IMG") closeFileView();
+  });
+  document.addEventListener("keydown", function(ev){ if (ev.key === "Escape") closeFileView(); });
+}
+function findAttachment(key){
+  var i = String(key).indexOf("|"), eid = String(key).slice(0, i), fid = String(key).slice(i + 1);
+  var e = eintraege.find(function(x){ return x.id === eid; });
+  if (!e) return null;
+  var f = dateien(e).find(function(x){ return String(x.id) === fid; });
+  return f ? { eintrag: e, file: f } : null;
+}
+function openAttachment(key){
+  var hit = findAttachment(key); if (!hit) return;
+  var f = hit.file;
+  if (fileUrls[f.id]){ showFile(f); return; }
+  if (fileLoading[f.id]) return;
+  fileLoading[f.id] = true; zeichne();
+  fetchFileRecord(f.id).then(function(rec){
+    delete fileLoading[f.id];
+    if (!rec || !rec.data){ hinweis("Datei nicht gefunden – evtl. bereits gelöscht.", true); zeichne(); return; }
+    fileBlobs[f.id] = b64ToBlob(rec.data, rec.type || f.type);
+    fileUrls[f.id] = URL.createObjectURL(fileBlobs[f.id]);
+    zeichne(); showFile(f);
+  }).catch(function(){
+    delete fileLoading[f.id];
+    hinweis("Datei konnte nicht geladen werden (Verbindung?).", true); zeichne();
+  });
+}
+function removeAttachment(eid, fid){
+  var e = eintraege.find(function(x){ return x.id === eid; }); if (!e) return;
+  var f = dateien(e).find(function(x){ return x.id === fid; });
+  e.files = dateien(e).filter(function(x){ return x.id !== fid; });
+  if (!e.files.length) delete e.files;
+  speichere(e); zeichne();
+  dateiLoeschen(fid);
+  hinweis((f && fileKind(f) === "photo" ? "Foto" : "Datei") + " gelöscht.");
+}
+
+/* ---- Hochladen ---- */
+function readBase64(file){
+  return new Promise(function(resolve, reject){
+    var r = new FileReader();
+    r.onload = function(){ var str = String(r.result); resolve(str.slice(str.indexOf(",") + 1)); };
+    r.onerror = function(){ reject(r.error || new Error("read")); };
+    r.readAsDataURL(file);
+  });
+}
+function withTimeout(p, ms){
+  return new Promise(function(resolve, reject){
+    var t = setTimeout(function(){ reject(new Error("timeout")); }, ms);
+    p.then(function(v){ clearTimeout(t); resolve(v); }, function(err){ clearTimeout(t); reject(err); });
+  });
+}
+function loadImage(file){
+  return new Promise(function(resolve, reject){
+    var url = URL.createObjectURL(file), img = new Image();
+    img.onload = function(){ resolve({ img: img, url: url }); };
+    img.onerror = function(){ URL.revokeObjectURL(url); reject(new Error("bild")); };
+    img.src = url;
+  });
+}
+function drawScaled(img, edge){
+  var w = img.naturalWidth || img.width, h = img.naturalHeight || img.height, k = Math.min(1, edge / Math.max(w, h));
+  var c = document.createElement("canvas");
+  c.width = Math.max(1, Math.round(w * k)); c.height = Math.max(1, Math.round(h * k));
+  var g = c.getContext("2d"); g.fillStyle = "#fff"; g.fillRect(0, 0, c.width, c.height); g.drawImage(img, 0, 0, c.width, c.height);
+  return c;
+}
+function canvasBlob(c, q){
+  return new Promise(function(resolve, reject){
+    if (!c.toBlob){ reject(new Error("bild")); return; }
+    c.toBlob(function(bl){ bl ? resolve(bl) : reject(new Error("bild")); }, "image/jpeg", q);
+  });
+}
+function makeThumb(img){
+  try{
+    var w = img.naturalWidth || img.width, h = img.naturalHeight || img.height, side = Math.min(w, h), c = document.createElement("canvas");
+    c.width = c.height = 92;
+    var g = c.getContext("2d"); g.fillStyle = "#fff"; g.fillRect(0, 0, 92, 92);
+    g.drawImage(img, (w - side) / 2, (h - side) / 2, side, side, 0, 0, 92, 92);
+    var t = c.toDataURL("image/jpeg", .7);
+    return thumbOk(t) ? t : "";
+  }catch(x){ return ""; }
+}
+// Stufen [längere Seite, JPEG-Qualität]: die erste, die unter max bleibt
+function shrinkImage(file, max){
+  return loadImage(file).then(function(r){
+    var thumb = makeThumb(r.img), steps = [[PHOTO_EDGE, .88], [PHOTO_EDGE, .8], [2560, .8], [2048, .78], [1600, .75]], i = 0;
+    function next(){
+      var st = steps[i++];
+      return canvasBlob(drawScaled(r.img, st[0]), st[1]).then(function(bl){ return (bl.size <= max || i >= steps.length) ? bl : next(); });
+    }
+    return next().then(function(bl){ URL.revokeObjectURL(r.url); return { blob: bl, thumb: thumb }; },
+                       function(err){ URL.revokeObjectURL(r.url); throw err; });
+  });
+}
+function thumbFor(file){
+  if (!/^image\/(jpeg|png|gif|webp|bmp|avif)$/i.test(file.type || "")) return Promise.resolve("");
+  return loadImage(file).then(function(r){ var t = makeThumb(r.img); URL.revokeObjectURL(r.url); return t; }, function(){ return ""; });
+}
+function pad2f(n){ return n < 10 ? "0" + n : "" + n; }
+function photoName(){
+  var d = new Date();
+  return "Foto " + pad2f(d.getDate()) + "." + pad2f(d.getMonth() + 1) + ". " + pad2f(d.getHours()) + "." + pad2f(d.getMinutes()) + ".jpg";
+}
+function storeFile(blob, name, type, thumb){
+  return readBase64(blob).then(function(b64){
+    if (!b64) throw new Error("leer");
+    var fid = nextId();
+    var rec = { name: name, type: type || "application/octet-stream", size: blob.size, ts: Date.now(), data: b64 };
+    var online = !!dbRoot;
+    var put = online ? withTimeout(dbRoot.ref(FILE_PATH + "/" + fid).set(rec), 60000) : Promise.resolve();
+    if (!online) localFiles[fid] = rec;
+    return put.then(function(){
+      var meta = { id: fid, name: rec.name, type: rec.type, size: rec.size, ts: rec.ts };
+      if (thumb) meta.thumb = thumb;
+      return { meta: meta, online: online };
+    });
+  });
+}
+function fehlerKurz(err, name){
+  var m = err && err.message;
+  return "„" + name + "“ " + (m === "zugross" ? "ist zu gross (" + fmtSize(err.groesse) + ")"
+    : m === "gross" ? "ist auch verkleinert zu gross" : m === "leer" ? "ist leer oder ein Ordner"
+    : m === "bild" ? "konnte nicht verarbeitet werden" : "konnte nicht hochgeladen werden (Verbindung oder Firebase-Regel prüfen)");
+}
+function prepUpload(file){
+  var istBild = /^image\/(jpeg|png|webp|bmp|avif|heic|heif)$/i.test(file.type || "");
+  if (file.size > ATTACH_MAX){
+    if (!istBild) return Promise.reject(Object.assign(new Error("zugross"), { groesse: file.size }));
+    return shrinkImage(file, ATTACH_MAX).then(function(r){
+      if (r.blob.size > ATTACH_MAX) throw new Error("gross");
+      return { blob: r.blob, name: file.name.replace(/\.[^.]+$/, "") + ".jpg", type: "image/jpeg", thumb: r.thumb };
+    });
+  }
+  if (!file.size) return Promise.reject(new Error("leer"));
+  return thumbFor(file).then(function(t){ return { blob: file, name: file.name, type: file.type, thumb: t }; });
+}
+function vollText(kind){
+  return kind === "photo" ? "Höchstens " + MAX_PHOTOS + " Fotos pro Eintrag – zuerst eines entfernen."
+                          : "Höchstens " + MAX_FILES + " Dateien pro Eintrag – zuerst eine entfernen.";
+}
+function uploadBatch(list, eid){
+  var files = Array.prototype.slice.call(list || []).filter(Boolean);
+  if (!files.length) return Promise.resolve(false);
+  var e0 = eintraege.find(function(x){ return x.id === eid; });
+  if (!e0) return Promise.resolve(false);
+  var frei = MAX_FILES - countKind(e0, "file"), zuViel = 0;
+  if (files.length > frei){ zuViel = files.length - frei; files = files.slice(0, Math.max(0, frei)); }
+  if (!files.length){ hinweis(vollText("file"), true); return Promise.resolve(false); }
+  var metas = [], fehler = [], online = true, i = 0;
+  function naechste(){
+    if (i >= files.length) return Promise.resolve();
+    var f = files[i++];
+    hinweis((files.length > 1 ? "Lädt hoch (" + i + " von " + files.length + "): " : "Lädt hoch: ") + f.name + " …", false, 0);
+    return prepUpload(f).then(function(pr){ return storeFile(pr.blob, pr.name, pr.type, pr.thumb); })
+      .then(function(r){ r.meta.kind = "file"; metas.push(r.meta); if (!r.online) online = false; },
+            function(err){ fehler.push(fehlerKurz(err, f.name)); })
+      .then(naechste);
+  }
+  return naechste().then(function(){
+    if (metas.length){
+      var e = eintraege.find(function(x){ return x.id === eid; });
+      if (!e){ metas.forEach(function(m){ dateiLoeschen(m.id); }); hinweis("Der Eintrag wurde inzwischen gelöscht – nichts angehängt.", true); return false; }
+      var platz = MAX_FILES - countKind(e, "file");
+      if (metas.length > platz){ metas.slice(platz).forEach(function(m){ dateiLoeschen(m.id); }); zuViel += metas.length - platz; metas = metas.slice(0, Math.max(0, platz)); }
+      e.files = dateien(e).concat(metas);
+      speichere(e); zeichne();
+    }
+    var teile = [];
+    if (metas.length) teile.push(metas.length === 1 ? "Angehängt: " + metas[0].name + " (" + fmtSize(metas[0].size) + ")" : metas.length + " Dateien angehängt");
+    if (!online && metas.length) teile.push("nur lokal gespeichert (keine Verbindung zur Datenbank)");
+    if (fehler.length) teile.push(fehler.join(", ") + " – nicht hochgeladen (max. " + fmtSize(ATTACH_MAX) + ")");
+    if (zuViel) teile.push(zuViel + (zuViel === 1 ? " Datei" : " Dateien") + " übersprungen – höchstens " + MAX_FILES + " pro Eintrag");
+    hinweis(teile.join(" · ") || "Nichts hochgeladen.", !metas.length || fehler.length > 0 || zuViel > 0 || !online, (fehler.length || zuViel) ? 8000 : undefined);
+    return metas.length > 0;
+  });
+}
+function attachFoto(eid, file){
+  var e0 = eintraege.find(function(x){ return x.id === eid; }); if (!e0) return Promise.resolve(false);
+  if (countKind(e0, "photo") >= MAX_PHOTOS){ hinweis(vollText("photo"), true); return Promise.resolve(false); }
+  var name = photoName();
+  hinweis("Foto wird verkleinert und hochgeladen …", false, 0);
+  return shrinkImage(file, PHOTO_MAX).then(function(r){
+    if (r.blob.size > PHOTO_MAX) throw new Error("gross");
+    return storeFile(r.blob, name, "image/jpeg", r.thumb);
+  }).then(function(r){
+    var e = eintraege.find(function(x){ return x.id === eid; });
+    if (!e){ dateiLoeschen(r.meta.id); hinweis("Der Eintrag wurde inzwischen gelöscht – nichts angehängt.", true); return false; }
+    if (countKind(e, "photo") >= MAX_PHOTOS){ dateiLoeschen(r.meta.id); hinweis(vollText("photo"), true); return false; }
+    r.meta.kind = "photo";
+    e.files = dateien(e).concat([r.meta]);
+    speichere(e); zeichne();
+    hinweis(r.online ? "Foto angehängt (" + fmtSize(r.meta.size) + ")" : "Nur lokal gespeichert (keine Verbindung zur Datenbank): " + name, !r.online);
+    return true;
+  }).catch(function(err){
+    hinweis(err && err.message === "gross" ? "Das Bild ist auch verkleinert noch zu gross." : fehlerKurz(err, name), true);
+    return false;
+  });
+}
+function pickFor(eid, kind){
+  var inp = document.getElementById(kind === "photo" ? "pickPhoto" : "pickFile");
+  if (!inp) return;
+  pickTarget = { id: String(eid), kind: kind };
+  inp.value = "";
+  inp.click();      // muss direkt im Klick passieren (Safari)
+}
+["pickFile", "pickPhoto"].forEach(function(id){
+  var inp = document.getElementById(id); if (!inp) return;
+  inp.addEventListener("change", function(){
+    var list = inp.files ? Array.prototype.slice.call(inp.files) : [], t = pickTarget;
+    pickTarget = null; inp.value = "";
+    if (!list.length || !t) return;
+    if (t.kind === "photo") attachFoto(t.id, list[0]); else uploadBatch(list, t.id);
+  });
+});
+
+// Klicks in der Liste (Anhänge öffnen, entfernen, Upload, Kamera)
+document.getElementById("list").addEventListener("click", function(ev){
+  var t = ev.target;
+  var el = t.closest("[data-file-remove]");
+  if (el){
+    var hit = findAttachment(el.getAttribute("data-file-remove"));
+    if (hit){ pendingRemove = { id: hit.eintrag.id, fid: hit.file.id, foto: fileKind(hit.file) === "photo" }; zeichne(); }
+    return;
+  }
+  el = t.closest("[data-file-open]");
+  if (el){ openAttachment(el.getAttribute("data-file-open")); return; }
+  el = t.closest("[data-pick-file]");
+  if (el){ pickFor(el.getAttribute("data-pick-file"), "file"); return; }
+  el = t.closest("[data-pick-photo]");
+  if (el){ pickFor(el.getAttribute("data-pick-photo"), "photo"); return; }
+  if (t.closest("[data-rm-ja]")){ var p = pendingRemove; pendingRemove = null; if (p) removeAttachment(p.id, p.fid); return; }
+  if (t.closest("[data-rm-nein]")){ pendingRemove = null; zeichne(); return; }
+});
+
+/* ---- Besen: erledigte Einträge aufräumen ---- */
+function besenAuswertung(){
+  var l = eintraege.filter(function(e){ return !e.archiviert && e.status === "erledigt"; });
+  var r = { liste: l, mitAnh: 0, fotos: 0, dateien: 0, bytes: 0 };
+  l.forEach(function(e){
+    var d = dateien(e);
+    if (d.length) r.mitAnh++;
+    d.forEach(function(f){ if (fileKind(f) === "photo") r.fotos++; else r.dateien++; r.bytes += Math.round((f.size || 0) * 4 / 3); });
+  });
+  return r;
+}
+function besenOeffnen(){
+  var r = besenAuswertung();
+  if (!r.liste.length){ toastZeigen("Keine erledigten Einträge"); return; }
+  var n = r.liste.length;
+  var txt = "<b>" + n + "</b> erledigte" + (n === 1 ? "r Eintrag" : " Einträge");
+  if (r.mitAnh){
+    var teile = [];
+    if (r.fotos) teile.push("<b>" + r.fotos + "</b> " + (r.fotos === 1 ? "Foto" : "Fotos"));
+    if (r.dateien) teile.push("<b>" + r.dateien + "</b> " + (r.dateien === 1 ? "Datei" : "Dateien"));
+    txt += ", davon <b>" + r.mitAnh + "</b> mit Anhängen (" + teile.join(", ") + ", zusammen rund <b>" + fmtSize(r.bytes) + "</b> in der Datenbank).";
+  } else txt += ", keiner davon mit Anhängen.";
+  document.getElementById("besenText").innerHTML = txt;
+  document.getElementById("besenAllesSub").textContent = (n === 1 ? "Der erledigte Eintrag wird" : "Alle " + n + " erledigten Einträge werden") + " endgültig entfernt. Archivierte bleiben.";
+  document.getElementById("besenNurAnhang").disabled = !r.mitAnh;
+  document.getElementById("besenHinter").classList.add("offen");
+}
+function besenSchliessen(){ document.getElementById("besenHinter").classList.remove("offen"); }
+function besenAnhaengeLoeschen(){
+  besenSchliessen();
+  var r = besenAuswertung(), anz = 0;
+  r.liste.forEach(function(e){
+    var d = dateien(e); if (!d.length) return;
+    d.forEach(function(f){ dateiLoeschen(f.id); anz++; });
+    delete e.files; speichere(e);
+  });
+  pendingRemove = null; zeichne();
+  toastZeigen(anz + (anz === 1 ? " Anhang gelöscht" : " Anhänge gelöscht"));
+}
+function besenAllesLoeschen(){
+  besenSchliessen();
+  var r = besenAuswertung();
+  r.liste.forEach(function(e){
+    entferne(e);
+    var idx = eintraege.indexOf(e); if (idx > -1) eintraege.splice(idx, 1);
+  });
+  pendingRemove = null; zeichne();
+  toastZeigen(r.liste.length + (r.liste.length === 1 ? " Eintrag gelöscht" : " Einträge gelöscht"));
+}
+document.getElementById("besenBtn").onclick = besenOeffnen;
+document.getElementById("besenNurAnhang").onclick = besenAnhaengeLoeschen;
+document.getElementById("besenAlles").onclick = besenAllesLoeschen;
+document.getElementById("besenAbbr").onclick = besenSchliessen;
+
 function zeichne(){
   eintraege.sort(function(a,b){ return new Date(b.zeit) - new Date(a.zeit); });
 
@@ -772,12 +1273,17 @@ function zeichne(){
        + "</div>"
        + (e.prod ? "<div class='row-prod'>"+esc(kurzProd(e.prod))+"</div>" : "")
        + "<div class='row-txt'>"+esc(e.txt)+"</div>"
+       + anhaengeHtml(e)
        + "<div class='row-foot'>"
        + (e.von ? "<span class='kuerzel'>"+esc(e.von)+"</span>" : "")
        + (e.statusVon || e.statusZeit ? "<span class='aenderung'><b>"+esc(e.statusVon||"")+"</b> "+(e.statusZeit?datumKurz(e.statusZeit):"")+"</span>" : "")
        + "<span class='row-spacer'></span>"
-       + "<span class='icon-btn' onclick='bearbeiten("+i+")' title='Bearbeiten'><svg width='18' height='18' viewBox='0 0 20 20' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M14.5 3.5l2 2L6 16l-3 1 1-3L14.5 3.5z'/></svg></span>"
-       + "<span class='icon-btn' onclick='loeschen("+i+")' title='Löschen'><svg width='18' height='18' viewBox='0 0 20 20' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M4 5h12M8 5V3.5h4V5M5.5 5l.6 11a1 1 0 0 0 1 .9h5.8a1 1 0 0 0 1-.9l.6-11'/></svg></span>"
+       + (pendingRemove && pendingRemove.id === e.id
+          ? "<span class='fuss-frage'>"+(pendingRemove.foto ? "Foto" : "Datei")+" löschen?</span><span class='fuss-btn ja' data-rm-ja='1'>Ja</span><span class='fuss-btn' data-rm-nein='1'>Abbrechen</span>"
+          : "<span class='icon-btn' onclick='bearbeiten("+i+")' title='Bearbeiten'><svg width='18' height='18' viewBox='0 0 20 20' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M14.5 3.5l2 2L6 16l-3 1 1-3L14.5 3.5z'/></svg></span>"
+          + "<span class='icon-btn' data-pick-file='"+attr(e.id)+"' title='Datei hochladen' role='button' aria-label='Datei hochladen'>"+ICON_UPLOAD+"</span>"
+          + "<span class='icon-btn kamera' data-pick-photo='"+attr(e.id)+"' title='Foto aufnehmen' role='button' aria-label='Foto aufnehmen'>"+ICON_CAM+"</span>"
+          + "<span class='icon-btn' onclick='loeschen("+i+")' title='Löschen'><svg width='18' height='18' viewBox='0 0 20 20' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M4 5h12M8 5V3.5h4V5M5.5 5l.6 11a1 1 0 0 0 1 .9h5.8a1 1 0 0 0 1-.9l.6-11'/></svg></span>")
        + "</div></div>";
   });
   el.innerHTML = h;
@@ -1273,7 +1779,7 @@ document.getElementById("pdfBtn").onclick = pdfExportieren;
 
 function infoMittig(){
   var hd = document.getElementById("header"), i = document.getElementById("infoBtn"),
-      arch = document.getElementById("archivBtn"), h1 = document.querySelector(".logo-wrap h1");
+      arch = document.getElementById("besenBtn"), h1 = document.querySelector(".logo-wrap h1");
   if (!hd || !i || !arch || !h1) return;
   var hr = hd.getBoundingClientRect(), ar = arch.getBoundingClientRect();
   var links = h1.getBoundingClientRect().right;                 // rechter Rand von LOGBUCH
@@ -1289,7 +1795,7 @@ function infoMittig(){
   }
   var mitte = (links + ar.left) / 2;
   var w = i.offsetWidth || 18, hh = i.offsetHeight || 18;
-  i.style.left = Math.round(mitte - hr.left - w / 2) + "px";
+  i.style.left = (mitte - hr.left - w / 2).toFixed(1) + "px";
   i.style.top = Math.round(ar.top + ar.height / 2 - hr.top - hh / 2) + "px";
   i.style.visibility = "visible";
 }
