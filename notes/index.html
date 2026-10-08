@@ -305,7 +305,21 @@
   /* Header-Knopf Archiv (•••) */
   .archbtn{ color:var(--text-dim); font-size:13px; }
   /* Lupe · Archiv · ★ enger zusammen, + leicht abgesetzt (seit v68) */
-  #archBtn, #bmBtn{ margin-left:-4px; }
+  #archBtn, #bmBtn, #cleanBtn, #lockBtn{ margin-left:-4px; }
+  /* Schloss „Gesperrte Einträge“ (seit v94): nur am Desktop mit Maus, immer grau */
+  .lockbtn{ display:none; }
+  @media (hover:hover) and (pointer:fine){ .lockbtn{ display:flex; } }
+  /* Besen „Alle Anhänge löschen“ (seit v93): nur am Desktop mit Maus */
+  .cleanbtn{ display:none; }
+  @media (hover:hover) and (pointer:fine){ .cleanbtn{ display:flex; } }
+  .cleanbtn .bm-count{ font-size:11px; letter-spacing:normal; }
+  .cleanbtn{ padding:0 6px; gap:3px; }
+  .brand-logo.zu-eng{ visibility:hidden; }   /* Logo weicht, wenn es sonst an NOTES oder die Lupe stösst (seit v93) */
+  .clean-body{ padding:4px 10px 10px; font-size:15px; line-height:1.45; color:var(--text); }
+  .clean-body .clean-q{ font-size:17px; font-weight:700; color:var(--warn); margin-bottom:6px; }
+  .clean-body .clean-sub{ color:var(--text-dim); font-size:14px; margin-top:4px; }
+  .clean-actions{ display:flex; justify-content:flex-end; gap:10px; padding:4px 10px 8px; }
+  .clean-actions .delbtn{ font-size:15px; }
   #addBtn{ margin-left:16px; }
   .archbtn .bm-count{ letter-spacing:normal; }
 
@@ -464,7 +478,7 @@
   }
   .bm-fulltext a{ color:inherit; text-decoration:underline; text-underline-offset:2px; }
   .bm-actions{ display:flex; justify-content:flex-end; margin-top:4px; }
-  .note-footer .confirm-text{ font-size:15px; }
+  .note-footer .confirm-text{ font-size:14px; }
 
   /* Lesezeichen-Stern pro Notiz */
   .note-bm{
@@ -473,7 +487,7 @@
     background:none;
     border:none;
     padding:2px 2px 2px 8px;
-    font-size:21px;
+    font-size:24px;   /* 24px seit v87 (vorher 21) */
     line-height:1;
     color:var(--text-dim);
     opacity:.55;
@@ -495,7 +509,7 @@
     cursor:pointer;
     -webkit-tap-highlight-color:transparent;
   }
-  .note-flag svg{ width:19px; height:19px; display:block; }
+  .note-flag svg{ width:22px; height:22px; display:block; }   /* 22px seit v87 (vorher 19) */
   .note-flag.on{ color:var(--flag); opacity:1; }
   .note-flag + .note-bm{ margin-left:0; }
 
@@ -512,7 +526,7 @@
     cursor:pointer;
     -webkit-tap-highlight-color:transparent;
   }
-  .note-lock svg{ width:17px; height:17px; display:block; }
+  .note-lock svg{ width:20px; height:20px; display:block; }   /* 20px seit v87 (vorher 17) */
   .note-lock.on{ color:var(--text); opacity:.9; }
   .note-lock + .note-flag{ margin-left:0; }
   .note-lock.nudge{ animation: lockNudge .45s ease-in-out; }
@@ -675,9 +689,15 @@
     flex-wrap:wrap;
     row-gap:2px;
   }
-  .note-footer .sharebtn, .note-footer .delbtn:not(.delx){ padding:4px 5px; }
-  .delbtn.delx{ padding:4px 7px; line-height:0; display:inline-flex; align-items:center; opacity:.55; }
-  .delx svg{ width:17px; height:17px; display:block; }
+  .note-footer .sharebtn, .note-footer .delbtn:not(.delx){ padding:4px 3px; font-size:13px; }   /* knapper seit v87, damit „Löschen? Archivieren Löschen Abbrechen“ auch bei 360px in eine Zeile passt */
+  .delbtn.delx{ padding:4px 6px; line-height:0; display:inline-flex; align-items:center; opacity:.55; }
+  /* Sehr schmale Handys: Fusszeile mit „VORGESTERN“ + 5 Symbolen muss in eine Zeile passen (seit v89) */
+  @media (max-width:374px){ .note-footer{ gap:2px; } .delbtn.delx{ padding:4px 5px; } .note-day{ letter-spacing:.02em; } }
+  .delx svg{ width:20px; height:20px; display:block; }   /* 20px seit v87 (vorher 17) */
+  /* Handy (seit v91): Fusszeilen-Symbole grösser (23px statt 20px) */
+  @media (max-width:699px){ .delx svg{ width:23px; height:23px; } }
+  /* Kamera-Knopf nur am Handy/Tablet – am Desktop (Maus) ausgeblendet (seit v91) */
+  @media (hover:hover) and (pointer:fine){ .note-footer [data-action=attach-photo]{ display:none; } }
   /* ✕ (Löschen) etwas heller als die übrigen grauen Symbole (seit v86) */
   .delbtn.delx.delx-del{ opacity:.85; }
   .note-day{
@@ -701,6 +721,7 @@
     -webkit-tap-highlight-color:transparent;
   }
   .sharebtn{ color:var(--ka); }
+  .confirm-text.ct-share{ color:var(--text-dim); }   /* Teilen-Rückfrage neutral, nicht rot (seit v92) */
   .confirm-text{
     font-size:14px;
     color:var(--warn);
@@ -708,6 +729,9 @@
     margin-right:auto;
   }
   .confirm-yes{ color:var(--warn); opacity:1; font-weight:700; }
+  /* „Abbrechen“ als Text (seit v87): türkis beim Löschen eines Anhangs, orange beim Löschen eines Eintrags */
+  .delbtn.abbr-tk{ color:var(--ka); opacity:1; }
+  .delbtn.abbr-or{ color:var(--accent); opacity:1; }
   .empty{
     text-align:center;
     color:var(--text-dim);
@@ -740,10 +764,10 @@
   .nf-ph-open.loading{ opacity:.55; cursor:progress; }
   .nf-rm{ flex:0 0 auto; background:none; border:0; color:var(--text-dim); opacity:.7; padding:6px 2px 6px 8px; line-height:0; cursor:pointer;
     -webkit-tap-highlight-color:transparent; }
-  .nf-rm svg{ width:15px; height:15px; display:block; }
-  .nf-ph .nf-rm{ position:absolute; top:-7px; right:-7px; width:22px; height:22px; padding:0; border-radius:50%; opacity:1;
+  .nf-rm svg{ width:17px; height:17px; display:block; }
+  .nf-ph .nf-rm{ position:absolute; top:-8px; right:-8px; width:25px; height:25px; padding:0; border-radius:50%; opacity:1;
     background:var(--surface-2); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; }
-  .nf-ph .nf-rm svg{ width:12px; height:12px; }
+  .nf-ph .nf-rm svg{ width:13px; height:13px; }
   .nf-row{ display:flex; align-items:center; width:calc(100% + 24px); margin:0 -12px; padding-right:10px;
     background:var(--note-band); border-top:1px solid var(--divider); }
   .nf-row .note-file{ width:auto; margin:0; flex:1 1 auto; min-width:0; background:none; border-top:0; }
@@ -760,6 +784,15 @@
   .nf-sub{ display:block; font-size:12.5px; color:var(--text-dim); margin-top:1px; }
   .nf-go{ flex:0 0 auto; font-size:13px; font-weight:700; color:var(--ka); }
   .note-file.loading{ opacity:.6; cursor:progress; }
+  /* „Alle laden“ bei mehreren Anhängen (seit v92): eine ZIP-Datei mit allen Anhängen */
+  .nf-all{ display:flex; justify-content:flex-end; width:calc(100% + 24px); margin:0 -12px; padding:7px 14px 8px;
+    background:var(--note-band); border-top:1px solid var(--divider); }
+  .nf-all button{ display:inline-flex; align-items:center; gap:7px; background:none; border:1px solid var(--line); border-radius:8px;
+    padding:6px 11px; color:var(--ka); font:inherit; font-size:13px; font-weight:700; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+  .nf-all button svg{ width:16px; height:16px; display:block; }
+  .nf-all button .nf-all-sub{ font-weight:400; color:var(--text-dim); }
+  .nf-all button.loading{ opacity:.6; cursor:progress; }
+  .bm-full .nf-all{ width:100%; margin:8px 0 0; padding:0; background:none; border:0; }
   .bm-full .note-file{ width:100%; margin:8px 0 0; border:1px solid var(--line); border-radius:8px; }
   .drop-overlay{
     position:fixed; inset:0; z-index:50; background:rgba(0,0,0,.74);
@@ -787,11 +820,13 @@
     .drop-overlay:not([hidden]) ~ .drop-hint{ display:none; }
   }
   @media print{ .drop-hint{ display:none !important; } }
+  /* Hinweis (Upload läuft, fertig, Fehler): seit v89 mittig im oberen Drittel, grösser und eingerahmt */
   .toast{
-    position:fixed; left:50%; bottom:calc(22px + env(safe-area-inset-bottom, 0px)); transform:translateX(-50%);
-    z-index:60; background:var(--surface-2); border:1px solid var(--line); color:var(--text);
-    font-size:14px; padding:10px 16px; border-radius:10px; box-shadow:var(--shadow);
-    max-width:calc(100% - 32px); text-align:center;
+    position:fixed; left:50%; top:33vh; transform:translate(-50%, -50%);
+    z-index:60; background:var(--surface-2); border:1.5px solid var(--accent); color:var(--text);   /* oranger Rahmen seit v90 */
+    font-size:16.5px; font-weight:600; line-height:1.35; padding:14px 20px; border-radius:12px;
+    box-shadow:0 10px 34px rgba(0,0,0,.6);
+    width:max-content; max-width:min(420px, calc(100% - 40px)); text-align:center;
   }
   .toast.err{ border-color:var(--warn); color:var(--warn); }
   .toast[hidden]{ display:none; }
@@ -861,12 +896,16 @@
     <h1 id="appTitle" title="Zurück zum Spielplan"><span class="title-swap"><span id="titleNot" class="title-face visible">NOT</span><span id="titleTon" class="title-face">TON</span></span>ES</h1>
     <span class="brand-logo"><span class="brand-text">TON &amp; BILD</span></span>
     <button class="bmbtn searchbtn" id="searchBtn" aria-label="Suchen" aria-expanded="false" aria-controls="searchRow"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M15.5 15.5L21 21" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
+    <button class="bmbtn archbtn cleanbtn" id="cleanBtn" aria-label="Anhänge älter als einen Monat löschen" title="Anhänge älter als 1 Monat löschen (Speicher freigeben)" aria-expanded="false" aria-controls="cleanPanel"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="display:block"><path d="M20.5 3.5l-7.2 7.2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M14.6 12.4l-3-3c-1.6-.4-3.4.3-4.6 1.5L4 14l6 6 3.1-3c1.2-1.2 1.9-3 1.5-4.6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M7 17l-2.5 2.5M9.5 18.5l-1.5 2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span class="bm-count" id="cleanCount"></span></button>
+    <button class="bmbtn archbtn lockbtn" id="lockBtn" aria-label="Gesperrte Einträge anzeigen" title="Gesperrte Einträge" aria-expanded="false" aria-controls="lockPanel"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="display:block"><rect x="5" y="11" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span class="bm-count" id="lockCount"></span></button>
     <button class="bmbtn archbtn" id="archBtn" aria-label="Archiv anzeigen" aria-expanded="false" aria-controls="archPanel"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="display:block"><rect x="3" y="4" width="18" height="5" rx="1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 9v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 13h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="bm-count" id="archCount"></span></button>
     <button class="bmbtn" id="bmBtn" aria-label="Lesezeichen anzeigen" aria-expanded="false" aria-controls="bmPanel">★<span class="bm-count" id="bmCount"></span></button>
     <button class="addbtn" id="addBtn" aria-label="Neue Notiz">+</button>
     <div class="overlay" id="overlay" hidden></div>
     <div class="bm-panel" id="bmPanel" hidden></div>
     <div class="bm-panel arch-panel" id="archPanel" hidden></div>
+    <div class="bm-panel arch-panel clean-panel" id="cleanPanel" hidden></div>
+    <div class="bm-panel arch-panel" id="lockPanel" hidden></div>
   </div>
   <div class="search-row" id="searchRow" hidden>
     <input type="search" class="search-input" id="searchInput" placeholder="Suchen: Wort, Kürzel, „links“, Juli, 01.07.2026 …" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search">
@@ -883,7 +922,7 @@
 <div class="drop-hint" id="dropHint" aria-hidden="true"><span class="drop-hint-text" id="dropHintText">Schieb drauf zum Hochladen</span></div>
 <div class="file-view" id="fileView" hidden><div class="fv-stage" id="fvStage"></div><div class="fv-bar"><span id="fvName"></span><a id="fvSave" href="#">Speichern</a><button type="button" id="fvClose">Schliessen</button></div></div>
 <div class="toast" id="toast" role="status" hidden></div>
-<input type="file" id="pickFile" hidden tabindex="-1" aria-hidden="true">
+<input type="file" id="pickFile" multiple hidden tabindex="-1" aria-hidden="true">
 <input type="file" id="pickPhoto" accept="image/*" capture="environment" hidden tabindex="-1" aria-hidden="true">
 <div class="gate" id="gate" hidden><form class="gate-box" id="gateForm" autocomplete="on">
   <div class="gate-title">NOTES</div><div class="gate-brand">TON &amp; BILD</div><div class="gate-line"></div>
@@ -1095,12 +1134,17 @@
   var FILE_MAX = 5 * 1024 * 1024;
   var FILE_PATH = "sharedFiles";
   var FILE_NOTE_TEXT = "Einwurf";
+  var FILE_NOTE_TEXT_MOBIL = "Einwurf mobil";   // Titel einer Notiz ohne Text, an die am Handy etwas angehängt wurde (seit v88)
   // Anhänge an einer Notiz (Upload-Knopf / Foto, seit v85) – Grenzen hier anpassen.
-  // (Der Einwurf per Drag & Drop am Desktop bleibt bei FILE_MAX.)
+  // (Seit v91 gilt ATTACH_MAX auch für den Einwurf per Drag & Drop; FILE_MAX wird nicht mehr benutzt.)
   var ATTACH_MAX = 5 * 1024 * 1024;   // Datei über den Upload-Knopf: bis 5 MB (seit v86, vorher 1 MB)
   var PHOTO_MAX = 1 * 1024 * 1024;    // Foto: wird auf höchstens 1 MB verkleinert
-  var MAX_PHOTOS = 3, MAX_FILES = 3;  // pro Notiz (seit v86 mehrere Anhänge)
+  var MAX_PHOTOS = 3, MAX_FILES = 10; // pro Notiz (v86: 3/3; seit v91 bis 10 Dateien wegen Mehrfachauswahl)
   var pendingRemove = null;           // { id, fid } – Rückfrage „Foto/Datei entfernen?“
+  // Teilen (seit v92): Rückfrage „Im Team / Extern“. Extern = Teilen-Menü des Geräts mit Text und
+  // den Anhängen als echte Dateien. Liest die Dateien nur (Firebase oder Zwischenspeicher im Gerät),
+  // schreibt NICHTS nach Firebase – der Speicherbedarf der Datenbank bleibt gleich.
+  var pendingShare = null;            // { id, stage:"choose"|"loading"|"ready", files:[File], skipped:[Namen], token }
   var PHOTO_EDGE = 1600;      // längere Seite eines verkleinerten Fotos in Pixel
   var pickTarget = null;      // id der Notiz, für die gerade eine Datei/ein Foto gewählt wird
   var ICON_UPLOAD = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5V4.5M7.5 8.5L12 4l4.5 4.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 14.5v3.5a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-3.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -1113,9 +1157,10 @@
   var ICON_IMG = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="9" cy="10" r="1.6" fill="currentColor"/><path d="M4.5 17l5-4.5 3.5 3 2.5-2 4 3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/></svg>';
 
   function fmtSize(b){
-    if(b < 1024) return b + " B";
-    if(b < 1024 * 1024) return Math.round(b / 1024) + " KB";
-    return (b / 1024 / 1024).toFixed(1).replace(".", ",") + " MB";
+    // geschütztes Leerzeichen: Zahl und Einheit nie getrennt umbrechen
+    if(b < 1024) return b + "\u00a0B";
+    if(b < 1024 * 1024) return Math.round(b / 1024) + "\u00a0KB";
+    return (b / 1024 / 1024).toFixed(1).replace(".", ",") + "\u00a0MB";
   }
   // PDF lässt sich nur am Desktop zuverlässig eingebettet anzeigen (iPhone zeigt eingebettet nur
   // Seite 1, Android gar nichts) → am Handy öffnet der PDF-Betrachter des Geräts
@@ -1135,7 +1180,7 @@
   function toast(msg, isErr, ms){
     if(!toastEl) return;
     clearTimeout(toastTimer);
-    toastEl.textContent = msg;
+    toastEl.textContent = String(msg).replace(/ …$/, "\u00a0…");
     toastEl.classList.toggle("err", !!isErr);
     toastEl.hidden = false;
     if(ms !== 0) toastTimer = setTimeout(function(){ toastEl.hidden = true; }, ms || (isErr ? 6000 : 2600));
@@ -1157,7 +1202,7 @@
   // Türkiser Titel nur für Einwurf-Einträge (nicht für Notizen, an die etwas angehängt wurde)
   function isEinwurf(n){
     var l = noteFiles(n);
-    return l.length > 0 && (n.text === FILE_NOTE_TEXT || l.some(function(f){ return f.einwurf; }));
+    return l.length > 0 && (n.text === FILE_NOTE_TEXT || n.text === FILE_NOTE_TEXT_MOBIL || l.some(function(f){ return f.einwurf; }));
   }
   var ICON_X_SMALL = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>';
   function fileRowHtml(n, f, mitEntfernen){
@@ -1194,13 +1239,202 @@
       }).join("") + '</div>';
     }
     rest.forEach(function(f){ html += fileRowHtml(n, f, mitEntfernen); });
+    if(l.length >= 2){
+      var total = l.reduce(function(a, f){ return a + (f.size || 0); }, 0);
+      html += '<div class="nf-all"><button type="button" class="' + (zipLoading[n.id] ? 'loading' : '') + '" data-file-all="' + n.id + '" aria-label="Alle Anhänge auf einmal herunterladen" title="Alle Anhänge als eine ZIP-Datei herunterladen">' +
+        ICON_DOWNLOAD + '<span>' + (zipLoading[n.id] ? 'Lädt\u00a0…' : 'Alle laden') + '</span><span class="nf-all-sub">' + l.length + '\u00a0Dateien · ' + esc(fmtSize(total)) + '</span></button></div>';
+    }
     return html;
+  }
+  // ---- Alle Anhänge als eine ZIP-Datei (seit v92) ----
+  // Liest die Dateien nur (Firebase oder Zwischenspeicher) und packt sie im Gerät zusammen –
+  // nichts wird nach Firebase geschrieben.
+  var zipLoading = {};
+  var ICON_DOWNLOAD = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.5v11M7.5 11.5L12 16l4.5-4.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 14.5v3.5a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-3.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  var CRC_TABLE = null;
+  function crc32(u8){
+    if(!CRC_TABLE){
+      CRC_TABLE = new Uint32Array(256);
+      for(var i = 0; i < 256; i++){ var c = i; for(var k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1); CRC_TABLE[i] = c >>> 0; }
+    }
+    var crc = 0xFFFFFFFF;
+    for(var j = 0; j < u8.length; j++) crc = CRC_TABLE[(crc ^ u8[j]) & 0xFF] ^ (crc >>> 8);
+    return (crc ^ 0xFFFFFFFF) >>> 0;
+  }
+  // Einfaches ZIP ohne Kompression (Fotos/PDFs sind ohnehin schon komprimiert), Namen in UTF-8
+  function makeZip(entries){
+    var parts = [], central = [], offset = 0, enc = new TextEncoder();
+    var d = new Date(), dosTime = (d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1),
+        dosDate = ((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate();
+    entries.forEach(function(e){
+      var name = enc.encode(e.name), data = e.data, crc = crc32(data);
+      var h = new DataView(new ArrayBuffer(30));
+      h.setUint32(0, 0x04034b50, true); h.setUint16(4, 20, true); h.setUint16(6, 0x0800, true); h.setUint16(8, 0, true);
+      h.setUint16(10, dosTime, true); h.setUint16(12, dosDate, true); h.setUint32(14, crc, true);
+      h.setUint32(18, data.length, true); h.setUint32(22, data.length, true); h.setUint16(26, name.length, true); h.setUint16(28, 0, true);
+      parts.push(h.buffer, name, data);
+      var c = new DataView(new ArrayBuffer(46));
+      c.setUint32(0, 0x02014b50, true); c.setUint16(4, 20, true); c.setUint16(6, 20, true); c.setUint16(8, 0x0800, true); c.setUint16(10, 0, true);
+      c.setUint16(12, dosTime, true); c.setUint16(14, dosDate, true); c.setUint32(16, crc, true);
+      c.setUint32(20, data.length, true); c.setUint32(24, data.length, true); c.setUint16(28, name.length, true);
+      c.setUint32(42, offset, true);
+      central.push(c.buffer, name);
+      offset += 30 + name.length + data.length;
+    });
+    var cSize = central.reduce(function(a, b){ return a + b.byteLength; }, 0);
+    var end = new DataView(new ArrayBuffer(22));
+    end.setUint32(0, 0x06054b50, true); end.setUint16(8, entries.length, true); end.setUint16(10, entries.length, true);
+    end.setUint32(12, cSize, true); end.setUint32(16, offset, true);
+    return new Blob(parts.concat(central, [end.buffer]), { type: "application/zip" });
+  }
+  function zipName(n){
+    var d = new Date(n.ts || Date.now()), p = function(x){ return (x < 10 ? "0" : "") + x; };
+    var who = String(n.kuerzel || "").replace(/[^A-Za-z0-9ÄÖÜäöüß_-]+/g, "");
+    return "NOTES" + (who ? "_" + who : "") + "_" + d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate()) + ".zip";
+  }
+  function downloadAll(nid){
+    var n = notes.find(function(x){ return x.id === nid; });
+    if(!n || zipLoading[nid]) return;
+    var fs = noteFiles(n);
+    zipLoading[nid] = true; rerenderAll();
+    Promise.all(fs.map(function(f){
+      if(fileBlobs[f.id]) return Promise.resolve(fileBlobs[f.id]);
+      return fetchFileRecord(f.id).then(function(rec){
+        if(!rec || !rec.data) return null;
+        fileBlobs[f.id] = b64ToBlob(rec.data, rec.type || f.type);
+        if(!fileUrls[f.id]) fileUrls[f.id] = URL.createObjectURL(fileBlobs[f.id]);
+        return fileBlobs[f.id];
+      }, function(){ return null; });
+    })).then(function(blobs){
+      return Promise.all(blobs.map(function(b){
+        if(!b) return null;
+        return b.arrayBuffer ? b.arrayBuffer() : new Response(b).arrayBuffer();
+      }));
+    }).then(function(bufs){
+      var used = {}, entries = [], fehlt = 0;
+      bufs.forEach(function(buf, i){
+        if(!buf){ fehlt++; return; }
+        var name = String(fs[i].name || ("Datei-" + (i + 1))).replace(/[\\/:*?"<>|]+/g, "_");
+        if(used[name.toLowerCase()]){
+          var dot = name.lastIndexOf("."), base = dot > 0 ? name.slice(0, dot) : name, ext = dot > 0 ? name.slice(dot) : "", k = 2;
+          while(used[(base + " (" + k + ")" + ext).toLowerCase()]) k++;
+          name = base + " (" + k + ")" + ext;
+        }
+        used[name.toLowerCase()] = true;
+        entries.push({ name: name, data: new Uint8Array(buf) });
+      });
+      delete zipLoading[nid]; rerenderAll();
+      if(!entries.length){ toast("Die Anhänge konnten nicht geladen werden.", true); return; }
+      var url = URL.createObjectURL(makeZip(entries));
+      var a = document.createElement("a");
+      a.href = url; a.download = zipName(n); a.style.display = "none";
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function(){ URL.revokeObjectURL(url); }, 60000);
+      toast(fehlt ? (entries.length + " von " + fs.length + " Dateien in der ZIP – " + fehlt + " nicht geladen.") : (entries.length + "\u00a0Dateien als ZIP heruntergeladen"), !!fehlt);
+    }).catch(function(){
+      delete zipLoading[nid]; rerenderAll();
+      toast("Herunterladen hat nicht geklappt.", true);
+    });
   }
 
   function b64ToBlob(b64, type){
     var bin = atob(b64), len = bin.length, u8 = new Uint8Array(len);
     for(var i = 0; i < len; i++) u8[i] = bin.charCodeAt(i);
     return new Blob([u8], { type: type || "application/octet-stream" });
+  }
+  function shareText(n){
+    return (n.kuerzel || "?") + " (" + formatTs(n.ts) + "):\n\n" + (n.text || "");
+  }
+  function shareTeamMail(n){
+    var subject = encodeURIComponent("NOTES Webapp Weiterleitung");
+    var body = encodeURIComponent(shareText(n) + (noteFiles(n).length ? "\n\nAnhänge (in der NOTES-App): " + noteFiles(n).map(function(f){ return f.name; }).join(", ") : ""));
+    window.location.href = "mailto:?subject=" + subject + "&body=" + body;
+  }
+  function canShareFiles(list){
+    try{ return !!(navigator.canShare && navigator.canShare({ files: list })); }catch(e){ return false; }
+  }
+  // Anhänge als File-Objekte: nur aus dem Zwischenspeicher (synchron) – null, wenn noch etwas fehlt
+  function cachedShareFiles(n){
+    var out = [], fs = noteFiles(n);
+    for(var i = 0; i < fs.length; i++){
+      var b = fileBlobs[fs[i].id];
+      if(!b) return null;
+      out.push(new File([b], fs[i].name || "Datei", { type: b.type || fs[i].type || "application/octet-stream" }));
+    }
+    return out;
+  }
+  // Fehlende Anhänge lesen (nur lesen, kein Schreiben nach Firebase)
+  function loadShareFiles(n){
+    return Promise.all(noteFiles(n).map(function(f){
+      if(fileBlobs[f.id]) return Promise.resolve(true);
+      return fetchFileRecord(f.id).then(function(rec){
+        if(!rec || !rec.data) return false;
+        fileBlobs[f.id] = b64ToBlob(rec.data, rec.type || f.type);
+        if(!fileUrls[f.id]) fileUrls[f.id] = URL.createObjectURL(fileBlobs[f.id]);
+        return true;
+      }, function(){ return false; });
+    })).then(function(){ return cachedShareFiles(n) || noteFiles(n).filter(function(f){ return fileBlobs[f.id]; }).map(function(f){
+      var b = fileBlobs[f.id];
+      return new File([b], f.name || "Datei", { type: b.type || f.type || "application/octet-stream" });
+    }); });
+  }
+  // Nicht jedes Gerät nimmt jeden Dateityp an (Android/Chrome z. B. keine Word/Excel-Dateien):
+  // teilbare Dateien behalten, den Rest als Hinweis melden.
+  function splitShareable(list){
+    if(!list.length || canShareFiles(list)) return { ok: list, skipped: [] };
+    var ok = [], skipped = [];
+    list.forEach(function(f){ if(canShareFiles([f])) ok.push(f); else skipped.push(f.name); });
+    if(ok.length && !canShareFiles(ok)) ok = [];
+    return { ok: ok, skipped: skipped };
+  }
+  // Muss direkt aus einem Tipp heraus laufen (sonst blockiert v. a. Safari das Teilen-Menü)
+  function doExternalShare(n, files, skipped){
+    pendingShare = null; renderList();
+    var data = { title: "NOTES", text: shareText(n) };
+    if(files.length) data.files = files;
+    if(skipped.length) data.text += "\n\n(Nicht angehängt: " + skipped.join(", ") + ")";
+    var p;
+    try{ p = navigator.share(data); }catch(e){ p = Promise.reject(e); }
+    Promise.resolve(p).then(function(){
+      if(skipped.length) toast("Nicht mitgeschickt (Dateityp vom Gerät nicht unterstützt): " + skipped.join(", "), true, 6000);
+    }, function(err){
+      if(err && err.name === "AbortError") return;   // im Teilen-Menü abgebrochen
+      if(files.length){
+        // Zweiter Versuch nur mit Text (z. B. Dateien zu gross für das Teilen-Menü)
+        try{
+          navigator.share({ title: "NOTES", text: shareText(n) }).then(function(){
+            toast("Anhänge konnten nicht mitgeschickt werden – nur der Text wurde geteilt.", true, 6000);
+          }, function(e2){ if(!(e2 && e2.name === "AbortError")) toast("Teilen hat nicht geklappt.", true); });
+          return;
+        }catch(e3){}
+      }
+      toast("Teilen hat nicht geklappt.", true);
+    });
+  }
+  function startExternalShare(n){
+    if(!navigator.share){
+      // Browser ohne Teilen-Menü (z. B. Firefox am Desktop): Mail mit Text, Anhänge von Hand
+      pendingShare = null; renderList();
+      var subject = encodeURIComponent("NOTES");
+      window.location.href = "mailto:?subject=" + subject + "&body=" + encodeURIComponent(shareText(n));
+      if(noteFiles(n).length) toast("Dieser Browser kann keine Dateien teilen. Anhänge bitte in der App öffnen, speichern und ans Mail hängen.", true, 7000);
+      return;
+    }
+    if(!noteFiles(n).length){ doExternalShare(n, [], []); return; }
+    var cached = cachedShareFiles(n);
+    if(cached){ var sp = splitShareable(cached); doExternalShare(n, sp.ok, sp.skipped); return; }
+    var token = {};
+    pendingShare = { id: n.id, stage: "loading", token: token };
+    renderList();
+    loadShareFiles(n).then(function(list){
+      if(!pendingShare || pendingShare.token !== token) return;   // inzwischen abgebrochen
+      var missing = noteFiles(n).length - list.length;
+      var sp = splitShareable(list);
+      if(missing) toast(missing === 1 ? "Ein Anhang konnte nicht geladen werden." : missing + " Anhänge konnten nicht geladen werden.", true);
+      // Nach dem Laden ist der ursprüngliche Tipp „verbraucht“ – ein zweiter Tipp auf „Senden“ öffnet das Teilen-Menü
+      pendingShare = { id: n.id, stage: "ready", files: sp.ok, skipped: sp.skipped, token: token };
+      renderList();
+    });
   }
   function fetchFileRecord(fid){
     if(localFiles[fid]) return Promise.resolve(localFiles[fid]);
@@ -1287,7 +1521,7 @@
     if(!n.files.length) delete n.files;
     save(); rerenderAll();
     removeStoredFile(fid);
-    toast((fileKind(hit.file) === "photo" ? "Foto" : "Datei") + " entfernt.");
+    toast((fileKind(hit.file) === "photo" ? "Foto" : "Datei") + " gelöscht.");
   }
   if(fileView){
     fileView.addEventListener("click", function(e){
@@ -1299,6 +1533,8 @@
   }
   // Klick auf einen Datei-Anhang (Liste, Lesezeichen, Archiv)
   function handleFileClick(e){
+    var all = e.target.closest("[data-file-all]");
+    if(all){ e.stopPropagation(); downloadAll(all.getAttribute("data-file-all")); return true; }
     var el = e.target.closest("[data-file-open]");
     if(!el) return false;
     e.stopPropagation();
@@ -1313,7 +1549,7 @@
     var key = el.getAttribute("data-file-remove"), hit = findAttachment(key);
     if(!hit || hit.note.locked) return true;
     pendingDelete = null;
-    pendingRemove = { id: hit.note.id, fid: hit.file.id, foto: fileKind(hit.file) === "photo" };
+    pendingShare = null; pendingRemove = { id: hit.note.id, fid: hit.file.id, foto: fileKind(hit.file) === "photo" };
     renderList();
     return true;
   }
@@ -1409,7 +1645,7 @@
       var put = online ? withTimeout(db.ref(FILE_PATH + "/" + fid).set(rec), 60000) : Promise.resolve();
       if(!online) localFiles[fid] = rec;
       return put.then(function(){
-        var meta = { id: fid, name: rec.name, type: rec.type, size: rec.size };
+        var meta = { id: fid, name: rec.name, type: rec.type, size: rec.size, ts: rec.ts };   // ts seit v93 (für den Besen)
         if(thumb) meta.thumb = thumb;
         return { meta: meta, online: online };
       });
@@ -1422,24 +1658,77 @@
         : "Upload fehlgeschlagen: " + name + " (Verbindung oder Firebase-Regel prüfen).", true);
     return false;
   }
-  // Einwurf (Drag & Drop am Desktop): neue Notiz „Einwurf“ mit der Datei
-  function uploadFile(file){
-    if(file.size > FILE_MAX){
-      toast("„" + file.name + "“ ist zu gross (" + fmtSize(file.size) + ") – maximal " + fmtSize(FILE_MAX) + ".", true);
-      return Promise.resolve(false);
+  // Eine Datei für den Upload vorbereiten (seit v91 gemeinsam für Einwurf und Upload-Knopf):
+  // bis ATTACH_MAX unverändert, zu grosse Bilder werden verkleinert, andere zu grosse Dateien abgelehnt
+  function prepUpload(file){
+    var istBild = /^image\/(jpeg|png|webp|bmp|avif|heic|heif)$/i.test(file.type || "");
+    if(file.size > ATTACH_MAX){
+      if(!istBild) return Promise.reject(Object.assign(new Error("zugross"), { groesse: file.size }));
+      return shrinkImage(file, ATTACH_MAX).then(function(r){
+        if(r.blob.size > ATTACH_MAX) throw new Error("gross");
+        return { blob: r.blob, name: file.name.replace(/\.[^.]+$/, "") + ".jpg", type: "image/jpeg", thumb: r.thumb };
+      });
     }
-    toast("Lädt hoch: " + file.name + " …", false, 0);
-    return thumbFor(file).then(function(thumb){
-      return storeFile(file, file.name, file.type, thumb);
-    }).then(function(r){
-      // Eintrag erst anlegen, wenn die Datei sicher gespeichert ist
-      r.meta.einwurf = true; r.meta.kind = "file";
-      notes.push({ id: nextId(), kuerzel: "", text: FILE_NOTE_TEXT, done: false, ts: Date.now(), files: [r.meta] });
-      save(); rerenderAll();
-      toast(r.online ? "Hochgeladen: " + file.name : "Nur lokal gespeichert (keine Verbindung zur Datenbank): " + file.name, !r.online);
-      return true;
-    }).catch(function(err){ return uploadFehler(err, file.name); });
+    if(!file.size) return Promise.reject(new Error("leer"));
+    return thumbFor(file).then(function(t){ return { blob: file, name: file.name, type: file.type, thumb: t }; });
   }
+  function fehlerKurz(err, name){
+    var m = err && err.message;
+    return "„" + name + "“ " + (m === "zugross" ? "ist zu gross (" + fmtSize(err.groesse) + ")"
+      : m === "gross" ? "ist auch verkleinert zu gross" : m === "leer" ? "ist leer oder ein Ordner"
+      : m === "bild" ? "konnte nicht verarbeitet werden" : "konnte nicht hochgeladen werden");
+  }
+  // Mehrere Dateien nacheinander hochladen und GEMEINSAM in eine Notiz legen:
+  // noteId = null → neue Notiz „Einwurf“ (Drag & Drop am Desktop), sonst an die bestehende Notiz hängen
+  function uploadBatch(list, noteId){
+    var files = Array.prototype.slice.call(list || []).filter(Boolean);
+    if(!files.length) return Promise.resolve(false);
+    var frei = MAX_FILES, zuViel = 0;
+    if(noteId){
+      var n0 = notes.find(function(x){ return x.id === String(noteId); });
+      if(!n0) return Promise.resolve(false);
+      frei = MAX_FILES - countKind(n0, "file");
+    }
+    if(files.length > frei){ zuViel = files.length - frei; files = files.slice(0, Math.max(0, frei)); }
+    if(!files.length){ toast(vollText("file"), true); return Promise.resolve(false); }
+    var metas = [], fehler = [], online = true, i = 0;
+    function naechste(){
+      if(i >= files.length) return Promise.resolve();
+      var f = files[i++];
+      toast((files.length > 1 ? "Lädt hoch (" + i + " von " + files.length + "): " : "Lädt hoch: ") + f.name + " …", false, 0);
+      return prepUpload(f).then(function(pr){ return storeFile(pr.blob, pr.name, pr.type, pr.thumb); })
+        .then(function(r){ r.meta.kind = "file"; if(!noteId) r.meta.einwurf = true; metas.push(r.meta); if(!r.online) online = false; },
+              function(err){ fehler.push(fehlerKurz(err, f.name)); })
+        .then(naechste);
+    }
+    return naechste().then(function(){
+      if(metas.length){
+        if(noteId){
+          var n = notes.find(function(x){ return x.id === String(noteId); });
+          if(!n){ metas.forEach(function(m){ removeStoredFile(m.id); }); toast("Der Eintrag wurde inzwischen gelöscht – nichts angehängt.", true); return false; }
+          var platz = MAX_FILES - countKind(n, "file");              // könnte inzwischen von einem anderen Gerät gefüllt sein
+          if(metas.length > platz){ metas.slice(platz).forEach(function(m){ removeStoredFile(m.id); }); zuViel += metas.length - platz; metas = metas.slice(0, Math.max(0, platz)); }
+          n.files = noteFiles(n).concat(metas);
+          delete n.file;
+          if(!String(n.text || "").trim()) n.text = FILE_NOTE_TEXT_MOBIL;
+        } else {
+          // Einwurf: erst anlegen, wenn die Dateien sicher gespeichert sind – alle zusammen in EINER Notiz
+          notes.push({ id: nextId(), kuerzel: "", text: FILE_NOTE_TEXT, done: false, ts: Date.now(), files: metas });
+        }
+        save(); rerenderAll();
+      }
+      var teile = [];
+      if(metas.length) teile.push(metas.length === 1 ? (noteId ? "Angehängt: " : "Hochgeladen: ") + metas[0].name + " (" + fmtSize(metas[0].size) + ")"
+                                                      : metas.length + " Dateien " + (noteId ? "angehängt" : "hochgeladen"));
+      if(!online && metas.length) teile.push("nur lokal gespeichert (keine Verbindung zur Datenbank)");
+      if(fehler.length) teile.push(fehler.join(", ") + (fehler.length === 1 ? " – nicht hochgeladen" : " – nicht hochgeladen") + " (max. " + fmtSize(ATTACH_MAX) + ")");
+      if(zuViel) teile.push(zuViel + (zuViel === 1 ? " Datei" : " Dateien") + " übersprungen – höchstens " + MAX_FILES + " pro Notiz");
+      toast(teile.join(" · ") || "Nichts hochgeladen.", !metas.length || fehler.length > 0 || zuViel > 0 || !online, (fehler.length || zuViel) ? 8000 : undefined);
+      return metas.length > 0;
+    });
+  }
+  // Einwurf einzelner Datei (bleibt für ältere Aufrufe erhalten)
+  function uploadFile(file){ return uploadBatch([file], null); }
   // Datei oder Foto an eine bestehende Notiz hängen (Knöpfe am Eintrag). Seit v86 bis zu MAX_PHOTOS Fotos
   // und MAX_FILES Dateien pro Notiz. Fotos werden immer auf höchstens PHOTO_MAX verkleinert; Dateien
   // dürfen bis ATTACH_MAX gross sein (zu grosse Bilder werden statt Ablehnung verkleinert).
@@ -1471,6 +1760,7 @@
       }
       r.meta.kind = kind;
       n.files = noteFiles(n).concat([r.meta]);
+      if(!String(n.text || "").trim()) n.text = FILE_NOTE_TEXT_MOBIL;   // ohne eigenen Text → „Einwurf mobil“ (türkis)
       delete n.file;                                                  // altes Einzel-Feld (v78–v85) in die Liste überführt
       save(); rerenderAll();
       toast(r.online ? (alsFoto ? "Foto angehängt" : "Angehängt: " + name) + " (" + fmtSize(r.meta.size) + ")"
@@ -1497,18 +1787,16 @@
     var inp = document.getElementById(id);
     if(!inp) return;
     inp.addEventListener("change", function(){
-      var f = inp.files && inp.files[0], t = pickTarget;
+      var list = inp.files ? Array.prototype.slice.call(inp.files) : [], t = pickTarget;
       pickTarget = null;
-      if(!f || !t) return;
-      attachToNote(t.id, f, t.kind === "photo");
       inp.value = "";
+      if(!list.length || !t) return;
+      if(t.kind === "photo") attachToNote(t.id, list[0], true);   // Foto: immer einzeln
+      else uploadBatch(list, t.id);                               // Dateien: auch mehrere auf einmal (seit v91)
     });
   });
   function uploadFiles(list){
-    var files = Array.prototype.slice.call(list || []);
-    var chain = Promise.resolve();
-    files.forEach(function(f){ chain = chain.then(function(){ return uploadFile(f); }); });
-    return chain;
+    return uploadBatch(list, null);   // seit v91: mehrere Dateien landen zusammen in EINER Einwurf-Notiz
   }
   // Drag & Drop auf das ganze Fenster (nur echte Dateien, keine Textauswahl)
   (function(){
@@ -1614,6 +1902,8 @@
   function setBmOpen(open){
     bmOpen = open;
     if(open && archOpen){ archOpen = false; renderArchive(); }
+    if(open && cleanOpen){ cleanOpen = false; renderClean(); }
+    if(open && lockOpen){ lockOpen = false; lockExpanded = null; renderLocked(); }
     if(!open){ bmExpanded = null; bmPendingRemove = null; }
     renderBookmarks();
   }
@@ -1688,6 +1978,196 @@
     }
   });
 
+  // ---- Alle Anhänge löschen (Besen, seit v93) ----
+  // Entfernt alle Anhänge aus Liste, Archiv und Lesezeichen und löscht sie aus sharedFiles.
+  // Gesperrte Notizen behalten ihre Anhänge. Reine Einwurf-Einträge (Text nur „Einwurf“ /
+  // „Einwurf mobil“) werden ganz gelöscht. Texte aller übrigen Notizen bleiben.
+  var cleanOpen = false;
+  var cleanBtn = document.getElementById("cleanBtn");
+  var cleanPanel = document.getElementById("cleanPanel");
+  var cleanCount = document.getElementById("cleanCount");
+  function nurEinwurfText(n){ var t = String(n.text || "").trim(); return t === FILE_NOTE_TEXT || t === FILE_NOTE_TEXT_MOBIL; }
+  // Nur Anhänge, die älter als einen Monat sind (seit v93 auf Wunsch). Hochladezeit: f.ts (neu),
+  // sonst aus der Datei-ID (beginnt mit Date.now() in Basis 36), sonst die Zeit der Notiz.
+  function fileTs(f, n){
+    if(f.ts) return f.ts;
+    var t = parseInt(String(f.id || "").slice(0, 8), 36);
+    if(t > 1600000000000 && t < Date.now() + 86400000) return t;
+    return n.ts || Date.now();
+  }
+  function cleanGrenze(){ var d = new Date(); d.setMonth(d.getMonth() - 1); return d.getTime(); }
+  function alteAnhaenge(n){ var g = cleanGrenze(); return noteFiles(n).filter(function(f){ return fileTs(f, n) < g; }); }
+  function cleanStats(){
+    var st = { files: 0, size: 0, notes: 0, einwurf: 0, locked: 0, neu: 0 };
+    notes.forEach(function(n){
+      var l = noteFiles(n);
+      if(!l.length) return;
+      var alt = alteAnhaenge(n);
+      st.neu += l.length - alt.length;
+      if(!alt.length) return;
+      if(n.locked){ st.locked++; return; }
+      st.notes++; st.files += alt.length;
+      st.size += alt.reduce(function(a, f){ return a + (f.size || 0); }, 0);
+      if(nurEinwurfText(n) && alt.length === l.length) st.einwurf++;
+    });
+    return st;
+  }
+  // Kurze Grössenangabe für den Besen: ab 10 MB ohne Komma („41 MB“), darunter mit einer Stelle („4,1 MB“)
+  function kurzMB(b){
+    var mb = b / 1024 / 1024;
+    return (mb >= 10 ? Math.round(mb) : mb.toFixed(1).replace(".", ",").replace(",0", "")) + "\u00a0MB";
+  }
+  // „TON & BILD“ ausblenden, wenn zwischen NOTES und Lupe zu wenig Platz ist (z. B. Laptop mit Besen + MB-Zahl)
+  var brandLogo = document.querySelector(".brand-logo"), brandText = document.querySelector(".brand-text");
+  function logoPlatz(){
+    if(!brandLogo || !brandText) return;
+    brandLogo.classList.remove("zu-eng");
+    var t = document.getElementById("appTitle").getBoundingClientRect(), l = brandText.getBoundingClientRect(),
+        sb = document.getElementById("searchBtn").getBoundingClientRect();
+    if(l.width && (l.left - t.right < 12 || sb.left - l.right < 12)) brandLogo.classList.add("zu-eng");
+  }
+  window.addEventListener("resize", logoPlatz);
+  if(document.fonts && document.fonts.ready && document.fonts.ready.then) document.fonts.ready.then(logoPlatz);
+  function renderClean(){
+    if(!cleanBtn) return;
+    var st = cleanStats();
+    // Rechts neben dem Besen immer klein die Grösse, die er freigeben würde (Anhänge älter als 1 Monat)
+    if(cleanCount.textContent !== kurzMB(st.size)){ cleanCount.textContent = kurzMB(st.size); logoPlatz(); }
+    cleanBtn.title = st.files ? "Anhänge älter als 1 Monat löschen: " + st.files + " · " + fmtSize(st.size) : "Keine Anhänge älter als 1 Monat";
+    cleanBtn.classList.toggle("open", cleanOpen);
+    cleanBtn.setAttribute("aria-expanded", cleanOpen ? "true" : "false");
+    cleanPanel.hidden = !cleanOpen;
+    updateOverlay();
+    if(!cleanOpen) return;
+    var html = '<div class="bm-head">Anhänge aufräumen</div>';
+    if(!st.files){
+      html += '<div class="bm-empty">Keine Anhänge, die älter als einen Monat sind' + (st.locked ? ' (ausser in gesperrten Notizen)' : '') + '.</div>';
+    } else {
+      html += '<div class="clean-body">' +
+        '<div class="clean-q">Anhänge älter als 1 Monat löschen?</div>' +
+        st.files + (st.files === 1 ? ' Datei/Foto' : ' Dateien/Fotos') + ' · ' + esc(fmtSize(st.size)) + ' aus ' + st.notes + (st.notes === 1 ? ' Notiz' : ' Notizen') + ' (Liste, Archiv, Lesezeichen) – auch in Firebase.' +
+        (st.einwurf ? '<div class="clean-sub">' + st.einwurf + (st.einwurf === 1 ? ' reiner Einwurf-Eintrag wird' : ' reine Einwurf-Einträge werden') + ' ganz gelöscht. Texte aller anderen Notizen bleiben.</div>'
+                    : '<div class="clean-sub">Die Texte der Notizen bleiben.</div>') +
+        (st.locked ? '<div class="clean-sub">Gesperrte Notizen (' + st.locked + ') behalten ihre Anhänge.</div>' : '') +
+        (st.neu ? '<div class="clean-sub">' + st.neu + (st.neu === 1 ? ' neuerer Anhang bleibt' : ' neuere Anhänge bleiben') + '.</div>' : '') +
+        '<div class="clean-sub">Kann nicht rückgängig gemacht werden.</div>' +
+      '</div>' +
+      '<div class="clean-actions">' +
+        '<button type="button" class="delbtn confirm-yes" data-clean-yes="1">Löschen</button>' +
+        '<button type="button" class="delbtn abbr-or" data-clean-no="1">Abbrechen</button>' +
+      '</div>';
+    }
+    cleanPanel.innerHTML = html;
+  }
+  function setCleanOpen(open){
+    cleanOpen = open;
+    if(open){
+      if(bmOpen){ bmOpen = false; bmExpanded = null; bmPendingRemove = null; renderBookmarks(); }
+      if(archOpen){ archOpen = false; archExpanded = null; archPendingDelete = null; renderArchive(); }
+      if(lockOpen){ lockOpen = false; lockExpanded = null; renderLocked(); }
+    }
+    renderClean();
+  }
+  function cleanAllAttachments(){
+    var st = cleanStats(), ids = [];
+    if(!st.files) return;
+    notes = notes.filter(function(n){
+      var l = noteFiles(n), alt = alteAnhaenge(n);
+      if(!alt.length || n.locked) return true;
+      if(nurEinwurfText(n) && alt.length === l.length) return false;   // Einwurf-Eintrag ganz weg; save() löscht seine Dateien
+      var weg = {};
+      alt.forEach(function(f){ ids.push(f.id); weg[f.id] = true; });
+      var rest = l.filter(function(f){ return !weg[f.id]; });
+      delete n.file;
+      if(rest.length) n.files = rest; else delete n.files;
+      return true;
+    });
+    pendingRemove = null; pendingShare = null;
+    save();
+    ids.forEach(function(fid){ removeStoredFile(fid); });
+    cleanOpen = false;
+    renderList();
+    toast(st.files + (st.files === 1 ? " Anhang" : " Anhänge") + " gelöscht · " + fmtSize(st.size) + " frei");
+  }
+  if(cleanBtn){
+    cleanBtn.addEventListener("click", function(e){ e.stopPropagation(); setCleanOpen(!cleanOpen); });
+    cleanPanel.addEventListener("click", function(e){
+      e.stopPropagation();
+      if(e.target.closest("[data-clean-yes]")){ cleanAllAttachments(); return; }
+      if(e.target.closest("[data-clean-no]")) setCleanOpen(false);
+    });
+  }
+
+  // ---- Gesperrte Einträge (Schloss in der Kopfzeile, seit v94) ----
+  // Liste aller Notizen mit Schloss (auch archivierte und ausgeblendete). Tipp auf einen Eintrag in der
+  // Liste → hinspringen; archivierte/ausgeblendete werden im Feld aufgeklappt (nur lesen).
+  var lockOpen = false, lockExpanded = null;
+  var lockBtn = document.getElementById("lockBtn");
+  var lockPanel = document.getElementById("lockPanel");
+  var lockCount = document.getElementById("lockCount");
+  function lockedNotes(){
+    return notes.filter(function(n){ return n.locked; }).sort(function(a, b){ return (b.ts || 0) - (a.ts || 0); });
+  }
+  function renderLocked(){
+    if(!lockBtn) return;
+    var l = lockedNotes();
+    lockCount.textContent = l.length ? String(l.length) : "";
+    lockBtn.classList.toggle("open", lockOpen);
+    lockBtn.setAttribute("aria-expanded", lockOpen ? "true" : "false");
+    lockPanel.hidden = !lockOpen;
+    updateOverlay();
+    if(!lockOpen) return;
+    var html = '<div class="bm-head">Gesperrt' + (l.length ? ' <span class="bm-head-count">' + l.length + '</span>' : '') + '</div>';
+    if(!l.length){
+      html += '<div class="bm-empty">Keine gesperrten Einträge.<br>Bei einer Notiz auf das Schloss tippen, um sie zu sperren.</div>';
+    } else {
+      l.forEach(function(n){
+        var weg = n.archived || n.hidden, nf = noteFiles(n).length;
+        html += '<div class="bm-item">' +
+          '<button type="button" class="bm-go" data-lock-go="' + n.id + '"' + (weg ? ' aria-expanded="' + (lockExpanded === n.id) + '"' : '') + '>' +
+            (n.kuerzel ? '<span class="bm-k">' + esc(n.kuerzel) + '</span>' : '') +
+            '<span class="bm-t">' + esc(firstLine(n.text)) + '</span>' +
+            (nf ? '<span class="bm-tag">' + nf + '\u00a0' + (nf === 1 ? 'Anhang' : 'Anhänge') + '</span>' : '') +
+            (n.archived ? '<span class="bm-tag">Archiv</span>' : n.hidden ? '<span class="bm-tag">ausgeblendet</span>' : '') +
+          '</button>' +
+        '</div>';
+        if(weg && lockExpanded === n.id){
+          html += '<div class="bm-sub bm-full">' +
+            '<div class="bm-meta">' + (n.kuerzel ? esc(n.kuerzel) + ' · ' : '') + esc(formatTs(n.ts)) + '</div>' +
+            '<div class="bm-fulltext">' + (n.text ? linkify(esc(n.text)) : '(leere Notiz)') + '</div>' + attachmentsHtml(n, true) +
+          '</div>';
+        }
+      });
+    }
+    lockPanel.innerHTML = html;
+  }
+  function setLockOpen(open){
+    lockOpen = open;
+    if(open){
+      if(bmOpen){ bmOpen = false; bmExpanded = null; bmPendingRemove = null; renderBookmarks(); }
+      if(archOpen){ archOpen = false; archExpanded = null; archPendingDelete = null; renderArchive(); }
+      if(cleanOpen){ cleanOpen = false; renderClean(); }
+    }
+    if(!open) lockExpanded = null;
+    renderLocked();
+  }
+  if(lockBtn){
+    lockBtn.addEventListener("click", function(e){ e.stopPropagation(); setLockOpen(!lockOpen); });
+    lockPanel.addEventListener("click", function(e){
+      e.stopPropagation();
+      if(e.target.closest("a")) return;
+      if(handleFileClick(e)) return;
+      var el = e.target.closest("[data-lock-go]");
+      if(!el) return;
+      var id = String(el.getAttribute("data-lock-go")), n = notes.find(function(x){ return x.id === id; });
+      if(!n) return;
+      if(n.archived || n.hidden){ lockExpanded = (lockExpanded === id) ? null : id; renderLocked(); return; }
+      setLockOpen(false);
+      if(searchOpen) setSearchOpen(false);
+      jumpToNote(id);
+    });
+  }
+
   // ---- Archiv ----
   var archOpen = false;
   var archExpanded = null;
@@ -1698,7 +2178,7 @@
   var overlay = document.getElementById("overlay");
 
   function updateOverlay(){
-    if(overlay) overlay.hidden = !(bmOpen || archOpen);
+    if(overlay) overlay.hidden = !(bmOpen || archOpen || cleanOpen || lockOpen);
   }
 
   function archivedNotes(){
@@ -1755,6 +2235,8 @@
   function setArchOpen(open){
     archOpen = open;
     if(open && bmOpen){ bmOpen = false; bmExpanded = null; bmPendingRemove = null; renderBookmarks(); }
+    if(open && cleanOpen){ cleanOpen = false; renderClean(); }
+    if(open && lockOpen){ lockOpen = false; lockExpanded = null; renderLocked(); }
     if(!open){ archExpanded = null; archPendingDelete = null; }
     renderArchive();
   }
@@ -1853,6 +2335,8 @@
   document.addEventListener("click", function(e){
     if(bmOpen && !bmPanel.contains(e.target) && e.target !== bmBtn) setBmOpen(false);
     if(archOpen && !archPanel.contains(e.target) && !archBtn.contains(e.target)) setArchOpen(false);
+    if(cleanOpen && !cleanPanel.contains(e.target) && !cleanBtn.contains(e.target)) setCleanOpen(false);
+    if(lockOpen && !lockPanel.contains(e.target) && !lockBtn.contains(e.target)) setLockOpen(false);
     if(menuOpenId !== null && !e.target.closest(".note-menu") && !e.target.closest(".morebtn")){
       menuOpenId = null;
       renderList();
@@ -1862,6 +2346,8 @@
     if(e.key !== "Escape") return;
     if(bmOpen) setBmOpen(false);
     if(archOpen) setArchOpen(false);
+    if(cleanOpen) setCleanOpen(false);
+    if(lockOpen) setLockOpen(false);
     if(menuOpenId !== null){ menuOpenId = null; renderList(); }
   });
 
@@ -1984,6 +2470,8 @@
     if(open){
       if(bmOpen) setBmOpen(false);
       if(archOpen) setArchOpen(false);
+      if(cleanOpen) setCleanOpen(false);
+      if(lockOpen) setLockOpen(false);
       searchHint.hidden = !!searchQuery;
       setTimeout(function(){ searchInput.focus(); }, 0);
     } else {
@@ -2029,6 +2517,8 @@
   function renderList(){
     renderBookmarks();
     renderArchive();
+    renderClean();
+    renderLocked();
     var mo = document.getElementById("menuOverlay");
     if(mo) mo.hidden = (menuOpenId === null);
     var main = document.getElementById("main");
@@ -2084,21 +2574,34 @@
             '<button type="button" class="delbtn confirm-yes" data-action="confirm-delete" aria-label="Nein, ganz löschen">Nein</button>' +
             '<button type="button" class="delbtn" data-action="cancel-delete" aria-label="Abbrechen">Abbrechen</button>'
           : pendingRemove && pendingRemove.id === n.id ?
-            '<span class="confirm-text">' + (pendingRemove.foto ? 'Foto' : 'Datei') + ' entfernen?</span>' +
-            '<button type="button" class="delbtn confirm-yes" data-action="remove-yes" aria-label="Ja, entfernen">Ja</button>' +
-            '<button type="button" class="delbtn delx" data-action="remove-no" aria-label="Abbrechen" title="Abbrechen">' + ICON_X + '</button>'
+            '<span class="confirm-text">Löschen?</span>' +
+            '<button type="button" class="delbtn confirm-yes" data-action="remove-yes" aria-label="Ja, ' + (pendingRemove.foto ? 'Foto' : 'Datei') + ' löschen">Ja</button>' +
+            '<button type="button" class="delbtn abbr-tk" data-action="remove-no">Abbrechen</button>'
+          : pendingShare && pendingShare.id === n.id ?
+            (pendingShare.stage === "loading" ?
+              '<span class="confirm-text ct-share">Lädt Anhänge…</span>' +
+              '<button type="button" class="delbtn abbr-tk" data-action="share-cancel">Abbrechen</button>'
+            : pendingShare.stage === "ready" ?
+              '<span class="confirm-text ct-share">Bereit:</span>' +
+              '<button type="button" class="sharebtn" data-action="share-send" aria-label="Teilen-Menü öffnen">Senden</button>' +
+              '<button type="button" class="delbtn abbr-tk" data-action="share-cancel">Abbrechen</button>'
+            :
+              '<span class="confirm-text ct-share">Teilen?</span>' +
+              '<button type="button" class="sharebtn" data-action="share-team" aria-label="Im Team per Mail teilen">Im Team</button>' +
+              '<button type="button" class="sharebtn" data-action="share-ext" aria-label="Extern teilen, mit Anhängen">Extern</button>' +
+              '<button type="button" class="delbtn abbr-tk" data-action="share-cancel">Abbrechen</button>')
           : pendingDelete === n.id ?
-            '<span class="confirm-text">Entfernen?</span>' +
+            '<span class="confirm-text">Löschen?</span>' +
             '<button type="button" class="sharebtn" data-action="archive" aria-label="Archivieren">Archivieren</button>' +
             '<button type="button" class="delbtn confirm-yes" data-action="confirm-delete" aria-label="Endgültig löschen">Löschen</button>' +
-            '<button type="button" class="delbtn delx" data-action="cancel-delete" aria-label="Abbrechen" title="Abbrechen">' + ICON_X + '</button>'
+            '<button type="button" class="delbtn abbr-or" data-action="cancel-delete">Abbrechen</button>'
           :
             (dayLabel(n.ts) ? '<span class="note-day">' + dayLabel(n.ts) + '</span>' : '') +
             (n.locked ? '' : '<button type="button" class="delbtn delx delx-del" data-action="delete" aria-label="Notiz löschen" title="Löschen">' + ICON_X + '</button>') +
             (n.locked ? '' : '<button type="button" class="delbtn delx" data-action="attach-file" aria-label="Datei anhängen" title="Datei anhängen (max. ' + fmtSize(ATTACH_MAX) + ')">' + ICON_UPLOAD + '</button>' +
                              '<button type="button" class="delbtn delx" data-action="attach-photo" aria-label="Foto machen und anhängen" title="Foto anhängen">' + ICON_CAM + '</button>') +
             '<button type="button" class="delbtn delx" data-action="print" aria-label="Drucken" title="Drucken">' + ICON_PRINT + '</button>' +
-            '<button type="button" class="delbtn delx" data-action="share" aria-label="Per Mail teilen" title="Teilen">' + ICON_SHARE + '</button>'
+            '<button type="button" class="delbtn delx" data-action="share" aria-label="Teilen" title="Teilen">' + ICON_SHARE + '</button>'
           ) +
           (menuOpenId === n.id ?
             '<div class="note-menu" role="menu">' +
@@ -2168,6 +2671,8 @@
         note.kuerzel = input.value.trim().toUpperCase();
       } else {
         note.text = input.value.replace(/^\n+|\n+$/g, "");
+        // Text geleert, aber Anhänge vorhanden → wieder „Einwurf mobil“ (seit v88)
+        if(!note.text.trim() && noteFiles(note).length) note.text = FILE_NOTE_TEXT_MOBIL;
       }
       save();
       renderList();
@@ -2231,6 +2736,9 @@
     if(!btn) return;
     var li = btn.closest("li.note");
     var id = String(li.getAttribute("data-id"));
+    // Läuft gerade eine Texteingabe: erst sauber abschliessen, dann die Aktion ausführen (seit v88) –
+    // so reicht EIN Tipp (z. B. „+“ und gleich auf die Kamera), statt dass der erste nur die Eingabe schliesst
+    if(isEditing()){ try{ document.activeElement.blur(); }catch(x){} }
     var note = notes.find(function(n){ return n.id === id; });
     if(!note) return;
 
@@ -2259,7 +2767,7 @@
       e.stopPropagation();
       if(note.locked) return;
       var kind = btn.dataset.action === "attach-photo" ? "photo" : "file";
-      pendingDelete = null; pendingRemove = null;
+      pendingDelete = null; pendingRemove = null; pendingShare = null;
       if(countKind(note, kind) >= (kind === "photo" ? MAX_PHOTOS : MAX_FILES)){ toast(vollText(kind), true); renderList(); return; }
       pickFor(id, kind);
       return;
@@ -2286,7 +2794,7 @@
       note.bookmark = !note.bookmark;
       save(); renderList();
     } else if(btn.dataset.action === "delete"){
-      pendingRemove = null;
+      pendingRemove = null; pendingShare = null;
       pendingDelete = id;
       pendingDeleteStage = "confirm";
       renderList();
@@ -2310,12 +2818,25 @@
       renderList();
     } else if(btn.dataset.action === "share"){
       menuOpenId = null;
+      pendingDelete = null; pendingRemove = null;
+      pendingShare = { id: id, stage: "choose" };
       renderList();
-      var subject = encodeURIComponent("NOTES Webapp Weiterleitung");
-      var body = encodeURIComponent((note.kuerzel || "?") + " (" + formatTs(note.ts) + "):\n\n" + (note.text || "") + (noteFiles(note).length ? "\n\nAnhänge (in der NOTES-App): " + noteFiles(note).map(function(f){ return f.name; }).join(", ") : ""));
-      window.location.href = "mailto:?subject=" + subject + "&body=" + body;
+    } else if(btn.dataset.action === "share-team"){
+      pendingShare = null; renderList();
+      shareTeamMail(note);
+    } else if(btn.dataset.action === "share-ext"){
+      startExternalShare(note);
+    } else if(btn.dataset.action === "share-send"){
+      var ps = pendingShare;
+      if(ps && ps.id === id) doExternalShare(note, ps.files || [], ps.skipped || []);
+    } else if(btn.dataset.action === "share-cancel"){
+      pendingShare = null; renderList();
     }
   });
+
+  document.addEventListener("pointerdown", function(e){
+    if(isEditing() && e.target.closest && e.target.closest("li.note button[data-action]")) e.preventDefault();
+  }, true);
 
   document.getElementById("addBtn").addEventListener("click", function(){
     if(searchOpen) setSearchOpen(false);
