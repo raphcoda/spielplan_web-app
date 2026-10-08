@@ -1703,6 +1703,7 @@
   .ts-wrap:focus-within .ts-input{ padding-right:52px; }
   .ts-items{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:5px; }
   .ts-item{ display:flex; align-items:center; gap:6px; }
+  .ts-item-confirm{ margin:2px 0 4px; list-style:none; }
   .ts-dash{ flex:0 0 auto; color:var(--text-dim); font-weight:700; }
   .ts-item .ts-wrap{ flex:1 1 auto; min-width:0; }
   .ts-item-input{ height:30px; font-size:15px; font-weight:500; }
@@ -2066,7 +2067,11 @@
               html += '<ul class="ts-items">' + (t[lk] || []).map(function(it){
                 return '<li class="ts-item"><span class="ts-dash">–</span>' +
                   '<div class="ts-wrap"><input type="text" class="ts-input ts-item-input" data-tech="' + cat.id + ':item:' + lk + ':' + it.id + '" value="' + esc(it.text || "") + '" placeholder="Unterpunkt…" autocomplete="off" spellcheck="false" enterkeyhint="next">' + OK_BTN + '</div>' +
-                  '<button type="button" class="ts-item-del" data-action="tech-item-del" data-cat="' + cat.id + '" data-list="' + lk + '" data-item="' + it.id + '" aria-label="Unterpunkt löschen">✕</button></li>';
+                  '<button type="button" class="ts-item-del" data-action="tech-item-del" data-cat="' + cat.id + '" data-list="' + lk + '" data-item="' + it.id + '" aria-label="Unterpunkt löschen">✕</button></li>' +
+                  (techDelAsk === cat.id + ":" + lk + ":" + it.id ?
+                    '<li class="cue-confirm ts-item-confirm"><span class="cue-confirm-text">Punkt löschen?</span>' +
+                    '<button type="button" class="prod-dd-confirm-yes" data-action="tech-item-del-yes" data-cat="' + cat.id + '" data-list="' + lk + '" data-item="' + it.id + '">Ja</button>' +
+                    '<button type="button" class="prod-dd-confirm-no" data-action="tech-item-del-no">Nein</button></li>' : '');
               }).join("") + '</ul>' +
               '<button type="button" class="note-add ts-item-add" data-action="tech-item-add" data-cat="' + cat.id + '" data-list="' + lk + '">+ Punkt</button>';
             }
@@ -2087,6 +2092,7 @@
     Array.prototype.forEach.call(main.querySelectorAll(".ts-textarea"), growTa);
   }
   var techEmptyCleaned = false;
+  var techDelAsk = null;   // „Kategorie:Liste:Id“ des Technik-Punkts, für den gerade „Punkt löschen? Ja / Nein“ offen ist
   var OK_BTN = '<button type="button" class="ts-ok" data-action="tech-ok" tabindex="-1">OK</button>';
   function growTa(ta){
     var min = ta.classList.contains("ts-multi") ? 40 : 80;
@@ -4838,13 +4844,25 @@
     if(el) el.focus();
   }
   mainEl.addEventListener("mousedown", function(e){
-    if(e.target.closest('.tech-sheet [data-action="tech-item-add"], .tech-sheet [data-action="tech-item-del"]')) e.preventDefault();
+    if(e.target.closest('.tech-sheet [data-action="tech-item-add"], .tech-sheet [data-action="tech-item-del"], .tech-sheet [data-action="tech-item-del-yes"], .tech-sheet [data-action="tech-item-del-no"]')) e.preventDefault();
   });
   mainEl.addEventListener("click", function(e){
     var ab = e.target.closest('.tech-sheet [data-action="tech-item-add"]');
     if(ab){ addTechItem(ab.dataset.cat, ab.dataset.list, null); return; }
-    var db2 = e.target.closest('.tech-sheet [data-action="tech-item-del"]');
+    // ✕ fragt erst nach (leere Punkte werden ohne Rückfrage entfernt)
+    var dq = e.target.closest('.tech-sheet [data-action="tech-item-del"]');
+    if(dq){
+      var tq = sheetCue().tech[dq.dataset.cat], itq = tq && (tq[dq.dataset.list] || []).find(function(x){ return String(x.id) === dq.dataset.item; });
+      if(itq && String(itq.text || "").trim()){
+        techDelAsk = dq.dataset.cat + ":" + dq.dataset.list + ":" + dq.dataset.item;
+        renderList();
+        return;
+      }
+    }
+    if(e.target.closest('.tech-sheet [data-action="tech-item-del-no"]')){ techDelAsk = null; renderList(); return; }
+    var db2 = e.target.closest('.tech-sheet [data-action="tech-item-del"], .tech-sheet [data-action="tech-item-del-yes"]');
     if(db2){
+      techDelAsk = null;
       var t = sheetCue().tech[db2.dataset.cat];
       var lk2 = db2.dataset.list;
       if(t && t[lk2]) t[lk2] = t[lk2].filter(function(x){ return String(x.id) !== db2.dataset.item; });
