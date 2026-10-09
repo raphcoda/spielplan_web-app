@@ -81,12 +81,18 @@ h1 { font-size: 18px; font-weight: 500; color: #fff; line-height: 1.1; }
   font-family: Georgia, 'Times New Roman', serif; font-style: italic; font-size: 12px; line-height: 1;
   cursor: pointer; position: absolute; top: 0; left: 0; visibility: hidden; -webkit-tap-highlight-color: transparent; user-select: none;
 }
+.header-aktionen .info-i { position: static; visibility: visible; }
 .info-i:active { color: #bbb; border-color: #999; }
-.info-text { font-size: 14px; line-height: 1.5; color: #d0d0d0; }
+.info-text { font-size: 16px; line-height: 1.5; color: #d0d0d0; }
 .info-text ul { margin: 12px 0 0 18px; }
 .info-text li { margin-bottom: 8px; }
 .info-text b { color: #fff; }
-.info-version { margin-top: 16px; padding-top: 12px; border-top: 1px solid #2c2c2c; font-size: 11px; color: #777; letter-spacing: 0.03em; }
+.info-kopf { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+.info-kopf h2 { font-size: 18px; margin: 0; line-height: 1.3; }
+.info-zu { flex: 0 0 auto; width: 34px; height: 34px; margin: -6px -8px 0 0; padding: 0; border: 0; background: none; color: #cf8a48; display: flex; align-items: center; justify-content: center; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.info-zu svg { width: 19px; height: 19px; display: block; }
+.info-zu:hover, .info-zu:active { color: #e6a35f; }
+.info-version { margin-top: 16px; padding-top: 12px; border-top: 1px solid #2c2c2c; font-size: 13px; color: #777; letter-spacing: 0.03em; }
 .btn3d:active { filter: brightness(0.85); }
 .btn3d.btn-text { font-size: 9px; letter-spacing: 0.02em; }
 .btn3d svg { display: block; width: 12px; height: 12px; }
@@ -416,13 +422,53 @@ textarea:focus, .auswahl-feld:focus, #waehlSuche:focus { border-color: #4db8b8; 
 .fv-stage audio { width: min(520px, 90%); }
 .fv-bar { flex: 0 0 auto; display: flex; align-items: center; gap: 16px; font-size: 14px; color: #9a9a9a; padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px)); background: #1c1c1c; border-top: 1px solid #333; }
 .fv-bar span { flex: 1 1 auto; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nf-all { display: flex; align-items: center; gap: 8px; width: 100%; margin: 6px 0; padding: 9px 12px; border: 1px solid #3a3a3a; border-radius: 8px; background: #202020; color: #4db8b8; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.nf-all svg { width: 18px; height: 18px; flex: 0 0 auto; }
+.nf-all .nf-all-sub { margin-left: auto; font-weight: 400; font-size: 12.5px; color: #9a9a9a; }
+.nf-all.loading { opacity: .55; cursor: progress; }
+.fv-nav { position: absolute; top: 50%; transform: translateY(-50%); z-index: 2; width: 44px; height: 56px; border: 0; padding: 0; border-radius: 10px; background: rgba(28,28,28,.62); color: #eee; display: none; align-items: center; justify-content: center; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+#fvPrev { left: 8px; } #fvNext { right: 8px; }
+.file-view.galerie .fv-nav { display: flex; }
+.fv-nav:active { background: rgba(60,60,60,.85); }
 .fv-bar a svg { display: block; }
 .fv-bar a, .fv-bar button { flex: 0 0 auto; background: none; border: 0; font: inherit; font-weight: 700; color: #4db8b8; text-decoration: none; cursor: pointer; padding: 6px 2px; }
 @media (max-width: 899px) {
-  .row-foot .icon-btn { width: 31px; height: 28px; border-radius: 7px; }
+  .row-foot .icon-btn { width: 28px; height: 28px; border-radius: 7px; }
   .row-foot .icon-btn svg { width: 17px; height: 17px; }
-  .row-foot { gap: 6px; }
+  .row-foot { gap: 5px; }
 }
+/* ---------- Menü, Media, Putzen-Vorschau ---------- */
+#menuHinter { position: fixed; inset: 0; z-index: 70; background: transparent; }
+#menuHinter[hidden], #menuPop[hidden] { display: none; }
+#menuPop { position: fixed; z-index: 71; min-width: 190px; padding: 6px; background: #232323; border: 1px solid #2f6a6a; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,.6); }
+#menuPop button { display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 12px; border: 0; background: none; color: #e6e6e6; font: inherit; font-size: 16px; font-weight: 500; text-align: left; border-radius: 8px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+#menuPop button:active, #menuPop button:hover { background: #2e2e2e; }
+
+.md-row { display: flex; align-items: center; gap: 12px; padding: 9px 0; border-top: 1px solid #2c2c2c; }
+.md-th { flex: 0 0 auto; width: 54px; height: 54px; padding: 0; border: 1px solid #3a3a3a; border-radius: 9px; overflow: hidden; background: #262626; color: #4db8b8; display: flex; align-items: center; justify-content: center; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.md-th img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.md-th svg { width: 24px; height: 24px; }
+.md-body { flex: 1; min-width: 0; }
+.md-body .nf-sub { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.md-del { flex: 0 0 auto; width: 36px; height: 32px; padding: 0; border-radius: 7px; background: #1e1e1e; color: #999; display: flex; align-items: center; justify-content: center; cursor: pointer; border-top: 1px solid #585858; border-left: 1px solid #484848; border-bottom: 1px solid #0d0d0d; border-right: 1px solid #0d0d0d; }
+.md-del svg { width: 17px; height: 17px; }
+.md-frage { flex: 0 0 auto; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.md-frage .fuss-frage { font-size: 13px; }
+.md-frage .fuss-reihe { display: flex; gap: 6px; }
+.besen-sicher { font-size: 16px; line-height: 1.45; color: #f0f0f0; margin: 2px 0 14px; padding: 12px 14px; border: 1px solid #7a3a3a; border-radius: 10px; background: #221a1a; }
+.besen-sicher b { color: #fff; }
+#teilenListe .row { margin: 0; }
+#teilenListe .row-foot .icon-btn { display: none; }
+.row-foot .icon-btn { flex: 0 0 auto; }
+.pv-liste { max-height: 32vh; overflow-y: auto; margin: 0 0 14px; border: 1px solid #2c2c2c; border-radius: 10px; padding: 0 12px; }
+.pv-eintrag { padding: 9px 0; border-top: 1px solid #2c2c2c; }
+.pv-eintrag:first-child { border-top: 0; }
+.pv-kopf { font-size: 13px; color: #9a9a9a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pv-kopf b { color: #ddd; font-weight: 600; }
+.pv-thumbs { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.pv-th { width: 40px; height: 40px; border: 1px solid #3a3a3a; border-radius: 7px; overflow: hidden; background: #262626; color: #4db8b8; display: flex; align-items: center; justify-content: center; }
+.pv-th img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pv-th svg { width: 18px; height: 18px; }
 </style>
 </head>
 <body>
@@ -444,15 +490,12 @@ textarea:focus, .auswahl-feld:focus, #waehlSuche:focus { border-color: #4db8b8; 
       <div class="eyebrow-glanz" aria-hidden="true">Ton &amp; Bild</div>
     </div>
     <div class="header-aktionen">
-      <span class="btn3d" id="besenBtn" title="Erledigte aufräumen" role="button" aria-label="Erledigte aufräumen"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 3l-7.5 7.5"/><path d="M9.5 8.5l6 6-1.2 1.6H6.4L4 20h0c-.2-4 1.3-7.600 4.200-10.500z" transform="translate(1 0)"/><path d="M9 13l3 3M6.500 16.500l2.500 2.500"/></svg></span>
-      <span class="btn3d" id="archivBtn" title="Archiv">
-        <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="14" height="3.5" rx="1"/><path d="M4 7.5v8a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-8"/><path d="M8 11h4"/></svg>
-      </span>
+      <span class="info-i" id="infoBtn" title="Info" role="button" aria-label="Info">i</span>
+      <span class="btn3d" id="menuBtn" title="Menü" role="button" aria-label="Menü" aria-haspopup="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 7h14M5 12h14M5 17h14"/></svg></span>
       <span class="btn3d btn-text" id="csvBtn" title="Als CSV exportieren">CSV</span>
       <span class="btn3d btn-text" id="pdfBtn" title="Als PDF exportieren">PDF</span>
     </div>
   </div>
-  <span class="info-i" id="infoBtn" title="Info" role="button" aria-label="Info">i</span>
 </div>
 
 <div class="qbar" id="statusfilter">
@@ -548,23 +591,48 @@ textarea:focus, .auswahl-feld:focus, #waehlSuche:focus { border-color: #4db8b8; 
 <div class="blatt-hinter blatt-hoch" id="infoHinter">
   <div class="blatt">
     <div class="griff"></div>
-    <h2>Technisches Logbuch Ton &amp; Bild</h2>
+    <div class="info-kopf"><h2>Technisches Logbuch</h2><button type="button" class="info-zu" id="infoZu" aria-label="Schliessen" title="Schliessen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></div>
     <div class="info-text">
-      Zur Erfassung von Pendenzen und Störungen im Tonbetrieb. Alle Einträge sind auf allen Geräten sofort sichtbar und bearbeitbar.
+      Zur Erfassung von Pendenzen und Störungen im Tonbetrieb.
       <ul>
         <li><b>Status:</b> Erfasst, In Arbeit, Erledigt. Zum Ändern auf den Status tippen und das eigene Namenskürzel wählen.</li>
-        <li><b>CSV-Export:</b> Button CSV in der Titelzeile. Die Tabelle enthält alle Einträge, ist spaltenweise sortierbar und kann zur Archivierung auf dem Server abgelegt werden.</li>
+        <li><b>CSV-Export:</b> Button CSV in der Titelzeile. Die Tabelle enthält alle Einträge, ist spaltenweise sortierbar und kann zur Dokumentation auf dem Server abgelegt werden.</li>
         <li><b>PDF-Export:</b> Button PDF in der Titelzeile. Das PDF folgt den gesetzten Filtern. Beispiel: Filter «Erfasst» und Art «Tonregie» ergibt nur erfasste Einträge der Art Tonregie.</li>
       </ul>
-      <div class="info-version">V_Ton_LB_A_08.10.26_18:30</div>
+      <div class="info-version">V_Ton_LB_A_09.10.26_13:25</div>
     </div>
+  </div>
+</div>
+
+<div id="menuHinter" hidden></div>
+<div id="menuPop" role="menu" hidden>
+  <button type="button" role="menuitem" data-menu="about"><span>Über</span></button>
+  <button type="button" role="menuitem" data-menu="archiv"><span>Archiv</span></button>
+  <button type="button" role="menuitem" data-menu="medien"><span>Medien</span></button>
+  <button type="button" role="menuitem" data-menu="putzen"><span>Putzen</span></button>
+</div>
+
+<div class="blatt-hinter blatt-hoch" id="teilenHinter">
+  <div class="blatt">
+    <div class="griff"></div>
+    <div class="info-kopf"><h2>Eintrag</h2><button type="button" class="info-zu" id="teilenZu" aria-label="Schliessen" title="Schliessen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></div>
+    <div id="teilenListe"></div>
+  </div>
+</div>
+
+<div class="blatt-hinter blatt-hoch" id="medienHinter">
+  <div class="blatt">
+    <div class="griff"></div>
+    <div class="info-kopf"><h2>Medien</h2><button type="button" class="info-zu" id="medienZu" aria-label="Schliessen" title="Schliessen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></div>
+    <div class="besen-text" id="medienSumme"></div>
+    <div id="medienListe"></div>
   </div>
 </div>
 
 <div class="blatt-hinter blatt-hoch" id="archivHinter">
   <div class="blatt">
     <div class="griff"></div>
-    <h2>Archiv</h2>
+    <div class="info-kopf"><h2>Archiv</h2><button type="button" class="info-zu" id="archivZu" aria-label="Schliessen" title="Schliessen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></div>
     <div id="archivListe"></div>
   </div>
 </div>
@@ -582,18 +650,26 @@ textarea:focus, .auswahl-feld:focus, #waehlSuche:focus { border-color: #4db8b8; 
   </div>
 </div>
 
-<div class="blatt-hinter" id="besenHinter">
+<div class="blatt-hinter blatt-hoch" id="besenHinter">
   <div class="blatt">
     <div class="griff"></div>
-    <h2>Erledigte aufräumen</h2>
+    <div class="info-kopf"><h2>Putzen</h2><button type="button" class="info-zu" id="besenZu" aria-label="Schliessen" title="Schliessen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></div>
     <div class="besen-text" id="besenText"></div>
+    <div class="pv-liste" id="besenVorschau"></div>
+    <div id="besenOptionen">
     <button type="button" class="besen-opt" id="besenNurAnhang"><span>Nur Fotos und Dateien löschen</span><small>Die Einträge bleiben, nur die Anhänge verschwinden. Gibt Speicherplatz frei.</small></button>
     <button type="button" class="besen-opt rot" id="besenAlles"><b>Einträge samt Anhängen löschen</b><small id="besenAllesSub"></small></button>
     <div class="besen-abbr" id="besenAbbr">Abbrechen</div>
+    </div>
+    <div id="besenFrage" hidden>
+      <div class="besen-sicher" id="besenFrageText"></div>
+      <button type="button" class="besen-opt rot" id="besenJa"><b>Ja, endgültig löschen</b></button>
+      <div class="besen-abbr" id="besenNein">Abbrechen</div>
+    </div>
   </div>
 </div>
 
-<div class="file-view" id="fileView" hidden><div class="fv-stage" id="fvStage"></div><div class="fv-bar"><span id="fvName"></span><a id="fvTab" href="#" target="_blank" rel="noopener" title="In neuem Tab öffnen (zoomen)" aria-label="In neuem Tab öffnen"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M8 16L18 6M10 6h8v8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a><a id="fvSave" href="#">Speichern</a><button type="button" id="fvClose">Schliessen</button></div></div>
+<div class="file-view" id="fileView" hidden><div class="fv-stage" id="fvStage"></div><button type="button" class="fv-nav" id="fvPrev" aria-label="Vorheriges Bild"><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="fv-nav" id="fvNext" aria-label="Nächstes Bild"><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="fv-bar"><span id="fvName"></span><a id="fvTab" href="#" target="_blank" rel="noopener" title="In neuem Tab öffnen (zoomen)" aria-label="In neuem Tab öffnen"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M8 16L18 6M10 6h8v8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a><a id="fvSave" href="#">Speichern</a><button type="button" id="fvClose">Schliessen</button></div></div>
 <div id="hinweis" role="status" hidden></div>
 <input type="file" id="pickFile" multiple hidden tabindex="-1" aria-hidden="true">
 <input type="file" id="pickPhoto" accept="image/*" capture="environment" hidden tabindex="-1" aria-hidden="true">
@@ -720,6 +796,7 @@ function dbEmpfangen(snap){
   eintraege.length = 0;
   neu.forEach(function(e){ eintraege.push(e); });
   zeichne();
+  if (typeof linkPruefen === "function") linkPruefen();
   if (document.getElementById("archivHinter").classList.contains("offen")) archivZeichne();
 }
 function dbAnhaengen(){
@@ -899,6 +976,11 @@ function anhaengeHtml(e){
     }).join("") + '</div>';
   }
   rest.forEach(function(f){ h += dateiZeileHtml(e, f); });
+  if (l.length >= 2){
+    var total = l.reduce(function(x, f){ return x + (f.size || 0); }, 0), busy = zipLaeuft[e.id];
+    h += '<button type="button" class="nf-all' + (busy ? ' loading' : '') + '" data-file-all="' + attr(e.id) + '" title="Alle Anhänge als eine ZIP-Datei laden">' + ICON_DOWNLOAD
+      + '<span>' + (busy ? 'Lädt\u00a0…' : 'Alle laden') + '</span><span class="nf-all-sub">' + l.length + '\u00a0Dateien · ' + esc(fmtSize(total)) + '</span></button>';
+  }
   return h;
 }
 
@@ -921,7 +1003,7 @@ function dateiLoeschen(fid){
 var fileView = document.getElementById("fileView"), fvStage = document.getElementById("fvStage");
 function closeFileView(){
   if (!fileView || fileView.hidden) return;
-  fileView.hidden = true; fvStage.innerHTML = "";
+  fileView.hidden = true; fvStage.innerHTML = ""; fileView.classList.remove("galerie"); galerie = null;
 }
 function showFile(f){
   var url = fileUrls[f.id]; if (!url) return;
@@ -957,7 +1039,22 @@ if (fileView){
     if (ev.target.closest("#fvSave") || ev.target.closest("#fvTab")) return;
     if (ev.target.closest("#fvClose") || ev.target === fvStage || ev.target.tagName === "IMG") closeFileView();
   });
-  document.addEventListener("keydown", function(ev){ if (ev.key === "Escape") closeFileView(); });
+  document.addEventListener("keydown", function(ev){
+    if (ev.key === "Escape") closeFileView();
+    else if (ev.key === "ArrowLeft") galerieWeiter(-1);
+    else if (ev.key === "ArrowRight") galerieWeiter(1);
+  });
+  document.getElementById("fvPrev").addEventListener("click", function(ev){ ev.stopPropagation(); galerieWeiter(-1); });
+  document.getElementById("fvNext").addEventListener("click", function(ev){ ev.stopPropagation(); galerieWeiter(1); });
+  // Wischen nach links/rechts blättert; ein Wisch soll das Bild nicht schliessen
+  var wx = null, wischte = false;
+  fvStage.addEventListener("touchstart", function(ev){ wx = ev.touches.length === 1 ? ev.touches[0].clientX : null; wischte = false; }, { passive: true });
+  fvStage.addEventListener("touchend", function(ev){
+    if (wx === null || !ev.changedTouches.length) return;
+    var dx = ev.changedTouches[0].clientX - wx; wx = null;
+    if (Math.abs(dx) > 50){ wischte = true; galerieWeiter(dx < 0 ? 1 : -1); setTimeout(function(){ wischte = false; }, 400); }
+  }, { passive: true });
+  fvStage.addEventListener("click", function(ev){ if (wischte){ ev.stopPropagation(); ev.preventDefault(); } }, true);
 }
 function findAttachment(key){
   var i = String(key).indexOf("|"), eid = String(key).slice(0, i), fid = String(key).slice(i + 1);
@@ -966,21 +1063,110 @@ function findAttachment(key){
   var f = dateien(e).find(function(x){ return String(x.id) === fid; });
   return f ? { eintrag: e, file: f } : null;
 }
+var ICON_DOWNLOAD = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v10.5M7.5 10.5L12 15l4.5-4.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 15v3a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-3" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+var zipLaeuft = {};
+// Minimaler ZIP-Schreiber (ohne Kompression, UTF-8-Namen)
+var crcTab = null;
+function crc32(u8){
+  if (!crcTab){ crcTab = []; for (var n = 0; n < 256; n++){ var c = n; for (var k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1); crcTab[n] = c >>> 0; } }
+  var crc = 0xFFFFFFFF;
+  for (var i = 0; i < u8.length; i++) crc = crcTab[(crc ^ u8[i]) & 0xFF] ^ (crc >>> 8);
+  return (crc ^ 0xFFFFFFFF) >>> 0;
+}
+function zipBauen(eintraege_){
+  var enc = new TextEncoder(), teile = [], zentral = [], off = 0, d = new Date();
+  var dt = ((d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1)) & 0xFFFF;
+  var dd = (((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate()) & 0xFFFF;
+  eintraege_.forEach(function(it){
+    var nm = enc.encode(it.name), crc = crc32(it.data), sz = it.data.length;
+    var lh = new DataView(new ArrayBuffer(30));
+    lh.setUint32(0, 0x04034b50, true); lh.setUint16(4, 20, true); lh.setUint16(6, 0x0800, true); lh.setUint16(8, 0, true);
+    lh.setUint16(10, dt, true); lh.setUint16(12, dd, true); lh.setUint32(14, crc, true); lh.setUint32(18, sz, true); lh.setUint32(22, sz, true);
+    lh.setUint16(26, nm.length, true); lh.setUint16(28, 0, true);
+    teile.push(lh.buffer, nm, it.data);
+    var ch = new DataView(new ArrayBuffer(46));
+    ch.setUint32(0, 0x02014b50, true); ch.setUint16(4, 20, true); ch.setUint16(6, 20, true); ch.setUint16(8, 0x0800, true); ch.setUint16(10, 0, true);
+    ch.setUint16(12, dt, true); ch.setUint16(14, dd, true); ch.setUint32(16, crc, true); ch.setUint32(20, sz, true); ch.setUint32(24, sz, true);
+    ch.setUint16(28, nm.length, true); ch.setUint32(42, off, true);
+    zentral.push(ch.buffer, nm);
+    off += 30 + nm.length + sz;
+  });
+  var zl = 0; zentral.forEach(function(x){ zl += x.byteLength; });
+  var end = new DataView(new ArrayBuffer(22));
+  end.setUint32(0, 0x06054b50, true); end.setUint16(8, eintraege_.length, true); end.setUint16(10, eintraege_.length, true);
+  end.setUint32(12, zl, true); end.setUint32(16, off, true);
+  return new Blob(teile.concat(zentral, [end.buffer]), { type: "application/zip" });
+}
+function alleLaden(eid){
+  var e = eintraege.find(function(x){ return x.id === eid; }); if (!e || zipLaeuft[eid]) return;
+  var l = dateien(e); if (!l.length) return;
+  zipLaeuft[eid] = true; zeichne();
+  hinweis("Dateien werden gesammelt …", false, 0);
+  var namen = {}, items = [], fehlt = 0, i = 0;
+  function eindeutig(n){
+    var base = String(n || "datei").replace(/[\\\/:*?"<>|]/g, "_"); if (!namen[base]){ namen[base] = 1; return base; }
+    var p = base.lastIndexOf("."), a = p > 0 ? base.slice(0, p) : base, x = p > 0 ? base.slice(p) : "", k = ++namen[base];
+    return a + " (" + k + ")" + x;
+  }
+  function weiter(){
+    if (i >= l.length) return Promise.resolve();
+    var f = l[i++];
+    hinweis("Lädt (" + i + " von " + l.length + "): " + f.name + " …", false, 0);
+    return fetchFileRecord(f.id).then(function(rec){
+      if (!rec || !rec.data){ fehlt++; return; }
+      var bl = b64ToBlob(rec.data, rec.type || f.type);
+      return new Promise(function(res){ var r = new FileReader(); r.onload = function(){ items.push({ name: eindeutig(f.name), data: new Uint8Array(r.result) }); res(); }; r.onerror = function(){ fehlt++; res(); }; r.readAsArrayBuffer(bl); });
+    }, function(){ fehlt++; }).then(weiter);
+  }
+  weiter().then(function(){
+    delete zipLaeuft[eid]; zeichne();
+    if (!items.length){ hinweis("Dateien konnten nicht geladen werden (Verbindung?).", true); return; }
+    var t = new Date(e.zeit), pad = function(n){ return n < 10 ? "0" + n : "" + n; };
+    var kurz = String(e.txt || "").replace(/[^A-Za-z0-9ÄÖÜäöüß]+/g, " ").trim().slice(0, 30).trim();
+    var name = "Logbuch " + pad(t.getDate()) + "." + pad(t.getMonth() + 1) + "." + String(t.getFullYear()).slice(2) + (kurz ? " " + kurz : "") + ".zip";
+    dateiHerunterladen(zipBauen(items), name);
+    hinweis(items.length + (items.length === 1 ? " Datei" : " Dateien") + " als ZIP geladen" + (fehlt ? " · " + fehlt + " nicht gefunden" : ""), fehlt > 0);
+  });
+}
+var galerie = null;   // { list:[Anhänge], idx } – Bilder desselben Eintrags zum Durchblättern
+function ladeDatei(f){
+  if (fileUrls[f.id]) return Promise.resolve(true);
+  if (fileLoading[f.id]) return Promise.resolve(false);
+  fileLoading[f.id] = true; zeichne();
+  return fetchFileRecord(f.id).then(function(rec){
+    delete fileLoading[f.id];
+    if (!rec || !rec.data){ hinweis("Datei nicht gefunden – evtl. bereits gelöscht.", true); zeichne(); return false; }
+    fileBlobs[f.id] = b64ToBlob(rec.data, rec.type || f.type);
+    fileUrls[f.id] = URL.createObjectURL(fileBlobs[f.id]);
+    zeichne(); return true;
+  }).catch(function(){
+    delete fileLoading[f.id];
+    hinweis("Datei konnte nicht geladen werden (Verbindung?).", true); zeichne(); return false;
+  });
+}
+function galerieZeigen(){
+  var f = galerie.list[galerie.idx];
+  showFile(f);
+  var n = galerie.list.length;
+  fileView.classList.toggle("galerie", n > 1 && viewKind(f) === "img");
+  if (n > 1) document.getElementById("fvName").textContent = (galerie.idx + 1) + " / " + n + " · " + f.name;
+}
+function galerieWeiter(d){
+  if (!galerie || galerie.list.length < 2 || fileView.hidden) return;
+  var n = galerie.list.length, idx = (galerie.idx + d + n) % n, f = galerie.list[idx];
+  ladeDatei(f).then(function(ok){
+    if (!ok || fileView.hidden || !galerie) return;
+    galerie.idx = idx; galerieZeigen();
+  });
+}
 function openAttachment(key){
   var hit = findAttachment(key); if (!hit) return;
   var f = hit.file;
-  if (fileUrls[f.id]){ showFile(f); return; }
-  if (fileLoading[f.id]) return;
-  fileLoading[f.id] = true; zeichne();
-  fetchFileRecord(f.id).then(function(rec){
-    delete fileLoading[f.id];
-    if (!rec || !rec.data){ hinweis("Datei nicht gefunden – evtl. bereits gelöscht.", true); zeichne(); return; }
-    fileBlobs[f.id] = b64ToBlob(rec.data, rec.type || f.type);
-    fileUrls[f.id] = URL.createObjectURL(fileBlobs[f.id]);
-    zeichne(); showFile(f);
-  }).catch(function(){
-    delete fileLoading[f.id];
-    hinweis("Datei konnte nicht geladen werden (Verbindung?).", true); zeichne();
+  var l = dateien(hit.eintrag).filter(function(x){ return viewKind(x) === "img"; });
+  galerie = (viewKind(f) === "img" && l.length) ? { list: l, idx: Math.max(0, l.findIndex(function(x){ return x.id === f.id; })) } : null;
+  ladeDatei(f).then(function(ok){
+    if (!ok) return;
+    if (galerie) galerieZeigen(); else { fileView.classList.remove("galerie"); showFile(f); }
   });
 }
 function removeAttachment(eid, fid){
@@ -1173,14 +1359,17 @@ function pickFor(eid, kind){
 });
 
 // Klicks in der Liste (Anhänge öffnen, entfernen, Upload, Kamera)
-document.getElementById("list").addEventListener("click", function(ev){
+function listKlick(ev){
   var t = ev.target;
+  if (t.closest("[data-share]")){ eintragTeilen(t.closest("[data-share]").getAttribute("data-share")); return; }
   var el = t.closest("[data-file-remove]");
   if (el){
     var hit = findAttachment(el.getAttribute("data-file-remove"));
     if (hit){ pendingRemove = { id: hit.eintrag.id, fid: hit.file.id, foto: fileKind(hit.file) === "photo" }; zeichne(); }
     return;
   }
+  el = t.closest("[data-file-all]");
+  if (el){ alleLaden(el.getAttribute("data-file-all")); return; }
   el = t.closest("[data-file-open]");
   if (el){ openAttachment(el.getAttribute("data-file-open")); return; }
   el = t.closest("[data-pick-file]");
@@ -1189,7 +1378,9 @@ document.getElementById("list").addEventListener("click", function(ev){
   if (el){ pickFor(el.getAttribute("data-pick-photo"), "photo"); return; }
   if (t.closest("[data-rm-ja]")){ var p = pendingRemove; pendingRemove = null; if (p) removeAttachment(p.id, p.fid); return; }
   if (t.closest("[data-rm-nein]")){ pendingRemove = null; zeichne(); return; }
-});
+}
+document.getElementById("list").addEventListener("click", listKlick);
+document.getElementById("teilenListe").addEventListener("click", listKlick);
 
 /* ---- Besen: erledigte Einträge aufräumen ---- */
 function besenAuswertung(){
@@ -1203,6 +1394,7 @@ function besenAuswertung(){
   return r;
 }
 function besenOeffnen(){
+  besenFrageZu();
   var r = besenAuswertung();
   if (!r.liste.length){ toastZeigen("Keine erledigten Einträge"); return; }
   var n = r.liste.length;
@@ -1215,9 +1407,149 @@ function besenOeffnen(){
   } else txt += ", keiner davon mit Anhängen.";
   document.getElementById("besenText").innerHTML = txt;
   document.getElementById("besenAllesSub").textContent = (n === 1 ? "Der erledigte Eintrag wird" : "Alle " + n + " erledigten Einträge werden") + " endgültig entfernt. Archivierte bleiben.";
+  document.getElementById("besenVorschau").innerHTML = besenVorschauHtml(r);
   document.getElementById("besenNurAnhang").disabled = !r.mitAnh;
   document.getElementById("besenHinter").classList.add("offen");
 }
+
+/* ---- Menü ---- */
+var menuBtn = document.getElementById("menuBtn"), menuPop = document.getElementById("menuPop"), menuHinter = document.getElementById("menuHinter");
+function menuZu(){ menuPop.hidden = true; menuHinter.hidden = true; }
+function menuAuf(){
+  var r = menuBtn.getBoundingClientRect();
+  menuPop.hidden = false; menuHinter.hidden = false;
+  var w = menuPop.offsetWidth;
+  menuPop.style.top = Math.round(r.bottom + 8) + "px";
+  menuPop.style.left = Math.max(8, Math.min(Math.round(r.left), window.innerWidth - w - 8)) + "px";
+}
+document.getElementById("infoBtn").onclick = function(){ document.getElementById("infoHinter").classList.add("offen"); };
+menuBtn.onclick = function(){ if (menuPop.hidden) menuAuf(); else menuZu(); };
+menuHinter.addEventListener("click", menuZu);
+document.addEventListener("keydown", function(ev){ if (ev.key === "Escape") menuZu(); });
+menuPop.addEventListener("click", function(ev){
+  var b = ev.target.closest("[data-menu]"); if (!b) return;
+  var w = b.getAttribute("data-menu"); menuZu();
+  if (w === "about") document.getElementById("infoHinter").classList.add("offen");
+  else if (w === "archiv") archivOeffnen();
+  else if (w === "medien") medienOeffnen();
+  else if (w === "putzen") besenOeffnen();
+});
+
+/* ---- Media: alle Anhänge auf einen Blick ---- */
+var mdPending = null;
+function thumbHtml(f, cls){
+  return thumbOk(f.thumb) ? '<img src="' + f.thumb + '" alt="">' : (viewKind(f) === "img" || fileKind(f) === "photo" ? ICON_IMG : ICON_FILE);
+}
+function medienOeffnen(){ mdPending = null; medienZeichne(); document.getElementById("medienHinter").classList.add("offen"); }
+function medienZeichne(){
+  var liste = [];
+  eintraege.forEach(function(e){ dateien(e).forEach(function(f){ liste.push({ e: e, f: f }); }); });
+  liste.sort(function(a, b){ return (b.f.ts || new Date(b.e.zeit).getTime()) - (a.f.ts || new Date(a.e.zeit).getTime()); });
+  var bytes = liste.reduce(function(x, it){ return x + Math.round((it.f.size || 0) * 4 / 3); }, 0);
+  document.getElementById("medienSumme").innerHTML = liste.length
+    ? "<b>" + liste.length + "</b> " + (liste.length === 1 ? "Datei" : "Dateien und Fotos") + ", zusammen rund <b>" + esc(fmtSize(bytes)) + "</b> in der Datenbank."
+    : "Noch keine Fotos oder Dateien hochgeladen.";
+  document.getElementById("medienListe").innerHTML = liste.map(function(it){
+    var key = attr(it.e.id + "|" + it.f.id), e = it.e, f = it.f;
+    var ctx = datumKurz(e.zeit) + (e.art ? " · " + e.art : "") + (e.archiviert ? " · Archiv" : "") + " · " + String(e.txt || "").slice(0, 40);
+    var rechts = (mdPending === it.e.id + "|" + it.f.id)
+      ? '<span class="md-frage"><span class="fuss-frage">Löschen?</span><span class="fuss-reihe"><span class="fuss-btn ja" data-md-ja="' + key + '">Ja</span><span class="fuss-btn" data-md-nein="1">Nein</span></span></span>'
+      : '<span class="md-del" data-md-del="' + key + '" role="button" aria-label="Löschen" title="Löschen"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 5h12M8 5V3.5h4V5M5.5 5l.6 11a1 1 0 0 0 1 .9h5.8a1 1 0 0 0 1-.9l.6-11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>';
+    return '<div class="md-row"><button type="button" class="md-th" data-md-open="' + key + '" aria-label="Ansehen">' + thumbHtml(f) + '</button>'
+      + '<div class="md-body"><span class="nf-name">' + esc(f.name || "") + '</span><span class="nf-sub">' + esc(fmtSize(f.size || 0)) + '</span><span class="nf-sub">' + esc(ctx) + '</span></div>' + rechts + '</div>';
+  }).join("");
+}
+document.getElementById("medienListe").addEventListener("click", function(ev){
+  var t = ev.target, el;
+  if ((el = t.closest("[data-md-open]"))){ openAttachment(el.getAttribute("data-md-open")); return; }
+  if ((el = t.closest("[data-md-del]"))){ mdPending = el.getAttribute("data-md-del"); medienZeichne(); return; }
+  if (t.closest("[data-md-nein]")){ mdPending = null; medienZeichne(); return; }
+  if ((el = t.closest("[data-md-ja]"))){
+    var k = el.getAttribute("data-md-ja"), hit = findAttachment(k); mdPending = null;
+    if (hit) removeAttachment(hit.eintrag.id, hit.file.id);
+    medienZeichne();
+  }
+});
+document.getElementById("archivZu").onclick = function(){ document.getElementById("archivHinter").classList.remove("offen"); };
+document.getElementById("medienZu").onclick = function(){ document.getElementById("medienHinter").classList.remove("offen"); };
+document.getElementById("besenZu").onclick = function(){ document.getElementById("besenHinter").classList.remove("offen"); };
+
+function besenVorschauHtml(r){
+  return r.liste.map(function(e){
+    var d = dateien(e);
+    return '<div class="pv-eintrag"><div class="pv-kopf"><b>' + datumKurz(e.zeit) + '</b>' + (e.art ? " · " + esc(e.art) : "") + " · " + esc(String(e.txt || "").slice(0, 50)) + '</div>'
+      + (d.length ? '<div class="pv-thumbs">' + d.map(function(f){ return '<span class="pv-th" title="' + attr(f.name) + '">' + thumbHtml(f) + '</span>'; }).join("") + '</div>' : '')
+      + '</div>';
+  }).join("");
+}
+
+/* ---- Teilen: Link auf einen Eintrag (inkl. Anhänge) ---- */
+var SHARE_BASE = "https://raphcoda.github.io/spielplan_web-app/Logbuch/";
+var ICON_SHARE = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6.5" cy="12" r="2.4" fill="none" stroke="currentColor" stroke-width="1.9"/><circle cx="17.5" cy="6" r="2.4" fill="none" stroke="currentColor" stroke-width="1.9"/><circle cx="17.5" cy="18" r="2.4" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M8.6 10.9l6.8-3.8M8.6 13.1l6.8 3.8" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>';
+var teilenId = "", linkId = "";
+function teilenLink(id){
+  var base = /^https?:/.test(location.protocol) ? location.href.split("#")[0] : SHARE_BASE;
+  return base + "#e=" + encodeURIComponent(id);
+}
+function kopierenText(txt){
+  if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(txt);
+  return new Promise(function(res, rej){
+    var ta = document.createElement("textarea"); ta.value = txt; ta.setAttribute("readonly", ""); ta.style.cssText = "position:fixed;left:-9999px;top:0";
+    document.body.appendChild(ta); ta.select();
+    var ok = false; try{ ok = document.execCommand("copy"); }catch(x){}
+    ta.remove(); ok ? res() : rej();
+  });
+}
+function linkKopieren(url){
+  // Wo möglich als Hyperlink «Logbuch-Link» (z. B. in Mail, Notizen), sonst die Adresse als Text
+  if (window.ClipboardItem && navigator.clipboard && navigator.clipboard.write && window.isSecureContext){
+    try{
+      var item = new ClipboardItem({
+        "text/html": new Blob(['<a href="' + attr(url) + '">Logbuch-Link</a>'], { type: "text/html" }),
+        "text/plain": new Blob([url], { type: "text/plain" })
+      });
+      return navigator.clipboard.write([item]);
+    }catch(x){}
+  }
+  return kopierenText(url);
+}
+var TEILEN_AKTIV = false;   // true setzen, sobald der Team-Login eingerichtet ist
+function eintragTeilen(id){
+  if (!TEILEN_AKTIV){ hinweis("Teilen wird noch eingerichtet.", false, 2400); return; }
+  var e = eintraege.find(function(x){ return x.id === id; }); if (!e) return;
+  var url = teilenLink(id);
+  var kopieren = function(){ linkKopieren(url).then(function(){ toastZeigen("Logbuch-Link kopiert"); }, function(){ window.prompt("Link kopieren:", url); }); };
+  if (navigator.share){
+    navigator.share({ title: "Logbuch", text: "Logbuch-Link", url: url }).catch(function(err){
+      if (!err || err.name !== "AbortError") kopieren();
+    });
+  } else kopieren();
+}
+function teilenZeichnen(){
+  var e = eintraege.find(function(x){ return x.id === teilenId; });
+  var el = document.getElementById("teilenListe");
+  if (!e){ el.innerHTML = ""; return; }
+  el.innerHTML = zeileHtml(e, eintraege.indexOf(e));
+}
+function teilenOeffnen(id){ teilenId = id; teilenZeichnen(); document.getElementById("teilenHinter").classList.add("offen"); }
+function teilenSchliessen(){
+  document.getElementById("teilenHinter").classList.remove("offen"); teilenId = "";
+  if (/^#e=/.test(location.hash)){ try{ history.replaceState(null, "", location.href.split("#")[0]); }catch(x){} }
+}
+document.getElementById("teilenZu").onclick = teilenSchliessen;
+document.getElementById("teilenHinter").addEventListener("click", function(ev){ if (ev.target === this) teilenSchliessen(); });
+// Link öffnen: #e=<id>
+function linkLesen(){
+  var m = /^#e=([^&]+)/.exec(location.hash || "");
+  linkId = m ? decodeURIComponent(m[1]) : "";
+}
+function linkPruefen(){
+  if (!linkId) return;
+  var id = linkId; linkId = "";
+  var e = eintraege.find(function(x){ return x.id === id; });
+  if (e) teilenOeffnen(id); else toastZeigen("Eintrag nicht gefunden (evtl. gelöscht)");
+}
+linkLesen();
 function besenSchliessen(){ document.getElementById("besenHinter").classList.remove("offen"); }
 function besenAnhaengeLoeschen(){
   besenSchliessen();
@@ -1240,12 +1572,51 @@ function besenAllesLoeschen(){
   pendingRemove = null; zeichne();
   toastZeigen(r.liste.length + (r.liste.length === 1 ? " Eintrag gelöscht" : " Einträge gelöscht"));
 }
-document.getElementById("besenBtn").onclick = besenOeffnen;
-document.getElementById("besenNurAnhang").onclick = besenAnhaengeLoeschen;
-document.getElementById("besenAlles").onclick = besenAllesLoeschen;
+var besenModus = "";
+function besenFrageZeigen(modus){
+  var r = besenAuswertung(), n = r.liste.length, anz = r.fotos + r.dateien;
+  besenModus = modus;
+  document.getElementById("besenFrageText").innerHTML = modus === "anhang"
+    ? "Wirklich <b>" + anz + (anz === 1 ? " Anhang" : " Fotos und Dateien") + "</b> der erledigten Einträge endgültig löschen? Die Einträge bleiben, das lässt sich nicht rückgängig machen."
+    : "Wirklich <b>" + n + (n === 1 ? " erledigten Eintrag" : " erledigte Einträge") + "</b> samt allen Anhängen endgültig löschen? Das lässt sich nicht rückgängig machen.";
+  document.getElementById("besenOptionen").hidden = true;
+  document.getElementById("besenFrage").hidden = false;
+}
+function besenFrageZu(){ besenModus = ""; document.getElementById("besenFrage").hidden = true; document.getElementById("besenOptionen").hidden = false; }
+document.getElementById("besenNurAnhang").onclick = function(){ besenFrageZeigen("anhang"); };
+document.getElementById("besenAlles").onclick = function(){ besenFrageZeigen("alles"); };
+document.getElementById("besenNein").onclick = besenFrageZu;
+document.getElementById("besenJa").onclick = function(){ var m = besenModus; besenFrageZu(); if (m === "anhang") besenAnhaengeLoeschen(); else if (m === "alles") besenAllesLoeschen(); };
 document.getElementById("besenAbbr").onclick = besenSchliessen;
 
+function zeileHtml(e, i){
+  return "<div class='row "+e.status+"'>"
+       + "<div class='row-top'>"
+       + "<span class='badge badge-"+e.status+"' onclick='statusOeffnen("+i+")'>"+STATUS_LABEL[e.status]+"</span>"
+       + (e.art ? "<span class='row-art'>"+esc(e.art)+"</span>" : "")
+       + (e.rot ? "<span class='rf-dot'></span>" : "")
+       + "<span class='row-date'>"+uhr(e.zeit)+"</span>"
+       + "</div>"
+       + (e.prod ? "<div class='row-prod'>"+esc(kurzProd(e.prod))+"</div>" : "")
+       + "<div class='row-txt'>"+esc(e.txt)+"</div>"
+       + anhaengeHtml(e)
+       + "<div class='row-foot'>"
+       + (e.von ? "<span class='kuerzel'>"+esc(e.von)+"</span>" : "")
+       + (e.statusVon || e.statusZeit ? "<span class='aenderung'><b>"+esc(e.statusVon||"")+"</b> "+(e.statusZeit?datumKurz(e.statusZeit):"")+"</span>" : "")
+       + "<span class='row-spacer'></span>"
+       + (pendingRemove && pendingRemove.id === e.id
+          ? "<span class='fuss-frage'>"+(pendingRemove.foto ? "Foto" : "Datei")+" löschen?</span><span class='fuss-btn ja' data-rm-ja='1'>Ja</span><span class='fuss-btn' data-rm-nein='1'>Abbrechen</span>"
+          : "<span class='icon-btn' onclick='bearbeiten("+i+")' title='Bearbeiten'><svg width='18' height='18' viewBox='0 0 20 20' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M14.5 3.5l2 2L6 16l-3 1 1-3L14.5 3.5z'/></svg></span>"
+          + "<span class='icon-btn kamera' data-pick-photo='"+attr(e.id)+"' title='Foto aufnehmen' role='button' aria-label='Foto aufnehmen'>"+ICON_CAM+"</span>"
+          + "<span class='icon-btn' data-pick-file='"+attr(e.id)+"' title='Datei hochladen' role='button' aria-label='Datei hochladen'>"+ICON_UPLOAD+"</span>"
+          + "<span class='icon-btn' data-share='"+attr(e.id)+"' title='Teilen' role='button' aria-label='Eintrag teilen'>"+ICON_SHARE+"</span>"
+          + "<span class='icon-btn' onclick='loeschen("+i+")' title='Löschen'><svg width='18' height='18' viewBox='0 0 20 20' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M4 5h12M8 5V3.5h4V5M5.5 5l.6 11a1 1 0 0 0 1 .9h5.8a1 1 0 0 0 1-.9l.6-11'/></svg></span>")
+       + "</div></div>";
+}
+
 function zeichne(){
+  if (teilenId && document.getElementById("teilenHinter").classList.contains("offen")) teilenZeichnen();
+  if (typeof medienZeichne === "function" && document.getElementById("medienHinter").classList.contains("offen")) medienZeichne();
   eintraege.sort(function(a,b){ return new Date(b.zeit) - new Date(a.zeit); });
 
   var sicht = eintraege.filter(inAnsicht);
@@ -1269,27 +1640,7 @@ function zeichne(){
       letzterTag = t.key;
       h += "<div class='tag-heading'><span class='d'>"+t.datum+"</span><span>"+t.wort+"</span></div>";
     }
-    h += "<div class='row "+e.status+"'>"
-       + "<div class='row-top'>"
-       + "<span class='badge badge-"+e.status+"' onclick='statusOeffnen("+i+")'>"+STATUS_LABEL[e.status]+"</span>"
-       + (e.art ? "<span class='row-art'>"+esc(e.art)+"</span>" : "")
-       + (e.rot ? "<span class='rf-dot'></span>" : "")
-       + "<span class='row-date'>"+uhr(e.zeit)+"</span>"
-       + "</div>"
-       + (e.prod ? "<div class='row-prod'>"+esc(kurzProd(e.prod))+"</div>" : "")
-       + "<div class='row-txt'>"+esc(e.txt)+"</div>"
-       + anhaengeHtml(e)
-       + "<div class='row-foot'>"
-       + (e.von ? "<span class='kuerzel'>"+esc(e.von)+"</span>" : "")
-       + (e.statusVon || e.statusZeit ? "<span class='aenderung'><b>"+esc(e.statusVon||"")+"</b> "+(e.statusZeit?datumKurz(e.statusZeit):"")+"</span>" : "")
-       + "<span class='row-spacer'></span>"
-       + (pendingRemove && pendingRemove.id === e.id
-          ? "<span class='fuss-frage'>"+(pendingRemove.foto ? "Foto" : "Datei")+" löschen?</span><span class='fuss-btn ja' data-rm-ja='1'>Ja</span><span class='fuss-btn' data-rm-nein='1'>Abbrechen</span>"
-          : "<span class='icon-btn' onclick='bearbeiten("+i+")' title='Bearbeiten'><svg width='18' height='18' viewBox='0 0 20 20' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M14.5 3.5l2 2L6 16l-3 1 1-3L14.5 3.5z'/></svg></span>"
-          + "<span class='icon-btn kamera' data-pick-photo='"+attr(e.id)+"' title='Foto aufnehmen' role='button' aria-label='Foto aufnehmen'>"+ICON_CAM+"</span>"
-          + "<span class='icon-btn' data-pick-file='"+attr(e.id)+"' title='Datei hochladen' role='button' aria-label='Datei hochladen'>"+ICON_UPLOAD+"</span>"
-          + "<span class='icon-btn' onclick='loeschen("+i+")' title='Löschen'><svg width='18' height='18' viewBox='0 0 20 20' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M4 5h12M8 5V3.5h4V5M5.5 5l.6 11a1 1 0 0 0 1 .9h5.8a1 1 0 0 0 1-.9l.6-11'/></svg></span>")
-       + "</div></div>";
+    h += zeileHtml(e, i);
   });
   el.innerHTML = h;
 }
@@ -1398,8 +1749,7 @@ function archivEndgueltigLoeschen(i){
   archivZeichne();
   zeichne();
 }
-document.getElementById("archivBtn").onclick = archivOeffnen;
-document.getElementById("infoBtn").onclick = function(){ document.getElementById("infoHinter").classList.add("offen"); };
+document.getElementById("infoZu").onclick = function(){ document.getElementById("infoHinter").classList.remove("offen"); };
 
 document.getElementById("statusfilter").addEventListener("click", function(ev){
   var p = ev.target.closest(".qtag");
