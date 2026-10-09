@@ -86,8 +86,20 @@
     position:relative;
   }
   /* Logo als Flex-Element zwischen Titel und Lupe → genau mittig im freien Raum (seit v65) */
+  /* Mitte der Kopfzeile: Logo (Desktop) und Info-„i“ (seit v98) */
+  .head-mid{ flex:1 1 auto; min-width:0; display:flex; align-items:center; justify-content:center; gap:26px; }
+  .infobtn{ flex:0 0 auto; width:19px; height:19px; padding:0; border-radius:50%; border:1.4px solid currentColor; background:none;
+    color:#6e6e6e; display:flex; align-items:center; justify-content:center; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+  .infobtn span{ font-family:Georgia, "Times New Roman", serif; font-style:italic; font-weight:700; font-size:12.5px; line-height:1; margin-left:-1px; }
+  .infobtn.open{ color:var(--ka); }
+  .info-panel{ width:min(320px, 100%); padding:6px 6px 8px; }
+  .info-head{ display:flex; align-items:center; padding:8px 10px 6px; font-size:16px; font-weight:700; letter-spacing:.06em; color:var(--ka); }
+  .info-x{ margin-left:auto; background:none; border:0; color:var(--accent); font-size:14px; padding:2px 4px; cursor:pointer; }
+  .info-list{ margin:0; padding:2px 10px 4px 28px; font-size:16px; line-height:1.55; color:var(--text); }
+  .info-list li{ list-style:"– "; padding-left:2px; }
+  .info-ver{ padding:10px 10px 2px; font-size:11px; color:var(--text-dim); opacity:.6; letter-spacing:.02em; }
   .brand-logo{
-    flex:1 1 auto;
+    flex:0 0 auto;
     min-width:0;
     text-align:center;
     transform:scaleX(1.4);
@@ -305,16 +317,34 @@
   /* Header-Knopf Archiv (•••) */
   .archbtn{ color:var(--text-dim); font-size:13px; }
   /* Lupe · Archiv · ★ enger zusammen, + leicht abgesetzt (seit v68) */
-  #archBtn, #bmBtn, #cleanBtn, #lockBtn{ margin-left:-4px; }
+  #archBtn, #bmBtn, #cleanBtn, #lockBtn, #menuBtn{ margin-left:-4px; }
+  /* Menü ☰ (seit v98): About · Archiv · Media */
+  .menubtn{ color:var(--text-dim); }
+  .menu-panel{ width:200px; padding:5px; }
+  .menu-item{ display:flex; align-items:center; width:100%; background:none; border:0; border-radius:7px; text-align:left;
+    font:inherit; font-size:17px; color:var(--text); padding:10px 12px; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+  .menu-item:hover{ background:var(--surface-2); }
+  .menu-count{ margin-left:auto; font-size:13px; color:var(--text-dim); }
+  /* Media-Übersicht (seit v98) */
+  .md-sec{ font-size:13px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:var(--text-dim); padding:10px 10px 6px; }
+  .md-grid{ display:flex; flex-wrap:wrap; gap:8px; padding:0 10px 4px; }
+  .md-ph{ width:84px; position:relative; }
+  .md-ph > .nf-ph{ position:absolute; top:0; right:0; width:0; height:0; z-index:1; }
+  .md-doc .nf-row{ padding-right:6px; }
+  .md-ask{ margin:4px 10px 6px; border:1px solid var(--line); border-radius:8px; padding:6px 10px; }
+  .md-ph .nf-ph-open{ width:84px; height:84px; }
+  .md-cap{ font-size:11.5px; color:var(--text-dim); margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .md-doc .nf-row{ width:100%; margin:0; padding-right:0; background:none; border-top:1px solid var(--divider); }
+  .md-doc .nf-row .note-file{ padding:9px 10px; }
+  .md-note{ display:block; font-size:12px; color:var(--text-dim); margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .md-tag{ font-size:11px; border:1px solid var(--line); border-radius:5px; padding:0 4px; margin-left:4px; }
   /* Schloss „Gesperrte Einträge“ (seit v94): nur am Desktop mit Maus, immer grau */
-  .lockbtn{ display:none; }
-  @media (hover:hover) and (pointer:fine){ .lockbtn{ display:flex; } }
+  .lockbtn{ display:none; }    /* seit v106 aus der Kopfzeile genommen – Funktion im Menü „Gesperrt“ */
   /* Besen „Alle Anhänge löschen“ (seit v93): nur am Desktop mit Maus */
-  .cleanbtn{ display:none; }
-  @media (hover:hover) and (pointer:fine){ .cleanbtn{ display:flex; } }
+  .cleanbtn{ display:none; }   /* seit v106 auch am Desktop aus der Kopfzeile genommen – Funktion im Menü „Putze“ */
   .cleanbtn .bm-count{ font-size:11px; letter-spacing:normal; }
   .cleanbtn{ padding:0 6px; gap:3px; }
-  .brand-logo.zu-eng{ visibility:hidden; }   /* Logo weicht, wenn es sonst an NOTES oder die Lupe stösst (seit v93) */
+  .brand-logo.zu-eng{ display:none; }   /* Logo weicht, wenn es sonst an NOTES oder die Lupe stösst (seit v93) */
   .clean-body{ padding:4px 10px 10px; font-size:15px; line-height:1.45; color:var(--text); }
   .clean-body .clean-q{ font-size:17px; font-weight:700; color:var(--warn); margin-bottom:6px; }
   .clean-body .clean-sub{ color:var(--text-dim); font-size:14px; margin-top:4px; }
@@ -679,6 +709,35 @@
     resize:none;
     overflow:hidden;
   }
+  /* ---- Abhak-Liste in einer Notiz (seit v96) ---- */
+  .note-items{ width:calc(100% + 24px); margin:0 -12px; padding:0 12px 6px; background:var(--note-band); }
+  .ni-row{ display:flex; align-items:flex-start; gap:10px; padding:4px 0; }
+  .ni-check{ flex:0 0 auto; width:22px; height:22px; margin-top:2px; padding:0; border:2px solid var(--text-dim); border-radius:6px;
+    background:none; color:var(--bg); display:flex; align-items:center; justify-content:center; cursor:pointer; opacity:.75;
+    -webkit-tap-highlight-color:transparent; }
+  .ni-check svg{ width:14px; height:14px; display:block; visibility:hidden; }
+  .ni-row.done .ni-check{ background:var(--ka); border-color:var(--ka); opacity:1; }
+  .ni-row.done .ni-check svg{ visibility:visible; }
+  .ni-text{ flex:1 1 auto; min-width:0; font-size:17px; line-height:1.4; color:var(--text); white-space:pre-wrap; word-wrap:break-word; cursor:text;
+    -webkit-tap-highlight-color:transparent; }
+  .ni-row.done .ni-text{ color:var(--text-dim); text-decoration:line-through; text-decoration-color:rgba(176,176,176,.6); }
+  li.note.locked .ni-text, li.note.locked .ni-check{ cursor:default; }
+  li.note.locked .ni-check{ opacity:.45; }
+  li.note.locked .ni-row.done .ni-check{ opacity:.6; }
+  .ni-del{ flex:0 0 auto; background:none; border:0; padding:4px 0 4px 6px; margin-top:1px; color:var(--text-dim); opacity:.6; line-height:0; cursor:pointer;
+    -webkit-tap-highlight-color:transparent; }
+  .ni-del svg{ width:15px; height:15px; display:block; }
+  .ni-row:has(.ni-input) .ni-del{ display:none; }
+  .ni-input{ flex:1 1 auto; min-width:0; font:inherit; font-size:17px; line-height:1.4; color:var(--text); background:var(--surface);
+    border:1px solid var(--accent); border-radius:7px; padding:2px 7px; margin:-3px 0; outline:none; }
+  .ni-add{ background:none; border:0; padding:6px 0 4px 32px; font:inherit; font-size:16px; font-weight:600; color:var(--ka); cursor:pointer;
+    -webkit-tap-highlight-color:transparent; }
+  .ni-foot{ display:flex; align-items:center; min-height:24px; }
+  .ni-count{ margin-left:auto; font-size:13px; font-weight:600; color:var(--text-dim); white-space:nowrap; }
+  .ni-count.all{ color:var(--ka); }
+  .ni-add.ni-add-edit{ display:block; text-align:left; padding:2px 0 8px 2px; }
+  .ni-row .note-ok.ni-ok{ flex:0 0 auto; height:26px; margin-top:-1px; }
+  .bm-full .note-items{ width:100%; margin:6px 0 0; padding:0; background:none; }
   .note-footer{
     display:flex;
     justify-content:flex-end;
@@ -894,12 +953,13 @@
 <header class="top">
   <div class="title-row">
     <button class="backbtn" id="backBtn" type="button" aria-label="Zurück zum Spielplan" title="Zurück zum Spielplan"><svg viewBox="0 0 11 18" aria-hidden="true"><path d="M9 1.5L2 9l7 7.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-    <h1 id="appTitle" title="Zurück zum Spielplan"><span class="title-swap"><span id="titleNot" class="title-face visible">NOT</span><span id="titleTon" class="title-face">TON</span></span>ES</h1>
-    <span class="brand-logo"><span class="brand-text">TON &amp; BILD</span></span>
+    <h1 id="appTitle" title="Zurück zum Spielplan"><span class="title-swap"><span id="titleNot" class="title-face visible">NOT</span><span id="titleTon" class="title-face">TON</span></span>E</h1>
+    <span class="head-mid" id="headMid"><span class="brand-logo"><span class="brand-text">TON &amp; BILD</span></span></span>
     <button class="bmbtn searchbtn" id="searchBtn" aria-label="Suchen" aria-expanded="false" aria-controls="searchRow"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M15.5 15.5L21 21" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
     <button class="bmbtn archbtn cleanbtn" id="cleanBtn" aria-label="Anhänge älter als einen Monat löschen" title="Anhänge älter als 1 Monat löschen (Speicher freigeben)" aria-expanded="false" aria-controls="cleanPanel"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="display:block"><path d="M20.5 3.5l-7.2 7.2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M14.6 12.4l-3-3c-1.6-.4-3.4.3-4.6 1.5L4 14l6 6 3.1-3c1.2-1.2 1.9-3 1.5-4.6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M7 17l-2.5 2.5M9.5 18.5l-1.5 2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span class="bm-count" id="cleanCount"></span></button>
     <button class="bmbtn archbtn lockbtn" id="lockBtn" aria-label="Gesperrte Einträge anzeigen" title="Gesperrte Einträge" aria-expanded="false" aria-controls="lockPanel"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="display:block"><rect x="5" y="11" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span class="bm-count" id="lockCount"></span></button>
-    <button class="bmbtn archbtn" id="archBtn" aria-label="Archiv anzeigen" aria-expanded="false" aria-controls="archPanel"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="display:block"><rect x="3" y="4" width="18" height="5" rx="1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 9v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 13h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="bm-count" id="archCount"></span></button>
+    <button class="bmbtn archbtn menubtn" id="menuBtn" aria-label="Menü" title="Menü" aria-expanded="false" aria-controls="menuPanel"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="display:block"><path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button>
+    <button class="bmbtn archbtn" id="archBtn" style="display:none" aria-label="Archiv anzeigen" aria-expanded="false" aria-controls="archPanel"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="display:block"><rect x="3" y="4" width="18" height="5" rx="1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 9v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 13h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="bm-count" id="archCount"></span></button>
     <button class="bmbtn" id="bmBtn" aria-label="Lesezeichen anzeigen" aria-expanded="false" aria-controls="bmPanel">★<span class="bm-count" id="bmCount"></span></button>
     <button class="addbtn" id="addBtn" aria-label="Neue Notiz">+</button>
     <div class="overlay" id="overlay" hidden></div>
@@ -907,6 +967,24 @@
     <div class="bm-panel arch-panel" id="archPanel" hidden></div>
     <div class="bm-panel arch-panel clean-panel" id="cleanPanel" hidden></div>
     <div class="bm-panel arch-panel" id="lockPanel" hidden></div>
+    <div class="bm-panel menu-panel" id="menuPanel" hidden>
+      <button type="button" class="menu-item" data-menu="about">Über</button>
+      <button type="button" class="menu-item" data-menu="archiv">Archiv<span class="menu-count" id="menuArchCount"></span></button>
+      <button type="button" class="menu-item" data-menu="media">Media<span class="menu-count" id="menuMediaCount"></span></button>
+      <button type="button" class="menu-item" data-menu="gesperrt">Gesperrt<span class="menu-count" id="menuLockCount"></span></button>
+      <button type="button" class="menu-item" data-menu="putze">Putze<span class="menu-count" id="menuCleanCount"></span></button>
+    </div>
+    <div class="bm-panel arch-panel" id="mediaPanel" hidden></div>
+    <div class="bm-panel info-panel" id="infoPanel" hidden>
+      <div class="info-head"><span>Note</span><button type="button" class="info-x" id="infoClose" aria-label="Schliessen">✕</button></div>
+      <ul class="info-list">
+        <li>Notizen mit Checklisten</li>
+        <li>max. 10 Dateien + 3 Fotos/Eintrag</li>
+        <li>max. 5&nbsp;MB/Anhang</li>
+        <li>max. 1920&nbsp;px lange Seite bei Fotos<br>(verkleinert automatisch vor Upload)</li>
+      </ul>
+      <div class="info-ver" id="infoVer"></div>
+    </div>
   </div>
   <div class="search-row" id="searchRow" hidden>
     <input type="search" class="search-input" id="searchInput" placeholder="Suchen: Wort, Kürzel, „links“, Juli, 01.07.2026 …" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search">
@@ -926,7 +1004,7 @@
 <input type="file" id="pickFile" multiple hidden tabindex="-1" aria-hidden="true">
 <input type="file" id="pickPhoto" accept="image/*" capture="environment" hidden tabindex="-1" aria-hidden="true">
 <div class="gate" id="gate" hidden><form class="gate-box" id="gateForm" autocomplete="on">
-  <div class="gate-title">NOTES</div><div class="gate-brand">TON &amp; BILD</div><div class="gate-line"></div>
+  <div class="gate-title">NOTE</div><div class="gate-brand">TON &amp; BILD</div><div class="gate-line"></div>
   <input class="gate-user" type="email" name="username" autocomplete="username" id="gateUser" tabindex="-1" readonly aria-hidden="true">
   <label class="gate-label" for="gateCode">Team-Code</label>
   <input class="gate-input" id="gateCode" type="password" name="password" autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go">
@@ -1000,9 +1078,34 @@
     }catch(e){ notes = []; }
     lastSynced = snapshotMap(notes);
   }
+  // ---- Neue Notiz als Entwurf (seit v97) ----
+  // Nach „+“ existiert die Notiz zuerst nur auf diesem Gerät. Erst wenn sie Inhalt hat (Text, Listenpunkt,
+  // Foto/Datei), wird sie gespeichert und erscheint auf allen Geräten. Bleibt sie leer, verschwindet sie.
+  var draftId = null;
+  function draftNote(){ return draftId ? (notes.find(function(n){ return n.id === draftId; }) || null) : null; }
+  function hasContent(n){
+    return !!(String(n.text || "").trim() || noteFiles(n).length || itemsOf(n).some(function(it){ return String(it.t || "").trim(); }));
+  }
+  // Leeren Entwurf kurz danach verwerfen – ausser man bearbeitet gerade etwas darin (z. B. Kürzel oder ersten Punkt)
+  function dropEmptyDraftSoon(){
+    setTimeout(function(){
+      var d = draftNote();
+      if(!d){ draftId = null; return; }
+      if(hasContent(d)) return;
+      var ae = document.activeElement, li = ae && ae.closest ? ae.closest("li.note") : null;
+      if(li && li.getAttribute("data-id") === d.id && isEditing()) return;
+      notes = notes.filter(function(n){ return n.id !== d.id; });
+      draftId = null;
+      renderList();
+    }, 250);
+  }
   function save(){
-    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(notes)); }catch(e){}
-    var cur = snapshotMap(notes);
+    var d0 = draftNote();
+    if(draftId && !d0) draftId = null;
+    if(d0 && hasContent(d0)){ draftId = null; d0.ts = Date.now(); }   // jetzt veröffentlichen
+    var list = draftId ? notes.filter(function(n){ return n.id !== draftId; }) : notes;
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); }catch(e){}
+    var cur = snapshotMap(list);
     var updates = {}, changed = false;
     Object.keys(cur).forEach(function(id){
       if(cur[id] !== lastSynced[id]){ updates[id] = JSON.parse(cur[id]); changed = true; }
@@ -1026,9 +1129,44 @@
     }
   }
 
+  // ---- Abhak-Liste (seit v96): note.items = [ { id, t, done } ] ----
+  var ICON_CHECK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  function itemsOf(n){
+    if(!n) return [];
+    var l = n.items;
+    if(l && !Array.isArray(l) && typeof l === "object") l = Object.keys(l).map(function(k){ return l[k]; });
+    return (Array.isArray(l) ? l : []).filter(function(it){ return it && typeof it === "object" && it.id; });
+  }
+  function itemsCountHtml(n){
+    var l = itemsOf(n).filter(function(it){ return String(it.t || "").trim(); });
+    if(!l.length) return "";
+    var d = l.filter(function(it){ return it.done; }).length;
+    return '<span class="ni-count' + (d === l.length ? ' all' : '') + '" title="erledigt / Punkte">' + d + '/' + l.length + '</span>';
+  }
+  function itemsHtml(n, nurLesen){
+    var l = itemsOf(n);
+    if(!l.length) return "";
+    var html = '<div class="note-items">';
+    l.forEach(function(it){
+      html += '<div class="ni-row' + (it.done ? ' done' : '') + '">' +
+        '<button type="button" class="ni-check"' + (nurLesen ? ' disabled' : ' data-action="item-toggle" data-item="' + esc(it.id) + '"') +
+          ' role="checkbox" aria-checked="' + (it.done ? 'true' : 'false') + '" aria-label="Abhaken">' + ICON_CHECK + '</button>' +
+        '<span class="ni-text"' + (nurLesen ? '' : ' data-item-edit="' + esc(it.id) + '"') + '>' + (it.t ? linkify(esc(it.t)) : '&nbsp;') + '</span>' +
+        ((nurLesen || n.locked) ? '' : '<button type="button" class="ni-del" data-action="item-del" data-item="' + esc(it.id) + '" aria-label="Punkt löschen" title="Punkt löschen">' + ICON_X_SMALL + '</button>') +
+      '</div>';
+    });
+    var plus = (!nurLesen && !n.locked) ? '<button type="button" class="ni-add" data-action="item-add">+ Punkt</button>' : '';
+    var cnt = itemsCountHtml(n);
+    if(plus || cnt) html += '<div class="ni-foot">' + plus + cnt + '</div>';
+    return html + '</div>';
+  }
+  function itemsPlain(n){
+    return itemsOf(n).filter(function(it){ return String(it.t || "").trim(); })
+      .map(function(it){ return (it.done ? "☑ " : "☐ ") + it.t; }).join("\n");
+  }
   function isEditing(){
     var ae = document.activeElement;
-    return !!(ae && (ae.classList.contains("note-text-input") || ae.classList.contains("note-kuerzel-input")));
+    return !!(ae && (ae.classList.contains("note-text-input") || ae.classList.contains("note-kuerzel-input") || ae.classList.contains("ni-input")));
   }
 
   // ---- Team-Login (seit v80) ----
@@ -1087,9 +1225,11 @@
         db.ref("sharedNotes").update(ups);
       }
     }
+    var dLocal = draftNote();
+    lastSynced = snapshotMap(remote);
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(remote)); }catch(e){}
     notes = remote;
-    lastSynced = snapshotMap(notes);
-    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(notes)); }catch(e){}
+    if(dLocal && !remote.some(function(n){ return n.id === dLocal.id; })) notes.push(dLocal);   // eigener Entwurf bleibt
     if(isEditing()){ deferredRemote = true; return; }
     renderList();
   }
@@ -1148,7 +1288,7 @@
   // „Extern“ teilen vorerst abgeschaltet (v95) – erst nach Einrichtung des Team-Logins auf true setzen
   var EXTERN_SHARE_ENABLED = false;
   var pendingShare = null;            // { id, stage:"choose"|"loading"|"ready", files:[File], skipped:[Namen], token }
-  var PHOTO_EDGE = 1600;      // längere Seite eines verkleinerten Fotos in Pixel
+  var PHOTO_EDGE = 1920;      // längere Seite eines verkleinerten Fotos in Pixel
   var pickTarget = null;      // id der Notiz, für die gerade eine Datei/ein Foto gewählt wird
   var ICON_UPLOAD = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5V4.5M7.5 8.5L12 4l4.5 4.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 14.5v3.5a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-3.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   var ICON_CAM = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8.5A1.5 1.5 0 0 1 5.5 7H8l1.4-2.2h5.2L16 7h2.5A1.5 1.5 0 0 1 20 8.5v9A1.5 1.5 0 0 1 18.5 19h-13A1.5 1.5 0 0 1 4 17.5Z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.4" fill="none" stroke="currentColor" stroke-width="1.9"/></svg>';
@@ -1293,7 +1433,7 @@
   function zipName(n){
     var d = new Date(n.ts || Date.now()), p = function(x){ return (x < 10 ? "0" : "") + x; };
     var who = String(n.kuerzel || "").replace(/[^A-Za-z0-9ÄÖÜäöüß_-]+/g, "");
-    return "NOTES" + (who ? "_" + who : "") + "_" + d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate()) + ".zip";
+    return "NOTE" + (who ? "_" + who : "") + "_" + d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate()) + ".zip";
   }
   function downloadAll(nid){
     var n = notes.find(function(x){ return x.id === nid; });
@@ -1346,11 +1486,12 @@
     return new Blob([u8], { type: type || "application/octet-stream" });
   }
   function shareText(n){
-    return (n.kuerzel || "?") + " (" + formatTs(n.ts) + "):\n\n" + (n.text || "");
+    var pl = itemsPlain(n);
+    return (n.kuerzel || "?") + " (" + formatTs(n.ts) + "):\n\n" + (n.text || "") + (pl ? "\n\n" + pl : "");
   }
   function shareTeamMail(n){
-    var subject = encodeURIComponent("NOTES Webapp Weiterleitung");
-    var body = encodeURIComponent(shareText(n) + (noteFiles(n).length ? "\n\nAnhänge (in der NOTES-App): " + noteFiles(n).map(function(f){ return f.name; }).join(", ") : ""));
+    var subject = encodeURIComponent("NOTE Webapp Weiterleitung");
+    var body = encodeURIComponent(shareText(n) + (noteFiles(n).length ? "\n\nAnhänge (in der NOTE-App): " + noteFiles(n).map(function(f){ return f.name; }).join(", ") : ""));
     window.location.href = "mailto:?subject=" + subject + "&body=" + body;
   }
   function canShareFiles(list){
@@ -1393,7 +1534,7 @@
   // Muss direkt aus einem Tipp heraus laufen (sonst blockiert v. a. Safari das Teilen-Menü)
   function doExternalShare(n, files, skipped){
     pendingShare = null; renderList();
-    var data = { title: "NOTES", text: shareText(n) };
+    var data = { title: "NOTE", text: shareText(n) };
     if(files.length) data.files = files;
     if(skipped.length) data.text += "\n\n(Nicht angehängt: " + skipped.join(", ") + ")";
     var p;
@@ -1405,7 +1546,7 @@
       if(files.length){
         // Zweiter Versuch nur mit Text (z. B. Dateien zu gross für das Teilen-Menü)
         try{
-          navigator.share({ title: "NOTES", text: shareText(n) }).then(function(){
+          navigator.share({ title: "NOTE", text: shareText(n) }).then(function(){
             toast("Anhänge konnten nicht mitgeschickt werden – nur der Text wurde geteilt.", true, 6000);
           }, function(e2){ if(!(e2 && e2.name === "AbortError")) toast("Teilen hat nicht geklappt.", true); });
           return;
@@ -1418,7 +1559,7 @@
     if(!navigator.share){
       // Browser ohne Teilen-Menü (z. B. Firefox am Desktop): Mail mit Text, Anhänge von Hand
       pendingShare = null; renderList();
-      var subject = encodeURIComponent("NOTES");
+      var subject = encodeURIComponent("NOTE");
       window.location.href = "mailto:?subject=" + subject + "&body=" + encodeURIComponent(shareText(n));
       if(noteFiles(n).length) toast("Dieser Browser kann keine Dateien teilen. Anhänge bitte in der App öffnen, speichern und ans Mail hängen.", true, 7000);
       return;
@@ -1617,7 +1758,7 @@
   // Foto/Bild verkleinern: längere Seite PHOTO_EDGE, JPEG; falls nötig weiter verkleinern, bis es unter max liegt
   function shrinkImage(file, max){
     return loadImage(file).then(function(r){
-      var thumb = makeThumb(r.img), steps = [[PHOTO_EDGE, .82], [PHOTO_EDGE, .68], [1280, .7], [1024, .65], [800, .6]], i = 0;
+      var thumb = makeThumb(r.img), steps = [[PHOTO_EDGE, .82], [PHOTO_EDGE, .7], [1600, .7], [1280, .65], [1024, .6]], i = 0;
       function next(){
         var st = steps[i++];
         return canvasBlob(drawScaled(r.img, st[0]), st[1]).then(function(bl){
@@ -1893,7 +2034,7 @@
         } else if(n.hidden && bmExpanded === n.id){
           html += '<div class="bm-sub bm-full">' +
             (n.kuerzel || n.ts ? '<div class="bm-meta">' + esc(n.kuerzel || "") + (n.kuerzel ? ' · ' : '') + esc(formatTs(n.ts)) + '</div>' : '') +
-            '<div class="bm-fulltext">' + (n.text ? linkify(esc(n.text)) : '(leere Notiz)') + '</div>' + attachmentsHtml(n, true) +
+            '<div class="bm-fulltext">' + (n.text ? linkify(esc(n.text)) : '(leere Notiz)') + '</div>' + itemsHtml(n, true) + attachmentsHtml(n, true) +
             '<div class="bm-actions"><button type="button" class="sharebtn" data-bm-unhide="' + n.id + '">Wieder in Liste einblenden</button></div>' +
           '</div>';
         }
@@ -1903,7 +2044,9 @@
   }
 
   function setBmOpen(open){
+    if(open) closePanels("bm");
     bmOpen = open;
+    if(open && infoOpen) setInfoOpen(false);
     if(open && archOpen){ archOpen = false; renderArchive(); }
     if(open && cleanOpen){ cleanOpen = false; renderClean(); }
     if(open && lockOpen){ lockOpen = false; lockExpanded = null; renderLocked(); }
@@ -2025,9 +2168,10 @@
   function logoPlatz(){
     if(!brandLogo || !brandText) return;
     brandLogo.classList.remove("zu-eng");
-    var t = document.getElementById("appTitle").getBoundingClientRect(), l = brandText.getBoundingClientRect(),
-        sb = document.getElementById("searchBtn").getBoundingClientRect();
-    if(l.width && (l.left - t.right < 12 || sb.left - l.right < 12)) brandLogo.classList.add("zu-eng");
+    var mid = document.getElementById("headMid"), l = brandText.getBoundingClientRect(), ib = document.getElementById("infoBtn");
+    if(!l.width || !mid) return;
+    // Platz in der Mitte: Logo (gestreckt) + Abstand + „i“ + je 12px Luft links/rechts
+    if(mid.getBoundingClientRect().width < l.width + 26 + (ib ? ib.getBoundingClientRect().width : 0) + 24) brandLogo.classList.add("zu-eng");
   }
   window.addEventListener("resize", logoPlatz);
   if(document.fonts && document.fonts.ready && document.fonts.ready.then) document.fonts.ready.then(logoPlatz);
@@ -2063,7 +2207,9 @@
     cleanPanel.innerHTML = html;
   }
   function setCleanOpen(open){
+    if(open) closePanels("clean");
     cleanOpen = open;
+    if(open && infoOpen) setInfoOpen(false);
     if(open){
       if(bmOpen){ bmOpen = false; bmExpanded = null; bmPendingRemove = null; renderBookmarks(); }
       if(archOpen){ archOpen = false; archExpanded = null; archPendingDelete = null; renderArchive(); }
@@ -2098,6 +2244,131 @@
       e.stopPropagation();
       if(e.target.closest("[data-clean-yes]")){ cleanAllAttachments(); return; }
       if(e.target.closest("[data-clean-no]")) setCleanOpen(false);
+    });
+  }
+
+  // ---- Kurzinfo „i“ (seit v98) ----
+  var APP_VERSION = "v_ton_nt_gh_a_091026_1321";   // bei jeder Änderung anpassen: v_ton_nt_gh_a_TTMMJJ_HHMM
+  var infoOpen = false;
+  var infoPanel = document.getElementById("infoPanel");
+  if(document.getElementById("infoVer")) document.getElementById("infoVer").textContent = APP_VERSION;
+  function setInfoOpen(open){
+    infoOpen = open;
+    if(open){
+      if(bmOpen){ bmOpen = false; bmExpanded = null; bmPendingRemove = null; renderBookmarks(); }
+      if(archOpen){ archOpen = false; archExpanded = null; archPendingDelete = null; renderArchive(); }
+      if(cleanOpen){ cleanOpen = false; renderClean(); }
+      if(lockOpen){ lockOpen = false; lockExpanded = null; renderLocked(); }
+    }
+    if(open) closePanels("info");
+    infoPanel.hidden = !open;
+    updateOverlay();
+  }
+  if(infoPanel){
+    infoPanel.addEventListener("click", function(e){ e.stopPropagation(); if(e.target.closest("#infoClose")) setInfoOpen(false); });
+  }
+
+  // ---- Menü ☰ und Media-Übersicht (seit v98) ----
+  var menuOpen = false, mediaOpen = false, mediaPendingRemove = null;   // "noteId|fileId"
+  var menuBtn = document.getElementById("menuBtn"), menuPanel = document.getElementById("menuPanel"), mediaPanel = document.getElementById("mediaPanel");
+  // alle anderen Felder schliessen (name = das, das offen bleiben soll)
+  function closePanels(name){
+    if(name !== "bm" && bmOpen){ bmOpen = false; bmExpanded = null; bmPendingRemove = null; renderBookmarks(); }
+    if(name !== "arch" && archOpen){ archOpen = false; archExpanded = null; archPendingDelete = null; renderArchive(); }
+    if(name !== "clean" && cleanOpen){ cleanOpen = false; renderClean(); }
+    if(name !== "lock" && lockOpen){ lockOpen = false; lockExpanded = null; renderLocked(); }
+    if(name !== "info" && infoOpen){ infoOpen = false; infoPanel.hidden = true; }
+    if(name !== "menu" && menuOpen){ menuOpen = false; renderMenu(); }
+    if(name !== "media" && mediaOpen){ mediaOpen = false; renderMedia(); }
+  }
+  function allMedia(){
+    var out = [];
+    notes.forEach(function(n){ noteFiles(n).forEach(function(f){ out.push({ n: n, f: f, ts: fileTs(f, n) }); }); });
+    return out.sort(function(a, b){ return b.ts - a.ts; });
+  }
+  function renderMenu(){
+    if(!menuBtn) return;
+    menuBtn.classList.toggle("open", menuOpen);
+    menuBtn.setAttribute("aria-expanded", menuOpen ? "true" : "false");
+    menuPanel.hidden = !menuOpen;
+    var a = archivedNotes().length, m = allMedia().length;
+    document.getElementById("menuArchCount").textContent = a ? String(a) : "";
+    document.getElementById("menuMediaCount").textContent = m ? String(m) : "";
+    var lk = lockedNotes().length;
+    document.getElementById("menuLockCount").textContent = lk ? String(lk) : "";
+    var cs = cleanStats();
+    document.getElementById("menuCleanCount").textContent = kurzMB(cs.size);
+    updateOverlay();
+  }
+  function setMenuOpen(open){ if(open) closePanels("menu"); menuOpen = open; renderMenu(); }
+  function renderMedia(){
+    if(!mediaPanel) return;
+    mediaPanel.hidden = !mediaOpen;
+    updateOverlay();
+    if(!mediaOpen) return;
+    var l = allMedia(), total = l.reduce(function(a, x){ return a + (x.f.size || 0); }, 0);
+    var html = '<div class="bm-head">Media' + (l.length ? ' <span class="bm-head-count">' + l.length + ' · ' + esc(fmtSize(total)) + '</span>' : '') + '</div>';
+    if(!l.length){
+      html += '<div class="bm-empty">Noch keine Fotos oder Dateien.</div>';
+    } else {
+      var fotos = l.filter(function(x){ return fileKind(x.f) === "photo"; }), docs = l.filter(function(x){ return fileKind(x.f) !== "photo"; });
+      var wo = function(n){ return esc((n.kuerzel ? n.kuerzel + " · " : "") + firstLine(n.text)); };
+      var rmBtn = function(x, foto){
+        if(x.n.locked) return '';
+        return '<button type="button" class="nf-rm" data-media-rm="' + x.n.id + '|' + x.f.id + '" aria-label="' + (foto ? 'Foto' : 'Datei') + ' löschen" title="Löschen">' + ICON_X_SMALL + '</button>';
+      };
+      var frage = function(x){
+        return '<div class="bm-sub md-ask"><span class="confirm-text">„' + esc(x.f.name) + '“ löschen?</span>' +
+          '<button type="button" class="delbtn confirm-yes" data-media-rm-yes="1">Ja</button>' +
+          '<button type="button" class="sharebtn" data-media-rm-no="1">Nein</button></div>';
+      };
+      var fragX = null;
+      var tag = function(n){ return n.archived ? '<span class="md-tag">Archiv</span>' : n.hidden ? '<span class="md-tag">ausgeblendet</span>' : ''; };
+      if(fotos.length){
+        html += '<div class="md-sec">Fotos (' + fotos.length + ')</div><div class="md-grid">';
+        fotos.forEach(function(x){
+          if(mediaPendingRemove === x.n.id + '|' + x.f.id) fragX = x;
+          html += '<div class="md-ph"><span class="nf-ph">' + rmBtn(x, true) + '</span><button type="button" class="nf-ph-open' + (fileLoading[x.f.id] ? ' loading' : '') + '" data-file-open="' + x.n.id + '|' + x.f.id + '" title="' + esc(x.f.name) + ' · ' + esc(fmtSize(x.f.size || 0)) + '">' +
+            (thumbOk(x.f.thumb) ? '<img src="' + x.f.thumb + '" alt="">' : ICON_IMG) + '</button>' +
+            '<div class="md-cap" title="' + wo(x.n) + '">' + wo(x.n) + '</div></div>';
+        });
+        html += '</div>';
+        if(fragX) html += frage(fragX);
+      }
+      if(docs.length){
+        html += '<div class="md-sec">Dokumente (' + docs.length + ')</div><div class="md-doc">';
+        docs.forEach(function(x){
+          html += fileRowHtml(x.n, x.f, false).replace('</span></span>', '</span><span class="md-note">' + wo(x.n) + tag(x.n) + '</span></span>').replace(/<\/div>$/, rmBtn(x, false) + '</div>');
+          if(mediaPendingRemove === x.n.id + '|' + x.f.id) html += frage(x);
+        });
+        html += '</div>';
+      }
+    }
+    mediaPanel.innerHTML = html;
+  }
+  function setMediaOpen(open){ if(open) closePanels("media"); mediaOpen = open; if(!open) mediaPendingRemove = null; renderMedia(); }
+  if(menuBtn){
+    menuBtn.addEventListener("click", function(e){ e.stopPropagation(); setMenuOpen(!menuOpen); });
+    menuPanel.addEventListener("click", function(e){
+      e.stopPropagation();
+      var it = e.target.closest("[data-menu]");
+      if(!it) return;
+      var w = it.getAttribute("data-menu");
+      setMenuOpen(false);
+      if(w === "about") setInfoOpen(true);
+      else if(w === "archiv") setArchOpen(true);
+      else if(w === "media") setMediaOpen(true);
+      else if(w === "putze") setCleanOpen(true);
+      else if(w === "gesperrt") setLockOpen(true);   // gleiche Funktion wie der Besen am Desktop
+    });
+    mediaPanel.addEventListener("click", function(e){
+      e.stopPropagation();
+      if(e.target.closest("a")) return;
+      var el;
+      if((el = e.target.closest("[data-media-rm]"))){ mediaPendingRemove = el.getAttribute("data-media-rm"); renderMedia(); return; }
+      if(e.target.closest("[data-media-rm-yes]")){ var k = mediaPendingRemove; mediaPendingRemove = null; if(k) removeAttachment(k); renderMedia(); return; }
+      if(e.target.closest("[data-media-rm-no]")){ mediaPendingRemove = null; renderMedia(); return; }
+      handleFileClick(e);
     });
   }
 
@@ -2137,7 +2408,7 @@
         if(weg && lockExpanded === n.id){
           html += '<div class="bm-sub bm-full">' +
             '<div class="bm-meta">' + (n.kuerzel ? esc(n.kuerzel) + ' · ' : '') + esc(formatTs(n.ts)) + '</div>' +
-            '<div class="bm-fulltext">' + (n.text ? linkify(esc(n.text)) : '(leere Notiz)') + '</div>' + attachmentsHtml(n, true) +
+            '<div class="bm-fulltext">' + (n.text ? linkify(esc(n.text)) : '(leere Notiz)') + '</div>' + itemsHtml(n, true) + attachmentsHtml(n, true) +
           '</div>';
         }
       });
@@ -2145,7 +2416,9 @@
     lockPanel.innerHTML = html;
   }
   function setLockOpen(open){
+    if(open) closePanels("lock");
     lockOpen = open;
+    if(open && infoOpen) setInfoOpen(false);
     if(open){
       if(bmOpen){ bmOpen = false; bmExpanded = null; bmPendingRemove = null; renderBookmarks(); }
       if(archOpen){ archOpen = false; archExpanded = null; archPendingDelete = null; renderArchive(); }
@@ -2181,7 +2454,7 @@
   var overlay = document.getElementById("overlay");
 
   function updateOverlay(){
-    if(overlay) overlay.hidden = !(bmOpen || archOpen || cleanOpen || lockOpen);
+    if(overlay) overlay.hidden = !(bmOpen || archOpen || cleanOpen || lockOpen || infoOpen || menuOpen || mediaOpen);
   }
 
   function archivedNotes(){
@@ -2203,7 +2476,7 @@
         '<button type="button" class="sharebtn bm-head-action" data-arch-printall="1">Alle drucken</button>' : '') +
       '</div>';
     if(arch.length === 0){
-      html += '<div class="bm-empty">Das Archiv ist leer.<br>Bei einer Notiz über ••• → „Archivieren“ ablegen.</div>';
+      html += '<div class="bm-empty">Das Archiv ist leer.<br>Bei einer Notiz über ✕ → „Archivieren“ ablegen.</div>';
     } else {
       arch.forEach(function(n){
         html += '<div class="bm-item">' +
@@ -2222,7 +2495,7 @@
           html += '<div class="bm-sub bm-full">' +
             '<div class="bm-meta">' + (n.kuerzel ? esc(n.kuerzel) + ' · ' : '') + esc(formatTs(n.ts)) +
               (n.archivedAt ? ' · archiviert ' + esc(formatTs(n.archivedAt)) : '') + '</div>' +
-            '<div class="bm-fulltext">' + (n.text ? linkify(esc(n.text)) : '(leere Notiz)') + '</div>' + attachmentsHtml(n, true) +
+            '<div class="bm-fulltext">' + (n.text ? linkify(esc(n.text)) : '(leere Notiz)') + '</div>' + itemsHtml(n, true) + attachmentsHtml(n, true) +
             '<div class="bm-actions">' +
               '<button type="button" class="sharebtn" data-arch-restore="' + n.id + '">Wiederherstellen</button>' +
               '<button type="button" class="sharebtn" data-arch-print="' + n.id + '">Drucken</button>' +
@@ -2236,7 +2509,9 @@
   }
 
   function setArchOpen(open){
+    if(open) closePanels("arch");
     archOpen = open;
+    if(open && infoOpen) setInfoOpen(false);
     if(open && bmOpen){ bmOpen = false; bmExpanded = null; bmPendingRemove = null; renderBookmarks(); }
     if(open && cleanOpen){ cleanOpen = false; renderClean(); }
     if(open && lockOpen){ lockOpen = false; lockExpanded = null; renderLocked(); }
@@ -2312,7 +2587,7 @@
   function printNotes(list, label){
     var area = document.getElementById("printArea");
     if(!area || !list.length) return;
-    var html = '<h1>NOTES · Ton &amp; Bild</h1>' +
+    var html = '<h1>NOTE · Ton &amp; Bild</h1>' +
       '<div class="p-sub">' + esc(label) + ' · ' + list.length + (list.length === 1 ? ' Eintrag' : ' Einträge') +
       ' · gedruckt am ' + esc(formatTsFull(Date.now())) + '</div>';
     list.forEach(function(n){
@@ -2324,7 +2599,7 @@
       html += '<div class="p-note">' +
         '<div class="p-meta">' + esc(n.kuerzel || "–") + ' · ' + esc(formatTsFull(n.ts)) +
           (tags.length ? ' <span class="p-tags">· ' + esc(tags.join(" · ")) + '</span>' : '') + '</div>' +
-        '<div class="p-text">' + esc(n.text || "") + noteFiles(n).map(function(f){ return '\n' + (fileKind(f) === 'photo' ? 'Foto: ' : 'Datei: ') + esc(f.name) + ' (' + esc(fmtSize(f.size || 0)) + ')'; }).join('') + '</div>' +
+        '<div class="p-text">' + esc(n.text || "") + (itemsPlain(n) ? (n.text ? '\n' : '') + esc(itemsPlain(n)) : '') + noteFiles(n).map(function(f){ return '\n' + (fileKind(f) === 'photo' ? 'Foto: ' : 'Datei: ') + esc(f.name) + ' (' + esc(fmtSize(f.size || 0)) + ')'; }).join('') + '</div>' +
       '</div>';
     });
     area.innerHTML = html;
@@ -2340,6 +2615,9 @@
     if(archOpen && !archPanel.contains(e.target) && !archBtn.contains(e.target)) setArchOpen(false);
     if(cleanOpen && !cleanPanel.contains(e.target) && !cleanBtn.contains(e.target)) setCleanOpen(false);
     if(lockOpen && !lockPanel.contains(e.target) && !lockBtn.contains(e.target)) setLockOpen(false);
+    if(infoOpen && !infoPanel.contains(e.target)) setInfoOpen(false);
+    if(menuOpen && !menuPanel.contains(e.target) && !menuBtn.contains(e.target)) setMenuOpen(false);
+    if(mediaOpen && !mediaPanel.contains(e.target)) setMediaOpen(false);
     if(menuOpenId !== null && !e.target.closest(".note-menu") && !e.target.closest(".morebtn")){
       menuOpenId = null;
       renderList();
@@ -2351,6 +2629,9 @@
     if(archOpen) setArchOpen(false);
     if(cleanOpen) setCleanOpen(false);
     if(lockOpen) setLockOpen(false);
+    if(infoOpen) setInfoOpen(false);
+    if(menuOpen) setMenuOpen(false);
+    if(mediaOpen) setMediaOpen(false);
     if(menuOpenId !== null){ menuOpenId = null; renderList(); }
   });
 
@@ -2443,7 +2724,7 @@
     return terms;
   }
   function noteMatches(n, terms){
-    var hay = norm((n.text || "") + " " + (n.kuerzel || "") + noteFiles(n).map(function(f){ return " " + f.name + (fileKind(f) === "photo" ? " foto" : " datei"); }).join(""));
+    var hay = norm((n.text || "") + " " + (n.kuerzel || "") + " " + itemsOf(n).map(function(it){ return it.t || ""; }).join(" ") + noteFiles(n).map(function(f){ return " " + f.name + (fileKind(f) === "photo" ? " foto" : " datei"); }).join(""));
     for(var i = 0; i < terms.length; i++){
       var t = terms[i];
       if(t.type === "range"){ if(!rangeMatches(t.a, t.b, n.ts)) return false; continue; }
@@ -2522,6 +2803,8 @@
     renderArchive();
     renderClean();
     renderLocked();
+    if(mediaOpen) renderMedia();
+    if(menuOpen) renderMenu();
     var mo = document.getElementById("menuOverlay");
     if(mo) mo.hidden = (menuOpenId === null);
     var main = document.getElementById("main");
@@ -2569,6 +2852,7 @@
           '<button type="button" class="note-bm' + (n.bookmark ? ' on' : '') + '" data-action="toggle-bm" aria-label="' + (n.bookmark ? 'Lesezeichen entfernen' : 'Als Lesezeichen merken') + '" aria-pressed="' + (n.bookmark ? 'true' : 'false') + '">' + (n.bookmark ? '★' : '☆') + '</button>' +
         '</div>' +
         '<div class="note-text' + (n.text ? '' : ' placeholder') + (isEinwurf(n) ? ' is-file' : '') + '" data-field="text" tabindex="0" role="button" aria-label="Notiz bearbeiten">' + (n.text ? linkify(esc(n.text)) : "Notiz eingeben…") + '</div>' +
+        itemsHtml(n) +
         attachmentsHtml(n) +
         '<div class="note-footer">' +
           (pendingDelete === n.id && pendingDeleteStage === "keep" ?
@@ -2679,12 +2963,14 @@
       }
       save();
       renderList();
+      dropEmptyDraftSoon();
     }
     function cancel(){
       if(done) return;
       done = true;
       deferredRemote = false;
       renderList();
+      dropEmptyDraftSoon();
     }
     input.addEventListener("blur", commit);
 
@@ -2701,11 +2987,73 @@
       okBtn.addEventListener("mousedown", function(e){ e.preventDefault(); });
       okBtn.addEventListener("click", function(e){ e.stopPropagation(); commit(); });
       timeEl.insertAdjacentElement("afterend", okBtn);
+      if(field === "text"){
+        // „+ Punkt“: Text übernehmen und gleich einen ersten/weiteren Listenpunkt anlegen (seit v96)
+        var ptBtn = document.createElement("button");
+        ptBtn.type = "button";
+        ptBtn.className = "ni-add ni-add-edit";
+        ptBtn.setAttribute("aria-label", "Listenpunkt hinzufügen");
+        ptBtn.textContent = "+ Punkt";
+        ptBtn.addEventListener("mousedown", function(e){ e.preventDefault(); });
+        ptBtn.addEventListener("click", function(e){ e.stopPropagation(); commit(); addItem(id, null); });
+        input.insertAdjacentElement("afterend", ptBtn);   // unter dem Textfeld (in der Kopfzeile wäre es am Handy zu eng)
+      }
     }
 
     input.addEventListener("keydown", function(e){
       if(field === "kuerzel" && e.key === "Enter"){ e.preventDefault(); input.blur(); return; }
       if(e.key === "Escape"){ e.preventDefault(); cancel(); }
+    });
+  }
+
+  // Neuer (leerer) Punkt nach afterId (oder am Ende) und gleich bearbeiten. Gespeichert wird erst mit Text.
+  function addItem(noteId, afterId){
+    var n = notes.find(function(x){ return x.id === noteId; });
+    if(!n || n.locked) return;
+    var l = itemsOf(n), it = { id: nextId(), t: "", done: false };
+    var i = afterId ? l.findIndex(function(x){ return x.id === afterId; }) : -1;
+    if(i >= 0) l.splice(i + 1, 0, it); else l.push(it);
+    n.items = l;
+    renderList();
+    startItemEdit(noteId, it.id);
+  }
+  function startItemEdit(noteId, itemId){
+    var li = document.querySelector('li.note[data-id="' + noteId + '"]');
+    var span = li && li.querySelector('[data-item-edit="' + itemId + '"]');
+    var n = notes.find(function(x){ return x.id === noteId; });
+    if(!span || !n) return;
+    if(n.locked){ nudgeLock(li); return; }
+    var it0 = itemsOf(n).find(function(x){ return x.id === itemId; }) || { t: "" };
+    var input = document.createElement("input");
+    input.type = "text"; input.className = "ni-input"; input.value = it0.t || "";
+    input.setAttribute("enterkeyhint", "next"); input.setAttribute("aria-label", "Listenpunkt");
+    span.replaceWith(input);
+    // OK rechts neben dem Punkt (seit v98): übernimmt den Punkt ohne neuen anzulegen
+    var okP = document.createElement("button");
+    okP.type = "button"; okP.className = "note-ok ni-ok"; okP.textContent = "OK"; okP.setAttribute("aria-label", "Punkt übernehmen");
+    okP.addEventListener("mousedown", function(e){ e.preventDefault(); });
+    okP.addEventListener("click", function(e){ e.stopPropagation(); weiter = false; input.blur(); });
+    input.insertAdjacentElement("afterend", okP);
+    input.focus();
+    var done = false, weiter = false;
+    function commit(){
+      if(done) return;
+      done = true;
+      var nn = notes.find(function(x){ return x.id === noteId; });
+      if(!nn){ deferredRemote = false; renderList(); return; }
+      var l = itemsOf(nn), t = input.value.trim(), i = l.findIndex(function(x){ return x.id === itemId; });
+      if(!t){ if(i >= 0) l.splice(i, 1); weiter = false; }
+      else if(i >= 0) l[i].t = t;
+      else l.push({ id: itemId, t: t, done: false });   // inzwischen vom Server überschrieben → wieder anhängen
+      if(l.length) nn.items = l; else delete nn.items;
+      deferredRemote = false;
+      save(); renderList();
+      if(weiter) addItem(noteId, itemId); else dropEmptyDraftSoon();
+    }
+    input.addEventListener("blur", commit);
+    input.addEventListener("keydown", function(e){
+      if(e.key === "Enter" && !e.isComposing){ e.preventDefault(); weiter = true; input.blur(); }
+      else if(e.key === "Escape"){ e.preventDefault(); input.value = it0.t || ""; input.blur(); }
     });
   }
 
@@ -2730,8 +3078,23 @@
       else { setBmOpen(true); bmExpanded = sid; renderBookmarks(); }
       return;
     }
+    var itemEl = e.target.closest("[data-item-edit]");
+    if(itemEl){
+      var iLi = itemEl.closest("li.note"), iNid = String(iLi.getAttribute("data-id")), iId = itemEl.getAttribute("data-item-edit");
+      if(isEditing()){ try{ document.activeElement.blur(); }catch(x){} }
+      startItemEdit(iNid, iId);
+      return;
+    }
     var fieldBtn = e.target.closest("[data-field]");
     if(fieldBtn){
+      if(isEditing()){
+        // Laufende Eingabe zuerst abschliessen (zeichnet neu), dann das Feld frisch suchen – EIN Tipp genügt (seit v97)
+        var fLi = fieldBtn.closest("li.note"), fNid = fLi && fLi.getAttribute("data-id"), fName = fieldBtn.getAttribute("data-field");
+        try{ document.activeElement.blur(); }catch(x){}
+        var fLi2 = document.querySelector('li.note[data-id="' + fNid + '"]');
+        fieldBtn = fLi2 && fLi2.querySelector('[data-field="' + fName + '"]');
+        if(!fieldBtn) return;
+      }
       startFieldEdit(fieldBtn);
       return;
     }
@@ -2746,6 +3109,26 @@
     if(!note) return;
 
     if(note.locked && btn.dataset.action === "delete"){ nudgeLock(li); return; }
+    if(btn.dataset.action === "item-toggle"){
+      // Gesperrte Notiz: auch Abhaken gesperrt (seit v96 auf Wunsch) – Schloss wackelt
+      if(note.locked){ nudgeLock(li); return; }
+      var tl = itemsOf(note), ti = tl.find(function(x){ return x.id === btn.getAttribute("data-item"); });
+      if(ti){ ti.done = !ti.done; note.items = tl; save(); }
+      renderList();
+      return;
+    }
+    if(btn.dataset.action === "item-del"){
+      if(note.locked){ nudgeLock(li); return; }
+      var dl = itemsOf(note).filter(function(x){ return x.id !== btn.getAttribute("data-item"); });
+      if(dl.length) note.items = dl; else delete note.items;
+      save(); renderList();
+      return;
+    }
+    if(btn.dataset.action === "item-add"){
+      if(note.locked){ nudgeLock(li); return; }
+      addItem(id, null);
+      return;
+    }
     if(btn.dataset.action === "more"){
       e.stopPropagation();
       menuOpenId = (menuOpenId === id) ? null : id;
@@ -2839,14 +3222,17 @@
   });
 
   document.addEventListener("pointerdown", function(e){
-    if(isEditing() && e.target.closest && e.target.closest("li.note button[data-action]")) e.preventDefault();
+    if(isEditing() && e.target.closest && e.target.closest("li.note button[data-action], li.note [data-field], li.note [data-item-edit]")) e.preventDefault();
   }, true);
 
   document.getElementById("addBtn").addEventListener("click", function(){
     if(searchOpen) setSearchOpen(false);
+    var d = draftNote();
+    if(d){ renderList(); focusNewNote(d.id); return; }   // es gibt schon einen leeren Entwurf → den nehmen
     var newNote = { id: nextId(), kuerzel: "", text: "", done: false, ts: Date.now() };
     notes.push(newNote);
-    save(); renderList();
+    draftId = newNote.id;          // noch nicht speichern – erst mit Inhalt (seit v97)
+    renderList();
     focusNewNote(newNote.id);
   });
 
