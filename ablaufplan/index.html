@@ -237,6 +237,9 @@
     z-index:1;
   }
   .walk-lane.front{ z-index:2; }
+  /* Handy: während des Lupen-Kunststücks übernimmt eine gezeichnete Figur (#lupeTrickSvg) */
+  .walk-lane.trick .wk-walker{ visibility:hidden; }
+  #lupeTrickSvg{ position:fixed; left:0; top:0; width:100%; height:100%; overflow:visible; pointer-events:none; z-index:3; }
   /* Sprung vom Schriftzug: Arme nach vorn, Knie angezogen – Landung in der Hocke; sonst normal gehen */
   .wk-jump, .wk-squat, .wk-armsup, .wk-hello{ display:none; }
   .walk-lane.hello .wk-hello{ display:inline; }
@@ -1312,6 +1315,11 @@
   li.cue.editing .edit-input{ height:30px; padding:0 4px; font-size:17px; font-weight:600; }
   li.cue.editing .task-input{ padding:7px 9px; font-size:18px; }
   li.cue.editing .note-text-input{ padding:4px 8px; font-size:17px; }
+  /* OK am Ende der Punkt-Eingabe (wie Technik), nur beim Tippen sichtbar */
+  .note-wrap{ position:relative; flex:1 1 auto; min-width:0; display:flex; }
+  .note-wrap .note-text-input{ width:100%; }
+  .note-wrap:focus-within .note-ok{ display:block; }
+  li.cue.editing .note-wrap:focus-within .note-text-input{ padding-right:52px; }
   li.cue.editing .edit-input::placeholder,
   li.cue.editing .task-input::placeholder,
   li.cue.editing .note-text-input::placeholder{ color:var(--text-dim); opacity:.6; font-weight:400; }
@@ -1660,25 +1668,35 @@
   .iv-n{ flex:0 0 auto; font-size:13px; color:#999; }
   .iv-bar .iv-ico{ font-size:20px; line-height:1; padding:4px 6px; }
   .iv-bar button{ flex:0 0 auto; background:none; border:0; font:inherit; font-weight:700; color:var(--ka); cursor:pointer; padding:6px 2px; }
-  #infoDlg{
+  #infoDlg, #printAsk{
     position:fixed; inset:0; z-index:60; display:flex; align-items:center; justify-content:center;
     background:rgba(0,0,0,.62); padding:16px;
   }
-  #infoDlg[hidden]{ display:none; }
+  #infoDlg[hidden], #printAsk[hidden]{ display:none; }
   .info-panel{
     width:min(440px, 100%); max-height:100%; overflow:auto; -webkit-overflow-scrolling:touch;
     background:var(--surface); border:1px solid var(--line); border-radius:16px; box-shadow:0 18px 50px rgba(0,0,0,.6);
-    padding:18px 20px 14px; color:var(--text); font-size:14px; line-height:1.45;
+    padding:18px 20px 14px; color:var(--text); font-size:15px; line-height:1.45;
   }
-  .info-panel h3{ margin:0 0 4px; font-size:17px; font-weight:700; }
-  .info-panel h4{ margin:14px 0 4px; font-size:13px; font-weight:800; letter-spacing:.05em; text-transform:uppercase; color:var(--accent); }
+  .info-panel h3{ margin:0 0 4px; font-size:18px; font-weight:700; }
+  .info-panel h4{ margin:14px 0 4px; font-size:14px; font-weight:800; letter-spacing:.05em; text-transform:uppercase; color:var(--accent); }
   .info-panel ul{ margin:0; padding-left:18px; }
   .info-panel li{ margin:3px 0; }
   .info-panel li b{ font-weight:700; }
   .info-panel .info-close{
-    display:block; width:100%; margin-top:16px; height:40px; border-radius:12px; border:1px solid var(--field-line);
-    background:none; color:var(--text); font:inherit; font-size:15px; font-weight:600; cursor:pointer;
+    display:block; margin:14px 0 0 auto; height:32px; padding:0 16px; border-radius:9px; border:1px solid var(--field-line);
+    background:none; color:var(--text); font:inherit; font-size:14px; font-weight:600; cursor:pointer;
   }
+  .info-panel .info-ver{ margin:10px 0 0; font-size:12px; color:#888; }
+  /* Handy: Rückfrage vor dem Druck – Bereich oder Alles */
+  /* schlicht: Titel, oranges × oben rechts, zwei ruhige Zeilen */
+  .print-ask{ position:relative; width:min(260px, 100%); padding:14px 16px 10px; border-radius:12px; }
+  .print-ask h3{ margin:0 0 6px; font-size:15px; font-weight:600; color:var(--text-dim); }
+  .pa-x{ position:absolute; top:6px; right:8px; width:30px; height:30px; border:none; background:none; padding:0;
+    color:var(--accent); font-size:20px; line-height:1; cursor:pointer; }
+  .pa-btn{ display:block; width:100%; padding:11px 2px; border:none; border-top:1px solid var(--line); background:none;
+    color:var(--text); font:inherit; font-size:16px; font-weight:600; text-align:left; cursor:pointer; }
+  .pa-btn:active{ color:var(--accent); }
   /* Export-Knöpfe vorerst ausgeblendet (Funktionen bleiben im Code) */
   #exportBtn, #exportAllBtn, #numbersBtn, .col-export{ display:none !important; }
   #printView{ display:none; }
@@ -1909,11 +1927,11 @@
 <div id="lockDlg" hidden></div>
 <div id="infoDlg" hidden><div class="info-panel" role="dialog" aria-modal="true" aria-labelledby="infoTitle">
   <h3 id="infoTitle">Kurzinfo Ablaufplan</h3>
-  <h4>Drucken</h4>
+  <h4>Drucken und PDF</h4>
   <ul>
     <li><b>Desktop, obere Zeile:</b> druckt den Gesamtablaufplan mit Bühne, Tonregie und Technik.</li>
-    <li><b>Desktop, Drucker im Bereich:</b> druckt nur diesen Bereich – Bühne, Tonregie oder Technik.</li>
-    <li><b>Handy:</b> druckt den Bereich, der gerade angezeigt wird.</li>
+    <li><b>Desktop, Drucker im Bereich Bühne/Tonregie/Technik:</b> druckt nur diesen Bereich.</li>
+    <li><b>Handy:</b> fragt vor dem Druck „Bereich oder Alles“.</li>
     <li>Das PDF sollte zur Produktionsdokumentation auf dem Server abgelegt werden.</li>
   </ul>
   <h4>Bühnenplan (BP)</h4>
@@ -1934,6 +1952,13 @@
     <li>Zum Entsperren braucht es den vierstelligen Code und das Namenskürzel.</li>
   </ul>
   <button type="button" class="info-close" id="infoClose">Schliessen</button>
+  <p class="info-ver" id="infoVer">v_ton_ap_gh_a_091026_1325</p>
+</div></div>
+<div id="printAsk" hidden><div class="info-panel print-ask" role="dialog" aria-modal="true" aria-labelledby="printAskTitle">
+  <h3 id="printAskTitle">Drucken</h3>
+  <button type="button" class="pa-x" id="paCancel" aria-label="Abbrechen">✕</button>
+  <button type="button" class="pa-btn" id="paArt">Bühne</button>
+  <button type="button" class="pa-btn" id="paAll">Alles</button>
 </div></div>
 <div class="file-view" id="fileView" hidden><div class="fv-stage" id="fvStage"></div><div class="fv-bar"><span id="fvName"></span><a id="fvSave" href="#">Speichern</a><button type="button" id="fvClose">Schliessen</button></div></div>
 <input type="file" id="bpFile" accept="application/pdf,.pdf" hidden>
@@ -2745,17 +2770,187 @@
     });
   }
 
+  // ---- Handy: Kunststücke an der Lupe – Reihenfolge: normal (ohne), C Hechtsprung, A robben drüber, B durchkriechen, dann von vorn ----
+  // Am rechten Ende der Laufbahn hält das CSS-Männchen an und wird ausgeblendet; eine gezeichnete Figur
+  // (eigenes SVG in der Kopfzeile) geht zur Lupe, macht das Kunststück, winkt und kommt zurück.
+  var LUPE_TRICKS = [null, "C", "A", "B"], lupeTrickIdx = 0, lupeTrick = null;
+  function lupeGeom(){
+    var sv = document.querySelector("#searchBtn svg");
+    if(!sv || sv.offsetParent === null) return null;
+    var r = sv.getBoundingClientRect();
+    if(!r.width) return null;
+    var k = r.width / 24;
+    return { x:r.left + 10.5*k, y:r.top + 10.5*k, r:6.5*k, sw:2.2*k, k:k, left:r.left, top:r.top, col:getComputedStyle(sv.parentNode).color };
+  }
+  function lupeTrickSvgEl(){
+    var el = document.getElementById("lupeTrickSvg");
+    if(!el){
+      el = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      el.id = "lupeTrickSvg"; el.setAttribute("aria-hidden", "true");
+      var hd = document.querySelector("header.top") || document.body;
+      hd.appendChild(el);
+    }
+    return el;
+  }
+  function buildLupeTrick(kind, C, G, X0){
+    var PI = Math.PI;
+    function lerp(a, b, u){ return a + (b - a) * u; }
+    function mix(p, q, u){ var o = {}; for(var k in p){ o[k] = Array.isArray(p[k]) ? p[k].map(function(v, i){ return lerp(v, q[k][i], u); }) : lerp(p[k], q[k], u); } return o; }
+    function ease(u){ return u < 0 ? 0 : u > 1 ? 1 : u * u * (3 - 2 * u); }
+    // Posen: Rumpf a ab senkrecht (nach vorn +), Glieder ab senkrecht nach unten (nach vorn +)
+    var STAND = { a:0, l1:[.05,.05], l2:[-.05,-.05], r1:[.15,.15], r2:[-.15,-.15] };
+    function WALK(p, k){ k = k || 1; var s = Math.sin(2*PI*p), c = Math.cos(2*PI*p);
+      return { a:.05*k, l1:[.42*k*s, .42*k*s - .45*Math.max(0,c)], l2:[-.42*k*s, -.42*k*s - .45*Math.max(0,-c)], r1:[-.5*k*s, -.5*k*s+.35], r2:[.5*k*s, .5*k*s+.35] }; }
+    function CRAWL4(p){ var s = Math.sin(2*PI*p);
+      return { a:0, l1:[PI/2-.3*s, .05-.3*s], l2:[PI/2+.3*s, .05+.3*s], r1:[PI/2+.35*s, PI/2+.35*s-.15], r2:[PI/2-.35*s, PI/2-.35*s-.15] }; }
+    function COMMANDO(p){ var s = Math.sin(2*PI*p);
+      return { a:0, l1:[.2+.25*s, .2+.25*s-.9*Math.max(0,s)], l2:[.2-.25*s, .2-.25*s-.9*Math.max(0,-s)], r1:[2.1+.5*s, 2.95], r2:[2.1-.5*s, 2.95] }; }
+    function STUCK(t){ var s = Math.sin(22*t), s2 = Math.sin(22*t+1.3);
+      return { a:0, l1:[1.0+.8*s, .3+.9*s2], l2:[1.0-.8*s, .3-.9*s2], r1:[PI/2+.1, PI/2-.1], r2:[PI/2-.1, PI/2-.2] }; }
+    var DIVE = { a:0, l1:[.05,.05], l2:[-.05,-.08], r1:[3.05,3.1], r2:[2.98,3.08] };
+    var TUCK = { a:.6, l1:[2.3,-.4], l2:[2.1,-.5], r1:[1.0,2.3], r2:[.9,2.2] };
+    var TADA = { a:-.05, l1:[.18,.18], l2:[-.18,-.18], r1:[2.15,2.45], r2:[-2.15,-2.45] };
+    function WAVE(t){ var w = Math.sin(18*t); return { a:0, l1:[.05,.05], l2:[-.05,-.05], r1:[2.75+.25*w, 3.05+.4*w], r2:[-.15,-.15] }; }
+    function seg(d, f){ return { d:d, f:f }; }
+    var HY = G - 7.3;   // Hüfthöhe im Stehen
+    function walkSeg(x0, x1, dir, speed, k){
+      speed = speed || 14.6;
+      return seg(Math.abs(x1-x0)/speed, function(u){ var x = lerp(x0, x1, u), p = Math.abs(x - x0) / (speed > 20 ? 13 : 10.2), s = Math.sin(2*PI*p);
+        return { x:x, y:HY+.35*Math.abs(s), dir:dir, rot:0, p:WALK(p, k) }; });
+    }
+    function holdSeg(d, st, poseFn){ return seg(d, function(u, t){ var o = Object.assign({}, st); if(poseFn) o.p = poseFn(t, u); return o; }); }
+    function turnSeg(x, dir){ return holdSeg(.25, { x:x, y:HY, dir:dir, rot:0, p:STAND }); }
+    function X(dir, lx){ return C.x + dir*lx; }
+    function frontOf(dir){ return dir > 0 ? "R" : "L"; }
+    var segs = [];
+    if(kind === "A"){
+      // Pfad (Hüftpunkte knapp über der Oberfläche): Boden → über das Glas → den Griff hinunter → Boden
+      var pts = [[C.x-20.75, G-1.9], [C.x-13.25, G-1.9]], R = C.r + .9 + 1.7;
+      for(var g = 205; g <= 372; g += 6){ var w = g*PI/180; pts.push([C.x + R*Math.cos(w), C.y + R*Math.sin(w)]); }
+      pts.push([C.x+9.85, G-1.7], [C.x+11.75, G-1.9], [C.x+13.25, G-1.9]);
+      var acc = [0]; for(var i = 1; i < pts.length; i++) acc.push(acc[i-1] + Math.hypot(pts[i][0]-pts[i-1][0], pts[i][1]-pts[i-1][1]));
+      var LEN = acc[acc.length-1], SLIDE = LEN * .8;
+      for(var j = 1; j < pts.length; j++){ if(pts[j][0] > C.x + 9.1 && pts[j][1] > C.y + 2.3){ SLIDE = acc[j-1]; break; } }
+      var at = function(d){ d = Math.max(0, Math.min(LEN, d)); var i = 1; while(i < acc.length-1 && acc[i] < d) i++;
+        var u = (d - acc[i-1]) / ((acc[i]-acc[i-1]) || 1), a = pts[i-1], b = pts[i];
+        return { x:lerp(a[0], b[0], u), y:lerp(a[1], b[1], u), dx:b[0]-a[0], dy:b[1]-a[1] }; };
+      var crawlA = function(d0, d1, dir, spd, pose){
+        return seg(Math.abs(d1-d0)/spd, function(u){ var dd = lerp(d0, d1, u), q = at(dd), f = d1 > d0 ? 1 : -1;
+          return { x:q.x, y:q.y, dir:dir, rot:PI/2 + Math.atan2(q.dy*f, q.dx*f*dir), p:pose ? pose : COMMANDO(dd/3.2) }; });
+      };
+      var x0 = C.x-20.75, x1 = C.x+15.25;
+      segs = [
+        walkSeg(Math.min(X0, x0), x0, 1),
+        seg(.55, function(u){ var e = ease(u); return { x:x0, y:lerp(HY, G-1.9, e), dir:1, rot:lerp(0, PI/2, e), p:mix(STAND, COMMANDO(0), e) }; }),
+        crawlA(0, SLIDE, 1, 7),
+        crawlA(SLIDE, LEN, 1, 14, DIVE),
+        seg(.55, function(u){ var e = ease(u); return { x:x1, y:lerp(G-1.9, HY, e), dir:1, rot:lerp(PI/2, 0, e), p:mix(DIVE, STAND, e) }; }),
+        holdSeg(1.4, { x:x1, y:HY, dir:1, rot:0 }, function(t){ return WAVE(t); }),
+        turnSeg(x1, -1),
+        seg(.55, function(u){ var e = ease(u); return { x:x1, y:lerp(HY, G-1.9, e), dir:-1, rot:lerp(0, PI/2, e), p:mix(STAND, COMMANDO(0), e) }; }),
+        crawlA(LEN, 0, -1, 6),
+        seg(.55, function(u){ var e = ease(u); return { x:x0, y:lerp(G-1.9, HY, e), dir:-1, rot:lerp(PI/2, 0, e), p:mix(COMMANDO(0), STAND, e) }; }),
+        walkSeg(x0, Math.min(X0, x0), -1)
+      ];
+    } else if(kind === "B"){
+      var trickB = function(dir){ var hy = C.y - .1, F = frontOf(dir); return [
+        seg(.6, function(u){ var e = ease(u); return { x:X(dir, lerp(-14, -7.5, u)), y:lerp(HY, hy, e) - 3*Math.sin(PI*u), dir:dir, rot:lerp(0, PI/2, e), p:mix(STAND, CRAWL4(0), e), front:u > .5 ? F : null }; }),
+        seg(2.2, function(u){ var lx = lerp(-7.5, .5, u); return { x:X(dir, lx), y:hy, dir:dir, rot:PI/2, p:CRAWL4((lx+7.5)/2.6), front:F }; }),
+        seg(1.6, function(u, t){ return { x:X(dir, .5 + .25*Math.sin(40*t)), y:hy, dir:dir, rot:PI/2, p:STUCK(t), front:F }; }),
+        seg(1.0, function(u){ var e = ease(u); return { x:X(dir, lerp(.5, 17, u)), y:lerp(hy, HY, e) - 2.5*Math.sin(PI*u), dir:dir, rot:lerp(PI/2, 2*PI, u), p:u < .5 ? mix(CRAWL4(0), TUCK, u*2) : mix(TUCK, STAND, (u-.5)*2), front:u < .25 ? F : null }; }),
+        holdSeg(.7, { x:X(dir, 17), y:HY, dir:dir, rot:0, p:TADA })
+      ]; };
+      segs = [ walkSeg(Math.min(X0, C.x-14), C.x-14, 1) ].concat(trickB(1),
+        [ holdSeg(1.2, { x:C.x+17, y:HY, dir:1, rot:0 }, function(t){ return WAVE(t); }), turnSeg(C.x+17, -1), walkSeg(C.x+17, C.x+14, -1) ],
+        trickB(-1), [ walkSeg(C.x-17, Math.min(X0, C.x-17), -1) ]);
+    } else {
+      var trickC = function(dir){ var F = frontOf(dir); return [
+        seg(.9, function(u){ var y0 = HY, y1 = C.y-.5, y2 = G-3, y = (1-u)*(1-u)*y0 + 2*(1-u)*u*(2*y1 - .5*(y0+y2)) + u*u*y2;
+          var r = u < .25 ? lerp(0, PI/2, u/.25) : lerp(PI/2, PI/2+.5, (u-.25)/.75);
+          return { x:X(dir, lerp(-17, 15, u)), y:y, dir:dir, rot:r, p:mix(WALK(.25, 1.6), DIVE, Math.min(1, u*4)), front:(u > .2 && u < .85) ? F : null }; }),
+        seg(.7, function(u){ return { x:X(dir, lerp(15, 20, u)), y:u < .8 ? G-3.8 : lerp(G-3.8, HY, (u-.8)/.2), dir:dir, rot:lerp(PI/2+.5, 2*PI, u), p:u < .8 ? mix(DIVE, TUCK, Math.min(1, u*3)) : mix(TUCK, STAND, (u-.8)/.2) }; }),
+        holdSeg(.6, { x:X(dir, 20), y:HY, dir:dir, rot:0, p:TADA })
+      ]; };
+      segs = [ walkSeg(Math.min(X0, C.x-30), C.x-30, 1), walkSeg(C.x-30, C.x-17, 1, 34, 1.6) ].concat(trickC(1),
+        [ holdSeg(1.2, { x:C.x+20, y:HY, dir:1, rot:0 }, function(t){ return WAVE(t); }), turnSeg(C.x+20, -1), walkSeg(C.x+20, C.x+17, -1, 20, 1.4) ],
+        trickC(-1), [ walkSeg(C.x-20, Math.min(X0, C.x-20), -1) ]);
+    }
+    segs.push(turnSeg(Math.min(X0, kind === "A" ? C.x-20.75 : kind === "B" ? C.x-17 : C.x-20), 1));
+    return segs.filter(function(s){ return s.d > 0.001; });
+  }
+  function lupeFigSvg(st, G, col){
+    var P = st.p, d = st.dir, rot = st.rot || 0, cr = Math.cos(rot), sr = Math.sin(rot);
+    function T(x, y){ var X = x*cr - y*sr, Y = x*sr + y*cr; return [st.x + X*d, Math.min(st.y + Y, G + .3)]; }   // nichts unter den Boden
+    function along(len, a){ return [len*Math.sin(a), -len*Math.cos(a)]; }
+    function chain(o, ang, l1, l2){ var k = [o[0]+l1*Math.sin(ang[0]), o[1]+l1*Math.cos(ang[0])]; return [o, k, [k[0]+l2*Math.sin(ang[1]), k[1]+l2*Math.cos(ang[1])]]; }
+    var neck = along(6.6, P.a), sh = along(4.5, P.a), head = along(9, P.a), s = "";
+    [ [[0,0], neck], chain(sh, P.r1, 2.3, 2.2), chain(sh, P.r2, 2.3, 2.2), chain([0,0], P.l1, 3.7, 3.6), chain([0,0], P.l2, 3.7, 3.6) ].forEach(function(pts){
+      s += '<polyline points="' + pts.map(function(q){ var t = T(q[0], q[1]); return t[0].toFixed(2) + "," + t[1].toFixed(2); }).join(" ") + '"/>';
+    });
+    var h = T(head[0], head[1]);
+    s += '<circle cx="' + h[0].toFixed(2) + '" cy="' + h[1].toFixed(2) + '" r="2.6" fill="' + col + '" stroke="none"/>';
+    return '<g stroke="' + col + '" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none">' + s + '</g>';
+  }
+  function startLupeTrick(lane, walker){
+    var L = lupeGeom();
+    if(!L) return false;
+    var wr = walker.getBoundingClientRect();
+    if(!wr.width) return false;
+    var G = wr.top + wr.height * .98, X0 = wr.left + wr.width / 2;
+    if(L.x - X0 < 25) return false;                     // zu wenig Platz bis zur Lupe
+    var kind = LUPE_TRICKS[lupeTrickIdx % LUPE_TRICKS.length];
+    if(!kind){ lupeTrickIdx++; return false; }          // dieser Lauf ohne Kunststück (wie früher)
+    var segs = buildLupeTrick(kind, { x:L.x, y:L.y, r:L.r }, G, X0);
+    lupeTrick = { segs:segs, total:segs.reduce(function(a, s){ return a + s.d; }, 0), t0:performance.now(), last:performance.now(), L0:L, G:G };
+    lane.classList.add("trick");
+    return true;
+  }
+  function endLupeTrick(lane){
+    if(!lupeTrick) return;
+    lupeTrick = null; lupeTrickIdx++;
+    if(lane) lane.classList.remove("trick");
+    var el = document.getElementById("lupeTrickSvg"); if(el) el.innerHTML = "";
+  }
+  // true = Kunststück läuft (CSS-Männchen bleibt angehalten)
+  function runLupeTrick(lane){
+    var now = performance.now(), L = lupeGeom();
+    if(!L || isCols() || now - lupeTrick.last > 1500){ endLupeTrick(lane); return false; }
+    lupeTrick.last = now;
+    var tt = (now - lupeTrick.t0) / 1000;
+    if(tt >= lupeTrick.total){ endLupeTrick(lane); return false; }
+    var i = 0, segs = lupeTrick.segs;
+    while(i < segs.length - 1 && tt >= segs[i].d){ tt -= segs[i].d; i++; }
+    var st = segs[i].f(Math.min(1, tt / segs[i].d), tt), L0 = lupeTrick.L0;
+    var deco = getComputedStyle(document.documentElement).getPropertyValue("--deco").trim() || "#6e6e6e";
+    var html = lupeFigSvg(st, lupeTrick.G, deco);
+    if(st.front){ // Rand auf der Austrittsseite vor die Figur legen -> sie schlüpft durchs Glas
+      var r = L0.r;
+      html += '<path d="M' + L0.x + ' ' + (L0.y - r) + ' A' + r + ' ' + r + ' 0 0 ' + (st.front === "R" ? 1 : 0) + ' ' + L0.x + ' ' + (L0.y + r) + '" fill="none" stroke="' + L0.col + '" stroke-width="' + L0.sw + '" stroke-linecap="round"/>';
+    }
+    var el = lupeTrickSvgEl();
+    el.innerHTML = '<g transform="translate(' + (L.x - L0.x).toFixed(2) + ' ' + (L.y - L0.y).toFixed(2) + ')">' + html + '</g>';
+    return true;
+  }
+
   function cableTick(){
     cableState.raf = 0;
     var lane = document.getElementById("walkLane");
     if(!lane || !lane.classList.contains("on") || document.hidden){
       if(lane) setWalkerRate(lane, 1);
+      if(lupeTrick) endLupeTrick(lane);
       return;
     }
     var walker = lane.querySelector(".wk-walker");
     var hop = lane.querySelector(".wk-hop");
     var cable = lane.querySelector(".wk-cable");
     var t = walkerCycleTime(walker);
+    // Handy: Kunststück an der Lupe läuft -> CSS-Männchen angehalten und ausgeblendet
+    if(lupeTrick && runLupeTrick(lane)){
+      setWalkerRate(lane, 0);
+      hop.style.transform = "";
+      cableState.raf = requestAnimationFrame(cableTick);
+      return;
+    }
     if(t != null){
       // Phase: "right" (0–40 %), "waveR" (40–50 %), "left" (50–90 %), "waveL" (90–100 %)
       var phase = t < .40 ? "right" : t < .50 ? "waveR" : t < .90 ? "left" : "waveL";
@@ -2776,6 +2971,12 @@
         }
         cableState.lastPhase = phase;
         cableState.helloPhase = null; // pro Weg einmal winken
+        // Handy: am rechten Ende angekommen -> Kunststück an der Lupe (ohne, C, A, B reihum)
+        if(phase === "waveR" && !logoBox && lane.classList.contains("front") && startLupeTrick(lane, walker)){
+          setWalkerRate(lane, 0);
+          cableState.raf = requestAnimationFrame(cableTick);
+          return;
+        }
       }
       var y = 0, inHop = false;
       var obst = cableState.obst || cable;
@@ -3440,7 +3641,8 @@
       d.notes.forEach(function(n){
         html += '<li class="note-item" data-note-id="' + n.id + '">' +
           '<span class="note-dash" aria-hidden="true">–</span>' +
-          '<input type="text" class="note-text-input" data-edit="note" data-note-id="' + n.id + '" value="' + esc(n.text) + '" placeholder="Punkt eingeben…">' +
+          '<div class="note-wrap"><input type="text" class="note-text-input" data-edit="note" data-note-id="' + n.id + '" value="' + esc(n.text) + '" placeholder="Punkt eingeben…">' +
+          '<button type="button" class="ts-ok note-ok" data-action="commit-edit" tabindex="-1" aria-label="Punkt bestätigen">OK</button></div>' +
           '<button type="button" class="note-del" data-action="delete-note" data-note-id="' + n.id + '" aria-label="Punkt löschen">✕</button>' +
         '</li>' + noteDelAskHtml(editing ? editing.id : null, n.id);
       });
@@ -5317,7 +5519,20 @@
     setTimeout(function(){ if(document.title === docName) document.title = oldTitle; }, 1500);
   }
   document.getElementById("printBtn").addEventListener("click", function(){ printView(); });
-  document.getElementById("printArtBtn").addEventListener("click", function(){ printView([currentArt]); });
+  // Handy: erst fragen – nur der angezeigte Bereich oder alles (Bühne, Tonregie, Technik)
+  (function(){
+    var dlg = document.getElementById("printAsk");
+    function close(){ dlg.hidden = true; }
+    document.getElementById("printArtBtn").addEventListener("click", function(){
+      var a = ARTS.find(function(x){ return x.id === currentArt; });
+      document.getElementById("paArt").textContent = a ? a.label : "Bereich";
+      dlg.hidden = false;
+    });
+    document.getElementById("paArt").addEventListener("click", function(){ close(); printView([currentArt]); });
+    document.getElementById("paAll").addEventListener("click", function(){ close(); printView(); });
+    dlg.addEventListener("click", function(e){ if(e.target === dlg || e.target.closest("#paCancel")) close(); });
+    document.addEventListener("keydown", function(e){ if(e.key === "Escape" && !dlg.hidden){ e.stopPropagation(); close(); } }, true);
+  })();
   // Archiv (Desktop): Liste der archivierten Produktionen; Antippen fragt „Zurück in die Produktionsliste / Löschen / Abbrechen“
   (function(){
     var btn = document.getElementById("archBtn"), pop = document.getElementById("archPop");
