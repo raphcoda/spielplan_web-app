@@ -1978,7 +1978,7 @@
     <li>Zum Entsperren braucht es den vierstelligen Code und das Namenskürzel.</li>
   </ul>
   <button type="button" class="info-close" id="infoClose">Schliessen</button>
-  <p class="info-ver" id="infoVer">v_ton_ap_gh_a_101026_2104</p>
+  <p class="info-ver" id="infoVer">v_ton_ap_gh_a_101026_2130</p>
 </div></div>
 <div id="printAsk" hidden><div class="info-panel print-ask" role="dialog" aria-modal="true" aria-labelledby="printAskTitle">
   <h3 id="printAskTitle">Drucken</h3>
@@ -5434,7 +5434,7 @@
         : [tStr, c.ka || "", c.akt || "", c.bild || "", printLoc(c.loc)];
       var text = [c.task ? highlightTask(esc(c.task)) : ""].concat((c.notes || []).filter(function(n){ return n.text; }).map(function(n){ return esc("– " + n.text.replace(/\n/g, "\n   ")); }))
         .filter(Boolean).join("\n");
-      if(c.chg && c.chg.k) text += (text ? "\n" : "") + '<span class="pv-chg">' + esc(chgText(c.chg, true)) + '</span>';
+      // „geändert … von …“ steht nur in der App, nicht im Druck (seit v207)
       if(!hasBild) vals.splice(bi, 1);
       var cells = vals.map(function(v){ return '<td><b>' + esc(v) + '</b></td>'; });
       if(textCol){
@@ -5494,7 +5494,7 @@
       h += '<tr class="pv-text' + (t.on ? '' : ' pv-off') + '"><td><b>' + esc(cat.label) + '</b></td><td>' + cell + '</td></tr>';
     });
     h += '</tbody></table>';
-    if(cues[0] && cues[0].chg && cues[0].chg.k) h += '<p class="pv-chg">' + esc(chgText(cues[0].chg, true)) + '</p>';
+    // Technik: „geändert … von …“ nur in der App, nicht im Druck (seit v207)
 
     return h;
   }
