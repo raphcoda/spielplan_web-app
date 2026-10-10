@@ -39,7 +39,9 @@ body {
   box-shadow: 0 1px 0 rgba(255,255,255,0.05), 0 2px 4px rgba(0,0,0,0.35); position: relative; z-index: 5;
 }
 .kopf-zeile { display: grid; grid-template-columns: auto 1fr auto; align-items: center; }
-.logo-wrap { grid-column: 1; display: flex; flex-direction: column; }
+.logo-wrap { grid-column: 1; display: flex; flex-direction: column; position: relative; margin-left: 20px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.backbtn { position: absolute; left: -26px; top: 50%; transform: translateY(-50%); display: flex; align-items: center; background: none; border: 0; padding: 12px 10px 12px 8px; color: #9a9a9a; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.backbtn svg { width: 11px; height: 18px; display: block; }
 .logo-kicker {
   display: flex; justify-content: space-between; font-size: 8px; font-weight: 600;
   color: #fff; text-transform: uppercase; line-height: 1; margin-bottom: 2px;
@@ -92,7 +94,7 @@ h1 { font-size: 18px; font-weight: 500; color: #fff; line-height: 1.1; }
 .info-zu { flex: 0 0 auto; width: 34px; height: 34px; margin: -6px -8px 0 0; padding: 0; border: 0; background: none; color: #cf8a48; display: flex; align-items: center; justify-content: center; cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .info-zu svg { width: 19px; height: 19px; display: block; }
 .info-zu:hover, .info-zu:active { color: #e6a35f; }
-.info-version { margin-top: 16px; padding-top: 12px; border-top: 1px solid #2c2c2c; font-size: 13px; color: #777; letter-spacing: 0.03em; }
+.info-version { margin-top: 16px; padding-top: 12px; border-top: 1px solid #2c2c2c; font-size: 11px; color: #777; letter-spacing: 0.03em; }
 .btn3d:active { filter: brightness(0.85); }
 .btn3d.btn-text { font-size: 9px; letter-spacing: 0.02em; }
 .btn3d svg { display: block; width: 12px; height: 12px; }
@@ -105,6 +107,10 @@ h1 { font-size: 18px; font-weight: 500; color: #fff; line-height: 1.1; }
   white-space: nowrap;
 }
 #toast.sichtbar { opacity: 1; transform: translateX(-50%) translateY(0); }
+#toast.oben { top: 76px; bottom: auto; left: 50%; transform: translateX(-50%) translateY(-10px); }
+#toast.oben.sichtbar { transform: translateX(-50%) translateY(0); }
+#toast.nah { bottom: auto; left: auto; transform: translateY(-8px); }
+#toast.nah.sichtbar { transform: translateY(0); }
 
 /* ---------- Filterzeilen (qbar) ---------- */
 .qbar {
@@ -433,6 +439,7 @@ textarea:focus, .auswahl-feld:focus, #waehlSuche:focus { border-color: #4db8b8; 
 .fv-bar a svg { display: block; }
 .fv-bar a, .fv-bar button { flex: 0 0 auto; background: none; border: 0; font: inherit; font-weight: 700; color: #4db8b8; text-decoration: none; cursor: pointer; padding: 6px 2px; }
 @media (max-width: 899px) {
+  .header-aktionen { gap: 9px; }
   .row-foot .icon-btn { width: 28px; height: 28px; border-radius: 7px; }
   .row-foot .icon-btn svg { width: 17px; height: 17px; }
   .row-foot { gap: 5px; }
@@ -477,7 +484,8 @@ textarea:focus, .auswahl-feld:focus, #waehlSuche:focus { border-color: #4db8b8; 
 
 <div id="header">
   <div class="kopf-zeile">
-    <div class="logo-wrap">
+    <div class="logo-wrap" id="logoWrap" title="Zurück zum Spielplan">
+      <button class="backbtn" id="backBtn" type="button" aria-label="Zurück zum Spielplan"><svg viewBox="0 0 11 18" aria-hidden="true"><path d="M9 1.5L2 9l7 7.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       <div class="logo-kicker" id="logoKicker"><span>T</span><span>E</span><span>C</span><span>H</span><span>N</span><span>I</span><span>S</span><span>C</span><span>H</span><span>E</span><span>S</span></div>
       <h1>LOGBUCH</h1>
       <div class="logo-sub" id="logoSub">
@@ -490,7 +498,6 @@ textarea:focus, .auswahl-feld:focus, #waehlSuche:focus { border-color: #4db8b8; 
       <div class="eyebrow-glanz" aria-hidden="true">Ton &amp; Bild</div>
     </div>
     <div class="header-aktionen">
-      <span class="info-i" id="infoBtn" title="Info" role="button" aria-label="Info">i</span>
       <span class="btn3d" id="menuBtn" title="Menü" role="button" aria-label="Menü" aria-haspopup="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 7h14M5 12h14M5 17h14"/></svg></span>
       <span class="btn3d btn-text" id="csvBtn" title="Als CSV exportieren">CSV</span>
       <span class="btn3d btn-text" id="pdfBtn" title="Als PDF exportieren">PDF</span>
@@ -599,7 +606,7 @@ textarea:focus, .auswahl-feld:focus, #waehlSuche:focus { border-color: #4db8b8; 
         <li><b>CSV-Export:</b> Button CSV in der Titelzeile. Die Tabelle enthält alle Einträge, ist spaltenweise sortierbar und kann zur Dokumentation auf dem Server abgelegt werden.</li>
         <li><b>PDF-Export:</b> Button PDF in der Titelzeile. Das PDF folgt den gesetzten Filtern. Beispiel: Filter «Erfasst» und Art «Tonregie» ergibt nur erfasste Einträge der Art Tonregie.</li>
       </ul>
-      <div class="info-version">V_Ton_LB_A_09.10.26_13:25</div>
+      <div class="info-version">v_ton_lb_a_101026_1826</div>
     </div>
   </div>
 </div>
@@ -1422,7 +1429,6 @@ function menuAuf(){
   menuPop.style.top = Math.round(r.bottom + 8) + "px";
   menuPop.style.left = Math.max(8, Math.min(Math.round(r.left), window.innerWidth - w - 8)) + "px";
 }
-document.getElementById("infoBtn").onclick = function(){ document.getElementById("infoHinter").classList.add("offen"); };
 menuBtn.onclick = function(){ if (menuPop.hidden) menuAuf(); else menuZu(); };
 menuHinter.addEventListener("click", menuZu);
 document.addEventListener("keydown", function(ev){ if (ev.key === "Escape") menuZu(); });
@@ -2105,15 +2111,28 @@ function pdfExportieren(){
   if (!tab.zeilen.length){ toastZeigen("Nichts in dieser Auswahl"); return; }
   var bytes = pdfErzeugen(tab, name.replace(/\.pdf$/, ""), "");
   dateiHerunterladen(new Blob([bytes], { type: "application/pdf" }), name);
-  toastZeigen("PDF exportiert");
+  toastZeigen("PDF exportiert", "pdfBtn");
 }
 
-function toastZeigen(text){
+function toastZeigen(text, ankerId){
   var t = document.getElementById("toast");
   if (!t){
     t = document.createElement("div");
     t.id = "toast";
     document.body.appendChild(t);
+  }
+  // Ohne Anker: unten (wie bisher). Mit Anker: Handy oben in der Mitte, Desktop nah beim Button
+  t.classList.remove("oben", "nah");
+  t.style.top = t.style.right = t.style.left = "";
+  var an = ankerId ? document.getElementById(ankerId) : null;
+  if (an){
+    if (window.innerWidth < 900) t.classList.add("oben");
+    else {
+      var r = an.getBoundingClientRect();
+      t.classList.add("nah");
+      t.style.top = Math.round(r.bottom + 10) + "px";
+      t.style.right = Math.round(window.innerWidth - r.right) + "px";
+    }
   }
   t.textContent = text;
   t.classList.add("sichtbar");
@@ -2127,7 +2146,7 @@ function csvExportieren(){
   }
   var text = "\uFEFF" + [t.kopf].concat(t.zeilen).map(function(z){ return z.map(zelle).join(";"); }).join("\r\n");
   dateiHerunterladen(new Blob([text], { type: "text/csv;charset=utf-8" }), exportDateiname("csv"));
-  toastZeigen("CSV exportiert");
+  toastZeigen("CSV exportiert", "csvBtn");
 }
 document.getElementById("csvBtn").onclick = csvExportieren;
 document.getElementById("pdfBtn").onclick = pdfExportieren;
@@ -2163,6 +2182,14 @@ function logoKickerAusrichten(){
   var sub = document.getElementById("logoSub");
   if (sub) sub.style.width = h1.getBoundingClientRect().width + "px";
 }
+
+(function(){
+  var w = document.getElementById("logoWrap");
+  if (w) w.addEventListener("click", function(){
+    try { window.close(); } catch(e) {}
+    setTimeout(function(){ if (!window.closed) location.href = "../"; }, 200);
+  });
+})();
 
 artfilterZeichnen();
 zeichne();
