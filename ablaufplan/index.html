@@ -1320,6 +1320,7 @@
   li.cue.editing .edit-input{ height:30px; padding:0 4px; font-size:17px; font-weight:600; }
   li.cue.editing .task-input{ padding:7px 9px; font-size:18px; }
   li.cue.editing .note-text-input{ padding:4px 8px; font-size:17px; }
+  textarea.note-text-input{ display:block; resize:none; overflow:hidden; white-space:pre-wrap; overflow-wrap:anywhere; line-height:1.4; }
   /* OK am Ende der Punkt-Eingabe (wie Technik), nur beim Tippen sichtbar */
   .note-wrap{ position:relative; flex:1 1 auto; min-width:0; display:flex; }
   .note-wrap .note-text-input{ width:100%; }
@@ -1681,6 +1682,8 @@
   .iv-cap{ flex:1 1 auto; min-width:0; font-size:15px; font-weight:600; color:#eee; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .iv-n{ flex:0 0 auto; font-size:13px; color:#999; }
   .iv-bar .iv-ico{ font-size:20px; line-height:1; padding:4px 6px; }
+  /* Handy/Tablet hochkant: kein „In neuem Tab öffnen“ – dort mit zwei Fingern zoomen */
+  @media (max-width: 1099px){ #ivTab{ display:none; } }
   .iv-bar button{ flex:0 0 auto; background:none; border:0; font:inherit; font-weight:700; color:var(--ka); cursor:pointer; padding:6px 2px; }
   #infoDlg, #printAsk{
     position:fixed; inset:0; z-index:60; display:flex; align-items:center; justify-content:center;
@@ -1847,6 +1850,8 @@
   .ts-inline-fields .ts-item-input{ padding:0 6px; font-size:14px; }
   .ts-inline-fields .ts-item-del{ padding:2px; }
   .ts-wrap:focus-within .ts-ok{ display:block; }
+  .ts-locked .ts-ok, .ts-wrap:has(> [readonly]) .ts-ok{ display:none !important; }
+  .ts-locked .ts-wrap:focus-within .ts-input{ padding-right:9px; }
   .ts-wrap:focus-within .ts-input{ padding-right:52px; }
   .ts-items{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:5px; }
   .ts-item{ display:flex; align-items:center; gap:6px; }
@@ -1854,6 +1859,9 @@
   .ts-dash{ flex:0 0 auto; color:var(--text-dim); font-weight:700; }
   .ts-item .ts-wrap{ flex:1 1 auto; min-width:0; }
   .ts-item-input{ height:30px; font-size:15px; font-weight:500; }
+  /* Punkte umbrechen: ganzer Text sichtbar, Feld wächst mit (seit v205) */
+  .tech-sheet .ts-item-ta{ display:block; height:auto; min-height:40px; padding:6px 9px; resize:none; overflow:hidden; white-space:pre-wrap; overflow-wrap:anywhere; }
+  .ts-inline-fields .ts-item-ta{ padding:6px 6px; }
   .ts-item-del{ flex:0 0 auto; background:none; border:none; color:var(--text-dim); font-size:12px; padding:4px; opacity:.55; cursor:pointer; }
   .ts-item-add{ margin-top:0; }
   .ts-multi{ min-height:34px; padding-top:6px; padding-bottom:6px; font-weight:600; }
@@ -1970,7 +1978,7 @@
     <li>Zum Entsperren braucht es den vierstelligen Code und das Namenskürzel.</li>
   </ul>
   <button type="button" class="info-close" id="infoClose">Schliessen</button>
-  <p class="info-ver" id="infoVer">v_ton_ap_gh_a_101026_1759</p>
+  <p class="info-ver" id="infoVer">v_ton_ap_gh_a_101026_2104</p>
 </div></div>
 <div id="printAsk" hidden><div class="info-panel print-ask" role="dialog" aria-modal="true" aria-labelledby="printAskTitle">
   <h3 id="printAskTitle">Drucken</h3>
@@ -2100,7 +2108,7 @@
     t = t || {};
     var vals = techFields(cat).map(function(f){
       var v = String(t[f.k] || "").trim();
-      var its = fieldItems(t, f).map(function(x){ return "– " + x; });
+      var its = fieldItems(t, f).map(function(x){ return "– " + x.replace(/\n/g, "\n   "); });
       var head = v ? (f.label ? f.label + ": " + v : v) : (its.length && f.label ? f.label + ":" : "");
       return [head].concat(its).filter(Boolean).join("\n");
     }).filter(Boolean);
@@ -2234,7 +2242,7 @@
               var lk = listKeyOf(f);
               html += '<ul class="ts-items">' + (t[lk] || []).map(function(it){
                 return '<li class="ts-item"><span class="ts-dash">–</span>' +
-                  '<div class="ts-wrap"><input type="text" class="ts-input ts-item-input" data-tech="' + cat.id + ':item:' + lk + ':' + it.id + '" value="' + esc(it.text || "") + '" placeholder="Unterpunkt…" autocomplete="off" spellcheck="false" enterkeyhint="next">' + OK_BTN + '</div>' +
+                  '<div class="ts-wrap multi"><textarea rows="1" class="ts-input ts-item-input ts-item-ta" data-tech="' + cat.id + ':item:' + lk + ':' + it.id + '"  placeholder="Unterpunkt…" spellcheck="false">' + esc(it.text || "") + '</textarea>' + OK_BTN + '</div>' +
                   '<button type="button" class="ts-item-del" data-action="tech-item-del" data-cat="' + cat.id + '" data-list="' + lk + '" data-item="' + it.id + '" aria-label="Unterpunkt löschen">✕</button></li>' +
                   (techDelAsk === cat.id + ":" + lk + ":" + it.id ?
                     '<li class="cue-confirm ts-item-confirm"><span class="cue-confirm-text">Punkt löschen?</span>' +
@@ -2257,13 +2265,13 @@
     html += '</div>';
     techEmptyCleaned = true;
     main.innerHTML = html;
-    Array.prototype.forEach.call(main.querySelectorAll(".ts-textarea"), growTa);
+    Array.prototype.forEach.call(main.querySelectorAll(".ts-textarea, .ts-item-ta"), growTa);
   }
   var techEmptyCleaned = false;
   var techDelAsk = null;   // „Kategorie:Liste:Id“ des Technik-Punkts, für den gerade „Punkt löschen? Ja / Nein“ offen ist
   var OK_BTN = '<button type="button" class="ts-ok" data-action="tech-ok" tabindex="-1">OK</button>';
   function growTa(ta){
-    var min = ta.classList.contains("ts-multi") ? 40 : 80;
+    var min = ta.classList.contains("ts-item-ta") ? 30 : ta.classList.contains("ts-multi") ? 40 : 80;
     ta.style.height = "auto"; ta.style.height = Math.max(ta.scrollHeight + 2, min) + "px";
   }
   var techSaveTimer = null;
@@ -3659,7 +3667,7 @@
       d.notes.forEach(function(n){
         html += '<li class="note-item" data-note-id="' + n.id + '">' +
           '<span class="note-dash" aria-hidden="true">–</span>' +
-          '<div class="note-wrap"><input type="text" class="note-text-input" data-edit="note" data-note-id="' + n.id + '" value="' + esc(n.text) + '" placeholder="Punkt eingeben…">' +
+          '<div class="note-wrap"><textarea rows="1" class="note-text-input" data-edit="note" data-note-id="' + n.id + '" placeholder="Punkt eingeben…">' + esc(n.text) + '</textarea>' +
           '<button type="button" class="ts-ok note-ok" data-action="commit-edit" tabindex="-1" aria-label="Punkt bestätigen">OK</button></div>' +
           '<button type="button" class="note-del" data-action="delete-note" data-note-id="' + n.id + '" aria-label="Punkt löschen">✕</button>' +
         '</li>' + noteDelAskHtml(editing ? editing.id : null, n.id);
@@ -3695,7 +3703,7 @@
 
   function autoGrowAll(){
     sizeLocInput();
-    document.querySelectorAll('li.cue.editing textarea.task-input').forEach(function(t){
+    document.querySelectorAll('li.cue.editing textarea.task-input, li.cue.editing textarea.note-text-input').forEach(function(t){
       t.style.height = "auto";
       t.style.height = t.scrollHeight + "px";
     });
@@ -3855,6 +3863,7 @@
     ts.classList.add("ts-locked");
     ts.querySelectorAll("input, textarea").forEach(function(el){ el.readOnly = true; });
     ts.querySelectorAll("select").forEach(function(el){ el.disabled = true; });
+    ts.querySelectorAll(".ts-ok").forEach(function(el){ el.remove(); });   // gesperrt: kein OK zum Bestätigen
   }
 
   // ---- Bühnenplan (BP): eine PDF pro Produktion ----
@@ -4752,6 +4761,7 @@
       var nid = Number(t.dataset.noteId);
       var n = editing.draft.notes.find(function(x){ return x.id === nid; });
       if(n) n.text = t.value;
+      t.style.height = "auto"; t.style.height = t.scrollHeight + "px";
     } else {
       editing.draft[f] = t.value;
       if(f === "task") autoGrowAll();
@@ -4777,9 +4787,9 @@
     var t = e.target;
     if(!editing || !t.dataset || !t.dataset.edit) return;
     if(e.key === "Escape"){ e.preventDefault(); cancelEdit(); return; }
-    if(e.key === "Enter" && t.dataset.edit !== "task"){
+    // Punkte: Enter = neuer Absatz im selben Punkt (neuer Punkt nur über „+ Punkt“, seit v206)
+    if(e.key === "Enter" && t.dataset.edit !== "task" && t.dataset.edit !== "note"){
       e.preventDefault();
-      if(t.dataset.edit === "note") return;
       var order = placeField() === "was"
         ? ["ka", "akt", "bild", "time", "was", "task"]
         : ["time", "ka", "akt", "bild", "loc", "task"];
@@ -5422,7 +5432,7 @@
       var vals = tonX
         ? [c.ka || "", c.akt || "", c.bild || "", tStr, [c.was || "", c.inspilz ? "LZ-Inspi" : ""].filter(Boolean).join(" · ")]
         : [tStr, c.ka || "", c.akt || "", c.bild || "", printLoc(c.loc)];
-      var text = [c.task ? highlightTask(esc(c.task)) : ""].concat((c.notes || []).filter(function(n){ return n.text; }).map(function(n){ return esc("– " + n.text); }))
+      var text = [c.task ? highlightTask(esc(c.task)) : ""].concat((c.notes || []).filter(function(n){ return n.text; }).map(function(n){ return esc("– " + n.text.replace(/\n/g, "\n   ")); }))
         .filter(Boolean).join("\n");
       if(c.chg && c.chg.k) text += (text ? "\n" : "") + '<span class="pv-chg">' + esc(chgText(c.chg, true)) + '</span>';
       if(!hasBild) vals.splice(bi, 1);
@@ -5453,7 +5463,7 @@
     if(bem.length){
       if(lines.length) lines.push("");
       if(bem.length === 1) lines.push("Bemerkungen: " + bem[0]);
-      else lines.push.apply(lines, ["Bemerkungen:"].concat(bem.map(function(x){ return "– " + x; })));
+      else lines.push.apply(lines, ["Bemerkungen:"].concat(bem.map(function(x){ return "– " + x.replace(/\n/g, "\n   "); })));
     }
     return lines.join("\n");
   }
@@ -5713,18 +5723,17 @@
     techSaveSoon();
   });
   mainEl.addEventListener("keydown", function(e){
-    // Einzeilige Felder: Enter = bestätigen; mehrzeilige (Mics, Bemerkungen): Enter = neuer Absatz
-    if(e.key === "Enter" && e.target.classList && e.target.classList.contains("ts-item-input") && e.target.value.trim()){
-      e.preventDefault();
-      var ip = e.target.dataset.tech.split(":");
-      addTechItem(ip[0], ip[2], ip[3]);
-      return;
-    }
+    // Einzeilige Felder: Enter = bestätigen. Punkte („+ Punkt“) und mehrzeilige Felder: Enter = neuer Absatz im selben Punkt;
+    // bestätigt wird mit OK, ein neuer Punkt kommt nur über „+ Punkt“ (seit v205)
     if(e.key === "Enter" && e.target.tagName === "INPUT" && e.target.dataset && e.target.dataset.tech){
       e.preventDefault();
       clearTimeout(techSaveTimer); saveArtFor("technik");
       e.target.blur();
     }
+  });
+  // Punkte: beim Betreten/Verlassen ändert sich der Platz rechts (OK) -> Höhe neu anpassen
+  ["focusin", "focusout"].forEach(function(ev){
+    mainEl.addEventListener(ev, function(e){ var ta = e.target; if(ta.classList && ta.classList.contains("ts-item-ta")) setTimeout(function(){ growTa(ta); }, 0); });
   });
   // OK-Knopf: Fokus nicht vorher verlieren (sonst verschwindet der Knopf vor dem Klick)
   mainEl.addEventListener("mousedown", function(e){
