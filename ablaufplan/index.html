@@ -184,6 +184,11 @@
     background:linear-gradient(90deg, transparent, var(--accent), transparent);
     pointer-events:none;
   }
+  /* Zurückpfeil vor ABLAUFPLAN → Spielplan (wie Notizen-App); grau wie Lupe, ohne Rahmen, grosse Tippfläche */
+  .backbtn{ flex:0 0 auto; display:flex; align-items:center; background:none; border:0; padding:8px; margin:-8px -6px -8px -8px;
+    color:var(--text-dim); cursor:pointer; -webkit-tap-highlight-color:transparent; position:relative; z-index:3; }
+  .backbtn svg{ width:11px; height:18px; display:block; }
+  #appTitle{ cursor:pointer; -webkit-tap-highlight-color:transparent; }
   .title-row{
     display:flex;
     align-items:center;
@@ -1603,13 +1608,14 @@
   .arch-btns .arch-warn{ border-color:var(--warn); color:var(--warn); background:transparent; }
   .arch-btns .arch-warn.full{ background:var(--warn); color:#fff; }
   .arch-btns .arch-no{ border:none; background:none; color:var(--text-dim); }
-  /* ---- Fotos: Liste (Handy als Blatt von unten, Desktop in der Mitte) ---- */
-  #fotoDlg{ position:fixed; inset:0; z-index:62; background:rgba(0,0,0,.62); display:flex; align-items:flex-end; justify-content:center; }
+  /* ---- Fotos: Liste (Handy und Desktop in der Mitte des Bildschirms) ---- */
+  #fotoDlg{ position:fixed; inset:0; z-index:62; background:rgba(0,0,0,.62); display:flex; align-items:center; justify-content:center;
+    padding:16px 12px calc(16px + env(safe-area-inset-bottom, 0px)); }
   #fotoDlg[hidden]{ display:none; }
   .foto-panel{
-    width:100%; max-height:88vh; overflow:auto; -webkit-overflow-scrolling:touch; background:var(--surface);
-    border-top:1px solid var(--line); border-radius:18px 18px 0 0; box-shadow:0 -10px 40px rgba(0,0,0,.6);
-    padding:14px 16px calc(16px + env(safe-area-inset-bottom, 0px)); color:var(--text);
+    width:100%; max-width:460px; max-height:80vh; overflow:auto; -webkit-overflow-scrolling:touch; background:var(--surface);
+    border:1px solid var(--line); border-radius:16px; box-shadow:0 18px 50px rgba(0,0,0,.6);
+    padding:14px 16px 16px; color:var(--text);
   }
   @media (min-width: 700px){
     #fotoDlg{ align-items:center; }
@@ -1645,12 +1651,20 @@
     font:inherit; font-size:16px; padding:0 10px;
   }
   .foto-cap:focus{ outline:none; border-color:var(--accent); }
+  /* OK rechts in der Beschriftung (wie Technik), nur beim Tippen sichtbar */
+  .foto-capw{ position:relative; flex:1 1 auto; min-width:0; display:flex; }
+  .foto-capw .foto-cap{ width:100%; }
+  .foto-capw:focus-within .foto-ok{ display:block; }
+  .foto-capw:focus-within .foto-cap{ padding-right:52px; }
   .foto-cap[readonly]{ border-color:transparent; background:none; padding-left:2px; }
   .foto-del{ flex:0 0 auto; background:none; border:none; color:var(--text-dim); font-size:13px; padding:6px 4px; opacity:.6; cursor:pointer; }
   .foto-confirm{ list-style:none; margin:2px 0 6px; }
   .foto-del-all{ display:block; margin:14px 0 0 auto; background:none; border:none; font:inherit; font-size:13px; font-weight:700; color:var(--warn); cursor:pointer; padding:4px 0; }
   .foto-all-confirm{ margin-top:12px; }
   .foto-empty{ font-size:13px; color:var(--text-dim); margin:4px 0 2px; }
+  .foto-locked{ margin:0 0 12px; padding:9px 12px; border-radius:10px; border:1px solid rgba(226,119,90,.45); background:rgba(226,119,90,.10);
+    font-size:14px; line-height:1.4; color:var(--text); }
+  .foto-locked b{ color:var(--warn); }
   .foto-hint{ font-size:12px; color:var(--text-dim); margin:10px 0 0; line-height:1.4; }
   .foto-busy{ font-size:13px; color:var(--text-dim); margin:0 0 10px; }
   /* Vollbild */
@@ -1690,6 +1704,8 @@
   .info-panel .info-ver{ margin:10px 0 0; font-size:12px; color:#888; }
   /* Handy: Rückfrage vor dem Druck – Bereich oder Alles */
   /* schlicht: Titel, oranges × oben rechts, zwei ruhige Zeilen */
+  /* Datei-Eingaben unsichtbar, aber nicht display:none (manche Handys öffnen sonst die Kamera nicht) */
+  .foto-file{ position:fixed; left:-200px; top:0; width:1px; height:1px; opacity:0; pointer-events:none; }
   .print-ask{ position:relative; width:min(260px, 100%); padding:14px 16px 10px; border-radius:12px; }
   .print-ask h3{ margin:0 0 6px; font-size:15px; font-weight:600; color:var(--text-dim); }
   .pa-x{ position:absolute; top:6px; right:8px; width:30px; height:30px; border:none; background:none; padding:0;
@@ -1712,6 +1728,7 @@
     /* Kopfzeile in einer Zeile: ABLAUFPLAN · Produktion · (Männchen) · TON & BILD (Bildschirmmitte) · Gesamtexport · Drucken · Lupe */
     header.top{ flex:0 0 auto; position:relative; top:auto; width:auto; display:flex; flex-wrap:wrap; align-items:center; column-gap:7px; }
     header.top .title-row, header.top .prod-row{ display:contents; }
+    header.top .backbtn{ order:0; }
     header.top h1{ order:1; }
     /* Breite so, dass das Schloss dahinter bündig über dem „+“ der Bühne-Spalte steht (mind. 280px) */
     #prodPicker{ order:2; flex:0 0 max(280px, calc((100vw - 96px) / 3 - 166.7px)); margin-left:14px; }
@@ -1881,7 +1898,8 @@
 <body>
 <header class="top">
   <div class="title-row">
-    <h1>Ablaufplan</h1>
+    <button class="backbtn" id="backBtn" type="button" aria-label="Zurück zum Spielplan" title="Zurück zum Spielplan"><svg viewBox="0 0 11 18" aria-hidden="true"><path d="M9 1.5L2 9l7 7.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <h1 id="appTitle" title="Zurück zum Spielplan">Ablaufplan</h1>
     <span class="brand-logo">TON &amp; BILD</span>
     <span class="walk-lane" id="walkLane" aria-hidden="true"><svg class="wk-obst wk-spk" width="15" height="11" viewBox="0 0 15 11"><g class="spk-body"><rect x=".6" y=".6" width="7.4" height="9.8" rx="1"></rect><circle class="spk-cone" cx="4.3" cy="6.6" r="2.2"></circle><circle class="spk-tw" cx="4.3" cy="2.7" r=".9"></circle></g><path class="spk-w w1" d="M9.6 3.6 Q11 5.5 9.6 7.4"></path><path class="spk-w w2" d="M11.4 2.2 Q13.6 5.5 11.4 8.8"></path></svg><span class="wk-obst wk-ton">TON</span><svg class="wk-obst wk-cable" width="14" height="4" viewBox="0 0 14 4"><path d="M.8 3.2 Q3.5 .6 7 2.2 T13.2 1.4"></path><circle cx="13.2" cy="1.4" r="1.2"></circle></svg><span class="wk-walker"><span class="wk-hop"><span class="wk-flip"><svg viewBox="0 0 22 20"><g class="wk-fig">
 <g class="wk-body">
@@ -1942,7 +1960,7 @@
   <h4>Fotos (Kamera-Symbol, Bühne)</h4>
   <ul>
     <li>Grau = noch keine Fotos, grün = Fotos vorhanden. Bis zu 10 Fotos pro Produktion, jedes mit kurzer Beschriftung.</li>
-    <li><b>Handy:</b> Antippen öffnet die Kamera bzw. die Fotoliste. <b>Desktop:</b> Fotos auf das Kamera-Symbol ziehen oder anklicken. Der Dateiname wird als Beschriftung übernommen.</li>
+    <li><b>Handy:</b> Antippen öffnet die Fotoliste mit „Foto machen“ und „Aus Gallery“. <b>Desktop:</b> Fotos auf das Kamera-Symbol ziehen oder anklicken. Der Dateiname wird als Beschriftung übernommen.</li>
     <li>Im Vollbild: ⤓ lädt nur dieses Foto herunter, ↗ öffnet es in einem neuen Tab (dort zoomen).</li>
     <li>„Alle herunterladen“ speichert alle Fotos als ZIP – zur Ablage auf dem Server.</li>
   </ul>
@@ -1952,7 +1970,7 @@
     <li>Zum Entsperren braucht es den vierstelligen Code und das Namenskürzel.</li>
   </ul>
   <button type="button" class="info-close" id="infoClose">Schliessen</button>
-  <p class="info-ver" id="infoVer">v_ton_ap_gh_a_091026_1325</p>
+  <p class="info-ver" id="infoVer">v_ton_ap_gh_a_101026_1759</p>
 </div></div>
 <div id="printAsk" hidden><div class="info-panel print-ask" role="dialog" aria-modal="true" aria-labelledby="printAskTitle">
   <h3 id="printAskTitle">Drucken</h3>
@@ -1962,8 +1980,8 @@
 </div></div>
 <div class="file-view" id="fileView" hidden><div class="fv-stage" id="fvStage"></div><div class="fv-bar"><span id="fvName"></span><a id="fvSave" href="#">Speichern</a><button type="button" id="fvClose">Schliessen</button></div></div>
 <input type="file" id="bpFile" accept="application/pdf,.pdf" hidden>
-<input type="file" id="fotoCam" accept="image/*" capture="environment" hidden>
-<input type="file" id="fotoPick" accept="image/*" multiple hidden>
+<input type="file" id="fotoCam" class="foto-file" accept="image/*" capture="environment">
+<input type="file" id="fotoPick" class="foto-file" accept="image/*" multiple>
 <div id="fotoDlg" hidden><div class="foto-panel" role="dialog" aria-modal="true" aria-label="Fotos"></div></div>
 <div id="imgView" hidden><div class="iv-stage" id="ivStage"><button type="button" class="iv-nav iv-prev" id="ivPrev" aria-label="Vorheriges Foto">‹</button><button type="button" class="iv-nav iv-next" id="ivNext" aria-label="Nächstes Foto">›</button></div><div class="iv-bar"><span class="iv-cap" id="ivCap"></span><span class="iv-n" id="ivN"></span><button type="button" class="iv-ico" id="ivDl" title="Dieses Foto herunterladen" aria-label="Dieses Foto herunterladen">⤓</button><button type="button" class="iv-ico" id="ivTab" title="In neuem Tab öffnen (zum Zoomen)" aria-label="In neuem Tab öffnen">↗</button><button type="button" id="ivClose">Schliessen</button></div></div>
 <div id="printView" aria-hidden="true"></div>
@@ -4137,10 +4155,9 @@
     if(prodOpen()) p.chg = { k: openLock.k, t: Date.now() };
   }
   // Knopf: Handy ohne Fotos -> Kamera direkt; sonst die Liste
+  // Kamera-Knopf: öffnet immer die Fotoliste mit „Foto machen“ / „Aus Gallery“ und den vorhandenen Fotos (keine Kamera vorweg)
   function fotoTap(){
-    var p = currentProd();
-    if(!p) return;
-    if(!isCols() && !prodFotos(p).length && !prodBlocked()){ fotoPick(true); return; }
+    if(!currentProd()) return;
     openFotoDlg();
   }
   function fotoPick(camera){
@@ -4167,16 +4184,18 @@
       (n ? '<button type="button" class="foto-dl" data-foto="download">Alle herunterladen</button>' : '') +
       '<button type="button" data-foto="close">Schliessen</button></div>';
     if(fotoBusy) h += '<p class="foto-busy">' + fotoBusy + (fotoBusy === 1 ? ' Foto wird' : ' Fotos werden') + ' gespeichert …</p>';
-    if(!blocked){
+    if(blocked) h += '<p class="foto-locked"><b>Produktion ist gesperrt.</b> Fotos nur ansehen und herunterladen – zum Hinzufügen erst das Schloss öffnen.</p>';
+    else {
       if(room <= 0) h += '<p class="foto-max">Maximal ' + FOTO_MAX + ' Fotos – zum Hinzufügen erst eines löschen.</p>';
       else if(isCols()) h += '<button type="button" class="foto-drop" data-foto="pick"><b>Fotos hierher ziehen</b><br>oder klicken und auswählen (mehrere möglich)</button>';
-      else h += '<div class="foto-add"><button type="button" class="main" data-foto="camera">' + CAM_SVG + 'Foto aufnehmen</button><button type="button" data-foto="pick">Aus Galerie</button></div>';
+      else h += '<div class="foto-add"><button type="button" class="main" data-foto="camera">' + CAM_SVG + 'Foto machen</button><button type="button" data-foto="pick">Aus Gallery</button></div>';
     }
     if(!n && !fotoBusy) h += '<p class="foto-empty">Noch keine Fotos.</p>';
     h += '<ul class="foto-list">';
     list.forEach(function(f){
       h += '<li class="foto-item">' + fotoThumbHtml(f) +
-        '<input type="text" class="foto-cap" data-id="' + esc(f.id) + '" value="' + esc(f.t) + '" placeholder="Beschriftung, z. B. Bühne links…" maxlength="80" autocomplete="off" spellcheck="false" enterkeyhint="done"' + (blocked ? ' readonly' : '') + '>' +
+        '<span class="foto-capw"><input type="text" class="foto-cap" data-id="' + esc(f.id) + '" value="' + esc(f.t) + '" placeholder="Beschriftung, z. B. Bühne links…" maxlength="80" autocomplete="off" spellcheck="false" enterkeyhint="done"' + (blocked ? ' readonly' : '') + '>' +
+        (blocked ? '' : '<button type="button" class="ts-ok foto-ok" data-foto="capok" tabindex="-1" aria-label="Beschriftung bestätigen">OK</button>') + '</span>' +
         (blocked ? '' : '<button type="button" class="foto-del" data-foto="del" data-id="' + esc(f.id) + '" aria-label="Foto löschen">✕</button>') + '</li>';
       if(fotoAsk === f.id) h += '<li class="cue-confirm foto-confirm"><span class="cue-confirm-text">Foto löschen?</span>' +
         '<button type="button" class="prod-dd-confirm-yes" data-foto="del-yes" data-id="' + esc(f.id) + '">Ja</button>' +
@@ -4189,7 +4208,7 @@
           '<button type="button" class="prod-dd-confirm-yes" data-foto="all-yes">Ja</button><button type="button" class="prod-dd-confirm-no" data-foto="del-no">Nein</button></div>'
         : '<button type="button" class="foto-del-all" data-foto="all">Alle Fotos löschen</button>';
     }
-    if(n) h += '<p class="foto-hint">' + (isCols() ? 'Bild anklicken = Vollbild · Text anklicken = Beschriftung ändern.' : 'Bild antippen = Vollbild · Text antippen = Beschriftung ändern.') + (blocked ? ' Produktion gesperrt – nur ansehen und herunterladen.' : '') + '</p>';
+    if(n) h += '<p class="foto-hint">' + (blocked ? (isCols() ? 'Bild anklicken = Vollbild.' : 'Bild antippen = Vollbild.') : isCols() ? 'Bild anklicken = Vollbild · Text anklicken = Beschriftung ändern.' : 'Bild antippen = Vollbild · Text antippen = Beschriftung ändern.') + '</p>';
     panel.innerHTML = h;
     dlg.hidden = false;
     fotoDlPending = false;
@@ -4514,6 +4533,14 @@
     });
     panel.addEventListener("keydown", function(e){
       if(e.key === "Enter" && e.target.classList.contains("foto-cap")){ e.preventDefault(); e.target.blur(); }
+    });
+    // OK in der Beschriftung: Fokus beim Antippen nicht vorher verlieren, dann bestätigen (= Feld verlassen -> speichern)
+    ["pointerdown", "mousedown"].forEach(function(ev){ panel.addEventListener(ev, function(e){ if(e.target.closest && e.target.closest(".foto-ok")) e.preventDefault(); }); });
+    panel.addEventListener("click", function(e){
+      var ok = e.target.closest && e.target.closest(".foto-ok");
+      if(!ok) return;
+      var inp = ok.parentNode.querySelector(".foto-cap");
+      if(inp) inp.blur();
     });
     panel.addEventListener("focusout", function(e){
       if(!e.target.classList || !e.target.classList.contains("foto-cap")) return;
@@ -5923,6 +5950,17 @@
     artPickerOpen = false;
     renderArtPicker();
   });
+
+  // Zurück zum Spielplan: Pfeil und Schriftzug „ABLAUFPLAN“ – Tab schliessen (wenn aus dem Spielplan geöffnet),
+  // sonst zur Spielplan-Web-App (feste Adresse, funktioniert auch in der Standalone-Datei)
+  var SPIELPLAN_URL = "https://raphcoda.github.io/spielplan_web-app/";
+  (function(){
+    function back(){
+      try { window.close(); } catch(e) {}
+      setTimeout(function(){ if(!window.closed) location.href = SPIELPLAN_URL; }, 200);
+    }
+    ["backBtn", "appTitle"].forEach(function(id){ var el = document.getElementById(id); if(el) el.addEventListener("click", back); });
+  })();
 
   load();
   renderProdPicker();
