@@ -318,6 +318,12 @@
   .archbtn{ color:var(--text-dim); font-size:13px; }
   /* Lupe · Archiv · ★ enger zusammen, + leicht abgesetzt (seit v68) */
   #archBtn, #bmBtn, #cleanBtn, #lockBtn, #menuBtn{ margin-left:-4px; }
+  /* Handy (seit v109): Stern ohne Zahl mittig, Lupe · Menü · Stern etwas weiter auseinander, + minimal weiter weg */
+  @media (max-width:699px){
+    #bmBtn .bm-count:empty{ display:none; }
+    #menuBtn, #bmBtn{ margin-left:2px; }
+    #addBtn{ margin-left:20px; }
+  }
   /* Menü ☰ (seit v98): About · Archiv · Media */
   .menubtn{ color:var(--text-dim); }
   .menu-panel{ width:200px; padding:5px; }
@@ -469,13 +475,24 @@
     background:none;
     border:none;
     color:var(--text-dim);
-    font-size:19px;
+    font-family:inherit;
+    font-size:13px;          /* seit v110 Text „Aus Lesezeichen entfernen“ statt ✕ */
+    white-space:nowrap;
     padding:8px 10px;
     cursor:pointer;
     opacity:.8;
     -webkit-tap-highlight-color:transparent;
   }
-  .bm-remove:hover{ color:var(--warn); opacity:1; }
+  .bm-remove:hover{ color:var(--text); opacity:1; }
+  /* Vorschaubild in den Listen (seit v113) */
+  .bm-go .bm-th{ flex:0 0 auto; width:30px; height:30px; border-radius:6px; border:1px solid var(--line); background:var(--surface-2);
+    object-fit:cover; align-self:center; display:flex; align-items:center; justify-content:center; color:var(--ka); }
+  .bm-go span.bm-th svg{ width:16px; height:16px; display:block; }
+  .bm-go .bm-src{ display:block; font-size:12px; font-weight:600; letter-spacing:.02em; color:var(--ka); line-height:1.2; margin-bottom:1px; }
+  /* Lesezeichen (seit v116): „Lesezeichen / entfernen“ zweizeilig rechts am Fensterrand, Titel links darf umbrechen */
+  #bmPanel .bm-item{ align-items:center; }
+  #bmPanel .bm-go .bm-t{ white-space:normal; overflow:visible; }
+  #bmPanel .bm-remove{ flex:0 0 auto; font-size:15px; line-height:1.25; text-align:right; padding:8px 10px 8px 6px; }
   .bm-tag{
     flex:0 0 auto;
     font-size:12px;
@@ -1082,6 +1099,7 @@
   // Nach „+“ existiert die Notiz zuerst nur auf diesem Gerät. Erst wenn sie Inhalt hat (Text, Listenpunkt,
   // Foto/Datei), wird sie gespeichert und erscheint auf allen Geräten. Bleibt sie leer, verschwindet sie.
   var draftId = null;
+  var draftBusy = null;   // id des Entwurfs, für den gerade Kamera/Dateiauswahl offen ist oder hochgeladen wird (seit v108)
   function draftNote(){ return draftId ? (notes.find(function(n){ return n.id === draftId; }) || null) : null; }
   function hasContent(n){
     return !!(String(n.text || "").trim() || noteFiles(n).length || itemsOf(n).some(function(it){ return String(it.t || "").trim(); }));
@@ -1092,6 +1110,7 @@
       var d = draftNote();
       if(!d){ draftId = null; return; }
       if(hasContent(d)) return;
+      if(draftBusy === d.id) return;   // Kamera/Auswahl offen oder Upload läuft → Entwurf behalten
       var ae = document.activeElement, li = ae && ae.closest ? ae.closest("li.note") : null;
       if(li && li.getAttribute("data-id") === d.id && isEditing()) return;
       notes = notes.filter(function(n){ return n.id !== d.id; });
@@ -1345,7 +1364,8 @@
   // Türkiser Titel nur für Einwurf-Einträge (nicht für Notizen, an die etwas angehängt wurde)
   function isEinwurf(n){
     var l = noteFiles(n);
-    return l.length > 0 && (n.text === FILE_NOTE_TEXT || n.text === FILE_NOTE_TEXT_MOBIL || l.some(function(f){ return f.einwurf; }));
+    // Türkis nur, solange der automatische Titel steht – eigener Text macht die Notiz normal (seit v107)
+    return l.length > 0 && (n.text === FILE_NOTE_TEXT || n.text === FILE_NOTE_TEXT_MOBIL);
   }
   var ICON_X_SMALL = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>';
   function fileRowHtml(n, f, mitEntfernen){
@@ -1770,7 +1790,56 @@
                          function(err){ URL.revokeObjectURL(r.url); throw err; });
     });
   }
+  // ---- PDF-Vorschaubild (seit v113b): erste Seite, oben quadratisch, 92px – pdf.js nur bei Bedarf von cdnjs ----
+  var PDFJS_URL = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs";
+  var PDFJS_WORKER = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs";
+  var pdfjsP = null;
+  function loadPdfJs(){
+    if(!pdfjsP){
+      pdfjsP = import(PDFJS_URL).then(function(m){
+        var lib = (m && m.getDocument) ? m : (m && m.default) || m;
+        lib.GlobalWorkerOptions.workerSrc = PDFJS_WORKER;
+        return lib;
+      });
+      pdfjsP.catch(function(){ pdfjsP = null; });
+    }
+    return pdfjsP;
+  }
+  function isPdf(file){ return /pdf$/i.test(file.type || "") || /\.pdf$/i.test(file.name || ""); }
+  function topThumb(c){
+    try{
+      var side = Math.min(c.width, c.height), t = document.createElement("canvas");
+      t.width = t.height = 92;
+      var g = t.getContext("2d");
+      g.fillStyle = "#fff"; g.fillRect(0, 0, 92, 92);
+      g.drawImage(c, 0, 0, side, side, 0, 0, 92, 92);
+      var u = t.toDataURL("image/jpeg", .72);
+      return thumbOk(u) ? u : "";
+    }catch(e){ return ""; }
+  }
+  function pdfThumb(file){
+    var job = loadPdfJs().then(function(lib){
+      return (file.arrayBuffer ? file.arrayBuffer() : new Response(file).arrayBuffer()).then(function(buf){
+        return lib.getDocument({ data: new Uint8Array(buf) }).promise;
+      });
+    }).then(function(doc){
+      return doc.getPage(1).then(function(page){
+        var vp0 = page.getViewport({ scale: 1 }), vp = page.getViewport({ scale: 184 / vp0.width });
+        var c = document.createElement("canvas");
+        c.width = Math.ceil(vp.width); c.height = Math.ceil(vp.height);
+        var g = c.getContext("2d");
+        g.fillStyle = "#fff"; g.fillRect(0, 0, c.width, c.height);
+        return page.render({ canvasContext: g, viewport: vp, canvas: c }).promise.then(function(){
+          var t = topThumb(c);
+          try{ doc.destroy(); }catch(e){}
+          return t;
+        });
+      });
+    });
+    return withTimeout(job, 12000).catch(function(){ return ""; });   // klappt es nicht: einfach ohne Vorschau
+  }
   function thumbFor(file){
+    if(isPdf(file)) return pdfThumb(file);
     if(!/^image\/(jpeg|png|gif|webp|bmp|avif)$/i.test(file.type || "")) return Promise.resolve("");
     return loadImage(file).then(function(r){ var t = makeThumb(r.img); URL.revokeObjectURL(r.url); return t; }, function(){ return ""; });
   }
@@ -1920,10 +1989,15 @@
                             : "Höchstens " + MAX_FILES + " Dateien pro Notiz – zuerst eine entfernen.";
   }
   // Auswahlfenster / Kamera öffnen (muss direkt im Klick passieren)
+  // Fallback für Browser ohne „cancel“-Ereignis: zurück in der App, aber keine Datei gekommen
+  window.addEventListener("focus", function(){
+    setTimeout(function(){ if(pickTarget && draftBusy){ pickTarget = null; draftBusy = null; dropEmptyDraftSoon(); } }, 1500);
+  });
   function pickFor(noteId, kind){
     var inp = document.getElementById(kind === "photo" ? "pickPhoto" : "pickFile");
     if(!inp) return;
     pickTarget = { id: String(noteId), kind: kind };
+    if(draftId === String(noteId)) draftBusy = draftId;   // Entwurf nicht verwerfen, solange Kamera/Auswahl offen ist
     inp.value = "";
     inp.click();
   }
@@ -1934,10 +2008,14 @@
       var list = inp.files ? Array.prototype.slice.call(inp.files) : [], t = pickTarget;
       pickTarget = null;
       inp.value = "";
-      if(!list.length || !t) return;
-      if(t.kind === "photo") attachToNote(t.id, list[0], true);   // Foto: immer einzeln
-      else uploadBatch(list, t.id);                               // Dateien: auch mehrere auf einmal (seit v91)
+      if(!list.length || !t){ draftBusy = null; return; }
+      var p = (t.kind === "photo") ? attachToNote(t.id, list[0], true)   // Foto: immer einzeln
+                                   : uploadBatch(list, t.id);            // Dateien: auch mehrere auf einmal (seit v91)
+      // Nach dem Upload: hat der Entwurf jetzt Inhalt, ist er veröffentlicht; sonst (Fehler) wieder normal behandeln
+      Promise.resolve(p).then(function(){ draftBusy = null; dropEmptyDraftSoon(); }, function(){ draftBusy = null; dropEmptyDraftSoon(); });
     });
+    // Kamera/Auswahl abgebrochen → leeren Entwurf wieder normal behandeln (seit v108)
+    inp.addEventListener("cancel", function(){ if(pickTarget){ pickTarget = null; draftBusy = null; dropEmptyDraftSoon(); } });
   });
   function uploadFiles(list){
     return uploadBatch(list, null);   // seit v91: mehrere Dateien landen zusammen in EINER Einwurf-Notiz
@@ -1967,13 +2045,17 @@
     });
   }
 
+  var LINK_MAX = 80;
   function linkify(escapedText){
     return escapedText.replace(/((?:https?:\/\/|www\.)[^\s<]+)/gi, function(match){
       var href = /^https?:\/\//i.test(match) ? match : "https://" + match;
       var clean = match.replace(/[),.;:!?]+$/, "");
       var trail = match.slice(clean.length);
       href = /^https?:\/\//i.test(clean) ? clean : "https://" + clean;
-      return '<a href="' + href + '" target="_blank" rel="noopener">' + clean + '</a>' + trail;
+      // Sehr lange Links gekürzt anzeigen (seit v117): max. LINK_MAX Zeichen ≈ 3 Zeilen am Handy, dann „…“; Ziel bleibt vollständig
+      var roh = clean.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&amp;/g, "&");
+      var zeige = roh.length > LINK_MAX ? esc(roh.slice(0, LINK_MAX - 1)) + "…" : clean;
+      return '<a href="' + href + '" target="_blank" rel="noopener"' + (roh.length > LINK_MAX ? ' title="' + clean + '"' : '') + '>' + zeige + '</a>' + trail;
     });
   }
 
@@ -1997,6 +2079,20 @@
   var bmPanel = document.getElementById("bmPanel");
   var bmCount = document.getElementById("bmCount");
 
+  // Titel in den Listen (Lesezeichen, Archiv, Gesperrt, Suche) – seit v113: bei Anhängen kleines Vorschaubild,
+  // und bei reinen Einwurf-Notizen (ohne eigenen Text) der Dateiname statt „Einwurf“
+  function listTitleHtml(n){
+    var l = noteFiles(n), f = l[0];
+    var ohneText = !String(n.text || "").trim() || isEinwurf(n);
+    var titel = (ohneText && f) ? f.name + (l.length > 1 ? "  +" + (l.length - 1) : "") : firstLine(n.text);
+    var quelle = (f && isEinwurf(n)) ? n.text : "";   // „Einwurf“ / „Einwurf mobil“ klein in Türkis darüber
+    var th = "";
+    if(f){
+      th = thumbOk(f.thumb) ? '<img class="bm-th" src="' + f.thumb + '" alt="">'
+         : '<span class="bm-th">' + (viewKind(f) === "img" || fileKind(f) === "photo" ? ICON_IMG : ICON_FILE) + '</span>';
+    }
+    return th + '<span class="bm-t">' + (quelle ? '<span class="bm-src">' + esc(quelle) + '</span>' : '') + esc(titel) + '</span>';
+  }
   function firstLine(text){
     var t = String(text || "").split("\n").filter(function(l){ return l.trim(); })[0] || "";
     return t.trim() || "(leere Notiz)";
@@ -2012,7 +2108,7 @@
     updateOverlay();
     if(!bmOpen) return;
 
-    var html = '<div class="bm-head">Lesezeichen</div>';
+    var html = '<div class="bm-head">Lesezeichen<button type="button" class="info-x" data-bm-close="1" aria-label="Fenster schliessen" title="Schliessen">✕</button></div>';
     if(bms.length === 0){
       html += '<div class="bm-empty">Noch keine Lesezeichen.<br>Bei einer Notiz auf ☆ tippen, um sie hier festzuhalten.</div>';
     } else {
@@ -2020,10 +2116,10 @@
         html += '<div class="bm-item' + (n.hidden ? ' is-hidden' : '') + '">' +
           '<button type="button" class="bm-go" data-bm-go="' + n.id + '"' + (n.hidden ? ' aria-expanded="' + (bmExpanded === n.id) + '"' : '') + '>' +
             (n.kuerzel ? '<span class="bm-k">' + esc(n.kuerzel) + '</span>' : '') +
-            '<span class="bm-t">' + esc(firstLine(n.text)) + '</span>' +
+            listTitleHtml(n) +
             (n.hidden ? '<span class="bm-tag">ausgeblendet</span>' : '') +
           '</button>' +
-          '<button type="button" class="bm-remove" data-bm-remove="' + n.id + '" aria-label="Lesezeichen entfernen" title="Lesezeichen entfernen">✕</button>' +
+          '<button type="button" class="bm-remove" data-bm-remove="' + n.id + '">Lesezeichen<br>entfernen</button>' +
         '</div>';
         if(bmPendingRemove === n.id){
           html += '<div class="bm-sub">' +
@@ -2079,6 +2175,7 @@
       return notes.find(function(n){ return n.id === id; });
     }
     var el;
+    if(e.target.closest("[data-bm-close]")){ setBmOpen(false); return; }
     if((el = e.target.closest("[data-bm-remove]"))){
       var rn = byId("data-bm-remove", el);
       if(!rn) return;
@@ -2248,7 +2345,7 @@
   }
 
   // ---- Kurzinfo „i“ (seit v98) ----
-  var APP_VERSION = "v_ton_nt_gh_a_091026_1321";   // bei jeder Änderung anpassen: v_ton_nt_gh_a_TTMMJJ_HHMM
+  var APP_VERSION = "v_ton_nt_gh_a_101026_1831";   // bei jeder Änderung anpassen: v_ton_nt_gh_a_TTMMJJ_HHMM
   var infoOpen = false;
   var infoPanel = document.getElementById("infoPanel");
   if(document.getElementById("infoVer")) document.getElementById("infoVer").textContent = APP_VERSION;
@@ -2400,7 +2497,7 @@
         html += '<div class="bm-item">' +
           '<button type="button" class="bm-go" data-lock-go="' + n.id + '"' + (weg ? ' aria-expanded="' + (lockExpanded === n.id) + '"' : '') + '>' +
             (n.kuerzel ? '<span class="bm-k">' + esc(n.kuerzel) + '</span>' : '') +
-            '<span class="bm-t">' + esc(firstLine(n.text)) + '</span>' +
+            listTitleHtml(n) +
             (nf ? '<span class="bm-tag">' + nf + '\u00a0' + (nf === 1 ? 'Anhang' : 'Anhänge') + '</span>' : '') +
             (n.archived ? '<span class="bm-tag">Archiv</span>' : n.hidden ? '<span class="bm-tag">ausgeblendet</span>' : '') +
           '</button>' +
@@ -2482,7 +2579,7 @@
         html += '<div class="bm-item">' +
           '<button type="button" class="bm-go" data-arch-go="' + n.id + '" aria-expanded="' + (archExpanded === n.id) + '">' +
             (n.kuerzel ? '<span class="bm-k">' + esc(n.kuerzel) + '</span>' : '') +
-            '<span class="bm-t">' + esc(firstLine(n.text)) + '</span>' +
+            listTitleHtml(n) +
           '</button>' +
         '</div>';
         if(archPendingDelete === n.id){
@@ -2827,7 +2924,7 @@
       extra.forEach(function(n){
         extraHtml += '<button type="button" class="bm-go" data-search-open="' + n.id + '">' +
           (n.kuerzel ? '<span class="bm-k">' + esc(n.kuerzel) + '</span>' : '') +
-          '<span class="bm-t">' + esc(firstLine(n.text)) + '</span>' +
+          listTitleHtml(n) +
           '<span class="bm-tag">' + (n.archived ? 'Archiv' : 'ausgeblendet') + '</span>' +
         '</button>';
       });
@@ -2929,7 +3026,12 @@
     } else {
       input = document.createElement("textarea");
       input.className = "note-text-input";
-      input.value = note.text || "";
+      // Automatischer Titel („Einwurf“/„Einwurf mobil“) → Feld leer öffnen, damit man direkt dazuschreiben kann (seit v107);
+      // bleibt es leer, kommt der Titel beim Speichern wieder
+      var autoTitel = (note.text === FILE_NOTE_TEXT || note.text === FILE_NOTE_TEXT_MOBIL) && noteFiles(note).length > 0;
+      var alterTitel = note.text;
+      input.value = autoTitel ? "" : (note.text || "");
+      if(autoTitel) input.placeholder = "Text zum Anhang …";
       input.rows = 1;
     }
     fieldBtn.replaceWith(input);
@@ -2959,7 +3061,7 @@
       } else {
         note.text = input.value.replace(/^\n+|\n+$/g, "");
         // Text geleert, aber Anhänge vorhanden → wieder „Einwurf mobil“ (seit v88)
-        if(!note.text.trim() && noteFiles(note).length) note.text = FILE_NOTE_TEXT_MOBIL;
+        if(!note.text.trim() && noteFiles(note).length) note.text = (typeof alterTitel === "string" && alterTitel) ? alterTitel : FILE_NOTE_TEXT_MOBIL;
       }
       save();
       renderList();
