@@ -910,6 +910,11 @@
   /* Vollbild-Ansicht für Dateien (Bild, PDF am Desktop, Text, Audio, Video) */
   .file-view{ position:fixed; inset:0; z-index:55; background:#000; display:flex; flex-direction:column; }
   .file-view[hidden]{ display:none; }
+  .fv-nav{ position:absolute; top:50%; transform:translateY(-50%); width:44px; height:64px; border:0; border-radius:10px;
+    background:rgba(0,0,0,.35); color:#fff; font-size:38px; line-height:1; cursor:pointer; -webkit-tap-highlight-color:transparent; z-index:1; }
+  .fv-prev{ left:8px; } .fv-next{ right:8px; }
+  .fv-nav:hover{ background:rgba(0,0,0,.6); }
+  .fv-stage{ position:relative; }
   .fv-stage{ flex:1 1 auto; min-height:0; display:flex; align-items:center; justify-content:center; overflow:hidden; }
   .fv-stage img, .fv-stage video{ width:100%; height:100%; object-fit:contain; display:block; }
   .fv-stage iframe{ width:100%; height:100%; border:0; background:#fff; display:block; }
@@ -1251,6 +1256,7 @@
     if(dLocal && !remote.some(function(n){ return n.id === dLocal.id; })) notes.push(dLocal);   // eigener Entwurf bleibt
     if(isEditing()){ deferredRemote = true; return; }
     renderList();
+    tryDeepLink(true);
   }
   function attachSync(){
     if(syncAttached || !db) return;
@@ -1511,7 +1517,10 @@
   }
   function shareTeamMail(n){
     var subject = encodeURIComponent("NOTE Webapp Weiterleitung");
-    var body = encodeURIComponent(shareText(n) + (noteFiles(n).length ? "\n\nAnhänge (in der NOTE-App): " + noteFiles(n).map(function(f){ return f.name; }).join(", ") : ""));
+    // Seit v119: pro Anhang ein Direktlink – öffnet die NOTE-App und zeigt die Datei sofort (#datei=notiz~datei)
+    var base = location.href.split("#")[0];
+    var anh = noteFiles(n).map(function(f){ return "– " + f.name + ":\n  " + base + "#datei=" + encodeURIComponent(n.id) + "~" + encodeURIComponent(f.id); });
+    var body = encodeURIComponent(shareText(n) + (anh.length ? "\n\nAnhänge (öffnen in der NOTE-App):\n" + anh.join("\n") : ""));
     window.location.href = "mailto:?subject=" + subject + "&body=" + body;
   }
   function canShareFiles(list){
@@ -1611,6 +1620,33 @@
     fileView.hidden = true;
     fvStage.innerHTML = "";   // stoppt auch Audio/Video
   }
+  // ---- Blättern im Vollbild (seit v118) ----
+  var fvCtx = null;   // { nid, fid } – zuletzt geöffneter Anhang
+  function fvGallery(){
+    if(!fvCtx) return null;
+    var n = notes.find(function(x){ return x.id === fvCtx.nid; });
+    if(!n) return null;
+    return { n: n, list: noteFiles(n).filter(function(x){ return viewKind(x) === "img"; }) };
+  }
+  function fvStep(d){
+    var gal = fvGallery();
+    if(!gal || fileView.hidden) return;
+    var i = gal.list.findIndex(function(x){ return x.id === fvCtx.fid; }), nx = gal.list[i + d];
+    if(i < 0 || !nx) return;
+    openNoteFile(gal.n.id + "|" + nx.id);
+  }
+  // Nachbarbilder still vorladen, damit das Wischen sofort klappt
+  function fvPreload(gal, pos){
+    [pos - 1, pos + 1].forEach(function(j){
+      var x = gal.list[j];
+      if(!x || fileUrls[x.id] || fileLoading[x.id]) return;
+      fetchFileRecord(x.id).then(function(rec){
+        if(!rec || !rec.data || fileUrls[x.id]) return;
+        fileBlobs[x.id] = b64ToBlob(rec.data, rec.type || x.type);
+        fileUrls[x.id] = URL.createObjectURL(fileBlobs[x.id]);
+      }, function(){});
+    });
+  }
   function showFile(f){
     var url = fileUrls[f.id];
     if(!url) return;
@@ -1634,7 +1670,14 @@
       }
       fvStage.appendChild(el);
       if(toastEl){ clearTimeout(toastTimer); toastEl.hidden = true; }
-      document.getElementById("fvName").textContent = f.name;
+      // Blättern zwischen den Bildern derselben Notiz (seit v118)
+      var gal = (kind === "img") ? fvGallery() : null, pos = gal ? gal.list.indexOf(f) : -1;
+      if(gal && gal.list.length > 1 && pos >= 0){
+        if(pos > 0) fvStage.insertAdjacentHTML("beforeend", '<button type="button" class="fv-nav fv-prev" data-fv-step="-1" aria-label="Vorheriges Bild">‹</button>');
+        if(pos < gal.list.length - 1) fvStage.insertAdjacentHTML("beforeend", '<button type="button" class="fv-nav fv-next" data-fv-step="1" aria-label="Nächstes Bild">›</button>');
+        fvPreload(gal, pos);
+      }
+      document.getElementById("fvName").textContent = f.name + (gal && gal.list.length > 1 && pos >= 0 ? "  ·  " + (pos + 1) + " / " + gal.list.length : "");
       var sv = document.getElementById("fvSave");
       sv.href = url; sv.setAttribute("download", f.name);
       fileView.hidden = false;
@@ -1659,6 +1702,7 @@
     var hit = findAttachment(key);
     if(!hit) return;
     var f = hit.file;
+    fvCtx = { nid: hit.note.id, fid: f.id };   // für das Blättern im Vollbild (seit v118)
     if(fileUrls[f.id]){ showFile(f); return; }
     if(fileLoading[f.id]) return;
     fileLoading[f.id] = true; rerenderAll();
@@ -1688,7 +1732,29 @@
     toast((fileKind(hit.file) === "photo" ? "Foto" : "Datei") + " gelöscht.");
   }
   if(fileView){
+    var fvTouch = null, fvSwiped = false;
+    fileView.addEventListener("touchstart", function(e){
+      if(e.touches.length !== 1){ fvTouch = null; return; }
+      fvTouch = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    }, { passive: true });
+    fileView.addEventListener("touchend", function(e){
+      if(!fvTouch) return;
+      var t = e.changedTouches[0], dx = t.clientX - fvTouch.x, dy = t.clientY - fvTouch.y;
+      fvTouch = null;
+      if(Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.3){
+        fvSwiped = true; setTimeout(function(){ fvSwiped = false; }, 400);
+        fvStep(dx < 0 ? 1 : -1);
+      }
+    }, { passive: true });
+    document.addEventListener("keydown", function(e){
+      if(fileView.hidden) return;
+      if(e.key === "ArrowRight"){ e.preventDefault(); fvStep(1); }
+      else if(e.key === "ArrowLeft"){ e.preventDefault(); fvStep(-1); }
+    });
     fileView.addEventListener("click", function(e){
+      if(fvSwiped) return;   // nach dem Wischen nicht gleich schliessen
+      var nav = e.target.closest("[data-fv-step]");
+      if(nav){ e.stopPropagation(); fvStep(Number(nav.getAttribute("data-fv-step"))); return; }
       if(e.target.closest("#fvSave")) return;
       // Schliessen über den Knopf oder Tipp auf das Bild / die freie Fläche (nicht auf PDF, Text, Player)
       if(e.target.closest("#fvClose") || e.target === fvStage || e.target.tagName === "IMG") closeFileView();
@@ -2345,7 +2411,7 @@
   }
 
   // ---- Kurzinfo „i“ (seit v98) ----
-  var APP_VERSION = "v_ton_nt_gh_a_101026_1831";   // bei jeder Änderung anpassen: v_ton_nt_gh_a_TTMMJJ_HHMM
+  var APP_VERSION = "v_ton_nt_gh_a_111026_0834";   // bei jeder Änderung anpassen: v_ton_nt_gh_a_TTMMJJ_HHMM
   var infoOpen = false;
   var infoPanel = document.getElementById("infoPanel");
   if(document.getElementById("infoVer")) document.getElementById("infoVer").textContent = APP_VERSION;
@@ -2569,8 +2635,8 @@
     if(!archOpen) return;
 
     var html = '<div class="bm-head">Archiv' +
-      (arch.length ? ' <span class="bm-head-count">' + arch.length + '</span>' +
-        '<button type="button" class="sharebtn bm-head-action" data-arch-printall="1">Alle drucken</button>' : '') +
+      (arch.length ? ' <span class="bm-head-count">' + arch.length + '</span>' : '') +
+      '<button type="button" class="info-x" data-arch-close="1" aria-label="Fenster schliessen" title="Schliessen">✕</button>' +   // v120: statt „Alle drucken“
       '</div>';
     if(arch.length === 0){
       html += '<div class="bm-empty">Das Archiv ist leer.<br>Bei einer Notiz über ✕ → „Archivieren“ ablegen.</div>';
@@ -2630,6 +2696,7 @@
       return notes.find(function(n){ return n.id === id; });
     }
     var el, n;
+    if(e.target.closest("[data-arch-close]")){ setArchOpen(false); return; }
     if(e.target.closest("[data-arch-printall]")){
       printNotes(archivedNotes(), "Archiv");
       return;
@@ -3357,9 +3424,35 @@
   }
   titleLoop(true);
 
+  // ---- Direktlink auf einen Anhang: …/notes/#datei=<notiz>~<datei> (seit v119) ----
+  var deepLink = null, deepLinkTries = 0;
+  function readDeepLink(){
+    var m = /[#&]datei=([^&]+)~([^&]+)/.exec(location.hash || "");
+    if(m){ deepLink = decodeURIComponent(m[1]) + "|" + decodeURIComponent(m[2]); deepLinkTries = 0; }
+  }
+  function tryDeepLink(final){
+    if(!deepLink) return;
+    var key = deepLink, hit = findAttachment(key);
+    if(hit){
+      deepLink = null;
+      try{ history.replaceState(null, "", location.href.split("#")[0]); }catch(e){}
+      // Notiz in der Liste zeigen (falls sichtbar) und Datei öffnen
+      var li = document.querySelector('li.note[data-id="' + hit.note.id + '"]');
+      if(li) li.scrollIntoView({ block: "start" });
+      openNoteFile(key);
+    } else if(final){
+      deepLink = null;
+      try{ history.replaceState(null, "", location.href.split("#")[0]); }catch(e){}
+      toast("Die verlinkte Datei gibt es nicht mehr (gelöscht oder aufgeräumt).", true);
+    }
+  }
+  window.addEventListener("hashchange", function(){ readDeepLink(); tryDeepLink(fbReady || !fbEnabled); });
+  readDeepLink();
+
   load();
   renderList();
   initFirebaseSync();
+  tryDeepLink(!fbEnabled);   // ohne Datenbank sofort, sonst nach dem ersten Server-Stand
 })();
 
   // Zurück zum Spielplan: Pfeil vor NOTES (v75) und der Titel selbst (v76) – Tab schliessen
