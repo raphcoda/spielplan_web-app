@@ -443,6 +443,16 @@ input[type=date]::-webkit-calendar-picker-indicator { filter: invert(0.8) bright
   /* Datumszeile etwas tiefer */
   #filters { margin-top: 10px !important; }
 }
+/* Mobil: OHZ, Menue, Drive, Notizen und Lupe mit gleichmaessigem, groesserem
+   Abstand. OHZ und KALENDER bleiben an ihrem Platz. Der Abstand richtet sich
+   nach der Bildschirmbreite (390px: 13.5px, ab 396px: 15px, schmale Geraete
+   bis hinunter auf 5px), damit vor KALENDER immer rund 8px frei bleiben. */
+@media (max-width: 999px) {
+  #main-h1 #menu-btn { margin-left: clamp(5px, calc((100vw - 336px) / 4), 15px) !important; }
+  #main-h1 #dbtn { margin-left: clamp(5px, calc((100vw - 336px) / 4), 15px) !important; }
+  #main-h1 .dn-btn { margin-right: clamp(5px, calc((100vw - 336px) / 4), 15px) !important; }
+  #main-h1 #such-lupe { margin-left: 8px !important; }
+}
 #about-desk { display: none; }
 #kal-hilfe-btn { display: none; }
 /* Hilfe-Button auf schmalen Geraeten: rechts in der Kategoriezeile,
@@ -4337,8 +4347,8 @@ filterAktuell();
       <div style="height:1px;background:#4d4d4d;margin:22px 0 18px"></div>
       <p style="margin-top:0">Die Daten des Spielplans basieren auf den Spielplanunterlagen der technischen Direktion, des KBB sowie der Website des Opernhauses Z&uuml;rich. &Auml;nderungen w&auml;hrend laufender Spielzeit sind m&ouml;glicherweise nicht ber&uuml;cksichtigt, werden aber kontinuierlich aktualisiert.</p>
       <p>Diese WebApp ist als Hilfsmittel f&uuml;r den Produktionsalltag gedacht. F&uuml;r die Richtigkeit, Vollst&auml;ndigkeit und Aktualit&auml;t der Inhalte wird keine Gew&auml;hr &uuml;bernommen.</p>
-      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_101026_1928" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
-      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_101026_1928</p>
+      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_111026_0842" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
+      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_111026_0842</p>
       </div>
   </div>
 </div>
