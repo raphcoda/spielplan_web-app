@@ -1460,7 +1460,7 @@
   .bv-row .bp-btn, .bv-row .foto-btn{ height:28px; width:44px; min-width:0; padding:0; border-radius:6px; font-size:13px; font-weight:700; letter-spacing:0; }   /* Handy: gleich hoch wie Ja/Nein */
   .bv-row .foto-btn svg{ width:18px; height:18px; }
   .bp-pop{
-    position:absolute; right:0; top:100%; margin-top:2px; z-index:8; width:min(290px, 100%); max-height:70vh; overflow:auto;
+    position:absolute; right:0; top:100%; margin-top:2px; z-index:8; width:min(390px, 100%); max-height:70vh; overflow:auto;
     background:var(--surface); border:1px solid var(--line); border-radius:12px; box-shadow:0 14px 40px rgba(0,0,0,.6); padding:12px;
   }
   .bp-pop h4{ margin:0 0 8px; font-size:14px; font-weight:700; color:var(--text); }
@@ -1936,6 +1936,21 @@
   }
   .inspilz-toggle.on{ background:transparent; border-color:var(--lz); color:var(--lz); }
   .inspilz-tag{ color:var(--lz); }
+  /* Bühne: Inspifunk – grün an, grau aus; schmal „Inspi“ in der Zeile BL/BH/BR, rechts bündig mit dem Wo-Feld */
+  .inspi-toggle{ flex:0 0 auto; height:30px; padding:0 11px; font:inherit; font-size:14px; font-weight:700; border-radius:8px;
+    border:1px solid var(--field-line); background:var(--surface-2); color:var(--text-dim); opacity:.6; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+  .inspi-toggle.on{ background:transparent; border-color:var(--ok); color:var(--ok); opacity:1; }
+  .inspi-toggle[hidden]{ display:none; }
+  li.cue.editing .edit-grid .inspi-toggle{ margin-left:54px; }
+  li.cue.editing .edit-chips .inspi-toggle{ margin-left:auto; }
+  .inspi-tag{ flex:0 0 auto; font-size:15px; font-weight:700; color:var(--ok); white-space:nowrap; margin-left:30px; }
+  .inspi-tag .inspi-s{ display:none; }
+  li.cue.cue-done .inspi-tag{ color:var(--text-dim); }
+  @media (max-width:699px){
+    .inspi-tag{ margin-left:auto; margin-right:auto; }   /* mittig zwischen Wo und ✓ */
+    .inspi-tag + .cue-check{ margin-left:0; }
+    .inspi-tag .inspi-l{ display:none; } .inspi-tag .inspi-s{ display:inline; }
+  }
   .inspilz-tag.after{ margin-left:20px; }
   li.cue.cue-done .inspilz-tag{ color:var(--text-dim); }
   li.cue.editing .was-extra .was-input{ min-width:0; height:30px; font-size:16px; font-weight:600; }
@@ -2034,7 +2049,7 @@
     <li>Zum Entsperren braucht es den vierstelligen Code und das Namenskürzel.</li>
   </ul>
   <button type="button" class="info-close" id="infoClose">Schliessen</button>
-  <p class="info-ver" id="infoVer">v_ton_ap_gh_a_111026_0935</p>
+  <p class="info-ver" id="infoVer">v_ton_ap_gh_a_111026_1833</p>
 </div></div>
 <div id="printAsk" hidden><div class="info-panel print-ask" role="dialog" aria-modal="true" aria-labelledby="printAskTitle">
   <h3 id="printAskTitle">Drucken</h3>
@@ -3587,6 +3602,7 @@
           loc: cue.loc || "",
           was: cue.was || "",
           inspilz: !!cue.inspilz,
+          inspi: !!cue.inspi,
           task: cue.task || "",
           notes: (cue.notes || []).map(function(n){ return { id: n.id, text: n.text || "", done: !!n.done }; })
         }
@@ -3618,7 +3634,7 @@
     var cue = cues.find(function(c){ return c.id === editing.id; });
     editing = null;
     if(cue){
-      var snap = function(){ return JSON.stringify([cue.time, cue.ka, cue.akt, cue.bild, cue.loc, cue.was, !!cue.inspilz, cue.task, cue.notes]); };
+      var snap = function(){ return JSON.stringify([cue.time, cue.ka, cue.akt, cue.bild, cue.loc, cue.was, !!cue.inspilz, !!cue.inspi, cue.task, cue.notes]); };
       var before = snap();
       var t = String(d.time || "").trim();
       if(t === ""){ cue.time = null; }
@@ -3630,6 +3646,8 @@
       if(placeField() === "was"){
         cue.was = String(d.was || "").trim();
         if(d.inspilz) cue.inspilz = true; else delete cue.inspilz;
+      } else {
+        if(d.inspi) cue.inspi = true; else delete cue.inspi;   // Bühne: Inspifunk
       }
       cue.task = String(d.task || "").replace(/^\n+|\n+$/g, "");
       cue.notes = d.notes
@@ -3713,6 +3731,7 @@
           cell("akt", "Akt", "", "") +
           cell("bild", "Bild/Szene", "", "") +
           cell("loc", "Wo", "", "") +
+          '<button type="button" class="inspi-toggle' + (d.inspi ? ' on' : '') + '" data-action="toggle-inspi" aria-pressed="' + (d.inspi ? 'true' : 'false') + '">Inspifunk</button>' +
         '</div>';
 
     if(isWas){
@@ -3731,6 +3750,7 @@
       FIXED_LOCATIONS.forEach(function(v){
         html += '<button type="button" class="chip-mini loc' + (d.loc === v ? ' selected' : '') + '" data-action="pick-chip" data-pickfield="loc" data-value="' + esc(v) + '">' + esc(v) + '</button>';
       });
+      html += '<button type="button" class="inspi-toggle inspi-short' + (d.inspi ? ' on' : '') + '" data-action="toggle-inspi" aria-pressed="' + (d.inspi ? 'true' : 'false') + '">Inspi</button>';
       html += '</div>';
     }
 
@@ -3775,8 +3795,25 @@
     }catch(e){}
   }
 
+  function placeInspi(){
+    var li = document.querySelector("li.cue.editing");
+    if(!li) return;
+    var big = li.querySelector(".edit-grid .inspi-toggle"), small = li.querySelector(".edit-chips .inspi-toggle");
+    if(!big) return;
+    big.hidden = false; if(small) small.hidden = true;
+    var ok = li.querySelector('.edit-labels [data-action="commit-edit"]'), grid = li.querySelector(".edit-grid");
+    var limit = ok ? ok.getBoundingClientRect().right : grid.getBoundingClientRect().right;
+    if(small && big.getBoundingClientRect().right > limit + 1){
+      big.hidden = true; small.hidden = false;
+      var wo = li.querySelector('.edit-grid [data-edit="loc"]');
+      small.style.marginRight = "0px";
+      if(wo) small.style.marginRight = Math.max(0, Math.round(small.getBoundingClientRect().right - wo.getBoundingClientRect().right)) + "px";
+    }
+  }
+
   function autoGrowAll(){
     sizeLocInput();
+    placeInspi();
     document.querySelectorAll('li.cue.editing textarea.task-input, li.cue.editing textarea.note-text-input').forEach(function(t){
       t.style.height = "auto";
       t.style.height = t.scrollHeight + "px";
@@ -5165,7 +5202,8 @@
                 '<button type="button" class="akt-badge' + (c.akt ? ' filled' : '') + '" data-field="akt" aria-label="Akt bearbeiten">' + (c.akt ? "Akt " + esc(c.akt) : "Akt") + '</button>' +
                 (c.bild ? '<button type="button" class="akt-badge bild-badge filled" data-field="bild" aria-label="Bild/Szene bearbeiten">B/Sz ' + esc(c.bild) + '</button>' : '')) +
             (tonOrder ? ''
-              : '<button type="button" class="loc-badge' + (c.loc ? ' filled' : '') + '" data-field="loc" aria-label="Wo bearbeiten">' + (c.loc ? esc(c.loc) : "Wo") + '</button>') +
+              : '<button type="button" class="loc-badge' + (c.loc ? ' filled' : '') + '" data-field="loc" aria-label="Wo bearbeiten">' + (c.loc ? esc(c.loc) : "Wo") + '</button>' +
+                (c.inspi ? '<span class="inspi-tag"><span class="inspi-l">Inspifunk</span><span class="inspi-s">Inspi</span></span>' : '')) +
             '<button type="button" class="cue-check' + (c.done ? ' checked' : '') + '" data-action="toggle-done" aria-label="Erledigt">✓</button>' +
           '</div>' +
           // Tonregie: "Was" in eigener Zeile unter KA/Akt/Zeit, darüber dem Text
@@ -5235,7 +5273,7 @@
     } else {
       editing.draft[f] = t.value;
       if(f === "task") autoGrowAll();
-      if(f === "loc") sizeLocInput(t);
+      if(f === "loc"){ sizeLocInput(t); placeInspi(); }
       if(f === "akt" || f === "loc" || f === "was"){
         document.querySelectorAll('li.cue.editing .chip-mini.' + f).forEach(function(ch){
           ch.classList.toggle("selected", ch.dataset.value === t.value);
@@ -5270,7 +5308,7 @@
 
   // Chips/OK im Bearbeiten-Modus sollen den Fokus (Tastatur) nicht wegnehmen
   mainEl.addEventListener("mousedown", function(e){
-    if(e.target.closest('li.cue.editing [data-action="pick-chip"], li.cue.editing [data-action="commit-edit"], li.cue.editing [data-action="toggle-inspilz"]')) e.preventDefault();
+    if(e.target.closest('li.cue.editing [data-action="pick-chip"], li.cue.editing [data-action="commit-edit"], li.cue.editing [data-action="toggle-inspilz"], li.cue.editing [data-action="toggle-inspi"]')) e.preventDefault();
   });
 
   mainEl.addEventListener("click", function(e){
@@ -5301,10 +5339,18 @@
         var inp = li.querySelector('[data-edit="' + pf + '"]');
         if(inp){
           if(pf === "was") inp.value = "";
-          else { inp.value = val; if(pf === "loc") sizeLocInput(inp); }
+          else { inp.value = val; if(pf === "loc"){ sizeLocInput(inp); placeInspi(); } }
         }
         li.querySelectorAll('.chip-mini.' + pf).forEach(function(ch){
           ch.classList.toggle("selected", ch.dataset.value === val && val !== "");
+        });
+        return;
+      }
+      if(action === "toggle-inspi"){
+        editing.draft.inspi = !editing.draft.inspi;
+        li.querySelectorAll(".inspi-toggle").forEach(function(x){
+          x.classList.toggle("on", editing.draft.inspi);
+          x.setAttribute("aria-pressed", editing.draft.inspi ? "true" : "false");
         });
         return;
       }
@@ -6355,7 +6401,7 @@
     renderList();
   }
   var wkResizeT = null;
-  window.addEventListener("resize", function(){ clearTimeout(wkResizeT); wkResizeT = setTimeout(function(){ updateWalker(); alignAmpRows(mainEl); }, 250); });
+  window.addEventListener("resize", function(){ clearTimeout(wkResizeT); wkResizeT = setTimeout(function(){ updateWalker(); alignAmpRows(mainEl); placeInspi(); }, 250); });
   if(mqCols.addEventListener) mqCols.addEventListener("change", onColsChange);
   else if(mqCols.addListener) mqCols.addListener(onColsChange);
 
