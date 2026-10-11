@@ -298,13 +298,15 @@
   @keyframes wkArmA{ 0%,100%{ transform:rotate(40deg); } 50%{ transform:rotate(-40deg); } }
   @keyframes wkArmB{ 0%,100%{ transform:rotate(-40deg); } 50%{ transform:rotate(40deg); } }
   @keyframes wkBob{ 0%,50%,100%{ transform:translateY(0); } 25%,75%{ transform:translateY(-.8px); } }
-  @keyframes wkWave{ from{ transform:rotate(-170deg); } to{ transform:rotate(-125deg); } }
+  @keyframes wkWave{ from{ transform:rotate(-25deg); } to{ transform:rotate(20deg); } }
   .wk-legA{ animation:wkSwingA .7s ease-in-out infinite; }
   .wk-legB{ animation:wkSwingB .7s ease-in-out infinite; }
   .wk-armB{ animation:wkArmA .7s ease-in-out infinite; }
   .wk-armA{ animation:wkArmB .7s ease-in-out infinite; }
   .wk-legA,.wk-legB{ transform-origin:11px 12px; }
-  .wk-armA,.wk-armB,.wk-wave{ transform-origin:11px 7.5px; }
+  .wk-armA,.wk-armB{ transform-origin:11px 7.5px; }
+  /* Winken (seit v214): Oberarm zur Seite, Unterarm mit Hand winkt neben dem Kopf – Drehpunkt Ellbogen */
+  .wk-wave{ transform-origin:15px 6.5px; }
   .wk-wave{ animation:wkWave .35s ease-in-out infinite alternate; }
   .wk-body{ animation:wkBob .7s ease-in-out infinite; }
   /* ---- Equalizer (nur Art „Tonregie“), Variante C: Spektrum mit Spitzenwert ---- */
@@ -361,7 +363,7 @@
     .rx-seg{ animation:none !important; opacity:.8; }
     .eqb i, .eqb s{ animation:none !important; }
     .wk-walker, .wk-walker *{ animation:none !important; }
-    .wk-standing{ opacity:1; } .wk-moving{ opacity:0; } .wk-wave{ transform:rotate(-20deg); }
+    .wk-standing{ opacity:1; } .wk-moving{ opacity:0; } .wk-wave{ transform:rotate(0deg); }
   }
 
   .prod-row{
@@ -1264,6 +1266,7 @@
   }
   .toast.show{ opacity:1; transform:translate(-50%, 0); }
   .toast.error{ background:var(--warn); }
+  .toast.lock{ top:calc(22vh + env(safe-area-inset-top, 0px)); color:var(--pause); border:1px solid rgba(240,196,25,.45); }
 
   /* ---- Bearbeiten-Modus: ruhiges Grau-Design ---- */
   li.cue.editing{
@@ -1457,7 +1460,7 @@
   .bv-row .bp-btn, .bv-row .foto-btn{ height:28px; width:44px; min-width:0; padding:0; border-radius:6px; font-size:13px; font-weight:700; letter-spacing:0; }   /* Handy: gleich hoch wie Ja/Nein */
   .bv-row .foto-btn svg{ width:18px; height:18px; }
   .bp-pop{
-    position:absolute; right:0; top:100%; margin-top:2px; z-index:8; width:min(290px, 100%);
+    position:absolute; right:0; top:100%; margin-top:2px; z-index:8; width:min(290px, 100%); max-height:70vh; overflow:auto;
     background:var(--surface); border:1px solid var(--line); border-radius:12px; box-shadow:0 14px 40px rgba(0,0,0,.6); padding:12px;
   }
   .bp-pop h4{ margin:0 0 8px; font-size:14px; font-weight:700; color:var(--text); }
@@ -1477,6 +1480,10 @@
   .file-view{ position:fixed; inset:0; z-index:70; background:#000; display:flex; flex-direction:column; }
   .file-view[hidden]{ display:none; }
   .fv-stage{ flex:1 1 auto; min-height:0; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+  /* Handy: Bühnenplan per pdf.js – Seiten untereinander, scrollen, mit zwei Fingern zoomen */
+  .fv-stage.pdf{ display:block; overflow:auto; -webkit-overflow-scrolling:touch; padding:8px; text-align:center; }
+  .fv-stage.pdf .fv-page{ display:block; margin:0 auto 8px; background:#fff; }
+  .fv-msg{ color:#888; font-size:14px; margin:40px 0; text-align:center; }
   .fv-stage iframe{ width:100%; height:100%; border:0; background:#fff; display:block; }
   .fv-bar{ flex:0 0 auto; display:flex; align-items:center; gap:16px; font-size:14px; color:var(--text-dim); background:#111; padding:8px 16px calc(8px + env(safe-area-inset-bottom, 0px)); }
   .fv-bar span{ flex:1 1 auto; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
@@ -1577,9 +1584,20 @@
     .bv-row.mit-bp .foto-btn svg{ width:16px; height:16px; }
   }
   .deskbtn{ display:none; }
+  /* Handy: Drucken und Kurzinfo („Über“) im Menü ☰ an der Stelle des Druckers (seit v216); Lupe bleibt in der Zeile */
+  #infoBtn, #printArtBtn{ display:none !important; }
+  .mob-menu{ position:absolute; right:12px; top:52px; z-index:40; min-width:170px; padding:6px; background:var(--surface);
+    border:1px solid var(--line); border-radius:12px; box-shadow:0 14px 40px rgba(0,0,0,.6); display:flex; flex-direction:column; }
+  .mob-menu[hidden]{ display:none; }
+  .mob-menu button{ display:flex; align-items:center; gap:12px; width:100%; padding:11px 12px; border:0; border-radius:8px; background:none;
+    color:var(--text); font:inherit; font-size:16px; font-weight:600; text-align:left; cursor:pointer; }
+  .mob-menu button:active{ background:var(--surface-2); }
+  .mob-menu svg{ flex:0 0 auto; color:var(--text-dim); }
+  .mm-i{ flex:0 0 auto; width:18px; height:18px; border-radius:50%; border:1.5px solid var(--text-dim); color:var(--text-dim); font:italic 700 12px/15px Georgia, serif; text-align:center; }
+  .exportbtn.menubtn.active{ color:var(--text); }
   .exportbtn.mobbtn{ margin-right:10px; }
   /* ---- Kurzinfo: eingekreistes kursives i links neben dem Drucker ---- */
-  .exportbtn.infobtn{ width:22px; margin-right:8px; color:#8a8a8a; }   /* sichtbarer Abstand i → Drucker = Drucker → Plus (23px) */
+  .exportbtn.infobtn{ width:22px; margin-right:3px; color:#8a8a8a; }   /* Handy: i und Lupe etwas weiter rechts (v215) */   /* sichtbarer Abstand i → Drucker = Drucker → Plus (23px) */
   .infobtn span{
     width:18px; height:18px; border:1.5px solid currentColor; border-radius:50%; display:flex; align-items:center; justify-content:center;
     font-family:Georgia, "Times New Roman", serif; font-style:italic; font-weight:700; font-size:12.5px; line-height:1;
@@ -1610,9 +1628,36 @@
   .arch-btns .arch-warn.full{ background:var(--warn); color:#fff; }
   .arch-btns .arch-no{ border:none; background:none; color:var(--text-dim); }
   /* ---- Fotos: Liste (Handy und Desktop in der Mitte des Bildschirms) ---- */
-  #fotoDlg{ position:fixed; inset:0; z-index:62; background:rgba(0,0,0,.62); display:flex; align-items:center; justify-content:center;
+  #fotoDlg, #docDlg, #bpDlg{ position:fixed; inset:0; z-index:62; background:rgba(0,0,0,.62); display:flex; align-items:center; justify-content:center;
     padding:16px 12px calc(16px + env(safe-area-inset-bottom, 0px)); }
-  #fotoDlg[hidden]{ display:none; }
+  #fotoDlg[hidden], #docDlg[hidden], #bpDlg[hidden]{ display:none; }
+  /* Bühnenplan: Rückfrage hinzufügen/ersetzen, Blättern im Vollbild */
+  .bp-ask{ display:flex; flex-direction:column; gap:6px; margin:0 0 4px; }
+  .bp-ask-t{ font-size:13px; font-weight:700; color:var(--text); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin-bottom:2px; }
+  .bp-ask button{ font:inherit; font-size:13px; font-weight:700; min-height:32px; padding:4px 10px; border-radius:8px; border:1px solid var(--field-line); background:var(--surface-2); color:var(--text); cursor:pointer; text-align:left; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .bp-ask .bp-ask-add{ border-color:var(--bp); color:var(--bp); background:transparent; }
+  .bp-ask .bp-ask-no{ border:none; background:none; color:var(--text-dim); }
+  .bp-ask-max{ font-size:12px; color:var(--text-dim); }
+  .bp-pop .bp-file + .bp-acts + .bp-file{ margin-top:12px; padding-top:10px; border-top:1px solid var(--line); }
+  .fv-bar .fv-nav{ flex:0 0 auto; display:flex; align-items:center; gap:4px; overflow:visible; min-width:auto; }
+  .fv-bar .fv-nav[hidden]{ display:none; }
+  .fv-nav b{ font-size:13px; color:#ccc; min-width:38px; text-align:center; }
+  .fv-bar .fv-nav button{ font-size:22px; line-height:1; padding:2px 10px; color:#fff; }
+  /* DOC (Tonregie/Technik): Knopf wie BP (grau leer, blau mit Dateien); Liste wie Fotos */
+  .col-head .doc-btn{ width:44px; padding:0; margin-right:10px; }
+  .doc-btn.ziel{ border-color:#6fd08c; color:#6fd08c; }
+  .doc-thumb.pdf{ background:#f2f2f2; cursor:pointer; }
+  .doc-pdf{ font:800 12px/1 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color:#c0392b; letter-spacing:.03em; }
+  .doc-info{ flex:1 1 auto; min-width:0; display:flex; flex-direction:column; align-items:flex-start; gap:2px; background:none; border:0; padding:0; text-align:left; color:var(--text); font:inherit; cursor:pointer; }
+  .doc-name{ max-width:100%; font-size:15px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .doc-meta{ font-size:12px; color:var(--text-dim); }
+  .doc-row .bv-lbl{ color:var(--ka); text-transform:uppercase; letter-spacing:.06em; font-weight:800; }   /* Türkis wie TECHNIK */
+  .doc-row .doc-prod{ flex:1 1 auto; min-width:0; font-size:14px; font-weight:600; color:var(--text-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .doc-row .doc-btn{ margin-left:auto; }
+  .ts-head{ align-items:center; }
+  .doc-row .doc-btn, .ts-head .doc-btn{ height:28px; width:44px; min-width:0; padding:0; border-radius:6px; font-size:13px; font-weight:700; letter-spacing:0; flex:0 0 auto; }
+  .ts-head-r{ display:flex; align-items:center; gap:10px; min-width:0; }
+  .fv-stage .fv-img{ max-width:100%; max-height:100%; object-fit:contain; display:block; }
   .foto-panel{
     width:100%; max-width:460px; max-height:80vh; overflow:auto; -webkit-overflow-scrolling:touch; background:var(--surface);
     border:1px solid var(--line); border-radius:16px; box-shadow:0 18px 50px rgba(0,0,0,.6);
@@ -1745,6 +1790,8 @@
     #searchBtn{ order:7; }
     header.top .search-row{ order:8; flex:1 1 100%; }
     .deskbtn{ display:flex; }
+    #infoBtn{ display:flex !important; }
+    #mobMenuBtn, #mobMenu{ display:none !important; }
     header.top .brand-logo{ top:29px; }
     #artPicker, #addBtn, #exportBtn{ display:none !important; }
     #prodPicker .prod-dd-menu{ right:-37px; } /* Liste bis unter das Schloss = rechter Rand der Bühne-Spalte */
@@ -1914,13 +1961,13 @@
 <circle class="wk-head" cx="11" cy="3" r="2.6"/>
 <line x1="11" y1="5.4" x2="11" y2="12"/>
 <g class="wk-moving"><line class="wk-armA" x1="11" y1="7.5" x2="11" y2="12"/><line class="wk-armB" x1="11" y1="7.5" x2="11" y2="12"/></g>
-<g class="wk-standing"><line x1="11" y1="7.5" x2="8.6" y2="11.6"/><line class="wk-wave" x1="11" y1="7.5" x2="11" y2="12"/></g>
+<g class="wk-standing"><line x1="11" y1="7.5" x2="8.6" y2="11.6"/><line x1="11" y1="7.5" x2="15" y2="6.5"/><g class="wk-wave"><line x1="15" y1="6.5" x2="16.2" y2="1.6"/><circle class="wk-head" cx="16.4" cy="0.9" r="1.25"/></g></g>
 </g>
 <g class="wk-moving"><line class="wk-legA" x1="11" y1="12" x2="11" y2="19.3"/><line class="wk-legB" x1="11" y1="12" x2="11" y2="19.3"/></g>
 <g class="wk-standing"><line x1="11" y1="12" x2="8.4" y2="19.3"/><line x1="11" y1="12" x2="13.6" y2="19.3"/></g>
 <g class="wk-jump"><circle class="wk-head" cx="11" cy="3" r="2.6"/><path d="M11 5.4 L11 12 M11 7.5 L16.5 8 M11 7.5 L16 10 M11 12 L14 15.5 L11.5 19 M11 12 L12.5 16 L9.5 19.3"/></g>
 <g class="wk-armsup"><circle class="wk-head" cx="11" cy="3" r="2.6"/><path d="M11 5.4 L11 12 M11 7.5 L7.5 1.6 M11 7.5 L14.5 1.6 M11 12 L9.8 19.3 M11 12 L12.6 18.6"/></g>
-<g class="wk-hello"><circle class="wk-head" cx="11" cy="3" r="2.6"/><path d="M11 5.4 L11 12 M11 7.5 L8.6 11.6 M11 12 L8.4 19.3 M11 12 L13.6 19.3"/><line class="wk-wave" x1="11" y1="7.5" x2="11" y2="12"/></g>
+<g class="wk-hello"><circle class="wk-head" cx="11" cy="3" r="2.6"/><path d="M11 5.4 L11 12 M11 7.5 L8.6 11.6 M11 12 L8.4 19.3 M11 12 L13.6 19.3"/><line x1="11" y1="7.5" x2="15" y2="6.5"/><g class="wk-wave"><line x1="15" y1="6.5" x2="16.2" y2="1.6"/><circle class="wk-head" cx="16.4" cy="0.9" r="1.25"/></g></g>
 <g class="wk-squat"><g transform="translate(0 4)"><circle class="wk-head" cx="12" cy="3.4" r="2.6"/><path d="M12 5.8 L11 10.5 M11.6 7.5 L16.5 8.5 M11.6 7.5 L16 10.5 M11 10.5 L15 12.6 L11.5 15.3 M11 10.5 L14 13.6 L9.5 15.3"/></g></g>
 </g></svg></span></span></span><span class="eq-lane-eq" aria-hidden="true"><span class="eqb"><i></i><s></s></span><span class="eqb"><i></i><s></s></span><span class="eqb"><i></i><s></s></span><span class="eqb"><i></i><s></s></span><span class="eqb"><i></i><s></s></span><span class="eqb"><i></i><s></s></span></span><svg class="hs-lane-hs" viewBox="0 0 30 18" aria-hidden="true"><path class="hs-st" d="M4 9 L1.5 1M26 9 L28.5 1"></path><rect class="hs-fl" x="1" y="9" width="28" height="9" rx="1.5"></rect><rect class="rx-seg rx-s1" x="4" y="12" width="2.4" height="3" rx=".4"></rect><rect class="rx-seg rx-s3" x="10.6" y="12" width="2.4" height="3" rx=".4"></rect><rect class="rx-seg rx-s5" x="17.2" y="12" width="2.4" height="3" rx=".4"></rect><circle class="rx-knob" cx="24" cy="13.5" r="1.8"></circle></svg></span>
     <button class="exportbtn deskbtn" id="exportAllBtn" aria-label="Gesamtexport als Excel" title="Gesamtexport (Bühne, Tonregie, Technik) als Excel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="11" rx="1.5"/><path d="M3.5 7.5h17M9.5 3.5v11M15 3.5v11"/><path d="M12 15.5v5.5M9 18.5l3 3 3-3"/></svg></button>
@@ -1930,6 +1977,8 @@
     <div class="arch-pop" id="archPop" hidden></div>
     <button class="exportbtn infobtn" id="infoBtn" aria-label="Kurzinfo" title="Kurzinfo"><span aria-hidden="true">i</span></button>
     <button class="exportbtn mobbtn" id="printArtBtn" aria-label="Drucken" title="Drucken"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.5 8.5V4h9v4.5"/><path d="M7.5 17H5a1.5 1.5 0 0 1-1.5-1.5v-5.5A1.5 1.5 0 0 1 5 8.5h14a1.5 1.5 0 0 1 1.5 1.5v5.5A1.5 1.5 0 0 1 19 17h-2.5"/><path d="M7.5 14h9v6h-9z"/></svg></button>
+    <button class="exportbtn mobbtn menubtn" id="mobMenuBtn" aria-label="Menü" title="Menü" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    <div class="mob-menu" id="mobMenu" hidden><button type="button" data-mm="print"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.5 8.5V4h9v4.5"/><path d="M7.5 17H5a1.5 1.5 0 0 1-1.5-1.5v-5.5A1.5 1.5 0 0 1 5 8.5h14a1.5 1.5 0 0 1 1.5 1.5v5.5A1.5 1.5 0 0 1 19 17h-2.5"/><path d="M7.5 14h9v6h-9z"/></svg>Drucken</button><button type="button" data-mm="info"><span class="mm-i" aria-hidden="true">i</span>Über</button></div>
     <button class="exportbtn" id="numbersBtn" aria-label="Tabelle für Numbers exportieren" title="Tabelle für Numbers exportieren (Bühne, Tonregie, Technik)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="11" rx="1.5"/><path d="M3.5 7.5h17M9.5 3.5v11M15 3.5v11"/><path d="M12 15.5v5.5M9 18.5l3 3 3-3"/></svg></button>
     <button class="exportbtn" id="exportBtn" aria-label="Ablauf als Excel exportieren" title="Als Excel exportieren"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 17v3h16v-3"/></svg></button>
     <button class="addbtn" id="addBtn" aria-label="Neuer Eintrag">+</button>
@@ -1957,13 +2006,14 @@
   <ul>
     <li><b>Desktop, obere Zeile:</b> druckt den Gesamtablaufplan mit Bühne, Tonregie und Technik.</li>
     <li><b>Desktop, Drucker im Bereich Bühne/Tonregie/Technik:</b> druckt nur diesen Bereich.</li>
-    <li><b>Handy:</b> fragt vor dem Druck „Bereich oder Alles“.</li>
+    <li><b>Handy:</b> Menü ☰ → „Drucken“, fragt vor dem Druck „Bereich oder Alles“. Diese Kurzinfo steht dort unter „Über“.</li>
     <li>Das PDF sollte zur Produktionsdokumentation auf dem Server abgelegt werden.</li>
   </ul>
   <h4>Bühnenplan (BP)</h4>
   <ul>
-    <li><b>Desktop:</b> Über den Knopf BP im Bereich Bühne einen Bühnenplan als PDF hochladen (max. 5 MB), ansehen, ersetzen oder entfernen.</li>
-    <li><b>Handy:</b> Der Knopf BP erscheint im Bereich Bühne nur, wenn ein Bühnenplan hochgeladen wurde. Antippen öffnet den Plan.</li>
+    <li><b>Desktop:</b> Über den Knopf BP im Bereich Bühne Bühnenpläne als PDF hochladen (max. 5 MB, bis zu 5 Pläne), ansehen oder entfernen. Gibt es schon einen Plan, fragt die App: hinzufügen oder ersetzen.</li>
+    <li>Mehrere Pläne: BP zeigt die Liste, im Vollbild mit ‹ › zum nächsten Plan blättern.</li>
+    <li><b>Handy:</b> Der Knopf BP erscheint im Bereich Bühne nur, wenn ein Bühnenplan hochgeladen wurde. Antippen zeigt den Plan in der App (mit zwei Fingern zoomen), „Speichern“ lädt ihn herunter.</li>
   </ul>
   <h4>Fotos (Kamera-Symbol, Bühne)</h4>
   <ul>
@@ -1972,13 +2022,19 @@
     <li>Im Vollbild: ⤓ lädt nur dieses Foto herunter, ↗ öffnet es in einem neuen Tab (dort zoomen).</li>
     <li>„Alle herunterladen“ speichert alle Fotos als ZIP – zur Ablage auf dem Server.</li>
   </ul>
+  <h4>Dokumente (DOC, Tonregie und Technik)</h4>
+  <ul>
+    <li>Grau = noch keine Dateien, blau = Dateien vorhanden. Bis zu 15 Dateien pro Bereich und Produktion: PDF (max. 5 MB) und Bilder/Screenshots.</li>
+    <li><b>Desktop:</b> DOC links neben dem Drucker im Bereich Tonregie oder Technik – Dateien darauf ziehen oder anklicken. <b>Handy:</b> DOC in der Titelzeile des Bereichs – „Datei hinzufügen“ oder „Foto machen“.</li>
+    <li>Antippen zeigt die Datei in der App, „Alle herunterladen“ speichert alle als ZIP. Nicht im Druck.</li>
+  </ul>
   <h4>Schloss</h4>
   <ul>
     <li>Mit dem Schloss neben der Produktion wird die ganze Produktion gesperrt.</li>
     <li>Zum Entsperren braucht es den vierstelligen Code und das Namenskürzel.</li>
   </ul>
   <button type="button" class="info-close" id="infoClose">Schliessen</button>
-  <p class="info-ver" id="infoVer">v_ton_ap_gh_a_101026_2130</p>
+  <p class="info-ver" id="infoVer">v_ton_ap_gh_a_111026_0935</p>
 </div></div>
 <div id="printAsk" hidden><div class="info-panel print-ask" role="dialog" aria-modal="true" aria-labelledby="printAskTitle">
   <h3 id="printAskTitle">Drucken</h3>
@@ -1986,10 +2042,14 @@
   <button type="button" class="pa-btn" id="paArt">Bühne</button>
   <button type="button" class="pa-btn" id="paAll">Alles</button>
 </div></div>
-<div class="file-view" id="fileView" hidden><div class="fv-stage" id="fvStage"></div><div class="fv-bar"><span id="fvName"></span><a id="fvSave" href="#">Speichern</a><button type="button" id="fvClose">Schliessen</button></div></div>
+<div class="file-view" id="fileView" hidden><div class="fv-stage" id="fvStage"></div><div class="fv-bar"><span id="fvName"></span><span class="fv-nav" id="fvNav" hidden><button type="button" id="fvPrev" aria-label="Vorheriger Plan">‹</button><b id="fvPos"></b><button type="button" id="fvNext" aria-label="Nächster Plan">›</button></span><a id="fvSave" href="#">Speichern</a><button type="button" id="fvClose">Schliessen</button></div></div>
 <input type="file" id="bpFile" accept="application/pdf,.pdf" hidden>
 <input type="file" id="fotoCam" class="foto-file" accept="image/*" capture="environment">
 <input type="file" id="fotoPick" class="foto-file" accept="image/*" multiple>
+<div id="bpDlg" hidden><div class="foto-panel" role="dialog" aria-modal="true" aria-label="Bühnenpläne"></div></div>
+<div id="docDlg" hidden><div class="foto-panel" role="dialog" aria-modal="true" aria-label="Dokumente"></div></div>
+<input type="file" id="docPick" class="foto-file" accept="application/pdf,.pdf,image/*" multiple>
+<input type="file" id="docCam" class="foto-file" accept="image/*" capture="environment">
 <div id="fotoDlg" hidden><div class="foto-panel" role="dialog" aria-modal="true" aria-label="Fotos"></div></div>
 <div id="imgView" hidden><div class="iv-stage" id="ivStage"><button type="button" class="iv-nav iv-prev" id="ivPrev" aria-label="Vorheriges Foto">‹</button><button type="button" class="iv-nav iv-next" id="ivNext" aria-label="Nächstes Foto">›</button></div><div class="iv-bar"><span class="iv-cap" id="ivCap"></span><span class="iv-n" id="ivN"></span><button type="button" class="iv-ico" id="ivDl" title="Dieses Foto herunterladen" aria-label="Dieses Foto herunterladen">⤓</button><button type="button" class="iv-ico" id="ivTab" title="In neuem Tab öffnen (zum Zoomen)" aria-label="In neuem Tab öffnen">↗</button><button type="button" id="ivClose">Schliessen</button></div></div>
 <div id="printView" aria-hidden="true"></div>
@@ -2176,7 +2236,7 @@
     migrateAmps(tech); migrateMipo(tech);
     var prod = productions.find(function(p){ return p.id === currentProdId; });
     var html = '<div class="tech-sheet">' +
-      '<div class="ts-head"><span class="ts-title">Technik</span><span class="ts-prod">' + esc(prod ? prod.name : "") + '</span></div>';
+      '<div class="ts-head"><span class="ts-title">Technik</span><span class="ts-head-r">' + (isCols() ? '' : docBtnHtml("technik")) + '</span></div>';
     TECH_GROUPS.forEach(function(group, gi){
       html += '<div class="ts-group' + (gi ? ' ts-group-2' : '') + '">';
       group.forEach(function(cat){
@@ -2304,6 +2364,7 @@
           '<span class="col-deco">' + (COL_DECO[a.id] || '') + '</span>' +
           (a.id === "buehne" ? '<button type="button" class="bp-btn" data-col-action="bp" aria-label="Bühnenplan" title="Bühnenplan (PDF)">BP</button>' +
             '<button type="button" class="foto-btn" data-col-action="foto" aria-label="Fotos" title="Fotos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8.5h3l1.6-2.5h6.8L17 8.5h3a1 1 0 0 1 1 1V18a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5a1 1 0 0 1 1-1z"/><circle cx="12" cy="13.5" r="3.4"/></svg></button>' : '') +
+          (DOC_AREAS[a.id] ? '<button type="button" class="bp-btn doc-btn" data-col-action="doc" aria-label="Dokumente ' + esc(a.label) + '" title="Dokumente (PDF, Bilder)">DOC</button>' : '') +
           '<button type="button" class="exportbtn col-print" data-col-action="print" aria-label="' + esc(a.label) + ' drucken" title="' + esc(a.label) + ' drucken">' + PRINT_SVG + '</button>' +
           '<button type="button" class="exportbtn col-export" data-col-action="export" aria-label="' + esc(a.label) + ' als Excel exportieren" title="' + esc(a.label) + ' als Excel exportieren">' + TABLE_SVG + '</button>' +
           (a.sheet ? '' : '<button type="button" class="addbtn col-add" data-col-action="add" aria-label="Neuer Eintrag ' + esc(a.label) + '">+</button>') +
@@ -2336,6 +2397,7 @@
     if(exp) exp.disabled = !currentProdId || !artCfg(id).ready;
     if(prt) prt.disabled = !currentProdId || !artCfg(id).ready;
     if(id === "buehne"){ renderBpHead(col); renderFotoHead(col); }
+    else renderDocHeads();
   }
   // Spalte wird aktiv (Klick/Fokus hinein): offenen Entwurf der bisherigen Spalte übernehmen
   function activateArt(id){
@@ -2477,6 +2539,7 @@
       if(!c || !c.id) return;
       Object.keys(c).forEach(function(k){
         if(k === "fotos" && c.fotos && typeof c.fotos === "object") Object.keys(c.fotos).forEach(function(fid){ m[c.id + "/fotos/" + fid] = JSON.stringify(c.fotos[fid]); });
+        else if(k === "docs" && c.docs && typeof c.docs === "object") Object.keys(c.docs).forEach(function(ar){ var da = c.docs[ar] || {}; Object.keys(da).forEach(function(did){ m[c.id + "/docs/" + ar + "/" + did] = JSON.stringify(da[did]); }); });
         else m[c.id + "/" + k] = JSON.stringify(c[k]);
       });
     });
@@ -2788,9 +2851,16 @@
           : (logoBox.right + lr.right) / 2 - lr.left;   // zwischen Schriftzug und Laufbahn-Ende
         want = Math.max(0, mid).toFixed(1) + "px";
       } else if(lane.classList.contains("front")){
-        // Handy: Hindernisse weiter mittig im Bereich hinter dem Titel
+        // Handy: Hindernisse mittig im freien Laufstück – zwischen der Landestelle nach dem Sprung vom „N“
+        // (Schriftende + 4 + Sprungweite + Hocke + halbe Männchenbreite) und der Lupe (seit v215)
         var lr2 = lane.getBoundingClientRect(), h1r = lane.parentNode.querySelector("h1").getBoundingClientRect();
-        want = Math.max(0, (h1r.right + lr2.right) / 2 - lr2.left).toFixed(1) + "px";
+        var sv = document.querySelector("#searchBtn svg"), sr = sv && sv.getBoundingClientRect();
+        var rightEdge = sr && sr.width ? sr.left : lr2.right;
+        // seit v217: nicht mehr mittig, sondern gleich hinter der Landestelle – Platz für Landung in der Hocke, ein paar Schritte
+        // und den Hüpfer (Hüpfbereich ±(halbe Breite + 11 px)); so bleibt rechts Platz für die Lupen-Kunststücke
+        var land = h1r.right + 4 + 15 + 2, obstHalf = 8;
+        var mid = (land + 8 + rightEdge) / 2;
+        want = Math.max(0, Math.min(land + 11 + obstHalf + 11, mid) - lr2.left).toFixed(1) + "px";
       }
       if(el.style.left !== want) el.style.left = want;
     });
@@ -2836,7 +2906,7 @@
     var DIVE = { a:0, l1:[.05,.05], l2:[-.05,-.08], r1:[3.05,3.1], r2:[2.98,3.08] };
     var TUCK = { a:.6, l1:[2.3,-.4], l2:[2.1,-.5], r1:[1.0,2.3], r2:[.9,2.2] };
     var TADA = { a:-.05, l1:[.18,.18], l2:[-.18,-.18], r1:[2.15,2.45], r2:[-2.15,-2.45] };
-    function WAVE(t){ var w = Math.sin(18*t); return { a:0, l1:[.05,.05], l2:[-.05,-.05], r1:[2.75+.25*w, 3.05+.4*w], r2:[-.15,-.15] }; }
+    function WAVE(t){ var w = Math.sin(18*t); return { a:0, l1:[.05,.05], l2:[-.05,-.05], r1:[1.85, 2.95+.4*w], r2:[-.15,-.15], hand:1 }; }
     function seg(d, f){ return { d:d, f:f }; }
     var HY = G - 7.3;   // Hüfthöhe im Stehen
     function walkSeg(x0, x1, dir, speed, k){
@@ -2915,6 +2985,7 @@
     });
     var h = T(head[0], head[1]);
     s += '<circle cx="' + h[0].toFixed(2) + '" cy="' + h[1].toFixed(2) + '" r="2.6" fill="' + col + '" stroke="none"/>';
+    if(P.hand){ var hp = chain(sh, P.r1, 2.3, 2.6)[2], ht = T(hp[0], hp[1]); s += '<circle cx="' + ht[0].toFixed(2) + '" cy="' + ht[1].toFixed(2) + '" r="1.25" fill="' + col + '" stroke="none"/>'; }
     return '<g stroke="' + col + '" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none">' + s + '</g>';
   }
   function startLupeTrick(lane, walker){
@@ -3062,7 +3133,7 @@
           var kf = (wcx - inRight) / FALL;
           y = Math.min(y, lift0 * (1 - kf * kf) - Math.sin(kf * Math.PI) * 3); // kleiner Absprung, dann fallen
           if(kf < 0.9) jumping = true; else squatting = true;
-        } else if(phase === "right" && wcx >= inRight + FALL && wcx < inRight + FALL + 5){
+        } else if(phase === "right" && wcx >= inRight + FALL && wcx < inRight + FALL + 2){
           squatting = true; // Landung in der Hocke, kurz verharren
         } else if(phase === "left" && wcx > inRight && wcx < inRight + 13){
           // Rückweg: mit einem Satz hinauf, dabei einmal die Arme hochreissen
@@ -3358,8 +3429,9 @@
     deletingProdId = null;
     deleteStage = "choose";
     var goneProd = productions.find(function(p){ return p.id === id; });
-    if(goneProd && goneProd.bp) bpRemoveStored(goneProd.bp.id);
+    bpList(goneProd).forEach(function(x){ bpRemoveStored(x.id); });
     if(goneProd && goneProd.fotos) Object.keys(goneProd.fotos).forEach(fotoRemoveStored);
+    if(goneProd && goneProd.docs) Object.keys(goneProd.docs).forEach(function(ar){ Object.keys(goneProd.docs[ar] || {}).forEach(fotoRemoveStored); });
     productions = productions.filter(function(p){ return p.id !== id; });
     saveProductions();
     ARTS.forEach(function(a){
@@ -3397,7 +3469,7 @@
       var wasReady = fbChan("prods").ready;
       var val = fbFirst("prods", FB_ROOT + "/productions", snap.val());
       var before = currentProd();
-      var sigBefore = before ? JSON.stringify([!!before.lock, before.bv || "", before.bp ? before.bp.id : "", canonJson(before.fotos || {})]) : "";
+      var sigBefore = before ? JSON.stringify([!!before.lock, before.bv || "", before.bp ? before.bp.id : "", canonJson(before.bpx || {}), canonJson(before.fotos || {}), canonJson(before.docs || {})]) : "";
       productions = prodsFromVal(val);
       fbChan("prods").last = flatProds(productions);
       try{ localStorage.setItem(PRODUCTIONS_KEY, JSON.stringify(productions)); }catch(e){}
@@ -3410,11 +3482,11 @@
         return;
       }
       var after = currentProd();
-      var sigAfter = after ? JSON.stringify([!!after.lock, after.bv || "", after.bp ? after.bp.id : "", canonJson(after.fotos || {})]) : "";
+      var sigAfter = after ? JSON.stringify([!!after.lock, after.bv || "", after.bp ? after.bp.id : "", canonJson(after.bpx || {}), canonJson(after.fotos || {}), canonJson(after.docs || {})]) : "";
       // Namensfeld im Menü (Umbenennen / Neu) nicht unter den Fingern neu zeichnen
       if(!(prodPickerOpen && (renamingProdId || addingProduction))) renderProdPicker();
       else renderProdLock();
-      if(sigAfter !== sigBefore){ updateAddBtnState(); if(!editing) renderList(); if(window.renderFotoDlg) renderFotoDlg(); }
+      if(sigAfter !== sigBefore){ updateAddBtnState(); if(!editing) renderList(); if(window.renderFotoDlg) renderFotoDlg(); if(docArea) renderDocDlg(); }
     });
     attachCuesListener(currentProdId);
   }
@@ -3447,11 +3519,13 @@
   // bleibt wie getippt. Nicht in Ableitungen oder Zusammensetzungen (abbauen, Umbaupause, Pausenumbau bleiben normal).
   // Ohne Lookbehind, damit es auch auf älteren iPhones läuft: das Zeichen davor wird mitgefangen und zurückgegeben.
   var GELB_RE = /(^|[^A-Za-z\u00C0-\u024F])(pause|abbau)(?![A-Za-z\u00C0-\u024F])/gi;
+  // „Ende“ grün – egal wie geschrieben (ENDE / Ende / ende), nur das ganze Wort (nicht „beenden“, „Endet“), seit v208
+  var ENDE_RE = /(^|[^A-Za-z\u00C0-\u024F])(ende)(?![A-Za-z\u00C0-\u024F])/gi;
   function highlightPause(escapedText){
-    // ENDE grün weiterhin nur in Grossbuchstaben
+    // Ende grün (jede Schreibweise)
     return escapedText
       .replace(GELB_RE, function(m, vor, w){ return vor + '<span class="pause-hl">' + w + '</span>'; })
-      .replace(/\bENDE\b/g, '<span class="ende-hl">ENDE</span>');
+      .replace(ENDE_RE, function(m, vor, w){ return vor + '<span class="ende-hl">' + w + '</span>'; });
   }
 
   function highlightExcl(escapedText){
@@ -3743,7 +3817,7 @@
   }
   function chgText(chg, withYear){ return chg && chg.k ? "geändert: " + chg.k + (chg.t ? (withYear ? ", " : " · ") + fmtChg(chg.t, withYear) : "") : ""; }
   function lockedHint(isProd){
-    showToast("Produktion gesperrt – Schloss antippen", 2400);
+    showToast("Produktion gesperrt – Schloss antippen", 2400, false, "lock");
   }
   function setOpenLock(o){ openLock = o || null; }
   function renderProdLock(){
@@ -3872,8 +3946,15 @@
   // der Notizen-App); an der Produktion steht nur prod.bp = { id, name, size, t }.
   // Knopf: Desktop immer da (grau = leer, türkis = Plan abgelegt); Handy nur, wenn ein Plan abgelegt ist.
   // Ansehen: Desktop im Vollbild in der App; am Handy öffnet der PDF-Betrachter des Geräts.
-  var BP_MAX = 5 * 1024 * 1024;
-  var bpPopOpen = false, bpConfirm = false, bpBusy = false;
+  var BP_MAX = 5 * 1024 * 1024, BP_PLANS = 5;
+  var bpPopOpen = false, bpConfirm = false, bpBusy = false, bpPending = null, bpViewList = [], bpViewIdx = 0;
+  // Mehrere Pläne (seit v211): prod.bp = erster Plan (wie bisher, damit ältere Geräte ihn sehen), weitere in prod.bpx = { <id>: {…, o} }
+  function bpList(p){
+    if(!p || !p.bp) return [];
+    var x = p.bpx || {};
+    return [p.bp].concat(Object.keys(x).map(function(k){ return x[k]; }).filter(function(f){ return f && f.id; })
+      .sort(function(a, b){ return (a.o || a.t || 0) - (b.o || b.t || 0); }));
+  }
   var bpLocal = {};    // fileId -> Datensatz, nur wenn Firebase nicht verfügbar ist (z. B. Vorschau)
   var bpUrls = {};     // fileId -> blob-URL (bereits geladen)
   var bpLoading = {};  // fileId -> true während des Ladens
@@ -3892,8 +3973,9 @@
   // Handy: Knopf in der Zeile Bühnenverstärkung. Ist die Datei schon geladen, ist er ein echter Link –
   // so öffnet der Betrachter des Geräts auch dort, wo ein automatisches Öffnen nach dem Laden unterdrückt wird.
   function bpViewBtnHtml(f){
-    var url = bpUrls[f.id];
-    if(url && !canEmbedPdf){
+    var url = bpUrls[f.id], many = bpList(currentProd()).length > 1;
+    if(many) return '<button type="button" class="bp-btn voll" data-action="bp-view" title="Bühnenpläne" aria-label="Bühnenpläne">BP</button>';
+    if(url && !canEmbedPdf && bpPdfJsFailed){   // nur noch, wenn die Anzeige in der App (pdf.js) nicht klappt
       return '<a class="bp-btn voll" href="' + url + '" download="' + esc(f.name) + '" title="Bühnenplan öffnen" aria-label="Bühnenplan öffnen">BP</a>';
     }
     return '<button type="button" class="bp-btn voll' + (bpLoading[f.id] ? ' laedt' : '') + '" data-action="bp-view" title="Bühnenplan ansehen" aria-label="Bühnenplan ansehen">' + (bpLoading[f.id] ? '…' : 'BP') + '</button>';
@@ -3912,15 +3994,25 @@
     btn.title = f ? "Bühnenplan: " + f.name : "Bühnenplan ablegen (PDF)";
     var pop = head.querySelector(".bp-pop");
     if(!bpPopOpen){ if(pop) pop.remove(); return; }
-    var h = '<h4>Bühnenplan</h4>' +
-      '<button type="button" class="bp-drop" data-bp="choose"' + (bpBusy ? ' disabled' : '') + '>' +
-        (bpBusy ? 'lädt hoch …' : '<b>PDF hierher ziehen</b><br>oder klicken und auswählen' + (f ? '<br>(ersetzt den abgelegten Plan)' : '')) + '</button>';
-    if(f){
-      h += '<div class="bp-file"><span class="bp-name" title="' + esc(f.name) + '">' + esc(f.name) + '</span><span class="bp-size">' + esc(fmtSize(f.size || 0)) + '</span></div>' +
-        (bpConfirm
-          ? '<div class="bp-acts"><span>Plan wirklich entfernen?</span><button type="button" class="warn" data-bp="remove-yes">Ja</button><button type="button" data-bp="remove-no">Abbrechen</button></div>'
-          : '<div class="bp-acts"><span></span><button type="button" data-bp="view">' + (bpLoading[f.id] ? 'lädt …' : 'Ansehen') + '</button><button type="button" data-bp="remove">Entfernen</button></div>');
+    var list = bpList(p), h = '<h4>' + (list.length > 1 ? 'Bühnenpläne (' + list.length + ')' : 'Bühnenplan') + '</h4>';
+    if(bpPending){
+      // neue Datei, es gibt schon Pläne: hinzufügen oder ersetzen?
+      h += '<div class="bp-ask"><div class="bp-ask-t">„' + esc(bpPending.name) + '“</div>' +
+        (list.length < BP_PLANS ? '<button type="button" class="bp-ask-add" data-bp="add">Hinzufügen</button>' : '<div class="bp-ask-max">Maximal ' + BP_PLANS + ' Pläne – nur Ersetzen möglich</div>') +
+        (list.length === 1
+          ? '<button type="button" data-bp="replace" data-id="' + esc(list[0].id) + '">Ersetzen</button>'
+          : list.map(function(x){ return '<button type="button" data-bp="replace" data-id="' + esc(x.id) + '">Ersetzen: ' + esc(x.name) + '</button>'; }).join("")) +
+        '<button type="button" class="bp-ask-no" data-bp="pending-no">Abbrechen</button></div>';
+    } else {
+      h += '<button type="button" class="bp-drop" data-bp="choose"' + (bpBusy ? ' disabled' : '') + '>' +
+        (bpBusy ? 'lädt hoch …' : '<b>PDF hierher ziehen</b><br>oder klicken und auswählen') + '</button>';
     }
+    list.forEach(function(x){
+      h += '<div class="bp-file"><span class="bp-name" title="' + esc(x.name) + '">' + esc(x.name) + '</span><span class="bp-size">' + esc(fmtSize(x.size || 0)) + '</span></div>' +
+        (bpConfirm === x.id
+          ? '<div class="bp-acts"><span>Plan wirklich entfernen?</span><button type="button" class="warn" data-bp="remove-yes" data-id="' + esc(x.id) + '">Ja</button><button type="button" data-bp="remove-no">Abbrechen</button></div>'
+          : '<div class="bp-acts"><span></span><button type="button" data-bp="view" data-id="' + esc(x.id) + '">' + (bpLoading[x.id] ? 'lädt …' : 'Ansehen') + '</button><button type="button" data-bp="remove" data-id="' + esc(x.id) + '">Entfernen</button></div>');
+    });
     if(!pop){ pop = document.createElement("div"); pop.className = "bp-pop"; head.appendChild(pop); }
     pop.innerHTML = h;
   }
@@ -3939,7 +4031,19 @@
       Promise.resolve(pr).then(function(v){ clearTimeout(t); resolve(v); }, function(err){ clearTimeout(t); reject(err); });
     });
   }
+  // Neue Datei: gibt es schon einen Plan, erst fragen (hinzufügen oder ersetzen), sonst direkt ablegen
   function bpUpload(file){
+    var p = currentProd();
+    if(!p || !file || bpBusy) return;
+    if(prodBlocked()){ lockedHint(true); return; }
+    var isPdf0 = file.type === "application/pdf" || /\.pdf$/i.test(file.name || "");
+    if(!isPdf0){ showToast("Bitte eine PDF-Datei ablegen", 3500, true); return; }
+    if(file.size > BP_MAX){ showToast("Zu gross (" + fmtSize(file.size) + ") – maximal 5 MB", 4500, true); return; }
+    if(bpList(p).length){ bpPending = file; bpConfirm = false; bpPopOpen = true; renderBpHead(); return; }
+    bpStore(file, null);
+  }
+  // replaceId: diesen Plan ersetzen; null = hinzufügen (bzw. erster Plan)
+  function bpStore(file, replaceId){
     var p = currentProd();
     if(!p || !file || bpBusy) return;
     if(prodBlocked()){ lockedHint(true); return; }
@@ -3960,14 +4064,17 @@
         // erst eintragen, wenn die Datei sicher gespeichert ist
         var pr = productions.find(function(x){ return x.id === prodId; });
         if(!pr){ bpRemoveStored(fid); return; }
-        var old = pr.bp;
-        pr.bp = { id: fid, name: file.name, size: file.size, t: Date.now() };
+        var nu = { id: fid, name: file.name, size: file.size, t: Date.now() }, old = null;
+        if(replaceId && pr.bp && pr.bp.id === replaceId){ old = pr.bp; pr.bp = nu; }
+        else if(replaceId && pr.bpx && pr.bpx[replaceId]){ old = pr.bpx[replaceId]; nu.o = old.o || old.t; delete pr.bpx[replaceId]; pr.bpx[fid] = nu; }
+        else if(!pr.bp){ pr.bp = nu; }
+        else { pr.bpx = pr.bpx || {}; nu.o = Date.now(); pr.bpx[fid] = nu; }
         pr.upd = Date.now();
         if(openLock && openLock.prodId === prodId) pr.chg = { k: openLock.k, t: Date.now() };
         try{ bpUrls[fid] = URL.createObjectURL(file); }catch(e){}
         saveProductions();
         if(old && old.id) bpRemoveStored(old.id);
-        showToast(online ? "Bühnenplan abgelegt" : "Nur lokal abgelegt (keine Verbindung zur Datenbank)", online ? 2400 : 4500, !online);
+        showToast(online ? (old ? "Bühnenplan ersetzt" : bpList(pr).length > 1 ? "Bühnenplan hinzugefügt" : "Bühnenplan abgelegt") : "Nur lokal abgelegt (keine Verbindung zur Datenbank)", online ? 2400 : 4500, !online);
       });
     }).catch(function(err){
       showToast(err && err.message === "leer" ? "Die Datei ist leer – nicht abgelegt" : "Ablegen fehlgeschlagen (Verbindung prüfen)", 4500, true);
@@ -3976,12 +4083,18 @@
       renderProdPicker(); bpRefresh();
     });
   }
-  function bpRemove(){
+  function bpRemove(id){
     var p = currentProd();
     if(!p || !p.bp) return;
     if(prodBlocked()){ lockedHint(true); return; }
-    var old = p.bp;
-    delete p.bp;
+    var old;
+    if(!id || p.bp.id === id){
+      old = p.bp; delete p.bp;
+      var rest = bpList({ bp: { id: "_" }, bpx: p.bpx }).slice(1);   // nächsten Plan nach vorn holen
+      if(rest.length){ p.bp = rest[0]; delete p.bpx[rest[0].id]; delete p.bp.o; }
+    } else if(p.bpx && p.bpx[id]){ old = p.bpx[id]; delete p.bpx[id]; }
+    else return;
+    if(p.bpx && !Object.keys(p.bpx).length) delete p.bpx;
     p.upd = Date.now();
     if(prodOpen()) p.chg = { k: openLock.k, t: Date.now() };
     saveProductions();
@@ -3998,12 +4111,26 @@
   var fileView = document.getElementById("fileView"), fvStage = document.getElementById("fvStage");
   function closeFileView(){
     if(fileView.hidden) return;
+    document.getElementById("fvNav").hidden = true;
     fileView.hidden = true;
     fvStage.innerHTML = "";
+    fvStage.classList.remove("pdf");
+    bpViewSeq++;
+  }
+  function bpNavUpdate(f){
+    var nav = document.getElementById("fvNav"), many = bpViewList.length > 1 && bpViewList.some(function(x){ return x.id === f.id; });
+    nav.hidden = !many;
+    if(many) document.getElementById("fvPos").textContent = (bpViewIdx + 1) + " / " + bpViewList.length;
+  }
+  function bpStep(d){
+    if(bpViewList.length < 2) return;
+    bpViewIdx = (bpViewIdx + d + bpViewList.length) % bpViewList.length;
+    bpView(bpViewList[bpViewIdx].id);
   }
   function bpShow(f){
     var url = bpUrls[f.id];
     if(!url) return;
+    setTimeout(function(){ bpNavUpdate(f); }, 0);
     if(canEmbedPdf){
       // Desktop: im Vollbild in der App
       fvStage.innerHTML = "";
@@ -4016,16 +4143,108 @@
       fileView.hidden = false;
       return;
     }
-    // Handy: an das Gerät übergeben -> dessen PDF-Betrachter öffnet den Plan im Vollbild
+    // Handy/Tablet: in der App anzeigen (pdf.js, wie die Fotos – nichts landet im Download-Ordner);
+    // klappt das nicht (kein Netz für pdf.js, defekte Datei), wie früher an den PDF-Betrachter des Geräts übergeben
+    bpShowPdfJs(f, url);
+  }
+  var PDFJS_URL = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
+  var PDFJS_WORKER = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+  var pdfJsPromise = null, bpViewSeq = 0, bpPdfJsFailed = false;
+  function loadPdfJs(){
+    if(window.pdfjsLib) return Promise.resolve(window.pdfjsLib);
+    if(pdfJsPromise) return pdfJsPromise;
+    pdfJsPromise = new Promise(function(resolve, reject){
+      var sc = document.createElement("script"), done = false;
+      var tm = setTimeout(function(){ if(!done){ done = true; pdfJsPromise = null; reject(new Error("pdf.js Zeitüberschreitung")); } }, 20000);
+      sc.src = PDFJS_URL;
+      sc.onload = function(){ if(done) return; done = true; clearTimeout(tm);
+        if(!window.pdfjsLib){ pdfJsPromise = null; reject(new Error("pdf.js fehlt")); return; }
+        try{ window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_WORKER; }catch(e){}
+        resolve(window.pdfjsLib); };
+      sc.onerror = function(){ if(done) return; done = true; clearTimeout(tm); pdfJsPromise = null; reject(new Error("pdf.js nicht ladbar")); };
+      document.head.appendChild(sc);
+    });
+    return pdfJsPromise;
+  }
+  function bpShowPdfJs(f, url){
+    var seq = ++bpViewSeq;
+    fvStage.innerHTML = '<p class="fv-msg">Bühnenplan wird angezeigt …</p>';
+    fvStage.classList.add("pdf");
+    document.getElementById("fvName").textContent = f.name;
+    var sv = document.getElementById("fvSave");
+    sv.href = url; sv.setAttribute("download", f.name);
+    fileView.hidden = false;
+    var still = function(){ return seq === bpViewSeq && !fileView.hidden; };
+    Promise.all([loadPdfJs(), fetch(url).then(function(r){ return r.arrayBuffer(); })]).then(function(rs){
+      if(!still()) return;
+      return rs[0].getDocument({ data: new Uint8Array(rs[1]) }).promise.then(function(pdf){
+        if(!still()) return;
+        fvStage.innerHTML = "";
+        var n = pdf.numPages;
+        if(n > 1) document.getElementById("fvName").textContent = f.name + " · " + n + " Seiten";
+        // Seiten nacheinander zeichnen: Breite = Bildschirmbreite, in doppelter Schärfe (für Zwei-Finger-Zoom),
+        // höchstens ca. 12 Mio. Pixel pro Seite (Grenze älterer iPhones)
+        var w = Math.max(200, fvStage.clientWidth - 16), pxr = Math.min(4, (window.devicePixelRatio || 1) * 2);
+        var chain = Promise.resolve();
+        for(var i = 1; i <= n; i++) (function(num){
+          var cv = document.createElement("canvas"); cv.className = "fv-page";
+          fvStage.appendChild(cv);
+          chain = chain.then(function(){
+            if(!still()) return;
+            return pdf.getPage(num).then(function(page){
+              var vp1 = page.getViewport({ scale: 1 }), sc = (w * pxr) / vp1.width;
+              var area = vp1.width * vp1.height * sc * sc;
+              if(area > 12e6) sc = sc * Math.sqrt(12e6 / area);
+              var vp = page.getViewport({ scale: sc });
+              cv.width = Math.floor(vp.width); cv.height = Math.floor(vp.height);
+              cv.style.width = w + "px"; cv.style.height = Math.round(w * vp.height / vp.width) + "px";
+              return page.render({ canvasContext: cv.getContext("2d"), viewport: vp }).promise;
+            });
+          });
+        })(i);
+        return chain;
+      });
+    }).catch(function(){
+      if(seq !== bpViewSeq) return;
+      bpPdfJsFailed = true; bpRefresh();
+      closeFileView();
+      bpHandOff(f, url);
+    });
+  }
+  // früherer Weg (Fallback): an das Gerät übergeben -> dessen PDF-Betrachter öffnet den Plan
+  // Handy, mehrere Pläne: Liste zum Auswählen (Ansehen dann mit ‹ › zum Blättern)
+  function openBpDlg(){
+    var dlg = document.getElementById("bpDlg"), list = bpList(currentProd());
+    if(!list.length) return;
+    var h = '<div class="foto-head"><h3>Bühnenpläne<span>' + list.length + '</span></h3><button type="button" data-bpl="close">Schliessen</button></div><ul class="foto-list">';
+    list.forEach(function(x){
+      h += '<li class="foto-item"><button type="button" class="foto-thumb doc-thumb pdf" data-bpl="view" data-id="' + esc(x.id) + '"><span class="doc-pdf">PDF</span></button>' +
+        '<button type="button" class="doc-info" data-bpl="view" data-id="' + esc(x.id) + '"><span class="doc-name">' + esc(x.name) + '</span><span class="doc-meta">' + esc(fmtSize(x.size || 0)) + (bpLoading[x.id] ? ' · lädt …' : '') + '</span></button></li>';
+    });
+    dlg.firstElementChild.innerHTML = h + '</ul><p class="foto-hint">Antippen = ansehen · im Vollbild mit ‹ › zum nächsten Plan.</p>';
+    dlg.hidden = false;
+  }
+  function closeBpDlg(){ var d = document.getElementById("bpDlg"); d.hidden = true; d.firstElementChild.innerHTML = ""; }
+  document.getElementById("bpDlg").addEventListener("click", function(e){
+    if(e.target === this){ closeBpDlg(); return; }
+    var b = e.target.closest("[data-bpl]");
+    if(!b) return;
+    if(b.dataset.bpl === "close") closeBpDlg();
+    else { closeBpDlg(); bpView(b.dataset.id); }
+  });
+  function bpHandOff(f, url){
     var a = document.createElement("a");
     a.href = url; a.download = f.name; a.style.display = "none";
     document.body.appendChild(a);
     try{ a.click(); }catch(e){}
     setTimeout(function(){ a.remove(); }, 0);
   }
-  function bpView(){
-    var p = currentProd(), f = p && p.bp;
+  // Ansehen: id = bestimmter Plan (sonst der erste). Bei mehreren Plänen kann im Vollbild geblättert werden (‹ ›).
+  function bpView(id){
+    var p = currentProd(), list = bpList(p);
+    var idx = Math.max(0, id ? list.findIndex(function(x){ return x.id === id; }) : 0), f = list[idx];
     if(!f) return;
+    bpViewList = list; bpViewIdx = idx;
     if(bpUrls[f.id]){ bpShow(f); return; }
     if(bpLoading[f.id]) return;
     bpLoading[f.id] = true; bpRefresh();
@@ -4040,7 +4259,7 @@
       document.getElementById("toast").classList.remove("show");
       bpRefresh();
       var now = currentProd();
-      if(now && now.bp && now.bp.id === f.id) bpShow(f);
+      if(now && bpList(now).some(function(x){ return x.id === f.id; }) && bpViewList[bpViewIdx] && bpViewList[bpViewIdx].id === f.id) bpShow(f);
     }).catch(function(){
       delete bpLoading[f.id];
       showToast("Bühnenplan konnte nicht geladen werden (Verbindung?)", 4500, true);
@@ -4049,16 +4268,19 @@
   }
   fileView.addEventListener("click", function(e){
     if(e.target.closest("#fvSave")) return;
-    if(e.target.closest("#fvClose") || e.target === fvStage) closeFileView();
+    if(e.target.closest("#fvPrev")){ bpStep(-1); return; }
+    if(e.target.closest("#fvNext")){ bpStep(1); return; }
+    if(e.target.closest("#fvClose") || (e.target === fvStage && !fvStage.classList.contains("pdf"))) closeFileView();
   });
   document.addEventListener("keydown", function(e){
+    if(!fileView.hidden && bpViewList.length > 1 && !document.getElementById("fvNav").hidden && (e.key === "ArrowRight" || e.key === "ArrowLeft")){ e.preventDefault(); bpStep(e.key === "ArrowRight" ? 1 : -1); return; }
     if(e.key !== "Escape") return;
     if(!fileView.hidden){ closeFileView(); return; }
-    if(bpPopOpen){ bpPopOpen = false; bpConfirm = false; renderBpHead(); }
+    if(bpPopOpen){ bpPopOpen = false; bpConfirm = false; bpPending = null; renderBpHead(); }
   });
   // Handy-Knopf (in der Zeile Bühnenverstärkung)
   document.getElementById("main").addEventListener("click", function(e){
-    if(e.target.closest && e.target.closest('[data-action="bp-view"]')) bpView();
+    if(e.target.closest && e.target.closest('[data-action="bp-view"]')){ if(bpList(currentProd()).length > 1) openBpDlg(); else bpView(); }
   });
   // Feld im Spaltenkopf
   document.getElementById("main").addEventListener("click", function(e){
@@ -4066,10 +4288,12 @@
     if(!b) return;
     var act = b.dataset.bp;
     if(act === "choose"){ if(prodBlocked()){ lockedHint(true); return; } var inp = document.getElementById("bpFile"); inp.value = ""; inp.click(); }
-    else if(act === "view") bpView();
-    else if(act === "remove"){ if(prodBlocked()){ lockedHint(true); return; } bpConfirm = true; renderBpHead(); }
+    else if(act === "view") bpView(b.dataset.id);
+    else if(act === "remove"){ if(prodBlocked()){ lockedHint(true); return; } bpConfirm = b.dataset.id; renderBpHead(); }
     else if(act === "remove-no"){ bpConfirm = false; renderBpHead(); }
-    else if(act === "remove-yes") bpRemove();
+    else if(act === "remove-yes") bpRemove(b.dataset.id);
+    else if(act === "add" || act === "replace"){ var pf = bpPending; bpPending = null; if(pf) bpStore(pf, act === "replace" ? b.dataset.id : null); }
+    else if(act === "pending-no"){ bpPending = null; renderBpHead(); }
   });
   document.getElementById("bpFile").addEventListener("change", function(){
     if(this.files && this.files[0]) bpUpload(this.files[0]);
@@ -4078,7 +4302,7 @@
   document.addEventListener("click", function(e){
     if(!bpPopOpen || bpBusy) return;
     if(e.target.closest && e.target.closest(".bp-pop, .bp-btn, #bpFile")) return;
-    bpPopOpen = false; bpConfirm = false; renderBpHead();
+    bpPopOpen = false; bpConfirm = false; bpPending = null; renderBpHead();
   }, true);   // in der Capture-Phase: die Knöpfe im Feld werden beim Antippen neu gezeichnet und hingen sonst schon nicht mehr im Dokument
   // Hineinziehen: auf den BP-Knopf oder ins aufgeklappte Feld. Dateien, die daneben landen, öffnet der
   // Browser nicht (sonst wäre die App weg).
@@ -4100,6 +4324,7 @@
     window.addEventListener("dragover", function(e){
       if(!hasFiles(e)) return;
       e.preventDefault();
+      if(e.target.closest && e.target.closest(".col-head .doc-btn, #docDlg .foto-panel")) return;   // DOC regelt das selbst
       var z = isCols() && currentProdId ? zone(e) : null;
       var fz = currentProdId && !z ? fzone(e) : null;
       e.dataTransfer.dropEffect = (z || fz) ? "copy" : "none";
@@ -4570,6 +4795,247 @@
     var p = currentProd();
     return p && p.bv === "ja" ? "Ja" : p && p.bv === "nein" ? "Nein" : "";
   }
+  // ================= Dokumente (DOC) – Tonregie und Technik =================
+  // Pro Produktion und Bereich eine eigene Liste (prod.docs = { tonregie: { <id>: {n,k,s,ts,o} }, technik: {…} }), höchstens 15 Dateien.
+  // PDF bis 5 MB unverändert; Bilder/Screenshots wie die Fotos verkleinert (1920 px, ≤ 1 MB, dazu Vorschaubild <id>_t).
+  // Dateien liegen wie BP und Fotos unter ablaufplan/files/<id>. Ansehen in der App (PDF wie BP, Bilder im Vollbild), nicht im Druck.
+  var DOC_AREAS = { tonregie: "Tonregie", technik: "Technik" }, DOC_MAX = 15;
+  var DOC_PDF_SVG = '<span class="doc-pdf">PDF</span>';
+  var docArea = null, docAsk = null, docBusy = 0, docThumbs = {}, docLoadingT = {};
+  function prodDocs(p, area){
+    var m = (p && p.docs && p.docs[area]) || {};
+    return Object.keys(m).map(function(id){ var d = m[id] || {}; return { id: id, n: d.n || "Datei", k: d.k === "img" ? "img" : "pdf", s: d.s || 0, ts: d.ts || 0, o: d.o == null ? d.ts || 0 : d.o }; })
+      .sort(function(a, b){ return (a.o - b.o) || (a.ts - b.ts); });
+  }
+  function docBtnHtml(area){
+    var p = currentProd(), n = prodDocs(p, area).length;
+    return '<button type="button" class="bp-btn doc-btn' + (n ? ' voll' : '') + '" data-doc-open="' + area + '" aria-label="Dokumente ' + DOC_AREAS[area] + (n ? ' (' + n + ')' : '') + '" title="Dokumente (PDF, Bilder)">DOC</button>';
+  }
+  function renderDocHeads(){
+    var p = currentProd();
+    Object.keys(DOC_AREAS).forEach(function(area){
+      var col = colEl(area), btn = col && col.querySelector(".col-head .doc-btn");
+      if(!btn) return;
+      var n = prodDocs(p, area).length;
+      btn.disabled = !p;
+      btn.classList.toggle("voll", !!n);
+      btn.title = n ? n + (n === 1 ? " Datei" : " Dateien") : "Dokumente (PDF, Bilder) – hierher ziehen oder klicken";
+    });
+  }
+  function docSizeText(s){ return s >= 1048576 ? (s / 1048576).toFixed(1).replace(".", ",") + " MB" : Math.max(1, Math.round(s / 1024)) + " KB"; }
+  function docRefresh(){
+    if(isCols()) renderDocHeads(); else if(!editing) renderList();
+    renderDocDlg();
+  }
+  function openDocDlg(area){ if(!currentProd() || !DOC_AREAS[area]) return; docArea = area; docAsk = null; renderDocDlg(); }
+  function closeDocDlg(){ docArea = null; docAsk = null; var d = document.getElementById("docDlg"); d.hidden = true; d.firstElementChild.innerHTML = ""; }
+  function docThumbHtml(d){
+    if(d.k === "pdf") return '<button type="button" class="foto-thumb doc-thumb pdf" data-doc="view" data-id="' + esc(d.id) + '" aria-label="Ansehen">' + DOC_PDF_SVG + '</button>';
+    var u = docThumbs[d.id];
+    if(!u) docLoadThumb(d.id);
+    return '<button type="button" class="foto-thumb doc-thumb" data-doc="view" data-id="' + esc(d.id) + '"' + (u ? ' style="background-image:url(' + u + ')"' : '') + ' aria-label="Ansehen">' + (u ? '' : '…') + '</button>';
+  }
+  function docLoadThumb(id){
+    if(docThumbs[id] || docLoadingT[id]) return;
+    docLoadingT[id] = true;
+    fotoGet(id + "_t").then(function(rec){
+      delete docLoadingT[id];
+      if(!rec || !rec.data) return;
+      docThumbs[id] = b64ToUrl(rec.data, rec.type);
+      var b = document.querySelector('#docDlg .doc-thumb[data-id="' + id + '"]');
+      if(b){ b.style.backgroundImage = "url(" + docThumbs[id] + ")"; b.textContent = ""; }
+    }).catch(function(){ delete docLoadingT[id]; });
+  }
+  function renderDocDlg(){
+    var dlg = document.getElementById("docDlg"), panel = dlg.firstElementChild;
+    if(!docArea){ dlg.hidden = true; return; }
+    var p = currentProd();
+    if(!p){ closeDocDlg(); return; }
+    var list = prodDocs(p, docArea), n = list.length, blocked = prodBlocked(), room = DOC_MAX - n - docBusy;
+    var h = '<div class="foto-head"><h3>' + DOC_AREAS[docArea] + '<span>' + n + ' / ' + DOC_MAX + '</span></h3>' +
+      (n ? '<button type="button" class="foto-dl" data-doc="download">Alle herunterladen</button>' : '') +
+      '<button type="button" data-doc="close">Schliessen</button></div>';
+    if(docBusy) h += '<p class="foto-busy">' + docBusy + (docBusy === 1 ? ' Datei wird' : ' Dateien werden') + ' gespeichert …</p>';
+    if(blocked) h += '<p class="foto-locked"><b>Produktion ist gesperrt.</b> Dateien nur ansehen und herunterladen – zum Hinzufügen erst das Schloss öffnen.</p>';
+    else if(room <= 0) h += '<p class="foto-max">Maximal ' + DOC_MAX + ' Dateien – zum Hinzufügen erst eine löschen.</p>';
+    else if(isCols()) h += '<button type="button" class="foto-drop" data-doc="pick"><b>Dateien hierher ziehen</b><br>PDF, JPG, PNG, Screenshots – oder klicken und auswählen</button>';
+    else h += '<div class="foto-add"><button type="button" class="main" data-doc="pick">Datei hinzufügen</button><button type="button" data-doc="camera">' + CAM_SVG + 'Foto machen</button></div>';
+    if(!n && !docBusy) h += '<p class="foto-empty">Noch keine Dateien.</p>';
+    h += '<ul class="foto-list">';
+    list.forEach(function(d){
+      h += '<li class="foto-item">' + docThumbHtml(d) +
+        '<button type="button" class="doc-info" data-doc="view" data-id="' + esc(d.id) + '"><span class="doc-name">' + esc(d.n) + '</span><span class="doc-meta">' + (d.k === "pdf" ? "PDF" : "Bild") + (d.s ? " · " + docSizeText(d.s) : "") + '</span></button>' +
+        (blocked ? '' : '<button type="button" class="foto-del" data-doc="del" data-id="' + esc(d.id) + '" aria-label="Datei löschen">✕</button>') + '</li>';
+      if(docAsk === d.id) h += '<li class="cue-confirm foto-confirm"><span class="cue-confirm-text">Datei löschen?</span>' +
+        '<button type="button" class="prod-dd-confirm-yes" data-doc="del-yes" data-id="' + esc(d.id) + '">Ja</button>' +
+        '<button type="button" class="prod-dd-confirm-no" data-doc="del-no">Nein</button></li>';
+    });
+    h += '</ul>';
+    if(n) h += '<p class="foto-hint">' + (isCols() ? 'Anklicken = ansehen' : 'Antippen = ansehen') + (blocked ? '.' : ' · ✕ = löschen.') + '</p>';
+    panel.innerHTML = h;
+    dlg.hidden = false;
+  }
+  function docPick(camera){
+    var inp = document.getElementById(camera ? "docCam" : "docPick");
+    inp.value = ""; inp.click();
+  }
+  function docIsPdf(f){ return f.type === "application/pdf" || /\.pdf$/i.test(f.name || ""); }
+  function docIsImg(f){ return /^image\//.test(f.type) || /\.(jpe?g|png|heic|heif|webp|gif)$/i.test(f.name || ""); }
+  function docAddFiles(fileList, area, camera){
+    var p = currentProd();
+    area = area || docArea;
+    if(!p || !DOC_AREAS[area]) return;
+    if(prodBlocked()){ lockedHint(true); return; }
+    var all = Array.prototype.slice.call(fileList || []);
+    var files = all.filter(function(f){ return docIsPdf(f) || docIsImg(f); });
+    if(!files.length){ showToast("Bitte PDF- oder Bilddateien wählen", 3000, true); return; }
+    var big = files.filter(function(f){ return docIsPdf(f) && f.size > BP_MAX; });
+    files = files.filter(function(f){ return !(docIsPdf(f) && f.size > BP_MAX); });
+    var room = DOC_MAX - prodDocs(p, area).length - docBusy;
+    if(room <= 0){ showToast("Maximal " + DOC_MAX + " Dateien", 3500, true); return; }
+    var skipped = Math.max(0, files.length - room);
+    files = files.slice(0, room);
+    var prodId = p.id, done = 0, failed = 0;
+    docBusy += files.length;
+    docArea = area; renderDocDlg();
+    files.reduce(function(chain, file){
+      return chain.then(function(){
+        var pdf = docIsPdf(file), fid = "d" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7), ts = Date.now();
+        var name = file.name || "";
+        if(!name || (camera && !pdf)){ var d = new Date(); name = "Foto " + pad2(d.getDate()) + "." + pad2(d.getMonth() + 1) + ". " + pad2(d.getHours()) + ":" + pad2(d.getMinutes()) + ".jpg"; }
+        var prep = pdf
+          ? readBase64(file).then(function(b64){ return { full: b64, type: "application/pdf", size: file.size }; })
+          : fotoPrepare(file).then(function(r){ return { full: r.full, thumb: r.thumb, type: "image/jpeg", size: r.size, thumbBlob: r.thumbBlob }; });
+        return prep.then(function(r){
+          var online = fbEnabled && db;
+          var rec = { name: name, type: r.type, size: r.size, ts: ts, data: r.full };
+          var put = online
+            ? withTimeout(Promise.all([db.ref(bpPath(fid)).set(rec)].concat(r.thumb ? [db.ref(bpPath(fid + "_t")).set({ type: "image/jpeg", data: r.thumb })] : [])), 90000)
+            : Promise.resolve();
+          if(!online){ fotoLocal[fid] = rec; if(r.thumb) fotoLocal[fid + "_t"] = { type: "image/jpeg", data: r.thumb }; }
+          return put.then(function(){
+            var pr = productions.find(function(x){ return x.id === prodId; });
+            if(!pr){ fotoRemoveStored(fid); return; }
+            var max = 0; prodDocs(pr, area).forEach(function(x){ if(x.o > max) max = x.o; });
+            pr.docs = pr.docs || {}; pr.docs[area] = pr.docs[area] || {};
+            pr.docs[area][fid] = { n: name.slice(0, 120), k: pdf ? "pdf" : "img", s: r.size, ts: ts, o: max + 1 };
+            fotoTouch(pr);
+            if(r.thumbBlob){ try{ docThumbs[fid] = URL.createObjectURL(r.thumbBlob); }catch(e){} }
+            saveProductions();
+            done++;
+          });
+        }).catch(function(){ failed++; }).then(function(){ docBusy--; docRefresh(); });
+      });
+    }, Promise.resolve()).then(function(){
+      if(big.length) showToast(big.length + (big.length === 1 ? " PDF" : " PDFs") + " zu gross (max. 5 MB) – nicht übernommen", 4500, true);
+      else if(failed) showToast(failed + (failed === 1 ? " Datei" : " Dateien") + " nicht gespeichert (Format oder Verbindung prüfen)", 4500, true);
+      else if(skipped) showToast("Maximal " + DOC_MAX + " Dateien – " + skipped + " nicht übernommen", 4500, true);
+      else if(done) showToast(done === 1 ? "Datei gespeichert" : done + " Dateien gespeichert", 2200);
+      if(!(fbEnabled && db) && done) showToast("Nur auf diesem Gerät gespeichert (keine Verbindung)", 4500, true);
+    });
+  }
+  function docDelete(id){
+    var p = currentProd(), area = docArea;
+    if(!p || !p.docs || !p.docs[area] || !p.docs[area][id]) return;
+    if(prodBlocked()){ lockedHint(true); return; }
+    delete p.docs[area][id];
+    if(!Object.keys(p.docs[area]).length) delete p.docs[area];
+    if(!Object.keys(p.docs).length) delete p.docs;
+    fotoTouch(p); saveProductions();
+    fotoRemoveStored(id);
+    if(docThumbs[id]){ try{ URL.revokeObjectURL(docThumbs[id]); }catch(e){} delete docThumbs[id]; }
+    if(bpUrls[id]){ try{ URL.revokeObjectURL(bpUrls[id]); }catch(e){} delete bpUrls[id]; }
+    docAsk = null; docRefresh();
+    showToast("Datei gelöscht", 1800);
+  }
+  function docView(id){
+    var p = currentProd(), d = prodDocs(p, docArea).find(function(x){ return x.id === id; });
+    if(!d) return;
+    var show = function(url){ bpViewList = []; if(d.k === "pdf") bpShow({ id: d.id, name: d.n }); else docShowImage(d.n, url); };
+    if(bpUrls[id]){ show(bpUrls[id]); return; }
+    showToast("Datei lädt …", 60000);
+    fotoGet(id).then(function(rec){
+      if(!rec || !rec.data) throw new Error("fehlt");
+      bpUrls[id] = URL.createObjectURL(b64ToBlob(rec.data, rec.type || (d.k === "pdf" ? "application/pdf" : "image/jpeg")));
+      document.getElementById("toast").classList.remove("show");
+      show(bpUrls[id]);
+    }).catch(function(){ showToast("Datei nicht gefunden – evtl. gelöscht", 4000, true); });
+  }
+  function docShowImage(name, url){
+    bpViewSeq++;
+    document.getElementById("fvNav").hidden = true;
+    fvStage.classList.remove("pdf");
+    fvStage.innerHTML = '<img class="fv-img" alt="" src="' + url + '">';
+    document.getElementById("fvName").textContent = name;
+    var sv = document.getElementById("fvSave");
+    sv.href = url; sv.setAttribute("download", /\.(jpe?g|png)$/i.test(name) ? name : name + ".jpg");
+    fileView.hidden = false;
+  }
+  function docDownloadAll(){
+    var p = currentProd(), area = docArea, list = prodDocs(p, area);
+    if(!list.length) return;
+    showToast("Dateien werden zusammengestellt …", 60000);
+    var used = {};
+    Promise.all(list.map(function(d){ return fotoGet(d.id); })).then(function(recs){
+      var entries = [];
+      recs.forEach(function(rec, i){
+        if(!rec || !rec.data) return;
+        var d = list[i], ext = d.k === "pdf" ? ".pdf" : ".jpg";
+        var base = String(d.n).replace(/\.(pdf|jpe?g|png|heic|heif|webp|gif)$/i, "").replace(/[\\\/:*?"<>|\u0000-\u001f]+/g, " ").replace(/\s+/g, " ").trim().slice(0, 80) || "Datei";
+        var nm = base; while(used[nm]) nm += "_"; used[nm] = true;
+        entries.push({ name: nm + ext, data: b64ToU8(rec.data) });
+      });
+      if(!entries.length) throw new Error("leer");
+      var dt = new Date(), day = dt.getFullYear() + "-" + pad2(dt.getMonth() + 1) + "-" + pad2(dt.getDate());
+      var safeP = String(p.name || "Produktion").replace(/[\\\/:*?"<>|]+/g, "").replace(/\s+/g, "_");
+      return saveFile("DOC_" + DOC_AREAS[area] + "_" + safeP + "_" + day + ".zip", makeZip(entries)).then(function(){
+        showToast(entries.length + (entries.length === 1 ? " Datei" : " Dateien") + " heruntergeladen", 2600);
+      });
+    }).catch(function(){ showToast("Herunterladen fehlgeschlagen (Verbindung prüfen)", 4500, true); });
+  }
+  (function(){
+    var dlg = document.getElementById("docDlg"), panel = dlg.firstElementChild;
+    document.getElementById("docPick").addEventListener("change", function(){ if(this.files && this.files.length) docAddFiles(this.files, docArea, false); });
+    document.getElementById("docCam").addEventListener("change", function(){ if(this.files && this.files.length) docAddFiles(this.files, docArea, true); });
+    document.addEventListener("click", function(e){
+      var b = e.target.closest && e.target.closest("[data-doc-open]");
+      if(b && !b.disabled) openDocDlg(b.dataset.docOpen);
+    });
+    dlg.addEventListener("click", function(e){
+      if(e.target === dlg){ closeDocDlg(); return; }
+      var b = e.target.closest("[data-doc]");
+      if(!b) return;
+      var a = b.dataset.doc, id = b.dataset.id;
+      if(a === "close") closeDocDlg();
+      else if(a === "pick") docPick(false);
+      else if(a === "camera") docPick(true);
+      else if(a === "view") docView(id);
+      else if(a === "download") docDownloadAll();
+      else if(a === "del"){ docAsk = id; renderDocDlg(); }
+      else if(a === "del-no"){ docAsk = null; renderDocDlg(); }
+      else if(a === "del-yes") docDelete(id);
+    });
+    document.addEventListener("keydown", function(e){
+      if(e.key === "Escape" && docArea && fileView.hidden){ closeDocDlg(); }
+    }, true);   // vor dem Vollbild-Handler: ist eine Datei offen, schliesst Esc zuerst nur diese
+    // Desktop: Dateien auf den DOC-Knopf oder ins Fenster ziehen
+    function dzone(e){ return e.target.closest ? e.target.closest('.art-col .col-head .doc-btn, #docDlg .foto-panel') : null; }
+    function dArea(z){ if(z.closest("#docDlg")) return docArea; var c = z.closest(".art-col"); return c ? c.dataset.art : null; }
+    ["dragenter", "dragover"].forEach(function(ev){
+      document.addEventListener(ev, function(e){
+        var z = dzone(e); if(!z) return;
+        if(!e.dataTransfer || Array.prototype.indexOf.call(e.dataTransfer.types || [], "Files") < 0) return;
+        e.preventDefault(); e.dataTransfer.dropEffect = "copy"; z.classList.add("ziel");
+      });
+    });
+    document.addEventListener("dragleave", function(e){ var z = dzone(e); if(z) z.classList.remove("ziel"); });
+    document.addEventListener("drop", function(e){
+      var z = dzone(e); if(!z) return;
+      e.preventDefault(); z.classList.remove("ziel");
+      var area = dArea(z);
+      if(e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length && area) docAddFiles(e.dataTransfer.files, area, false);
+    });
+  })();
   function bvRowHtml(){
     var p = currentProd(), v = p ? p.bv : "";
     function b(val, txt){
@@ -4607,6 +5073,10 @@
     applySearchHighlight(main);
     // nur Bühne (mobil und Desktop): Zeile über dem ersten Eintrag
     if(currentArt === "buehne" && currentProdId) main.insertAdjacentHTML("afterbegin", bvRowHtml());
+    // Handy, Tonregie: eigene Titelzeile (wie Technik) mit DOC-Knopf
+    if(currentArt === "tonregie" && currentProdId && !isCols()){
+      main.insertAdjacentHTML("afterbegin", '<div class="bv-row doc-row"><span class="bv-lbl">Tonregie</span>' + docBtnHtml("tonregie") + '</div>');
+    }
   }
   // Suchbegriff in den Einträgen gelb markieren (solange das Suchfeld offen ist)
   function currentSearchTerm(){
@@ -5282,11 +5752,12 @@
   document.getElementById("searchInput").addEventListener("focus", runSearch);
 
   var toastTimer = null;
-  function showToast(msg, ms, isError){
+  function showToast(msg, ms, isError, kind){
     var el = document.getElementById("toast");
     if(!el) return;
     el.textContent = msg;
     el.classList.toggle("error", !!isError);
+    el.classList.toggle("lock", kind === "lock");   // Sperr-Hinweis: tiefer (oberes Viertel), gelbe Schrift
     el.classList.add("show");
     clearTimeout(toastTimer);
     toastTimer = setTimeout(function(){ el.classList.remove("show"); }, ms || 3000);
@@ -5432,8 +5903,8 @@
       var vals = tonX
         ? [c.ka || "", c.akt || "", c.bild || "", tStr, [c.was || "", c.inspilz ? "LZ-Inspi" : ""].filter(Boolean).join(" · ")]
         : [tStr, c.ka || "", c.akt || "", c.bild || "", printLoc(c.loc)];
-      var text = [c.task ? highlightTask(esc(c.task)) : ""].concat((c.notes || []).filter(function(n){ return n.text; }).map(function(n){ return esc("– " + n.text.replace(/\n/g, "\n   ")); }))
-        .filter(Boolean).join("\n");
+      // Punkte mit hängendem Einzug: Strich vorn, umbrochene Zeilen und Absätze beginnen unter dem Text (seit v208)
+      var text = (c.task ? highlightTask(esc(c.task)) : "") + (c.notes || []).filter(function(n){ return n.text; }).map(function(n){ return pvItem(n.text); }).join("");
       // „geändert … von …“ steht nur in der App, nicht im Druck (seit v207)
       if(!hasBild) vals.splice(bi, 1);
       var cells = vals.map(function(v){ return '<td><b>' + esc(v) + '</b></td>'; });
@@ -5482,6 +5953,20 @@
     }
     return h + '</tbody></table>';
   }
+  function pvItem(txt){ return '<span class="pv-item"><span class="pv-dash">–</span>' + esc(txt) + '</span>'; }
+  // Druck-Text mit Punkten („– …“, Folgezeilen mit drei Leerzeichen) in HTML mit hängendem Einzug umwandeln
+  function pvLinesHtml(val){
+    var lines = String(val || "").split("\n"), out = "", prevText = false, i = 0;
+    while(i < lines.length){
+      var L = lines[i];
+      if(L.indexOf("– ") === 0){
+        var body = [L.slice(2)]; i++;
+        while(i < lines.length && lines[i].indexOf("   ") === 0){ body.push(lines[i].slice(3)); i++; }
+        out += pvItem(body.join("\n")); prevText = false;
+      } else { out += (prevText ? "\n" : "") + esc(L); prevText = true; i++; }
+    }
+    return out;
+  }
   function printTechTable(){
     var tech = (cues[0] && cues[0].tech) || {};
     migrateAmps(tech); migrateMipo(tech);
@@ -5489,7 +5974,7 @@
     TECH_CATS.forEach(function(cat){
       var t = tech[cat.id] || {};
       var val = (t.on && cat.id === "amps") ? ampPrintText(t) : techCatValue(cat, t);
-      var cell = t.on ? (esc(val) || "an") : (cat.id === "mipo" ? "–" : "aus");   // Mipo nicht gewählt: Strich (= keine Mipos) statt „aus“
+      var cell = t.on ? (pvLinesHtml(val) || "an") : (cat.id === "mipo" ? "–" : "aus");   // Mipo nicht gewählt: Strich (= keine Mipos) statt „aus“
       if(t.on && cat.id === "mipo") cell = mipoPrintTable(cat, t) || "an";
       h += '<tr class="pv-text' + (t.on ? '' : ' pv-off') + '"><td><b>' + esc(cat.label) + '</b></td><td>' + cell + '</td></tr>';
     });
@@ -5569,6 +6054,20 @@
     document.getElementById("paAll").addEventListener("click", function(){ close(); printView(); });
     dlg.addEventListener("click", function(e){ if(e.target === dlg || e.target.closest("#paCancel")) close(); });
     document.addEventListener("keydown", function(e){ if(e.key === "Escape" && !dlg.hidden){ e.stopPropagation(); close(); } }, true);
+  })();
+  // Handy-Menü ☰: Drucken (mit Rückfrage Bereich/Alles) und „Über“ (Kurzinfo)
+  (function(){
+    var mb = document.getElementById("mobMenuBtn"), mm = document.getElementById("mobMenu");
+    function setOpen(on){ mm.hidden = !on; mb.classList.toggle("active", on); mb.setAttribute("aria-expanded", on ? "true" : "false"); }
+    mb.addEventListener("click", function(e){ e.stopPropagation(); setOpen(mm.hidden); });
+    mm.addEventListener("click", function(e){
+      var b = e.target.closest("[data-mm]"); if(!b) return;
+      setOpen(false);
+      if(b.dataset.mm === "print"){ var pb = document.getElementById("printArtBtn"); if(pb.disabled){ showToast("Erst eine Produktion wählen", 2500, true); return; } pb.click(); }
+      else if(b.dataset.mm === "info") document.getElementById("infoBtn").click();
+    });
+    document.addEventListener("click", function(e){ if(!mm.hidden && !e.target.closest("#mobMenu, #mobMenuBtn")) setOpen(false); }, true);
+    document.addEventListener("keydown", function(e){ if(e.key === "Escape" && !mm.hidden) setOpen(false); });
   })();
   // Archiv (Desktop): Liste der archivierten Produktionen; Antippen fragt „Zurück in die Produktionsliste / Löschen / Abbrechen“
   (function(){
@@ -5843,6 +6342,7 @@
     else if(b.dataset.colAction === "export") exportExcel(b);
     else if(b.dataset.colAction === "print") printView([currentArt]);
     else if(b.dataset.colAction === "bp"){ bpPopOpen = !bpPopOpen; bpConfirm = false; renderBpHead(); }
+    else if(b.dataset.colAction === "doc"){ var dc = b.closest(".art-col"); if(dc) openDocDlg(dc.dataset.art); }
     else if(b.dataset.colAction === "foto"){ bpPopOpen = false; bpConfirm = false; renderBpHead(); fotoTap(); }
   });
   // Fensterbreite wechselt zwischen Spalten und Einzelansicht
