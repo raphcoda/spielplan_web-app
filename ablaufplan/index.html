@@ -2049,7 +2049,7 @@
     <li>Zum Entsperren braucht es den vierstelligen Code und das Namenskürzel.</li>
   </ul>
   <button type="button" class="info-close" id="infoClose">Schliessen</button>
-  <p class="info-ver" id="infoVer">v_ton_ap_gh_a_111026_1833</p>
+  <p class="info-ver" id="infoVer">v_ton_ap_gh_a_111026_1845</p>
 </div></div>
 <div id="printAsk" hidden><div class="info-panel print-ask" role="dialog" aria-modal="true" aria-labelledby="printAskTitle">
   <h3 id="printAskTitle">Drucken</h3>
@@ -5899,6 +5899,7 @@
     '.pv .pv-text td{ white-space:pre-wrap; }' +
     '.pv .pv-wastext{ white-space:pre-wrap; }' +
     '.pv .pv-txt{ white-space:pre-wrap; padding-left:3.5mm; }' +
+    '.pv .pv-inspi{ float:right; margin-left:3mm; font-weight:700; color:#000; }' +
     '.pv .pv-sub{ width:100%; border-collapse:collapse; table-layout:fixed; }' +
     '.pv .pv-sub th{ background:transparent !important; border-bottom:.5pt solid #999; padding:0 2mm .6mm 0; font-weight:700; }' +
     '.pv .pv-sub td{ border:none; padding:.5mm 2mm .2mm 0; white-space:normal; vertical-align:top; }' +
@@ -5954,6 +5955,8 @@
       // „geändert … von …“ steht nur in der App, nicht im Druck (seit v207)
       if(!hasBild) vals.splice(bi, 1);
       var cells = vals.map(function(v){ return '<td><b>' + esc(v) + '</b></td>'; });
+      // Bühne: Inspifunk rechtsbündig neben dem Eintrag, fett schwarz (Gesamtdruck schmal: „Inspi“)
+      if(!tonX && c.inspi) text = '<b class="pv-inspi">' + (under ? 'Inspi' : 'Inspifunk') + '</b>' + text;
       if(textCol){
         cells.push('<td class="pv-txt">' + text + '</td>');
       } else {
