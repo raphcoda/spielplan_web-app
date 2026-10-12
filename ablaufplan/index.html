@@ -379,6 +379,9 @@
   .prod-dd{
     position:relative;
   }
+  /* offene Produktionsliste: Hintergrund abdunkeln, Liste darüber */
+  .prod-dd-dim{ position:fixed; inset:0; z-index:5; background:rgba(0,0,0,.55); }
+  .prod-dd.open .prod-dd-btn{ position:relative; z-index:6; }
   .prod-dd-btn{
     width:100%;
     display:flex;
@@ -415,13 +418,23 @@
     box-shadow:var(--shadow);
     padding:6px;
     z-index:6;
-    max-height:260px;
+    max-height:70vh; max-height:70dvh;   /* bis 70 % der Bildschirmhöhe, danach scrollen */
     overflow-y:auto;
     display:flex;
     flex-direction:column;
     gap:2px;
   }
   .prod-dd-search{ position:relative; display:flex; align-items:center; margin:0 0 4px; }
+  /* Kopfleiste der Produktionsliste: türkis */
+  .prod-dd-bar{ display:flex; align-items:center; gap:8px; padding:5px; margin:0 0 6px; border-radius:8px; background:var(--ka-soft); }
+  .prod-dd-bar .pdb-btn{ font:inherit; font-size:14px; font-weight:700; height:32px; min-width:34px; padding:0 10px; border-radius:7px;
+    border:1px solid transparent; background:none; color:var(--ka); cursor:pointer; display:flex; align-items:center; justify-content:center; -webkit-tap-highlight-color:transparent; }
+  .prod-dd-bar .pdb-lupe{ padding:0 7px; }
+  .prod-dd-bar .pdb-lupe svg{ width:18px; height:18px; }
+  .prod-dd-bar .pdb-btn.on{ border-color:var(--ka); }
+  .prod-dd-bar .pdb-sort{ display:flex; align-items:center; gap:2px; }
+  .prod-dd-bar .pdb-sort .pdb-btn.on{ background:var(--ka); color:var(--bg); border-color:var(--ka); }
+  .prod-dd-bar .pdb-new{ margin-left:auto; }
   .prod-dd-search svg{ position:absolute; left:9px; width:16px; height:16px; color:var(--text-dim); pointer-events:none; }
   .prod-dd-search input{
     font: inherit; font-size:15px; width:100%; height:34px; padding:0 30px 0 32px;
@@ -451,7 +464,7 @@
   #prodPicker .prod-dd-row .prod-dd-option{ color:var(--accent); }
   #prodPicker .prod-dd-row .prod-dd-option.selected{ color:#fff; }
   .prod-dd-option.prod-dd-add{
-    color:var(--accent);
+    color:var(--ka);
     font-weight:700;
     border-top:1px dashed var(--line);
     margin-top:4px;
@@ -589,6 +602,11 @@
     outline:2px solid var(--accent);
     outline-offset:1px;
   }
+  /* gesperrte Produktion: Inhalt reagiert optisch nicht (kein oranger Rahmen, keine Feld-Hervorhebung) */
+  html.prod-locked #main :focus, html.prod-locked #main :focus-visible{ outline:none !important; }
+  .prodlock:focus:not(:focus-visible){ outline:none; }
+  .prod-dd-row.locked .prod-dd-icon:focus{ outline:none; }   /* gesperrte Produktion in der Liste: Stift/✕ ohne Rahmen */   /* Schloss: nach dem Antippen kein oranger Rahmen */
+  html.prod-locked #main .ts-input:focus{ border-color:var(--field-line); background:var(--surface-2); }
   .addbtn{
     flex:0 0 auto;
     width:28px;
@@ -1111,7 +1129,7 @@
     padding:8px 4px 4px;
   }
   .prod-dd-row-rename{ padding:6px 4px; border-radius:8px; background:var(--surface-2); }
-  .prod-dd-new{ border-top:1px dashed var(--line); margin-top:4px; }
+  .prod-dd-new{ margin:0 0 6px; padding-top:2px; border-bottom:1px dashed var(--line); padding-bottom:8px; }
   .prod-dd-new .prod-new-input,
   .prod-dd-row-rename .prod-new-input{
     flex:1 1 100%;
@@ -1512,6 +1530,9 @@
   .prod-dd-lock svg{ vertical-align:0; }
   .prod-dd-name{ flex:0 1 auto; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .prod-dd-upd{ flex:0 0 auto; margin-left:auto; padding-left:10px; font-size:11px; font-weight:500; letter-spacing:0; color:var(--text-dim); white-space:nowrap; }
+  /* Daten (angelegt · geändert) in einer kleinen Zeile unter dem Titel, bündig mit dem Namen */
+  #prodPicker .prod-dd-row .prod-dd-option{ flex-wrap:wrap; row-gap:1px; }
+  #prodPicker .prod-dd-upd{ flex:1 1 100%; margin-left:19px; padding-left:0; display:flex; gap:14px; }
   /* Liste: nicht gesperrt = offenes Schloss grau · gesperrt = geschlossenes Schloss orange, bei der ausgewählten Produktion weiss */
   .prod-dd-option.selected .prod-dd-lock svg{ color:#fff; }
   .prod-dd-lock.open svg, .prod-dd-option.selected .prod-dd-lock.open svg{ color:var(--text-dim); }
@@ -2049,7 +2070,7 @@
     <li>Zum Entsperren braucht es den vierstelligen Code und das Namenskürzel.</li>
   </ul>
   <button type="button" class="info-close" id="infoClose">Schliessen</button>
-  <p class="info-ver" id="infoVer">v_ton_ap_gh_a_111026_1845</p>
+  <p class="info-ver" id="infoVer">v_ton_ap_gh_a_121026_0929</p>
 </div></div>
 <div id="printAsk" hidden><div class="info-panel print-ask" role="dialog" aria-modal="true" aria-labelledby="printAskTitle">
   <h3 id="printAskTitle">Drucken</h3>
@@ -3254,6 +3275,27 @@
       return sortName(a.name).localeCompare(sortName(b.name), "de");
     });
   }
+  // Anlegezeitpunkt steckt in der ID („p“ + Date.now() in Basis 36 + 4 Zufallszeichen); ältere/fremde IDs → 0 (ganz unten)
+  function prodCreated(p){
+    var id = String(p && p.id || "");
+    if(id.length < 10 || id[0] !== "p") return 0;
+    var t = parseInt(id.slice(1, -4), 36);
+    return t > 1.4e12 && t < 4e12 ? t : 0;
+  }
+  // kleine Zeile unter dem Titel: „angelegt 6.10.26   geändert 11.10.26 08:26“
+  function prodDatesHtml(p){
+    var c = prodCreated(p), u = p && p.upd, h = "";
+    if(c) h += '<span class="pdd-c">angelegt ' + fmtUpd(c).split(" ")[0] + '</span>';
+    if(fmtUpd(u)) h += '<span class="pdd-u">geändert ' + fmtUpd(u) + '</span>';
+    return h ? '<span class="prod-dd-upd">' + h + '</span>' : '';
+  }
+  function prodDate(p){ return prodCreated(p) || (p && p.upd) || 0; }   // Eintragsdatum; ohne lesbare ID: letzte Änderung
+  // Auswahlliste „Dat“: neueste oben, älteste unten (gleiches Datum → nach Name)
+  function prodsByDate(list){
+    return list.slice().sort(function(a, b){
+      return (prodDate(b) - prodDate(a)) || sortName(a.name).localeCompare(sortName(b.name), "de");
+    });
+  }
 
   function renderProdPicker(){
     if(archOpen && window.renderArchPop) setTimeout(window.renderArchPop, 0);
@@ -3270,10 +3312,27 @@
 
     if(prodPickerOpen){
       html += '<div class="prod-dd-menu" role="listbox">' +
+        // Kopfleiste (türkis): Lupe · Sortierung Dat / A–Z · + Neu
+        '<div class="prod-dd-bar">' +
+          '<button type="button" class="pdb-btn pdb-lupe' + (prodSearchOpen ? ' on' : '') + '" data-action="prod-search-toggle" aria-label="Produktion suchen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L20 20"/></svg></button>' +
+          '<span class="pdb-sort" role="group" aria-label="Sortierung">' +
+            '<button type="button" class="pdb-btn' + (prodSort === "dat" ? ' on' : '') + '" data-action="prod-sort" data-sort="dat" title="nach Eintragsdatum, neueste oben">Dat</button>' +
+            '<button type="button" class="pdb-btn' + (prodSort === "az" ? ' on' : '') + '" data-action="prod-sort" data-sort="az" title="alphabetisch">A–Z</button>' +
+          '</span>' +
+          '<button type="button" class="pdb-btn pdb-new" data-action="prod-new-start">+ Neu</button>' +
+        '</div>' +
+        (prodSearchOpen || prodFilter ?
         '<div class="prod-dd-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L20 20"/></svg>' +
           '<input type="search" id="prodSearchInput" placeholder="Produktion suchen…" autocomplete="off" spellcheck="false" value="' + esc(prodFilter) + '">' +
           (prodFilter ? '<button type="button" class="prod-dd-search-x" data-action="prod-filter-clear" aria-label="Suche leeren">✕</button>' : '') +
+        '</div>' : '');
+      if(addingProduction){
+        html += '<div class="prod-dd-new">' +
+          '<input type="text" class="prod-new-input" id="prodNewInput" placeholder="Name der Produktion">' +
+          '<button type="button" class="prod-new-btn" data-action="prod-new-confirm">Anlegen</button>' +
+          '<button type="button" class="prod-new-cancel" data-action="prod-new-cancel">Abbrechen</button>' +
         '</div>';
+      }
       function prodRow(p, isArchived){
         var pid = esc(p.id);
         if(deletingProdId === p.id && deleteStage === "choose"){
@@ -3298,10 +3357,11 @@
             '<button type="button" class="prod-new-cancel" data-action="prod-rename-cancel">Abbrechen</button>' +
           '</div>';
         }
-        return '<div class="prod-dd-row' + (isArchived ? ' archived' : '') + '">' +
+        var rowLocked = p.lock && !(openLock && openLock.type === "prod" && openLock.prodId === p.id);
+        return '<div class="prod-dd-row' + (isArchived ? ' archived' : '') + (rowLocked ? ' locked' : '') + '">' +
           '<button type="button" class="prod-dd-option' + (p.id === currentProdId ? ' selected' : '') + '" data-action="prod-select" data-id="' + pid + '" role="option">' + '<span class="prod-dd-lock' + (p.lock ? '' : ' open') + '" title="' + (p.lock ? 'gesperrt' : 'nicht gesperrt') + '">' + (p.lock ? LOCK_SVG_CLOSED : LOCK_SVG_OPEN) + '</span>' +
             '<span class="prod-dd-name">' + esc(p.name) + '</span>' +
-            (fmtUpd(p.upd) ? '<span class="prod-dd-upd" title="Letzte Aktualisierung">' + fmtUpd(p.upd) + '</span>' : '') + '</button>' +
+            prodDatesHtml(p) + '</button>' +
           (isArchived
             ? '<button type="button" class="prod-dd-icon prod-dd-icon-edit" data-action="prod-unarchive" data-id="' + pid + '" aria-label="Aus dem Archiv holen" title="Wiederherstellen">↺</button>'
             : '<button type="button" class="prod-dd-icon prod-dd-icon-edit" data-action="prod-rename-start" data-id="' + pid + '" aria-label="Umbenennen">✎</button>') +
@@ -3311,25 +3371,19 @@
       var fq = prodFilter.trim().toLowerCase();
       var all = sortedProductions().filter(function(p){ return !fq || String(p.name).toLowerCase().indexOf(fq) >= 0; });
       var active = all.filter(function(p){ return !p.archived; });
+      if(prodSort === "dat") active = prodsByDate(active);
       var archived = all.filter(function(p){ return !!p.archived; });
       active.forEach(function(p){ html += prodRow(p, false); });
+      if(fq && !all.length) html += '<div class="prod-dd-nohit">Keine Produktion gefunden</div>';
+      // Archiv ganz unten
       if(archived.length){
         var showArch = archiveOpen || !!fq; // beim Suchen Archiv-Treffer direkt zeigen
         html += '<button type="button" class="prod-dd-archive-toggle" data-action="prod-archive-toggle">' +
           '<span>Archiv (' + archived.length + ')</span><span class="prod-dd-chevron' + (showArch ? ' up' : '') + '">▾</span></button>';
         if(showArch) archived.forEach(function(p){ html += prodRow(p, true); });
       }
-      if(fq && !all.length) html += '<div class="prod-dd-nohit">Keine Produktion gefunden</div>';
-      if(addingProduction){
-        html += '<div class="prod-dd-new">' +
-          '<input type="text" class="prod-new-input" id="prodNewInput" placeholder="Name der Produktion">' +
-          '<button type="button" class="prod-new-btn" data-action="prod-new-confirm">Anlegen</button>' +
-          '<button type="button" class="prod-new-cancel" data-action="prod-new-cancel">Abbrechen</button>' +
-        '</div>';
-      } else {
-        html += '<button type="button" class="prod-dd-option prod-dd-add" data-action="prod-new-start">+ Neue Produktion eintragen…</button>';
-      }
       html += '</div>';
+      html += '<div class="prod-dd-dim" aria-hidden="true"></div>';   // Hintergrund abdunkeln
     }
 
     html += '</div>';
@@ -3348,11 +3402,12 @@
       if(sinp){ sinp.focus(); var l = sinp.value.length; try{ sinp.setSelectionRange(l, l); }catch(e){} }
     }
   }
-  var prodFilter = "", prodFilterFocus = false;
+  var prodFilter = "", prodFilterFocus = false, prodSearchOpen = false;
+  var prodSort = "dat"; try{ if(localStorage.getItem("buehnenablauf.prodSort.v1") === "az") prodSort = "az"; }catch(e){}
 
   function toggleProdPicker(){
     prodPickerOpen = !prodPickerOpen;
-    prodFilter = ""; prodFilterFocus = false;
+    prodFilter = ""; prodFilterFocus = false; prodSearchOpen = false;
     if(prodPickerOpen && artPickerOpen){ artPickerOpen = false; renderArtPicker(); }
     if(!prodPickerOpen){
       addingProduction = false;
@@ -3858,6 +3913,7 @@
   }
   function setOpenLock(o){ openLock = o || null; }
   function renderProdLock(){
+    document.documentElement.classList.toggle("prod-locked", prodBlocked());   // gesperrt: keine Fokus-Rahmen im Inhalt
     var b = document.getElementById("prodLockBtn");
     if(!b) return;
     var p = currentProd();
@@ -3960,6 +4016,8 @@
   ["click", "input", "change", "keydown", "mousedown", "focusout"].forEach(function(type){
     document.getElementById("main").addEventListener(type, function(e){
       if(!e.target.closest || !prodBlocked()) return;
+      // gesperrt: Felder und Knöpfe bekommen keinen Fokus (kein Rahmen, keine Tastatur) – nur der gelbe Hinweis erscheint
+      if(type === "mousedown" && e.target.closest("input, textarea, select, button")) e.preventDefault();
       if(!e.target.closest(".tech-sheet, .bv-row")) return;
       if(e.target.closest(".bp-btn, .foto-btn")) return; // Bühnenplan und Fotos ansehen ist immer erlaubt
       e.stopPropagation();
@@ -5101,6 +5159,7 @@
     });
   }
   function renderArtInto(main){
+    document.documentElement.classList.toggle("prod-locked", prodBlocked());
     renderArtIntoRaw(main);
     if(isSheetArt()){
       alignAmpRows(main);
@@ -5804,6 +5863,7 @@
     el.textContent = msg;
     el.classList.toggle("error", !!isError);
     el.classList.toggle("lock", kind === "lock");   // Sperr-Hinweis: tiefer (oberes Viertel), gelbe Schrift
+    el.style.top = "";
     el.classList.add("show");
     clearTimeout(toastTimer);
     toastTimer = setTimeout(function(){ el.classList.remove("show"); }, ms || 3000);
@@ -5899,7 +5959,7 @@
     '.pv .pv-text td{ white-space:pre-wrap; }' +
     '.pv .pv-wastext{ white-space:pre-wrap; }' +
     '.pv .pv-txt{ white-space:pre-wrap; padding-left:3.5mm; }' +
-    '.pv .pv-inspi{ float:right; margin-left:3mm; font-weight:700; color:#000; }' +
+    '.pv .pv-inspi{ float:right; margin-left:3mm; margin-right:1.2em; font-weight:700; color:#000; }' +   /* erste Zeile, ca. 2 Buchstaben vor dem rechten Rand */
     '.pv .pv-sub{ width:100%; border-collapse:collapse; table-layout:fixed; }' +
     '.pv .pv-sub th{ background:transparent !important; border-bottom:.5pt solid #999; padding:0 2mm .6mm 0; font-weight:700; }' +
     '.pv .pv-sub td{ border:none; padding:.5mm 2mm .2mm 0; white-space:normal; vertical-align:top; }' +
@@ -5951,12 +6011,15 @@
         ? [c.ka || "", c.akt || "", c.bild || "", tStr, [c.was || "", c.inspilz ? "LZ-Inspi" : ""].filter(Boolean).join(" · ")]
         : [tStr, c.ka || "", c.akt || "", c.bild || "", printLoc(c.loc)];
       // Punkte mit hängendem Einzug: Strich vorn, umbrochene Zeilen und Absätze beginnen unter dem Text (seit v208)
-      var text = (c.task ? highlightTask(esc(c.task)) : "") + (c.notes || []).filter(function(n){ return n.text; }).map(function(n){ return pvItem(n.text); }).join("");
+      var taskH = c.task ? highlightTask(esc(c.task)) : "";
+      var pts = (c.notes || []).filter(function(n){ return n.text; }).map(function(n){ return pvItem(n.text); }).join("");
+      var text = taskH + pts;
       // „geändert … von …“ steht nur in der App, nicht im Druck (seit v207)
       if(!hasBild) vals.splice(bi, 1);
       var cells = vals.map(function(v){ return '<td><b>' + esc(v) + '</b></td>'; });
       // Bühne: Inspifunk rechtsbündig neben dem Eintrag, fett schwarz (Gesamtdruck schmal: „Inspi“)
-      if(!tonX && c.inspi) text = '<b class="pv-inspi">' + (under ? 'Inspi' : 'Inspifunk') + '</b>' + text;
+      // Druck: „Inspifunk“ (Gesamtdruck „Inspi“) oben rechts im Eintrag, ca. 2 Buchstaben eingerückt
+      if(!tonX && c.inspi) text = '<b class="pv-inspi">' + (under ? 'Inspi' : 'Inspifunk') + '</b>' + text;   // immer in der ersten Zeile, Text bricht darunter weiter
       if(textCol){
         cells.push('<td class="pv-txt">' + text + '</td>');
       } else {
@@ -6411,6 +6474,7 @@
   var prodPickerEl = document.getElementById("prodPicker");
   prodPickerEl.addEventListener("click", function(e){
     e.stopPropagation();
+    if(e.target.closest(".prod-dd-dim")){ closeProdPicker(); return; }   // Klick auf den abgedunkelten Hintergrund
     if(e.target.closest("#prodDdBtn")){
       toggleProdPicker();
       return;
@@ -6422,7 +6486,8 @@
     if(btn.dataset.action === "prod-rename-start" || btn.dataset.action === "prod-delete-start" || btn.dataset.action === "prod-unarchive"){
       var gp = productions.find(function(p){ return p.id === btn.dataset.id; });
       if(gp && gp.lock && !(openLock && openLock.type === "prod" && openLock.prodId === gp.id)){
-        showToast("Gesperrt – erst Schloss öffnen", 2600);
+        btn.blur();
+        showToast("Produktion gesperrt – erst Schloss öffnen", 2600, false, "lock");   // gelb, wie im Inhalt
         return;
       }
     }
@@ -6452,6 +6517,13 @@
       setArchived(btn.dataset.id, true);
     } else if(btn.dataset.action === "prod-unarchive"){
       setArchived(btn.dataset.id, false);
+    } else if(btn.dataset.action === "prod-search-toggle"){
+      prodSearchOpen = !(prodSearchOpen || prodFilter); prodFilter = ""; prodFilterFocus = prodSearchOpen;
+      renderProdPicker();
+    } else if(btn.dataset.action === "prod-sort"){
+      prodSort = btn.dataset.sort === "az" ? "az" : "dat";
+      try{ localStorage.setItem("buehnenablauf.prodSort.v1", prodSort); }catch(e){}
+      renderProdPicker();
     } else if(btn.dataset.action === "prod-filter-clear"){
       prodFilter = ""; prodFilterFocus = true;
       renderProdPicker();
