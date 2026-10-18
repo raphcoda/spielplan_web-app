@@ -238,7 +238,7 @@ input[type=date] { background: #181818; border: 1px solid #333; color: #e8e8e8; 
   #kopf-zeile2 { min-height: 30px !important; }
   #filters #reset { font-size: 18px; }
   #filters input[type=date] { height: 30px !important; font-size: 16px !important; padding: 0 11px !important; }
-  #filters > span:not(#count) { font-size: 16px !important; }
+  #filters > span:not(#count):not(#pb-kopf) { font-size: 16px !important; }
   #filters #count { font-size: 15px; }
   #aktuell-btn, #sz-btn { height: 29px !important; font-size: 16px !important; padding: 0 9px !important; }
   .qbar .qtag { font-size: 16px; padding: 2px 7px; }
@@ -454,6 +454,13 @@ input[type=date]::-webkit-calendar-picker-indicator { filter: invert(0.8) bright
   #main-h1 #such-lupe { margin-left: 8px !important; }
 }
 #about-desk { display: none; }
+/* Stand der Probenplaene rechts in der Datumszeile, buendig unter KALENDER -
+   nur Desktop, mobil ausgeblendet */
+#pb-kopf { display: none; }
+@media (min-width: 1000px) and (hover: hover) and (pointer: fine) {
+  #pb-kopf { display: inline; margin-left: auto; color: #7a7a7a; font-size: 13.5px;
+             white-space: nowrap; flex-shrink: 0; }
+}
 #kal-hilfe-btn { display: none; }
 /* Hilfe-Button auf schmalen Geraeten: rechts in der Kategoriezeile,
    buendig mit der Aussenkante des Kalender-Buttons darueber */
@@ -637,6 +644,7 @@ input[type=date]::-webkit-calendar-picker-indicator { filter: invert(0.8) bright
     <input type="date" id="bis" onchange="applyDateSaison()" style="background:#181818;border:1px solid #333;color:#e8e8e8;height:26px;box-sizing:border-box;padding:0 10px;font-size:14px;font-weight:500;border-radius:4px;outline:none;-webkit-appearance:none;">
     <button id="reset" onclick="resetFilters()">X</button>
     <span id="count" style="margin-left:6px"></span>
+    <span id="pb-kopf">PB aktual. 17.10.2026 (KW43-44)</span>
   </div>
   </div>
 </div>
@@ -3305,7 +3313,13 @@ function openKalender() {
     + (ZOOM
         ? "<span class='kal-zoomhint' style='margin-left:calc(32% - 24px);flex-shrink:0'><button onclick='kalZoomTo(null)' style='background:#1c1c1c;border:1px solid #63f0f0;border-radius:3px;color:#ffffff;font-size:12px;cursor:pointer;padding:2px 10px;vertical-align:middle;-webkit-tap-highlight-color:transparent'>&#8594; Jahresansicht</button></span>"
         : "")
-    + "<span style='margin-left:auto;padding-left:12px;padding-right:max(0px, env(safe-area-inset-right));font-size:" + (deskKal ? 16 : 14) + "px;color:#999;white-space:nowrap;flex-shrink:0'>" + kalCountTxt + "</span>"
+    // Desktop: Trefferzahl mit etwas Abstand direkt hinter den Namensknoepfen,
+    // rechts buendig unter SPIELPLAN der Stand der Probenplaene (wie in der
+    // Datumszeile der Hauptansicht). Mobil unveraendert.
+    + (deskKal
+        ? "<span style='margin-left:14px;font-size:16px;color:#999;white-space:nowrap;flex-shrink:0'>" + kalCountTxt + "</span>"
+          + "<span id='pb-kal' style='margin-left:auto;padding-left:12px;font-size:13.5px;color:#7a7a7a;white-space:nowrap;flex-shrink:0'>" + ((document.getElementById("pb-kopf") || {}).textContent || "") + "</span>"
+        : "<span style='margin-left:auto;padding-left:12px;padding-right:max(0px, env(safe-area-inset-right));font-size:14px;color:#999;white-space:nowrap;flex-shrink:0'>" + kalCountTxt + "</span>")
     + "</div>";
 
   function ansichtBtn(modus, label) {
@@ -4347,8 +4361,8 @@ filterAktuell();
       <div style="height:1px;background:#4d4d4d;margin:22px 0 18px"></div>
       <p style="margin-top:0">Die Daten des Spielplans basieren auf den Spielplanunterlagen der technischen Direktion, des KBB sowie der Website des Opernhauses Z&uuml;rich. &Auml;nderungen w&auml;hrend laufender Spielzeit sind m&ouml;glicherweise nicht ber&uuml;cksichtigt, werden aber kontinuierlich aktualisiert.</p>
       <p>Diese WebApp ist als Hilfsmittel f&uuml;r den Produktionsalltag gedacht. F&uuml;r die Richtigkeit, Vollst&auml;ndigkeit und Aktualit&auml;t der Inhalte wird keine Gew&auml;hr &uuml;bernommen.</p>
-      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_171026_1001" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
-      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_171026_1001</p>
+      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_181026_1117" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
+      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_181026_1117</p>
       <p class="pb-stand-rm" style="color:#888;margin-top:2px">PB aktual. 17.10.2026 (KW43-44)</p>
       </div>
   </div>
