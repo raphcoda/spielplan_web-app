@@ -1504,6 +1504,10 @@
   .fv-pw{ position:relative; width:max-content; margin:0 auto 8px; -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; }
   .fv-stage.pdf .fv-pw .fv-page{ margin:0; }
   .fv-spot{ position:absolute; border-radius:8px; cursor:pointer; -webkit-touch-callout:none; -webkit-user-select:none; user-select:none; -webkit-tap-highlight-color:transparent; }
+  .fv-whole, .iv-back{ position:absolute; top:calc(12px + env(safe-area-inset-top, 0px)); right:12px; z-index:3; font:inherit; font-size:16px; font-weight:800;
+    padding:11px 18px; border:none; border-radius:12px; background:var(--ka); color:#0b1414; box-shadow:0 4px 18px rgba(0,0,0,.55); cursor:pointer; -webkit-tap-highlight-color:transparent; }
+  .fv-whole[hidden]{ display:none; }
+  .fv-stage.pdf.zoomed .fv-inner{ width:max-content; padding:50vh 50vw; }   /* Rand im Zoom: auch Geräte am Planrand kommen genau in die Mitte */
   .fv-spot.hold{ background:rgba(26,111,184,.18); box-shadow:0 0 0 2px rgba(26,111,184,.7); transition:background .45s; }
   .fv-msg{ color:#888; font-size:14px; margin:40px 0; text-align:center; }
   .fv-stage iframe{ width:100%; height:100%; border:0; background:#fff; display:block; }
@@ -2074,7 +2078,7 @@
     <li>Zum Entsperren braucht es den vierstelligen Code und das Namenskürzel.</li>
   </ul>
   <button type="button" class="info-close" id="infoClose">Schliessen</button>
-  <p class="info-ver" id="infoVer">v_ton_ap_gh_a_131026_2215</p>
+  <p class="info-ver" id="infoVer">v_ton_ap_gh_a_201026_1429</p>
 </div></div>
 <div id="printAsk" hidden><div class="info-panel print-ask" role="dialog" aria-modal="true" aria-labelledby="printAskTitle">
   <h3 id="printAskTitle">Drucken</h3>
@@ -2082,7 +2086,7 @@
   <button type="button" class="pa-btn" id="paArt">Bühne</button>
   <button type="button" class="pa-btn" id="paAll">Alles</button>
 </div></div>
-<div class="file-view" id="fileView" hidden><div class="fv-stage" id="fvStage"></div><div class="fv-bar"><span id="fvName"></span><span class="fv-nav" id="fvNav" hidden><button type="button" id="fvPrev" aria-label="Vorheriger Plan">‹</button><b id="fvPos"></b><button type="button" id="fvNext" aria-label="Nächster Plan">›</button></span><a id="fvSave" href="#">Speichern</a><button type="button" id="fvClose">Schliessen</button></div></div>
+<div class="file-view" id="fileView" hidden><button type="button" class="fv-whole" id="fvWhole" hidden>Ganzer Plan</button><div class="fv-stage" id="fvStage"></div><div class="fv-bar"><span id="fvName"></span><span class="fv-nav" id="fvNav" hidden><button type="button" id="fvPrev" aria-label="Vorheriger Plan">‹</button><b id="fvPos"></b><button type="button" id="fvNext" aria-label="Nächster Plan">›</button></span><a id="fvSave" href="#">Speichern</a><button type="button" id="fvClose">Schliessen</button></div></div>
 <input type="file" id="bpFile" accept="application/pdf,.pdf" hidden>
 <input type="file" id="fotoCam" class="foto-file" accept="image/*" capture="environment">
 <input type="file" id="fotoPick" class="foto-file" accept="image/*" multiple>
@@ -2091,7 +2095,7 @@
 <input type="file" id="docPick" class="foto-file" accept="application/pdf,.pdf,image/*" multiple>
 <input type="file" id="docCam" class="foto-file" accept="image/*" capture="environment">
 <div id="fotoDlg" hidden><div class="foto-panel" role="dialog" aria-modal="true" aria-label="Fotos"></div></div>
-<div id="imgView" hidden><div class="iv-stage" id="ivStage"><button type="button" class="iv-nav iv-prev" id="ivPrev" aria-label="Vorheriges Foto">‹</button><button type="button" class="iv-nav iv-next" id="ivNext" aria-label="Nächstes Foto">›</button></div><div class="iv-bar"><span class="iv-cap" id="ivCap"></span><span class="iv-n" id="ivN"></span><button type="button" class="iv-ico" id="ivDl" title="Dieses Foto herunterladen" aria-label="Dieses Foto herunterladen">⤓</button><button type="button" class="iv-ico" id="ivTab" title="In neuem Tab öffnen (zum Zoomen)" aria-label="In neuem Tab öffnen">↗</button><button type="button" id="ivClose">Schliessen</button></div></div>
+<div id="imgView" hidden><button type="button" class="iv-back" id="ivBack">Zurück</button><div class="iv-stage" id="ivStage"><button type="button" class="iv-nav iv-prev" id="ivPrev" aria-label="Vorheriges Foto">‹</button><button type="button" class="iv-nav iv-next" id="ivNext" aria-label="Nächstes Foto">›</button></div><div class="iv-bar"><span class="iv-cap" id="ivCap"></span><span class="iv-n" id="ivN"></span><button type="button" class="iv-ico" id="ivDl" title="Dieses Foto herunterladen" aria-label="Dieses Foto herunterladen">⤓</button><button type="button" class="iv-ico" id="ivTab" title="In neuem Tab öffnen (zum Zoomen)" aria-label="In neuem Tab öffnen">↗</button><button type="button" id="ivClose">Schliessen</button></div></div>
 <div id="printView" aria-hidden="true"></div>
 
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
@@ -4045,7 +4049,7 @@
   // der Notizen-App); an der Produktion steht nur prod.bp = { id, name, size, t }.
   // Knopf: Desktop immer da (grau = leer, türkis = Plan abgelegt); Handy nur, wenn ein Plan abgelegt ist.
   // Ansehen: Desktop im Vollbild in der App; am Handy öffnet der PDF-Betrachter des Geräts.
-  var BP_MAX = 7 * 1024 * 1024, BP_PLANS = 5; // seit v218: 7 MB (Bühnenpläne mit Fotos aus der Bühnenplan-App)
+  var BP_MAX = 7 * 1024 * 1024, BP_PLANS = 5; // seit v232: 7 MB (Bühnenpläne mit Fotos aus der Bühnenplan-App)
   var bpPopOpen = false, bpConfirm = false, bpBusy = false, bpPending = null, bpViewList = [], bpViewIdx = 0;
   // Mehrere Pläne (seit v211): prod.bp = erster Plan (wie bisher, damit ältere Geräte ihn sehen), weitere in prod.bpx = { <id>: {…, o} }
   function bpList(p){
@@ -4215,6 +4219,7 @@
     fvStage.innerHTML = "";
     fvStage.classList.remove("pdf");
     bpViewSeq++;
+    bpZ = 1; bpPages = []; document.getElementById("fvWhole").hidden = true; fvStage.classList.remove("zoomed");
   }
   function bpNavUpdate(f){
     var nav = document.getElementById("fvNav"), many = bpViewList.length > 1 && bpViewList.some(function(x){ return x.id === f.id; });
@@ -4265,10 +4270,13 @@
     });
     return pdfJsPromise;
   }
-  // ---- Fotos im Bühnenplan (seit v218, Test): Die Bühnenplan-App kann Fotos der Positionen ins PDF einbetten
+  // ---- Fotos im Bühnenplan (seit v232, aus dem Bühnenplan-App-Chat übernommen): Die Bühnenplan-App kann Fotos der Positionen ins PDF einbetten
   // (Anhang «tonplan-fotos.json» + Fotos als Anhänge). Gerät im Plan gedrückt halten → Fotos im Vollbild.
   function bpPhotoLayer(pdf){
-    return pdf.getAttachments().then(function(att){
+    // Fehler beim Lesen der Anhänge dürfen den Plan nie verhindern → dann einfach ohne Fotos
+    var pa; try{ pa = pdf.getAttachments(); }catch(e){ pa = null; }
+    if(!pa || typeof pa.then !== "function") return Promise.resolve(null);
+    return pa.then(function(att){
       if(!att) return null;
       var meta = null, files = {};
       var ent = (typeof Map !== "undefined" && att instanceof Map) ? Array.from(att.entries()) : Object.keys(att).map(function(k){ return [k, att[k]]; }); // pdf.js 3: Objekt, neuere Versionen: Map
@@ -4284,42 +4292,68 @@
       return meta;
     }).catch(function(){ return null; });
   }
-  function bpPhotoSpots(pw, layer, pageIdx, cw, ch){
-    var pg = layer.pages[pageIdx]; if(!pg || !pg.items) return;
-    pg.items.forEach(function(it){
-      var x = it.x * cw, y = it.y * ch, w = it.w * cw, h = it.h * ch, min = 34; // Mindestgrösse zum Treffen mit dem Finger
+  // Zoom im Plan (seit v234): Tipp auf ein Gerät = 2,5-fach, Gerät in die Bildschirmmitte; „Ganzer Plan“ = zurück.
+  // Halten (0,45 s) öffnet in jeder Zoomstufe die Fotos.
+  var BP_ZOOM = 2.5, bpZ = 1, bpPages = [];
+  function bpPlaceSpots(e){
+    var cw = e.w * bpZ, ch = e.h * bpZ, min = 34; // Mindestgrösse zum Treffen mit dem Finger
+    e.spots.forEach(function(sp){
+      var it = sp.it, x = it.x * cw, y = it.y * ch, w = it.w * cw, h = it.h * ch;
       if(w < min){ x -= (min - w) / 2; w = min; }
       if(h < min){ y -= (min - h) / 2; h = min; }
+      var st = sp.d.style; st.left = x + "px"; st.top = y + "px"; st.width = w + "px"; st.height = h + "px";
+    });
+  }
+  function bpSetZoom(z, e, fx, fy){
+    var oldZ = bpZ, keepY = fvStage.scrollTop + fvStage.clientHeight / 2;
+    bpZ = z;
+    fvStage.classList.toggle("zoomed", z > 1);
+    bpPages.forEach(function(p){ p.cv.style.width = (p.w * z) + "px"; p.cv.style.height = (p.h * z) + "px"; bpPlaceSpots(p); });
+    document.getElementById("fvWhole").hidden = z === 1;
+    if(e){ // Punkt (fx, fy relativ zur Seite) in die Mitte
+      var sr = fvStage.getBoundingClientRect(), pr = e.pw.getBoundingClientRect();
+      fvStage.scrollLeft = pr.left - sr.left + fvStage.scrollLeft + fx * e.w * z - fvStage.clientWidth / 2;
+      fvStage.scrollTop = pr.top - sr.top + fvStage.scrollTop + fy * e.h * z - fvStage.clientHeight / 2;
+    } else { // ganzer Plan: ungefähr an derselben Stelle bleiben
+      fvStage.scrollLeft = 0;
+      fvStage.scrollTop = keepY * z / oldZ - fvStage.clientHeight / 2;
+    }
+  }
+  function bpPhotoSpots(e, layer, pageIdx){
+    var pg = layer.pages[pageIdx]; if(!pg || !pg.items) return;
+    pg.items.forEach(function(it){
       var d = document.createElement("div"); d.className = "fv-spot";
-      d.style.left = x + "px"; d.style.top = y + "px"; d.style.width = w + "px"; d.style.height = h + "px";
+      e.spots.push({ d: d, it: it });
       var t = null, sx = 0, sy = 0, fired = false, moved = false;
       function cancel(){ if(t){ clearTimeout(t); t = null; } d.classList.remove("hold"); }
       function start(x, y){ fired = false; moved = false; sx = x; sy = y; d.classList.add("hold"); if(t) clearTimeout(t); t = setTimeout(function(){ t = null; fired = true; d.classList.remove("hold"); bpSpotOpen(layer, it); }, 450); }
       function move(x, y){ if(Math.hypot(x - sx, y - sy) > 10){ moved = true; cancel(); } }
+      function tap(){ fired = true; bpSetZoom(BP_ZOOM, e, it.x + it.w / 2, it.y + it.h / 2); }   // Tipp: hineinzoomen bzw. neu zentrieren
       // Touch (iPhone/Android) und Maus/Stift getrennt, damit nichts doppelt auslöst
-      d.addEventListener("touchstart", function(e){ if(e.touches.length > 1){ moved = true; cancel(); return; } var p = e.touches[0]; start(p.clientX, p.clientY); }, { passive: true });
-      d.addEventListener("touchmove", function(e){ if(e.touches.length > 1){ moved = true; cancel(); return; } var p = e.touches[0]; move(p.clientX, p.clientY); }, { passive: true });
-      d.addEventListener("touchend", function(){ var wasT = !!t; cancel(); if(wasT && !moved && !fired){ fired = true; bpSpotOpen(layer, it); } });
+      d.addEventListener("touchstart", function(ev){ if(ev.touches.length > 1){ moved = true; cancel(); return; } var p = ev.touches[0]; start(p.clientX, p.clientY); }, { passive: true });
+      d.addEventListener("touchmove", function(ev){ if(ev.touches.length > 1){ moved = true; cancel(); return; } var p = ev.touches[0]; move(p.clientX, p.clientY); }, { passive: true });
+      d.addEventListener("touchend", function(ev){ var wasT = !!t; cancel(); if(wasT && !moved && !fired){ if(ev.cancelable) ev.preventDefault(); tap(); } });
       d.addEventListener("touchcancel", cancel);
-      d.addEventListener("pointerdown", function(e){ if(e.pointerType === "touch") return; start(e.clientX, e.clientY); });
-      d.addEventListener("pointermove", function(e){ if(e.pointerType !== "touch" && t) move(e.clientX, e.clientY); });
-      d.addEventListener("pointerup", function(e){ if(e.pointerType === "touch") return; var wasT = !!t; cancel(); if(wasT && !moved && !fired){ fired = true; bpSpotOpen(layer, it); } });
-      d.addEventListener("pointerleave", function(e){ if(e.pointerType !== "touch") cancel(); });
-      d.addEventListener("contextmenu", function(e){ e.preventDefault(); });
-      d.addEventListener("click", function(e){ e.preventDefault(); e.stopPropagation(); });
-      pw.appendChild(d);
+      d.addEventListener("pointerdown", function(ev){ if(ev.pointerType === "touch") return; start(ev.clientX, ev.clientY); });
+      d.addEventListener("pointermove", function(ev){ if(ev.pointerType !== "touch" && t) move(ev.clientX, ev.clientY); });
+      d.addEventListener("pointerup", function(ev){ if(ev.pointerType === "touch") return; var wasT = !!t; cancel(); if(wasT && !moved && !fired) tap(); });
+      d.addEventListener("pointerleave", function(ev){ if(ev.pointerType !== "touch") cancel(); });
+      d.addEventListener("contextmenu", function(ev){ ev.preventDefault(); });
+      d.addEventListener("click", function(ev){ ev.preventDefault(); ev.stopPropagation(); });
+      e.pw.appendChild(d);
     });
+    bpPlaceSpots(e);
   }
   function bpSpotOpen(layer, it){
     ivList = (it.photos || []).map(function(nm, i){ return { id: "bp:" + nm, t: it.label || "Position", url: layer.urls[nm] }; }).filter(function(f){ return f.url; });
     if(!ivList.length) return;
     ivIdx = 0;
     try{ if(navigator.vibrate) navigator.vibrate(15); }catch(e){}
-    document.getElementById("imgView").hidden = false;
-    ivShow();
+    ivOpen();
   }
   function bpShowPdfJs(f, url){
     var seq = ++bpViewSeq;
+    bpZ = 1; bpPages = []; document.getElementById("fvWhole").hidden = true;
     fvStage.innerHTML = '<p class="fv-msg">Bühnenplan wird angezeigt …</p>';
     fvStage.classList.add("pdf");
     document.getElementById("fvName").textContent = f.name;
@@ -4335,18 +4369,19 @@
       }).then(function(pl){
         if(!pl || !still()) return;
         var pdf = pl[0], layer = pl[1];
-        if(layer){ var nPos = 0; layer.pages.forEach(function(pg){ nPos += (pg.items || []).length; }); if(nPos) setTimeout(function(){ showToast("Fotos zu " + nPos + (nPos === 1 ? " Position" : " Positionen") + " – Gerät antippen", 3500); }, 300); }
+        if(layer){ var nPos = 0; layer.pages.forEach(function(pg){ nPos += (pg.items || []).length; }); if(nPos) setTimeout(function(){ showToast("Fotos zu " + nPos + (nPos === 1 ? " Position" : " Positionen") + " – antippen = vergrössern, halten = Fotos", 4000); }, 300); }
         fvStage.innerHTML = "";
+        var inner = document.createElement("div"); inner.className = "fv-inner"; fvStage.appendChild(inner);
         var n = pdf.numPages;
         if(n > 1) document.getElementById("fvName").textContent = f.name + " · " + n + " Seiten";
-        // Seiten nacheinander zeichnen: Breite = Bildschirmbreite, in doppelter Schärfe (für Zwei-Finger-Zoom),
+        // Seiten nacheinander zeichnen: Breite = Bildschirmbreite, in 2,5-facher Schärfe (für den Zoom),
         // höchstens ca. 12 Mio. Pixel pro Seite (Grenze älterer iPhones)
-        var w = Math.max(200, fvStage.clientWidth - 16), pxr = Math.min(4, (window.devicePixelRatio || 1) * 2);
+        var w = Math.max(200, fvStage.clientWidth - 16), pxr = Math.min(7.5, (window.devicePixelRatio || 1) * 2.5);
         var chain = Promise.resolve();
         for(var i = 1; i <= n; i++) (function(num){
           var cv = document.createElement("canvas"); cv.className = "fv-page";
           var pw = document.createElement("div"); pw.className = "fv-pw"; pw.appendChild(cv);
-          fvStage.appendChild(pw);
+          inner.appendChild(pw);
           chain = chain.then(function(){
             if(!still()) return;
             return pdf.getPage(num).then(function(page){
@@ -4355,9 +4390,11 @@
               if(area > 12e6) sc = sc * Math.sqrt(12e6 / area);
               var vp = page.getViewport({ scale: sc });
               cv.width = Math.floor(vp.width); cv.height = Math.floor(vp.height);
-              cv.style.width = w + "px"; cv.style.height = Math.round(w * vp.height / vp.width) + "px";
+              var e = { pw: pw, cv: cv, w: w, h: Math.round(w * vp.height / vp.width), spots: [] };
+              bpPages.push(e);
+              cv.style.width = (e.w * bpZ) + "px"; cv.style.height = (e.h * bpZ) + "px";
               return page.render({ canvasContext: cv.getContext("2d"), viewport: vp }).promise.then(function(){
-                if(layer && still()) bpPhotoSpots(pw, layer, num - 1, w, Math.round(w * vp.height / vp.width));
+                if(layer && still()) bpPhotoSpots(e, layer, num - 1);
               });
             });
           });
@@ -4839,9 +4876,21 @@
   function fotoView(fid){
     ivList = prodFotos(currentProd());
     ivIdx = Math.max(0, ivList.findIndex(function(f){ return f.id === fid; }));
-    document.getElementById("imgView").hidden = false;
+    ivOpen();
+  }
+  // Fotobetrachter öffnen: Eintrag im Browser-Verlauf, damit „Zurück“ des Browsers/Handys ihn schliesst (seit v234)
+  var ivPushed = false;
+  function ivOpen(){
+    var iv = document.getElementById("imgView");
+    if(iv.hidden && !ivPushed){ try{ history.pushState({ abIv: 1 }, ""); ivPushed = true; }catch(e){} }
+    iv.hidden = false;
     ivShow();
   }
+  window.addEventListener("popstate", function(){
+    if(!ivPushed) return;
+    ivPushed = false;
+    if(!document.getElementById("imgView").hidden) ivClose(true);
+  });
   function ivShow(){
     var f = ivList[ivIdx];
     if(!f){ ivClose(); return; }
@@ -4881,12 +4930,17 @@
       .catch(function(){ try{ if(w) w.close(); }catch(e){} showToast("Foto nicht gefunden", 3500, true); });
   }
   function ivStep(d){ if(ivList.length < 2) return; ivIdx = (ivIdx + d + ivList.length) % ivList.length; ivShow(); }
-  function ivClose(){ document.getElementById("imgView").hidden = true; Array.prototype.forEach.call(document.querySelectorAll("#ivStage img"), function(x){ x.remove(); }); }
+  function ivClose(fromPop){
+    document.getElementById("imgView").hidden = true; Array.prototype.forEach.call(document.querySelectorAll("#ivStage img"), function(x){ x.remove(); });
+    if(fromPop !== true && ivPushed){ ivPushed = false; try{ history.back(); }catch(e){} }
+  }
   (function(){
     var iv = document.getElementById("imgView"), sx = null, sy = null, multi = false;
     document.getElementById("ivPrev").addEventListener("click", function(e){ e.stopPropagation(); ivStep(-1); });
     document.getElementById("ivNext").addEventListener("click", function(e){ e.stopPropagation(); ivStep(1); });
     document.getElementById("ivClose").addEventListener("click", ivClose);
+    document.getElementById("ivBack").addEventListener("click", ivClose);
+    document.getElementById("fvWhole").addEventListener("click", function(){ bpSetZoom(1); });
     document.getElementById("ivDl").addEventListener("click", function(e){ e.stopPropagation(); ivDownload(); });
     document.getElementById("ivTab").addEventListener("click", function(e){ e.stopPropagation(); ivOpenTab(); });
     iv.addEventListener("touchstart", function(e){ multi = e.touches.length > 1; if(!multi){ sx = e.touches[0].clientX; sy = e.touches[0].clientY; } }, { passive: true });
@@ -4898,7 +4952,7 @@
     document.addEventListener("keydown", function(e){
       if(iv.hidden) return;
       if(e.key === "Escape"){ e.stopPropagation(); ivClose(); }
-      else if(e.key === "ArrowRight"){ ivStep(1); } else if(e.key === "ArrowLeft"){ ivStep(-1); }
+      else if(e.key === "ArrowRight"){ e.stopPropagation(); ivStep(1); } else if(e.key === "ArrowLeft"){ e.stopPropagation(); ivStep(-1); }   // nicht zusätzlich im Bühnenplan blättern
     }, true);
   })();
   // ---- Bedienung der Liste ----
