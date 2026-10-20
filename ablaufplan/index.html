@@ -1482,6 +1482,9 @@
     background:var(--surface); border:1px solid var(--line); border-radius:12px; box-shadow:0 14px 40px rgba(0,0,0,.6); padding:12px;
   }
   .bp-pop h4{ margin:0 0 8px; font-size:14px; font-weight:700; color:var(--text); }
+  .bp-pop .bp-head{ display:flex; align-items:center; gap:10px; margin:0 0 8px; }
+  .bp-pop .bp-head h4{ margin:0; flex:1 1 auto; min-width:0; }
+  .bp-pop .bp-x{ flex:0 0 auto; background:none; border:none; font:inherit; font-size:14px; font-weight:700; color:var(--ka); cursor:pointer; padding:4px 2px; }
   .bp-drop{
     display:block; width:100%; font:inherit; font-size:13px; line-height:1.4; text-align:center; color:var(--text-dim);
     background:none; border:1.5px dashed #6a6a6a; border-radius:10px; padding:20px 10px; cursor:pointer;
@@ -1508,16 +1511,46 @@
     padding:11px 18px; border:none; border-radius:12px; background:var(--ka); color:#0b1414; box-shadow:0 4px 18px rgba(0,0,0,.55); cursor:pointer; -webkit-tap-highlight-color:transparent; }
   .fv-whole[hidden]{ display:none; }
   .fv-stage.pdf.desk .fv-pw{ cursor:default; }
-  .fv-close-big{ display:none; }
-  /* Desktop (seit v239): Schliessen (Plan) und Zurück (Foto) unten rechts, gross, schwarzer Rahmen */
-  .file-view.desk .fv-close-big, .fv-close-big{ font:inherit; }
-  .file-view.desk .fv-close-big{ display:block; position:absolute; right:24px; bottom:calc(64px + env(safe-area-inset-bottom, 0px)); z-index:3; }
-  .file-view.desk .fv-close-big{ font-size:19px; font-weight:800; padding:14px 26px; border:3px solid #000; border-radius:14px;
-    background:var(--ka); color:#0b1414; box-shadow:0 6px 22px rgba(0,0,0,.5); cursor:pointer; }
+  .fv-stage.pdf.desk .fv-spot{ cursor:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2230%22%20height%3D%2230%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cg%20fill%3D%22none%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M2%2012s3.6-6.5%2010-6.5S22%2012%2022%2012s-3.6%206.5-10%206.5S2%2012%202%2012z%22%20stroke%3D%22%23000%22%20stroke-width%3D%224%22/%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%223.2%22%20stroke%3D%22%23000%22%20stroke-width%3D%224%22/%3E%3Cpath%20d%3D%22M2%2012s3.6-6.5%2010-6.5S22%2012%2022%2012s-3.6%206.5-10%206.5S2%2012%202%2012z%22%20stroke%3D%22%23fff%22%20stroke-width%3D%222%22/%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%223.2%22%20fill%3D%22%23fff%22%20stroke%3D%22%23fff%22%20stroke-width%3D%221%22/%3E%3C/g%3E%3C/svg%3E") 15 15, pointer; }   /* Desktop: über einem Gerät mit Foto Mauszeiger als Auge */
+  .iv-right{ display:contents; }   /* Handy: wie bisher einzeln in der Leiste */
+  .iv-bar .iv-back{ flex:none; background:var(--ka); color:#0b1414; padding:11px 18px; border-radius:12px; font-size:16px; font-weight:800; }   /* Handy: unverändert unten mittig über der Leiste */
+  /* Desktop (seit v240): grosser Knopf mittig in der unteren Leiste – Plan: „Schliessen“, rechts daneben „Speichern“;
+     Foto: „Zurück“, rechts Zähler, ⤓, ↗, „Schliessen“ – Leisten-Schrift etwas grösser */
+  .file-view.desk .fv-bar{ display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); column-gap:20px; font-size:16px; padding:10px 24px calc(10px + env(safe-area-inset-bottom, 0px)); }
+  .file-view.desk .fv-bar #fvName{ grid-column:1; grid-row:1; }
+  .file-view.desk .fv-bar #fvClose{ grid-column:2; grid-row:1; min-width:148px; }   /* gleich breit wie „Zurück“ beim Foto */
+  .fv-acts{ display:contents; }   /* Handy: „Speichern“ als Text wie bisher */
+  .fv-bar .fv-i, #fvPrint, .iv-bar .fv-i{ display:none; }
+  .file-view.desk .fv-bar .fv-acts{ grid-column:3; grid-row:1; justify-self:start; display:flex; align-items:center; gap:12px; }
+  /* Desktop: Herunterladen (fetter Pfeil) und Drucken als Symbol-Knöpfe, etwas kleiner als „Schliessen“ */
+  .file-view.desk .fv-bar .fv-t{ display:none; }
+  .fv-bar .fv-zb{ display:none; }
+  .file-view.desk.canprint .fv-bar .fv-zb:disabled{ opacity:.35; cursor:default; }
+  .fv-stage.pdf.desk.zoomed{ cursor:grab; } .fv-stage.pdf.desk.zoomed.fv-drag{ cursor:grabbing; }
+  .file-view.desk .fv-bar #fvSave, .file-view.desk.canprint .fv-bar #fvPrint, .file-view.desk.canprint .fv-bar .fv-zb{ display:flex; align-items:center; justify-content:center; width:48px; height:48px; padding:0;
+    border-radius:12px; background:#1f3533; color:var(--ka); }
+  .file-view.desk .fv-bar #fvSave:hover, .file-view.desk .fv-bar #fvPrint:hover, .file-view.desk .fv-bar .fv-zb:not(:disabled):hover{ background:#28504c; }
+  .file-view.desk .fv-bar .fv-i{ display:block; width:28px; height:28px; }
+  .file-view.desk .fv-bar .fv-nav{ grid-column:3; grid-row:1; justify-self:end; }
+  .file-view.desk .fv-bar #fvClose{ font-size:18px; font-weight:800; padding:11px 24px; border:3px solid #000; border-radius:13px;
+    background:var(--ka); color:#0b1414; box-shadow:0 4px 16px rgba(0,0,0,.45); cursor:pointer; }
   @media (hover:hover) and (pointer:fine){
-    .iv-back{ left:auto; right:24px; margin:0; bottom:calc(72px + env(safe-area-inset-bottom, 0px)); font-size:19px; padding:14px 26px; border:3px solid #000; border-radius:14px; }
+    #imgView .iv-bar{ display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); column-gap:20px; padding:10px 24px calc(10px + env(safe-area-inset-bottom, 0px)); }
+    #imgView .iv-bar .iv-cap{ grid-column:1; font-size:16px; }
+    #imgView .iv-bar .iv-back{ position:static; grid-column:2; margin:0; width:auto; min-width:148px; font-size:18px; font-weight:800; padding:11px 24px; border:3px solid #000; border-radius:13px;
+      background:var(--ka); color:#0b1414; box-shadow:0 4px 16px rgba(0,0,0,.45); }
+    #imgView .iv-right{ grid-column:3; display:flex; align-items:center; justify-content:flex-start; gap:12px; }
+    #imgView .iv-bar .iv-n{ order:9; margin-left:auto; font-size:15px; }   /* Zähler ganz rechts */
+    /* Herunterladen und neuer Tab als Symbol-Knöpfe wie beim Bühnenplan; kein zweites „Schliessen“ (Zurück genügt) */
+    #imgView .iv-bar .iv-t, #imgView .iv-bar #ivClose, #imgView .iv-bar #ivTab{ display:none; }   /* ↗ entfällt am Desktop: Zoom direkt mit − / + */
+    #imgView .iv-bar .iv-ico:disabled{ opacity:.35; cursor:default; }
+    .iv-stage.iv-zoomed img{ cursor:grab; transition:transform .12s; }
+    .iv-stage.iv-drag img{ cursor:grabbing; transition:none; }
+    #imgView .iv-bar .iv-ico{ display:flex; align-items:center; justify-content:center; width:48px; height:48px; padding:0; border-radius:12px; background:#1f3533; color:var(--ka); }
+    #imgView .iv-bar .iv-ico:hover{ background:#28504c; }
+    #imgView .iv-bar .iv-ico .fv-i{ display:block; width:28px; height:28px; }
   }
-  .fv-stage.pdf:not(.zoomed) .fv-pw{ cursor:zoom-in; }
+  .fv-stage.pdf:not(.zoomed):not(.desk) .fv-pw{ cursor:zoom-in; }
   .fv-stage.pdf.zoomed .fv-inner{ width:max-content; padding:50vh 50vw; }   /* Rand im Zoom: auch Geräte am Planrand kommen genau in die Mitte */
   @media (hover:hover) and (pointer:fine){ .fv-spot:hover{ background:rgba(26,111,184,.14); box-shadow:0 0 0 2px rgba(26,111,184,.6); } }   /* Desktop: Gerät unter der Maus sichtbar */
   .fv-spot.hold{ background:rgba(26,111,184,.18); box-shadow:0 0 0 2px rgba(26,111,184,.7); transition:background .45s; }
@@ -1758,6 +1791,9 @@
   #imgView{ position:fixed; inset:0; z-index:75; background:#000; display:flex; flex-direction:column; }
   #imgView[hidden]{ display:none; }
   .iv-stage{ flex:1 1 auto; min-height:0; position:relative; display:flex; align-items:center; justify-content:center; overflow:hidden; touch-action:pinch-zoom; }
+  #imgView button:focus:not(:focus-visible), #fileView button:focus:not(:focus-visible), #fileView a:focus:not(:focus-visible){ outline:none; }   /* kein oranger Rahmen nach Mausklick */
+  .iv-zoom{ display:none !important; }   /* − / + nur am Desktop */
+  @media (hover:hover) and (pointer:fine){ #imgView .iv-bar .iv-zoom{ display:flex !important; } }
   .iv-stage img{ max-width:100%; max-height:100%; object-fit:contain; display:block; user-select:none; -webkit-user-drag:none; }
   .iv-load{ color:#888; font-size:14px; }
   .iv-nav{ position:absolute; top:50%; transform:translateY(-50%); width:42px; height:42px; border-radius:50%; border:none;
@@ -1781,15 +1817,20 @@
     background:var(--surface); border:1px solid var(--line); border-radius:16px; box-shadow:0 18px 50px rgba(0,0,0,.6);
     padding:18px 20px 14px; color:var(--text); font-size:15px; line-height:1.45;
   }
+  @media (min-width:1100px){   /* Desktop (seit v241): Kurzinfo doppelt so breit und fast fensterhoch – weniger scrollen */
+    #infoDlg{ padding:24px; }
+    #infoDlg .info-panel{ width:min(880px, 100%); max-height:calc(100vh - 48px); padding:22px 30px 16px; }
+  }
   .info-panel h3{ margin:0 0 4px; font-size:18px; font-weight:700; }
   .info-panel h4{ margin:14px 0 4px; font-size:14px; font-weight:800; letter-spacing:.05em; text-transform:uppercase; color:var(--accent); }
   .info-panel ul{ margin:0; padding-left:18px; }
   .info-panel li{ margin:3px 0; }
   .info-panel li b{ font-weight:700; }
-  .info-panel .info-close{
-    display:block; margin:14px 0 0 auto; height:32px; padding:0 16px; border-radius:9px; border:1px solid var(--field-line);
-    background:none; color:var(--text); font:inherit; font-size:14px; font-weight:600; cursor:pointer;
+  .info-panel .info-close{   /* seit v242: oben rechts, bleibt beim Scrollen sichtbar, orange */
+    position:sticky; top:0; float:right; z-index:2; margin:0 0 6px 12px; height:34px; padding:0 16px; border-radius:9px; border:2px solid var(--accent);
+    background:var(--surface); color:var(--accent); font:inherit; font-size:14px; font-weight:700; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,.35);
   }
+  .info-panel .info-close:focus{ outline:none; }   /* Knopf ist schon orange umrandet */
   .info-panel .info-ver{ margin:10px 0 0; font-size:12px; color:#888; }
   /* Handy: Rückfrage vor dem Druck – Bereich oder Alles */
   /* schlicht: Titel, oranges × oben rechts, zwei ruhige Zeilen */
@@ -1833,6 +1874,7 @@
     .deskbtn{ display:flex; }
     #infoBtn{ display:flex !important; }
     #mobMenuBtn, #mobMenu{ display:none !important; }
+    #archBtn{ display:none !important; }   /* seit v243: Archiv nur noch über die Produktionsliste */
     header.top .brand-logo{ top:29px; }
     #artPicker, #addBtn, #exportBtn{ display:none !important; }
     #prodPicker .prod-dd-menu{ right:-37px; } /* Liste bis unter das Schloss = rechter Rand der Bühne-Spalte */
@@ -2057,6 +2099,7 @@
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <div id="lockDlg" hidden></div>
 <div id="infoDlg" hidden><div class="info-panel" role="dialog" aria-modal="true" aria-labelledby="infoTitle">
+  <button type="button" class="info-close" id="infoClose">Schliessen</button>
   <h3 id="infoTitle">Kurzinfo Ablaufplan</h3>
   <h4>Drucken und PDF</h4>
   <ul>
@@ -2091,8 +2134,7 @@
     <li>Mit dem Schloss neben der Produktion wird die ganze Produktion gesperrt.</li>
     <li>Zum Entsperren braucht es den vierstelligen Code und das Namenskürzel.</li>
   </ul>
-  <button type="button" class="info-close" id="infoClose">Schliessen</button>
-  <p class="info-ver" id="infoVer">v_ton_ap_gh_a_201026_1525</p>
+  <p class="info-ver" id="infoVer">v_ton_ap_gh_a_201026_1946</p>
 </div></div>
 <div id="printAsk" hidden><div class="info-panel print-ask" role="dialog" aria-modal="true" aria-labelledby="printAskTitle">
   <h3 id="printAskTitle">Drucken</h3>
@@ -2100,7 +2142,7 @@
   <button type="button" class="pa-btn" id="paArt">Bühne</button>
   <button type="button" class="pa-btn" id="paAll">Alles</button>
 </div></div>
-<div class="file-view" id="fileView" hidden><button type="button" class="fv-whole" id="fvWhole" hidden>Ganzer Plan</button><button type="button" class="fv-close-big" id="fvCloseBig">Schliessen</button><div class="fv-stage" id="fvStage"></div><div class="fv-bar"><span id="fvName"></span><span class="fv-nav" id="fvNav" hidden><button type="button" id="fvPrev" aria-label="Vorheriger Plan">‹</button><b id="fvPos"></b><button type="button" id="fvNext" aria-label="Nächster Plan">›</button></span><a id="fvSave" href="#">Speichern</a><button type="button" id="fvClose">Schliessen</button></div></div>
+<div class="file-view" id="fileView" hidden><button type="button" class="fv-whole" id="fvWhole" hidden>Ganzer Plan</button><div class="fv-stage" id="fvStage"></div><div class="fv-bar"><span id="fvName"></span><span class="fv-nav" id="fvNav" hidden><button type="button" id="fvPrev" aria-label="Vorheriger Plan">‹</button><b id="fvPos"></b><button type="button" id="fvNext" aria-label="Nächster Plan">›</button></span><span class="fv-acts"><a id="fvSave" href="#" title="Herunterladen" aria-label="Herunterladen"><span class="fv-t">Speichern</span><svg class="fv-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5v12"/><path d="M6.5 10.5 12 16l5.5-5.5"/><path d="M5 20.5h14"/></svg></a><button type="button" id="fvPrint" title="Drucken" aria-label="Drucken"><svg class="fv-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.5 8.5V4h9v4.5"/><path d="M7.5 17H5a1.5 1.5 0 0 1-1.5-1.5v-5.5A1.5 1.5 0 0 1 5 8.5h14a1.5 1.5 0 0 1 1.5 1.5v5.5A1.5 1.5 0 0 1 19 17h-2.5"/><path d="M7.5 14h9v6h-9z"/></svg></button><button type="button" class="fv-zb" id="fvZoomOut" title="Verkleinern" aria-label="Verkleinern"><svg class="fv-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"/></svg></button><button type="button" class="fv-zb" id="fvZoomIn" title="Vergrössern" aria-label="Vergrössern"><svg class="fv-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button></span><button type="button" id="fvClose">Schliessen</button></div></div>
 <input type="file" id="bpFile" accept="application/pdf,.pdf" hidden>
 <input type="file" id="fotoCam" class="foto-file" accept="image/*" capture="environment">
 <input type="file" id="fotoPick" class="foto-file" accept="image/*" multiple>
@@ -2109,7 +2151,7 @@
 <input type="file" id="docPick" class="foto-file" accept="application/pdf,.pdf,image/*" multiple>
 <input type="file" id="docCam" class="foto-file" accept="image/*" capture="environment">
 <div id="fotoDlg" hidden><div class="foto-panel" role="dialog" aria-modal="true" aria-label="Fotos"></div></div>
-<div id="imgView" hidden><button type="button" class="iv-back" id="ivBack">Zurück</button><div class="iv-stage" id="ivStage"><button type="button" class="iv-nav iv-prev" id="ivPrev" aria-label="Vorheriges Foto">‹</button><button type="button" class="iv-nav iv-next" id="ivNext" aria-label="Nächstes Foto">›</button></div><div class="iv-bar"><span class="iv-cap" id="ivCap"></span><span class="iv-n" id="ivN"></span><button type="button" class="iv-ico" id="ivDl" title="Dieses Foto herunterladen" aria-label="Dieses Foto herunterladen">⤓</button><button type="button" class="iv-ico" id="ivTab" title="In neuem Tab öffnen (zum Zoomen)" aria-label="In neuem Tab öffnen">↗</button><button type="button" id="ivClose">Schliessen</button></div></div>
+<div id="imgView" hidden><div class="iv-stage" id="ivStage"><button type="button" class="iv-nav iv-prev" id="ivPrev" aria-label="Vorheriges Foto">‹</button><button type="button" class="iv-nav iv-next" id="ivNext" aria-label="Nächstes Foto">›</button></div><div class="iv-bar"><span class="iv-cap" id="ivCap"></span><button type="button" class="iv-back" id="ivBack">Zurück</button><span class="iv-right"><span class="iv-n" id="ivN"></span><button type="button" class="iv-ico" id="ivDl" title="Dieses Foto herunterladen" aria-label="Dieses Foto herunterladen"><span class="iv-t">⤓</span><svg class="fv-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5v12"/><path d="M6.5 10.5 12 16l5.5-5.5"/><path d="M5 20.5h14"/></svg></button><button type="button" class="iv-ico" id="ivTab" title="In neuem Tab öffnen (zum Zoomen)" aria-label="In neuem Tab öffnen"><span class="iv-t">↗</span><svg class="fv-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M9 7h8v8"/></svg></button><button type="button" class="iv-ico iv-zoom" id="ivZoomOut" title="Verkleinern" aria-label="Verkleinern"><svg class="fv-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"/></svg></button><button type="button" class="iv-ico iv-zoom" id="ivZoomIn" title="Vergrössern" aria-label="Vergrössern"><svg class="fv-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button><button type="button" id="ivClose">Schliessen</button></span></div></div>
 <div id="printView" aria-hidden="true"></div>
 
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
@@ -4111,7 +4153,7 @@
     btn.title = f ? "Bühnenplan: " + f.name : "Bühnenplan ablegen (PDF)";
     var pop = head.querySelector(".bp-pop");
     if(!bpPopOpen){ if(pop) pop.remove(); return; }
-    var list = bpList(p), h = '<h4>' + (list.length > 1 ? 'Bühnenpläne (' + list.length + ')' : 'Bühnenplan') + '</h4>';
+    var list = bpList(p), h = '<div class="bp-head"><h4>' + (list.length > 1 ? 'Bühnenpläne (' + list.length + ')' : 'Bühnenplan') + '</h4><button type="button" class="bp-x" data-bp="close">Schliessen</button></div>';   // Schliessen oben rechts wie bei DOC (seit v245)
     if(bpPending){
       // neue Datei, es gibt schon Pläne: hinzufügen oder ersetzen?
       h += '<div class="bp-ask"><div class="bp-ask-t">„' + esc(bpPending.name) + '“</div>' +
@@ -4256,6 +4298,48 @@
     // klappt das nicht (kein Netz für pdf.js, defekte Datei), wie früher an den PDF-Betrachter des Geräts übergeben
     bpShowPdfJs(f, url);
   }
+  // Bühnenplan drucken (Desktop, seit v240): jede Seite in Druckqualität (ca. 3300 px) zeichnen und voll auf A4 setzen –
+  // quer oder hoch je nach Plan (erste Seite), kleiner Rand
+  function bpPrint(){
+    var pdf = bpCurPdf; if(!pdf) return;
+    showToast("Druck wird vorbereitet …", 20000);
+    var urls = [], land = true, chain = Promise.resolve();
+    for(var i = 1; i <= pdf.numPages; i++) (function(num){
+      chain = chain.then(function(){
+        return pdf.getPage(num).then(function(page){
+          var v1 = page.getViewport({ scale: 1 });
+          if(num === 1) land = v1.width >= v1.height;
+          var sc = 3300 / Math.max(v1.width, v1.height);
+          if(v1.width * v1.height * sc * sc > 12e6) sc = Math.sqrt(12e6 / (v1.width * v1.height));
+          var vp = page.getViewport({ scale: sc }), cv = document.createElement("canvas");
+          cv.width = Math.floor(vp.width); cv.height = Math.floor(vp.height);
+          var cx = cv.getContext("2d"); cx.fillStyle = "#fff"; cx.fillRect(0, 0, cv.width, cv.height);
+          return page.render({ canvasContext: cx, viewport: vp }).promise.then(function(){
+            return new Promise(function(res){ cv.toBlob(function(b){ urls.push(URL.createObjectURL(b)); res(); }, "image/png"); });
+          });
+        });
+      });
+    })(i);
+    chain.then(function(){
+      var pv = document.getElementById("printView");
+      var h = land ? "198mm" : "285mm";   // A4 minus 6 mm Rand oben/unten
+      pv.innerHTML = '<style>@page{ size:A4 ' + (land ? "landscape" : "portrait") + '; margin:6mm; }' +
+        '.bpp{ height:' + h + '; display:flex; align-items:center; justify-content:center; break-after:page; page-break-after:always; }' +
+        '.bpp:last-child{ break-after:auto; page-break-after:auto; } .bpp img{ max-width:100%; max-height:100%; display:block; }</style>' +
+        urls.map(function(u){ return '<div class="bpp"><img src="' + u + '" alt=""></div>'; }).join("");
+      var imgs = Array.prototype.slice.call(pv.querySelectorAll("img"));
+      return Promise.all(imgs.map(function(im){ return im.complete ? 1 : new Promise(function(r){ im.onload = im.onerror = r; }); }));
+    }).then(function(){
+      document.getElementById("toast").classList.remove("show");
+      var old = document.title;
+      document.title = String(bpCurName || "Buehnenplan").replace(/\.pdf$/i, "");
+      window.addEventListener("afterprint", function done(){
+        document.title = old; window.removeEventListener("afterprint", done);
+        setTimeout(function(){ urls.forEach(function(u){ URL.revokeObjectURL(u); }); document.getElementById("printView").innerHTML = ""; }, 500);
+      });
+      window.print();
+    }).catch(function(){ showToast("Drucken nicht möglich", 3500, true); });
+  }
   function bpShowEmbed(f, url){
     bpViewSeq++;
     bpZ = 1; bpPages = []; document.getElementById("fvWhole").hidden = true; fvStage.classList.remove("zoomed", "pdf", "desk"); fileView.classList.add("desk");
@@ -4313,6 +4397,7 @@
     }).catch(function(){ return null; });
   }
   // Zoom im Plan (seit v234/v235): Tipp in den Plan = 2,5-fach um die getippte Stelle; „Ganzer Plan“ = zurück; im Zoom Tipp auf Gerät = Fotos.
+  var bpCurPdf = null, bpCurName = "";
   var BP_ZOOM = 2.5, bpZ = 1, bpPages = [], bpDesk = false, bpZoomF = 2.5;   // Desktop: kein Zoom (Seite füllt die Höhe)
   function bpPlaceSpots(e){
     var cw = e.w * bpZ, ch = e.h * bpZ, min = 34; // Mindestgrösse zum Treffen mit dem Finger
@@ -4323,24 +4408,51 @@
       var st = sp.d.style; st.left = x + "px"; st.top = y + "px"; st.width = w + "px"; st.height = h + "px";
     });
   }
+  // Punkt in Bildschirmmitte als Bezug (Seite + relative Lage), damit Zoomwechsel an derselben Stelle bleiben
+  function bpCenterRef(){
+    if(!bpPages.length) return null;
+    var sr = fvStage.getBoundingClientRect(), cx = sr.left + sr.width / 2, cy = sr.top + sr.height / 2, best = bpPages[0], bd = 1e9;
+    bpPages.forEach(function(p){ var r = p.pw.getBoundingClientRect(), dy = cy < r.top ? r.top - cy : cy > r.bottom ? cy - r.bottom : 0; if(dy < bd){ bd = dy; best = p; } });
+    var r = best.pw.getBoundingClientRect();
+    return { e: best, fx: Math.max(0, Math.min(1, (cx - r.left) / r.width)), fy: Math.max(0, Math.min(1, (cy - r.top) / r.height)) };
+  }
   function bpSetZoom(z, e, fx, fy){
-    var oldZ = bpZ, keepY = fvStage.scrollTop + fvStage.clientHeight / 2;
+    if(!e){ var ref = bpCenterRef(); if(ref){ e = ref.e; fx = ref.fx; fy = ref.fy; } }
     bpZ = z;
     fvStage.classList.toggle("zoomed", z > 1);
     bpPages.forEach(function(p){ p.cv.style.width = (p.w * z) + "px"; p.cv.style.height = (p.h * z) + "px"; bpPlaceSpots(p); });
-    document.getElementById("fvWhole").hidden = z === 1;
+    document.getElementById("fvWhole").hidden = z === 1 || bpDesk;   // Desktop: zurück mit −
     vvPin();
-    if(e){ // Punkt (fx, fy relativ zur Seite) in die Mitte
+    if(e){ // Punkt (fx, fy relativ zur Seite) in die Mitte (soweit scrollbar)
       var sr = fvStage.getBoundingClientRect(), pr = e.pw.getBoundingClientRect();
       fvStage.scrollLeft = pr.left - sr.left + fvStage.scrollLeft + fx * e.w * z - fvStage.clientWidth / 2;
       fvStage.scrollTop = pr.top - sr.top + fvStage.scrollTop + fy * e.h * z - fvStage.clientHeight / 2;
-    } else { // ganzer Plan: ungefähr an derselben Stelle bleiben
-      fvStage.scrollLeft = 0;
-      fvStage.scrollTop = keepY * z / oldZ - fvStage.clientHeight / 2;
     }
   }
   // Tipp in den Plan (seit v235): im ganzen Plan = um die getippte Stelle 2,5-fach vergrössern (Stelle in die Bildschirmmitte),
   // ein Gerät muss nicht getroffen werden. Im Zoom öffnet ein Tipp auf ein Gerät dessen Fotos. Wischen/zwei Finger = kein Tipp.
+  // Desktop (seit v244): − / + in der Leiste zoomt den Plan um die Bildschirmmitte (100–400 %), vergrösserter Plan mit der Maus ziehen
+  var BP_DZ = [1, 1.5, 2, 3, 4], bpDzi = 0;
+  function bpDeskZoomBtns(){
+    var o = document.getElementById("fvZoomOut"), n = document.getElementById("fvZoomIn");
+    if(o) o.disabled = bpDzi === 0; if(n) n.disabled = bpDzi === BP_DZ.length - 1;
+  }
+  function bpDeskZoom(d){
+    if(!bpPages.length) return;
+    var ni = Math.max(0, Math.min(BP_DZ.length - 1, bpDzi + d)); if(ni === bpDzi) return;
+    bpDzi = ni;
+    bpSetZoom(BP_DZ[ni]);   // um die Bildschirmmitte
+    bpDeskZoomBtns();
+  }
+  (function(){
+    var drag = null;
+    fvStage.addEventListener("mousedown", function(e){
+      if(!bpDesk || bpZ === 1 || e.button !== 0 || (e.target.closest && e.target.closest(".fv-spot"))) return;
+      e.preventDefault(); drag = { x: e.clientX, y: e.clientY, l: fvStage.scrollLeft, t: fvStage.scrollTop }; fvStage.classList.add("fv-drag");
+    });
+    window.addEventListener("mousemove", function(e){ if(!drag) return; fvStage.scrollLeft = drag.l - (e.clientX - drag.x); fvStage.scrollTop = drag.t - (e.clientY - drag.y); });
+    window.addEventListener("mouseup", function(){ if(drag){ drag = null; fvStage.classList.remove("fv-drag"); } });
+  })();
   function bpPageTaps(e, layer){
     var down = null, moved = false;
     function at(x, y, target){
@@ -4388,6 +4500,7 @@
     var seq = ++bpViewSeq;
     bpDesk = !!desk; bpZoomF = BP_ZOOM;
     fvStage.classList.toggle("desk", bpDesk); fileView.classList.toggle("desk", bpDesk);
+    bpCurPdf = null; fileView.classList.remove("canprint"); bpDzi = 0; bpDeskZoomBtns();
     bpZ = 1; bpPages = []; document.getElementById("fvWhole").hidden = true;
     fvStage.innerHTML = '<p class="fv-msg">Bühnenplan wird angezeigt …</p>';
     fvStage.classList.add("pdf");
@@ -4404,13 +4517,14 @@
       }).then(function(pl){
         if(!pl || !still()) return;
         var pdf = pl[0], layer = pl[1];
+        bpCurPdf = pdf; bpCurName = f.name; fileView.classList.toggle("canprint", !!desk);
         fvStage.innerHTML = "";
         var inner = document.createElement("div"); inner.className = "fv-inner"; fvStage.appendChild(inner);
         var n = pdf.numPages;
         if(n > 1) document.getElementById("fvName").textContent = f.name + " · " + n + " Seiten";
         // Seiten nacheinander zeichnen: Breite = Bildschirmbreite, in 2,5-facher Schärfe (für den Zoom),
         // höchstens ca. 12 Mio. Pixel pro Seite (Grenze älterer iPhones)
-        var w = Math.max(200, fvStage.clientWidth - 16), pxr = Math.min(7.5, (window.devicePixelRatio || 1) * (desk ? 1.5 : 2.5));
+        var w = Math.max(200, fvStage.clientWidth - 16), pxr = Math.min(7.5, (window.devicePixelRatio || 1) * (desk ? 3 : 2.5));
         var hMax = Math.max(200, fvStage.clientHeight - 16);   // Desktop (seit v239): Seite füllt die Fensterhöhe, kein Klick-Zoom
         var chain = Promise.resolve();
         for(var i = 1; i <= n; i++) (function(num){
@@ -4506,7 +4620,10 @@
     if(e.target.closest("#fvSave")) return;
     if(e.target.closest("#fvPrev")){ bpStep(-1); return; }
     if(e.target.closest("#fvNext")){ bpStep(1); return; }
-    if(e.target.closest("#fvClose, #fvCloseBig") || (e.target === fvStage && !fvStage.classList.contains("pdf"))) closeFileView();
+    if(e.target.closest("#fvPrint")){ bpPrint(); return; }
+    if(e.target.closest("#fvZoomIn")){ bpDeskZoom(1); return; }
+    if(e.target.closest("#fvZoomOut")){ bpDeskZoom(-1); return; }
+    if(e.target.closest("#fvClose") || (e.target === fvStage && !fvStage.classList.contains("pdf"))) closeFileView();
   });
   document.addEventListener("keydown", function(e){
     if(!fileView.hidden && bpViewList.length > 1 && !document.getElementById("fvNav").hidden && (e.key === "ArrowRight" || e.key === "ArrowLeft")){ e.preventDefault(); bpStep(e.key === "ArrowRight" ? 1 : -1); return; }
@@ -4523,6 +4640,7 @@
     var b = e.target.closest && e.target.closest(".bp-pop [data-bp]");
     if(!b) return;
     var act = b.dataset.bp;
+    if(act === "close"){ bpPopOpen = false; bpConfirm = false; bpPending = null; renderBpHead(); return; }
     if(act === "choose"){ if(prodBlocked()){ lockedHint(true); return; } var inp = document.getElementById("bpFile"); inp.value = ""; inp.click(); }
     else if(act === "view") bpView(b.dataset.id);
     else if(act === "remove"){ if(prodBlocked()){ lockedHint(true); return; } bpConfirm = b.dataset.id; renderBpHead(); }
@@ -4924,14 +5042,14 @@
   // „Ganzer Plan“/„Zurück“ unten mittig, die Leisten mit „Schliessen“ unten – an den sichtbaren Ausschnitt geheftet
   function vvPin(){
     var vv = window.visualViewport;
-    var tops = [document.getElementById("fvWhole"), document.getElementById("ivBack"), document.getElementById("fvCloseBig")];
+    var tops = [document.getElementById("fvWhole"), document.getElementById("ivBack")];
     var bars = [document.querySelector("#fileView .fv-bar"), document.querySelector("#imgView .iv-bar")];
     var reset = function(el){ if(el){ el.style.transform = ""; el.style.transformOrigin = ""; } };
     if(!vv || (vv.scale <= 1.01 && Math.abs(vv.offsetLeft) < 1 && Math.abs(vv.offsetTop) < 1)){ tops.forEach(reset); bars.forEach(reset); return; }
     var z = vv.scale, lw = document.documentElement.clientWidth, lh = window.innerHeight * z;   // innerHeight = sichtbare Höhe
     var fv = document.getElementById("fileView"); if(fv && !fv.hidden) lh = fv.clientHeight; else { var iv = document.getElementById("imgView"); if(iv && !iv.hidden) lh = iv.clientHeight; }
     tops.forEach(function(el){   // Knöpfe behalten ihre Lage im sichtbaren Ausschnitt (unten mittig bzw. unten rechts)
-      if(!el || !el.offsetParent) return;
+      if(!el || !el.offsetParent || getComputedStyle(el).position !== "absolute"){ reset(el); return; }   // in der Leiste: zieht mit der Leiste mit
       var cx = el.offsetLeft + el.offsetWidth / 2, by = el.offsetTop + el.offsetHeight;   // Lage ohne Zoom
       var tx = vv.offsetLeft + cx / z - cx, ty = vv.offsetTop + by / z - by;
       el.style.transformOrigin = "bottom center"; el.style.transform = "translate(" + tx + "px," + ty + "px) scale(" + (1 / z) + ")";
@@ -4963,6 +5081,7 @@
   function ivShow(){
     var f = ivList[ivIdx];
     if(!f){ ivClose(); return; }
+    ivZi = 0; ivTx = ivTy = 0; ivApplyZoom();
     var st = document.getElementById("ivStage");
     Array.prototype.forEach.call(st.querySelectorAll("img, .iv-load"), function(x){ x.remove(); });
     document.getElementById("ivCap").textContent = f.t || "Ohne Beschriftung";
@@ -4999,6 +5118,23 @@
       .catch(function(){ try{ if(w) w.close(); }catch(e){} showToast("Foto nicht gefunden", 3500, true); });
   }
   function ivStep(d){ if(ivList.length < 2) return; ivIdx = (ivIdx + d + ivList.length) % ivList.length; ivShow(); }
+  // Foto zoomen (Desktop, seit v240): − / + in Stufen, vergrössertes Foto mit der Maus verschieben
+  var IV_Z = [1, 1.5, 2, 3, 4], ivZi = 0, ivTx = 0, ivTy = 0;
+  function ivApplyZoom(){
+    var img = document.querySelector("#ivStage img"), z = IV_Z[ivZi];
+    if(img){
+      if(z === 1){ ivTx = ivTy = 0; }
+      else { // nicht weiter verschieben, als das Foto über den Rand ragt
+        var st = document.getElementById("ivStage"), mx = Math.max(0, (img.offsetWidth * z - st.clientWidth) / 2), my = Math.max(0, (img.offsetHeight * z - st.clientHeight) / 2);
+        ivTx = Math.max(-mx, Math.min(mx, ivTx)); ivTy = Math.max(-my, Math.min(my, ivTy));
+      }
+      img.style.transform = z === 1 ? "" : "translate(" + ivTx + "px," + ivTy + "px) scale(" + z + ")";
+    }
+    document.getElementById("ivStage").classList.toggle("iv-zoomed", z > 1);
+    document.getElementById("ivZoomOut").disabled = ivZi === 0;
+    document.getElementById("ivZoomIn").disabled = ivZi === IV_Z.length - 1;
+  }
+  function ivZoom(d){ ivZi = Math.max(0, Math.min(IV_Z.length - 1, ivZi + d)); ivApplyZoom(); }
   function ivClose(fromPop){
     document.getElementById("imgView").hidden = true; Array.prototype.forEach.call(document.querySelectorAll("#ivStage img"), function(x){ x.remove(); });
     if(fromPop !== true && ivPushed){ ivPushed = false; try{ history.back(); }catch(e){} }
@@ -5012,6 +5148,14 @@
     document.getElementById("fvWhole").addEventListener("click", function(){ bpSetZoom(1); });
     document.getElementById("ivDl").addEventListener("click", function(e){ e.stopPropagation(); ivDownload(); });
     document.getElementById("ivTab").addEventListener("click", function(e){ e.stopPropagation(); ivOpenTab(); });
+    document.getElementById("ivZoomIn").addEventListener("click", function(e){ e.stopPropagation(); ivZoom(1); });
+    document.getElementById("ivZoomOut").addEventListener("click", function(e){ e.stopPropagation(); ivZoom(-1); });
+    (function(){ // vergrössertes Foto mit der Maus ziehen
+      var st = document.getElementById("ivStage"), drag = null;
+      st.addEventListener("mousedown", function(e){ if(ivZi === 0 || e.button !== 0 || e.target.closest(".iv-nav")) return; e.preventDefault(); drag = { x: e.clientX, y: e.clientY, tx: ivTx, ty: ivTy }; st.classList.add("iv-drag"); });
+      window.addEventListener("mousemove", function(e){ if(!drag) return; ivTx = drag.tx + e.clientX - drag.x; ivTy = drag.ty + e.clientY - drag.y; ivApplyZoom(); });
+      window.addEventListener("mouseup", function(){ if(drag){ drag = null; st.classList.remove("iv-drag"); } });
+    })();
     iv.addEventListener("touchstart", function(e){ multi = e.touches.length > 1; if(!multi){ sx = e.touches[0].clientX; sy = e.touches[0].clientY; } }, { passive: true });
     iv.addEventListener("touchend", function(e){
       if(multi || sx == null || (window.visualViewport && window.visualViewport.scale > 1.05)){ sx = null; return; }
