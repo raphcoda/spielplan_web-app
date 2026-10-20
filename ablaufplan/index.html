@@ -1507,6 +1507,7 @@
   .fv-whole, .iv-back{ position:absolute; top:calc(12px + env(safe-area-inset-top, 0px)); right:12px; z-index:3; font:inherit; font-size:16px; font-weight:800;
     padding:11px 18px; border:none; border-radius:12px; background:var(--ka); color:#0b1414; box-shadow:0 4px 18px rgba(0,0,0,.55); cursor:pointer; -webkit-tap-highlight-color:transparent; }
   .fv-whole[hidden]{ display:none; }
+  .fv-stage.pdf:not(.zoomed) .fv-pw{ cursor:zoom-in; }
   .fv-stage.pdf.zoomed .fv-inner{ width:max-content; padding:50vh 50vw; }   /* Rand im Zoom: auch Geräte am Planrand kommen genau in die Mitte */
   .fv-spot.hold{ background:rgba(26,111,184,.18); box-shadow:0 0 0 2px rgba(26,111,184,.7); transition:background .45s; }
   .fv-msg{ color:#888; font-size:14px; margin:40px 0; text-align:center; }
@@ -2057,7 +2058,8 @@
   <ul>
     <li><b>Desktop:</b> Über den Knopf BP im Bereich Bühne Bühnenpläne als PDF hochladen (max. 7 MB, bis zu 5 Pläne), ansehen oder entfernen. Gibt es schon einen Plan, fragt die App: hinzufügen oder ersetzen.</li>
     <li>Mehrere Pläne: BP zeigt die Liste, im Vollbild mit ‹ › zum nächsten Plan blättern.</li>
-    <li><b>Handy:</b> Der Knopf BP erscheint im Bereich Bühne nur, wenn ein Bühnenplan hochgeladen wurde. Antippen zeigt den Plan in der App (mit zwei Fingern zoomen), „Speichern“ lädt ihn herunter.</li>
+    <li><b>Handy:</b> Der Knopf BP erscheint im Bereich Bühne nur, wenn ein Bühnenplan hochgeladen wurde. Antippen zeigt den Plan in der App, „Speichern“ lädt ihn herunter.</li>
+    <li><b>Zoom und Fotos (Handy):</b> In den Plan tippen = Zoom um die getippte Stelle, Button „Ganzer Plan“ = wieder Gesamtansicht. Im Zoom ein Gerät antippen = für das Gerät hinterlegtes Foto anzeigen, Button „Zurück“ = zum Plan.</li>
   </ul>
   <h4>Fotos (Kamera-Symbol, Bühne)</h4>
   <ul>
@@ -2078,7 +2080,7 @@
     <li>Zum Entsperren braucht es den vierstelligen Code und das Namenskürzel.</li>
   </ul>
   <button type="button" class="info-close" id="infoClose">Schliessen</button>
-  <p class="info-ver" id="infoVer">v_ton_ap_gh_a_201026_1429</p>
+  <p class="info-ver" id="infoVer">v_ton_ap_gh_a_201026_1452</p>
 </div></div>
 <div id="printAsk" hidden><div class="info-panel print-ask" role="dialog" aria-modal="true" aria-labelledby="printAskTitle">
   <h3 id="printAskTitle">Drucken</h3>
@@ -4292,8 +4294,7 @@
       return meta;
     }).catch(function(){ return null; });
   }
-  // Zoom im Plan (seit v234): Tipp auf ein Gerät = 2,5-fach, Gerät in die Bildschirmmitte; „Ganzer Plan“ = zurück.
-  // Halten (0,45 s) öffnet in jeder Zoomstufe die Fotos.
+  // Zoom im Plan (seit v234/v235): Tipp in den Plan = 2,5-fach um die getippte Stelle; „Ganzer Plan“ = zurück; im Zoom Tipp auf Gerät = Fotos.
   var BP_ZOOM = 2.5, bpZ = 1, bpPages = [];
   function bpPlaceSpots(e){
     var cw = e.w * bpZ, ch = e.h * bpZ, min = 34; // Mindestgrösse zum Treffen mit dem Finger
@@ -4310,6 +4311,7 @@
     fvStage.classList.toggle("zoomed", z > 1);
     bpPages.forEach(function(p){ p.cv.style.width = (p.w * z) + "px"; p.cv.style.height = (p.h * z) + "px"; bpPlaceSpots(p); });
     document.getElementById("fvWhole").hidden = z === 1;
+    vvPin();
     if(e){ // Punkt (fx, fy relativ zur Seite) in die Mitte
       var sr = fvStage.getBoundingClientRect(), pr = e.pw.getBoundingClientRect();
       fvStage.scrollLeft = pr.left - sr.left + fvStage.scrollLeft + fx * e.w * z - fvStage.clientWidth / 2;
@@ -4319,27 +4321,36 @@
       fvStage.scrollTop = keepY * z / oldZ - fvStage.clientHeight / 2;
     }
   }
+  // Tipp in den Plan (seit v235): im ganzen Plan = um die getippte Stelle 2,5-fach vergrössern (Stelle in die Bildschirmmitte),
+  // ein Gerät muss nicht getroffen werden. Im Zoom öffnet ein Tipp auf ein Gerät dessen Fotos. Wischen/zwei Finger = kein Tipp.
+  function bpPageTaps(e, layer){
+    var down = null, moved = false;
+    function at(x, y, target){
+      if(bpZ === 1){
+        var r = e.pw.getBoundingClientRect();
+        bpSetZoom(BP_ZOOM, e, (x - r.left) / (e.w * bpZ), (y - r.top) / (e.h * bpZ));
+        return;
+      }
+      var spot = target && target.closest && target.closest(".fv-spot");
+      if(spot && layer){ var sp = e.spots.filter(function(q){ return q.d === spot; })[0]; if(sp) bpSpotOpen(layer, sp.it); }
+    }
+    function startT(x, y, target){ down = { x: x, y: y, t: target }; moved = false; var sp = target && target.closest && target.closest(".fv-spot"); if(sp && bpZ > 1) sp.classList.add("hold"); }
+    function clear(){ down = null; Array.prototype.forEach.call(e.pw.querySelectorAll(".fv-spot.hold"), function(x){ x.classList.remove("hold"); }); }
+    function moveT(x, y){ if(down && Math.hypot(x - down.x, y - down.y) > 10){ moved = true; clear(); } }
+    e.pw.addEventListener("touchstart", function(ev){ if(ev.touches.length > 1){ moved = true; clear(); return; } var p = ev.touches[0]; startT(p.clientX, p.clientY, ev.target); }, { passive: true });
+    e.pw.addEventListener("touchmove", function(ev){ if(ev.touches.length > 1){ moved = true; clear(); return; } var p = ev.touches[0]; moveT(p.clientX, p.clientY); }, { passive: true });
+    e.pw.addEventListener("touchend", function(ev){ var d0 = down; clear(); if(!d0 || moved) return; if(ev.cancelable) ev.preventDefault(); at(d0.x, d0.y, d0.t); });
+    e.pw.addEventListener("touchcancel", clear);
+    e.pw.addEventListener("pointerdown", function(ev){ if(ev.pointerType === "touch" || ev.button > 0) return; startT(ev.clientX, ev.clientY, ev.target); });
+    e.pw.addEventListener("pointermove", function(ev){ if(ev.pointerType !== "touch") moveT(ev.clientX, ev.clientY); });
+    e.pw.addEventListener("pointerup", function(ev){ if(ev.pointerType === "touch") return; var d0 = down; clear(); if(!d0 || moved) return; at(d0.x, d0.y, d0.t); });
+    e.pw.addEventListener("contextmenu", function(ev){ ev.preventDefault(); });
+  }
   function bpPhotoSpots(e, layer, pageIdx){
     var pg = layer.pages[pageIdx]; if(!pg || !pg.items) return;
     pg.items.forEach(function(it){
       var d = document.createElement("div"); d.className = "fv-spot";
       e.spots.push({ d: d, it: it });
-      var t = null, sx = 0, sy = 0, fired = false, moved = false;
-      function cancel(){ if(t){ clearTimeout(t); t = null; } d.classList.remove("hold"); }
-      function start(x, y){ fired = false; moved = false; sx = x; sy = y; d.classList.add("hold"); if(t) clearTimeout(t); t = setTimeout(function(){ t = null; fired = true; d.classList.remove("hold"); bpSpotOpen(layer, it); }, 450); }
-      function move(x, y){ if(Math.hypot(x - sx, y - sy) > 10){ moved = true; cancel(); } }
-      function tap(){ fired = true; bpSetZoom(BP_ZOOM, e, it.x + it.w / 2, it.y + it.h / 2); }   // Tipp: hineinzoomen bzw. neu zentrieren
-      // Touch (iPhone/Android) und Maus/Stift getrennt, damit nichts doppelt auslöst
-      d.addEventListener("touchstart", function(ev){ if(ev.touches.length > 1){ moved = true; cancel(); return; } var p = ev.touches[0]; start(p.clientX, p.clientY); }, { passive: true });
-      d.addEventListener("touchmove", function(ev){ if(ev.touches.length > 1){ moved = true; cancel(); return; } var p = ev.touches[0]; move(p.clientX, p.clientY); }, { passive: true });
-      d.addEventListener("touchend", function(ev){ var wasT = !!t; cancel(); if(wasT && !moved && !fired){ if(ev.cancelable) ev.preventDefault(); tap(); } });
-      d.addEventListener("touchcancel", cancel);
-      d.addEventListener("pointerdown", function(ev){ if(ev.pointerType === "touch") return; start(ev.clientX, ev.clientY); });
-      d.addEventListener("pointermove", function(ev){ if(ev.pointerType !== "touch" && t) move(ev.clientX, ev.clientY); });
-      d.addEventListener("pointerup", function(ev){ if(ev.pointerType === "touch") return; var wasT = !!t; cancel(); if(wasT && !moved && !fired) tap(); });
-      d.addEventListener("pointerleave", function(ev){ if(ev.pointerType !== "touch") cancel(); });
-      d.addEventListener("contextmenu", function(ev){ ev.preventDefault(); });
-      d.addEventListener("click", function(ev){ ev.preventDefault(); ev.stopPropagation(); });
       e.pw.appendChild(d);
     });
     bpPlaceSpots(e);
@@ -4348,7 +4359,6 @@
     ivList = (it.photos || []).map(function(nm, i){ return { id: "bp:" + nm, t: it.label || "Position", url: layer.urls[nm] }; }).filter(function(f){ return f.url; });
     if(!ivList.length) return;
     ivIdx = 0;
-    try{ if(navigator.vibrate) navigator.vibrate(15); }catch(e){}
     ivOpen();
   }
   function bpShowPdfJs(f, url){
@@ -4369,7 +4379,6 @@
       }).then(function(pl){
         if(!pl || !still()) return;
         var pdf = pl[0], layer = pl[1];
-        if(layer){ var nPos = 0; layer.pages.forEach(function(pg){ nPos += (pg.items || []).length; }); if(nPos) setTimeout(function(){ showToast("Fotos zu " + nPos + (nPos === 1 ? " Position" : " Positionen") + " – antippen = vergrössern, halten = Fotos", 4000); }, 300); }
         fvStage.innerHTML = "";
         var inner = document.createElement("div"); inner.className = "fv-inner"; fvStage.appendChild(inner);
         var n = pdf.numPages;
@@ -4394,7 +4403,9 @@
               bpPages.push(e);
               cv.style.width = (e.w * bpZ) + "px"; cv.style.height = (e.h * bpZ) + "px";
               return page.render({ canvasContext: cv.getContext("2d"), viewport: vp }).promise.then(function(){
-                if(layer && still()) bpPhotoSpots(e, layer, num - 1);
+                if(!still()) return;
+                if(layer) bpPhotoSpots(e, layer, num - 1);
+                bpPageTaps(e, layer);
               });
             });
           });
@@ -4879,12 +4890,41 @@
     ivOpen();
   }
   // Fotobetrachter öffnen: Eintrag im Browser-Verlauf, damit „Zurück“ des Browsers/Handys ihn schliesst (seit v234)
-  var ivPushed = false;
+  var ivPushed = false, ivOpenedAt = 0;
+  document.getElementById("ivStage").addEventListener("contextmenu", function(e){ if(Date.now() - ivOpenedAt < 1000) e.preventDefault(); });
+  // Knöpfe bleiben beim Zwei-Finger-Zoom an ihrer Stelle und in normaler Grösse (seit v235):
+  // „Ganzer Plan“/„Zurück“ oben rechts, die Leisten mit „Schliessen“ unten – an den sichtbaren Ausschnitt geheftet
+  function vvPin(){
+    var vv = window.visualViewport;
+    var tops = [document.getElementById("fvWhole"), document.getElementById("ivBack")];
+    var bars = [document.querySelector("#fileView .fv-bar"), document.querySelector("#imgView .iv-bar")];
+    var reset = function(el){ if(el){ el.style.transform = ""; el.style.transformOrigin = ""; } };
+    if(!vv || (vv.scale <= 1.01 && Math.abs(vv.offsetLeft) < 1 && Math.abs(vv.offsetTop) < 1)){ tops.forEach(reset); bars.forEach(reset); return; }
+    var z = vv.scale, lw = document.documentElement.clientWidth, lh = window.innerHeight * z;   // innerHeight = sichtbare Höhe
+    var fv = document.getElementById("fileView"); if(fv && !fv.hidden) lh = fv.clientHeight; else { var iv = document.getElementById("imgView"); if(iv && !iv.hidden) lh = iv.clientHeight; }
+    tops.forEach(function(el){
+      if(!el) return;
+      var tx = vv.offsetLeft + vv.width - 12 / z - (lw - 12), ty = vv.offsetTop + 12 / z - 12;
+      el.style.transformOrigin = "top right"; el.style.transform = "translate(" + tx + "px," + ty + "px) scale(" + (1 / z) + ")";
+    });
+    bars.forEach(function(el){
+      if(!el) return;
+      var tx = vv.offsetLeft, ty = vv.offsetTop + vv.height - lh;
+      el.style.transformOrigin = "bottom left"; el.style.transform = "translate(" + tx + "px," + ty + "px) scale(" + (1 / z) + ")";
+    });
+  }
+  if(window.visualViewport){
+    var vvRaf = 0, vvQ = function(){ if(!vvRaf) vvRaf = requestAnimationFrame(function(){ vvRaf = 0; vvPin(); }); };
+    window.visualViewport.addEventListener("resize", vvQ);
+    window.visualViewport.addEventListener("scroll", vvQ);
+  }
   function ivOpen(){
     var iv = document.getElementById("imgView");
     if(iv.hidden && !ivPushed){ try{ history.pushState({ abIv: 1 }, ""); ivPushed = true; }catch(e){} }
     iv.hidden = false;
+    ivOpenedAt = Date.now();
     ivShow();
+    vvPin();
   }
   window.addEventListener("popstate", function(){
     if(!ivPushed) return;
