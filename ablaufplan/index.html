@@ -1501,6 +1501,10 @@
   /* Handy: Bühnenplan per pdf.js – Seiten untereinander, scrollen, mit zwei Fingern zoomen */
   .fv-stage.pdf{ display:block; overflow:auto; -webkit-overflow-scrolling:touch; padding:8px; text-align:center; }
   .fv-stage.pdf .fv-page{ display:block; margin:0 auto 8px; background:#fff; }
+  .fv-pw{ position:relative; width:max-content; margin:0 auto 8px; -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; }
+  .fv-stage.pdf .fv-pw .fv-page{ margin:0; }
+  .fv-spot{ position:absolute; border-radius:8px; cursor:pointer; -webkit-touch-callout:none; -webkit-user-select:none; user-select:none; -webkit-tap-highlight-color:transparent; }
+  .fv-spot.hold{ background:rgba(26,111,184,.18); box-shadow:0 0 0 2px rgba(26,111,184,.7); transition:background .45s; }
   .fv-msg{ color:#888; font-size:14px; margin:40px 0; text-align:center; }
   .fv-stage iframe{ width:100%; height:100%; border:0; background:#fff; display:block; }
   .fv-bar{ flex:0 0 auto; display:flex; align-items:center; gap:16px; font-size:14px; color:var(--text-dim); background:#111; padding:8px 16px calc(8px + env(safe-area-inset-bottom, 0px)); }
@@ -2047,7 +2051,7 @@
   </ul>
   <h4>Bühnenplan (BP)</h4>
   <ul>
-    <li><b>Desktop:</b> Über den Knopf BP im Bereich Bühne Bühnenpläne als PDF hochladen (max. 5 MB, bis zu 5 Pläne), ansehen oder entfernen. Gibt es schon einen Plan, fragt die App: hinzufügen oder ersetzen.</li>
+    <li><b>Desktop:</b> Über den Knopf BP im Bereich Bühne Bühnenpläne als PDF hochladen (max. 7 MB, bis zu 5 Pläne), ansehen oder entfernen. Gibt es schon einen Plan, fragt die App: hinzufügen oder ersetzen.</li>
     <li>Mehrere Pläne: BP zeigt die Liste, im Vollbild mit ‹ › zum nächsten Plan blättern.</li>
     <li><b>Handy:</b> Der Knopf BP erscheint im Bereich Bühne nur, wenn ein Bühnenplan hochgeladen wurde. Antippen zeigt den Plan in der App (mit zwei Fingern zoomen), „Speichern“ lädt ihn herunter.</li>
   </ul>
@@ -2060,7 +2064,7 @@
   </ul>
   <h4>Dokumente (DOC, Tonregie und Technik)</h4>
   <ul>
-    <li>Grau = noch keine Dateien, blau = Dateien vorhanden. Bis zu 15 Dateien pro Bereich und Produktion: PDF (max. 5 MB) und Bilder/Screenshots.</li>
+    <li>Grau = noch keine Dateien, blau = Dateien vorhanden. Bis zu 15 Dateien pro Bereich und Produktion: PDF (max. 7 MB) und Bilder/Screenshots.</li>
     <li><b>Desktop:</b> DOC links neben dem Drucker im Bereich Tonregie oder Technik – Dateien darauf ziehen oder anklicken. <b>Handy:</b> DOC in der Titelzeile des Bereichs – „Datei hinzufügen“ oder „Foto machen“.</li>
     <li>Antippen zeigt die Datei in der App, „Alle herunterladen“ speichert alle als ZIP. Nicht im Druck.</li>
   </ul>
@@ -2070,7 +2074,7 @@
     <li>Zum Entsperren braucht es den vierstelligen Code und das Namenskürzel.</li>
   </ul>
   <button type="button" class="info-close" id="infoClose">Schliessen</button>
-  <p class="info-ver" id="infoVer">v_ton_ap_gh_a_121026_0929</p>
+  <p class="info-ver" id="infoVer">v_ton_ap_gh_a_131026_2215</p>
 </div></div>
 <div id="printAsk" hidden><div class="info-panel print-ask" role="dialog" aria-modal="true" aria-labelledby="printAskTitle">
   <h3 id="printAskTitle">Drucken</h3>
@@ -3312,14 +3316,14 @@
 
     if(prodPickerOpen){
       html += '<div class="prod-dd-menu" role="listbox">' +
-        // Kopfleiste (türkis): Lupe · Sortierung Dat / A–Z · + Neu
+        // Kopfleiste (türkis): Lupe · Sortierung Datum / A–Z · + NEU
         '<div class="prod-dd-bar">' +
           '<button type="button" class="pdb-btn pdb-lupe' + (prodSearchOpen ? ' on' : '') + '" data-action="prod-search-toggle" aria-label="Produktion suchen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L20 20"/></svg></button>' +
           '<span class="pdb-sort" role="group" aria-label="Sortierung">' +
-            '<button type="button" class="pdb-btn' + (prodSort === "dat" ? ' on' : '') + '" data-action="prod-sort" data-sort="dat" title="nach Eintragsdatum, neueste oben">Dat</button>' +
+            '<button type="button" class="pdb-btn' + (prodSort === "dat" ? ' on' : '') + '" data-action="prod-sort" data-sort="dat" title="nach Eintragsdatum, neueste oben">Datum</button>' +
             '<button type="button" class="pdb-btn' + (prodSort === "az" ? ' on' : '') + '" data-action="prod-sort" data-sort="az" title="alphabetisch">A–Z</button>' +
           '</span>' +
-          '<button type="button" class="pdb-btn pdb-new" data-action="prod-new-start">+ Neu</button>' +
+          '<button type="button" class="pdb-btn pdb-new" data-action="prod-new-start">+ NEU</button>' +
         '</div>' +
         (prodSearchOpen || prodFilter ?
         '<div class="prod-dd-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L20 20"/></svg>' +
@@ -4041,7 +4045,7 @@
   // der Notizen-App); an der Produktion steht nur prod.bp = { id, name, size, t }.
   // Knopf: Desktop immer da (grau = leer, türkis = Plan abgelegt); Handy nur, wenn ein Plan abgelegt ist.
   // Ansehen: Desktop im Vollbild in der App; am Handy öffnet der PDF-Betrachter des Geräts.
-  var BP_MAX = 5 * 1024 * 1024, BP_PLANS = 5;
+  var BP_MAX = 7 * 1024 * 1024, BP_PLANS = 5; // seit v218: 7 MB (Bühnenpläne mit Fotos aus der Bühnenplan-App)
   var bpPopOpen = false, bpConfirm = false, bpBusy = false, bpPending = null, bpViewList = [], bpViewIdx = 0;
   // Mehrere Pläne (seit v211): prod.bp = erster Plan (wie bisher, damit ältere Geräte ihn sehen), weitere in prod.bpx = { <id>: {…, o} }
   function bpList(p){
@@ -4133,7 +4137,7 @@
     if(prodBlocked()){ lockedHint(true); return; }
     var isPdf0 = file.type === "application/pdf" || /\.pdf$/i.test(file.name || "");
     if(!isPdf0){ showToast("Bitte eine PDF-Datei ablegen", 3500, true); return; }
-    if(file.size > BP_MAX){ showToast("Zu gross (" + fmtSize(file.size) + ") – maximal 5 MB", 4500, true); return; }
+    if(file.size > BP_MAX){ showToast("Zu gross (" + fmtSize(file.size) + ") – maximal 7 MB", 4500, true); return; }
     if(bpList(p).length){ bpPending = file; bpConfirm = false; bpPopOpen = true; renderBpHead(); return; }
     bpStore(file, null);
   }
@@ -4144,7 +4148,7 @@
     if(prodBlocked()){ lockedHint(true); return; }
     var isPdf = file.type === "application/pdf" || /\.pdf$/i.test(file.name || "");
     if(!isPdf){ showToast("Bitte eine PDF-Datei ablegen", 3500, true); return; }
-    if(file.size > BP_MAX){ showToast("Zu gross (" + fmtSize(file.size) + ") – maximal 5 MB", 4500, true); return; }
+    if(file.size > BP_MAX){ showToast("Zu gross (" + fmtSize(file.size) + ") – maximal 7 MB", 4500, true); return; }
     var prodId = p.id;
     bpBusy = true; renderBpHead();
     showToast("Bühnenplan lädt hoch …", 60000);
@@ -4261,6 +4265,59 @@
     });
     return pdfJsPromise;
   }
+  // ---- Fotos im Bühnenplan (seit v218, Test): Die Bühnenplan-App kann Fotos der Positionen ins PDF einbetten
+  // (Anhang «tonplan-fotos.json» + Fotos als Anhänge). Gerät im Plan gedrückt halten → Fotos im Vollbild.
+  function bpPhotoLayer(pdf){
+    return pdf.getAttachments().then(function(att){
+      if(!att) return null;
+      var meta = null, files = {};
+      var ent = (typeof Map !== "undefined" && att instanceof Map) ? Array.from(att.entries()) : Object.keys(att).map(function(k){ return [k, att[k]]; }); // pdf.js 3: Objekt, neuere Versionen: Map
+      ent.forEach(function(kv){
+        var k = kv[0], a = kv[1], nm = (a && a.filename) || k;
+        if(nm === "tonplan-fotos.json"){ try{ meta = JSON.parse(new TextDecoder().decode(a.content)); }catch(e){} }
+        else if(a && a.content) files[nm] = a.content;
+      });
+      if(!meta || !meta.pages) return null;
+      var urls = {};
+      Object.keys(files).forEach(function(nm){ urls[nm] = URL.createObjectURL(new Blob([files[nm]], { type: "image/jpeg" })); });
+      meta.urls = urls;
+      return meta;
+    }).catch(function(){ return null; });
+  }
+  function bpPhotoSpots(pw, layer, pageIdx, cw, ch){
+    var pg = layer.pages[pageIdx]; if(!pg || !pg.items) return;
+    pg.items.forEach(function(it){
+      var x = it.x * cw, y = it.y * ch, w = it.w * cw, h = it.h * ch, min = 34; // Mindestgrösse zum Treffen mit dem Finger
+      if(w < min){ x -= (min - w) / 2; w = min; }
+      if(h < min){ y -= (min - h) / 2; h = min; }
+      var d = document.createElement("div"); d.className = "fv-spot";
+      d.style.left = x + "px"; d.style.top = y + "px"; d.style.width = w + "px"; d.style.height = h + "px";
+      var t = null, sx = 0, sy = 0, fired = false, moved = false;
+      function cancel(){ if(t){ clearTimeout(t); t = null; } d.classList.remove("hold"); }
+      function start(x, y){ fired = false; moved = false; sx = x; sy = y; d.classList.add("hold"); if(t) clearTimeout(t); t = setTimeout(function(){ t = null; fired = true; d.classList.remove("hold"); bpSpotOpen(layer, it); }, 450); }
+      function move(x, y){ if(Math.hypot(x - sx, y - sy) > 10){ moved = true; cancel(); } }
+      // Touch (iPhone/Android) und Maus/Stift getrennt, damit nichts doppelt auslöst
+      d.addEventListener("touchstart", function(e){ if(e.touches.length > 1){ moved = true; cancel(); return; } var p = e.touches[0]; start(p.clientX, p.clientY); }, { passive: true });
+      d.addEventListener("touchmove", function(e){ if(e.touches.length > 1){ moved = true; cancel(); return; } var p = e.touches[0]; move(p.clientX, p.clientY); }, { passive: true });
+      d.addEventListener("touchend", function(){ var wasT = !!t; cancel(); if(wasT && !moved && !fired){ fired = true; bpSpotOpen(layer, it); } });
+      d.addEventListener("touchcancel", cancel);
+      d.addEventListener("pointerdown", function(e){ if(e.pointerType === "touch") return; start(e.clientX, e.clientY); });
+      d.addEventListener("pointermove", function(e){ if(e.pointerType !== "touch" && t) move(e.clientX, e.clientY); });
+      d.addEventListener("pointerup", function(e){ if(e.pointerType === "touch") return; var wasT = !!t; cancel(); if(wasT && !moved && !fired){ fired = true; bpSpotOpen(layer, it); } });
+      d.addEventListener("pointerleave", function(e){ if(e.pointerType !== "touch") cancel(); });
+      d.addEventListener("contextmenu", function(e){ e.preventDefault(); });
+      d.addEventListener("click", function(e){ e.preventDefault(); e.stopPropagation(); });
+      pw.appendChild(d);
+    });
+  }
+  function bpSpotOpen(layer, it){
+    ivList = (it.photos || []).map(function(nm, i){ return { id: "bp:" + nm, t: it.label || "Position", url: layer.urls[nm] }; }).filter(function(f){ return f.url; });
+    if(!ivList.length) return;
+    ivIdx = 0;
+    try{ if(navigator.vibrate) navigator.vibrate(15); }catch(e){}
+    document.getElementById("imgView").hidden = false;
+    ivShow();
+  }
   function bpShowPdfJs(f, url){
     var seq = ++bpViewSeq;
     fvStage.innerHTML = '<p class="fv-msg">Bühnenplan wird angezeigt …</p>';
@@ -4274,6 +4331,11 @@
       if(!still()) return;
       return rs[0].getDocument({ data: new Uint8Array(rs[1]) }).promise.then(function(pdf){
         if(!still()) return;
+        return bpPhotoLayer(pdf).then(function(layer){ return [pdf, layer]; });
+      }).then(function(pl){
+        if(!pl || !still()) return;
+        var pdf = pl[0], layer = pl[1];
+        if(layer){ var nPos = 0; layer.pages.forEach(function(pg){ nPos += (pg.items || []).length; }); if(nPos) setTimeout(function(){ showToast("Fotos zu " + nPos + (nPos === 1 ? " Position" : " Positionen") + " – Gerät antippen", 3500); }, 300); }
         fvStage.innerHTML = "";
         var n = pdf.numPages;
         if(n > 1) document.getElementById("fvName").textContent = f.name + " · " + n + " Seiten";
@@ -4283,7 +4345,8 @@
         var chain = Promise.resolve();
         for(var i = 1; i <= n; i++) (function(num){
           var cv = document.createElement("canvas"); cv.className = "fv-page";
-          fvStage.appendChild(cv);
+          var pw = document.createElement("div"); pw.className = "fv-pw"; pw.appendChild(cv);
+          fvStage.appendChild(pw);
           chain = chain.then(function(){
             if(!still()) return;
             return pdf.getPage(num).then(function(page){
@@ -4293,7 +4356,9 @@
               var vp = page.getViewport({ scale: sc });
               cv.width = Math.floor(vp.width); cv.height = Math.floor(vp.height);
               cv.style.width = w + "px"; cv.style.height = Math.round(w * vp.height / vp.width) + "px";
-              return page.render({ canvasContext: cv.getContext("2d"), viewport: vp }).promise;
+              return page.render({ canvasContext: cv.getContext("2d"), viewport: vp }).promise.then(function(){
+                if(layer && still()) bpPhotoSpots(pw, layer, num - 1, w, Math.round(w * vp.height / vp.width));
+              });
             });
           });
         })(i);
@@ -4789,7 +4854,7 @@
     var ld = document.createElement("span"); ld.className = "iv-load"; ld.textContent = "Foto lädt …";
     st.insertBefore(ld, st.firstChild);
     var want = f.id;
-    fotoLoadFull(f.id).then(function(url){
+    (f.url ? Promise.resolve(f.url) : fotoLoadFull(f.id)).then(function(url){
       if(document.getElementById("imgView").hidden || !ivList[ivIdx] || ivList[ivIdx].id !== want) return;
       var img = document.createElement("img"); img.src = url; img.alt = f.t || "Foto";
       ld.remove(); st.insertBefore(img, st.firstChild);
@@ -4802,7 +4867,7 @@
   function ivDownload(){
     var f = ivList[ivIdx]; if(!f) return;
     var nm = ivFileName(f, ivIdx);
-    fotoLoadFull(f.id).then(function(url){ return fetch(url); }).then(function(r){ return r.blob(); })
+    (f.url ? Promise.resolve(f.url) : fotoLoadFull(f.id)).then(function(url){ return fetch(url); }).then(function(r){ return r.blob(); })
       .then(function(b){ return saveFile(nm, b); })
       .then(function(){ showToast("„" + nm + "“ heruntergeladen", 2400); })
       .catch(function(){ showToast("Herunterladen fehlgeschlagen (Verbindung prüfen)", 4500, true); });
@@ -4810,7 +4875,7 @@
   function ivOpenTab(){
     var f = ivList[ivIdx]; if(!f) return;
     var w = null;
-    if(fotoFull[f.id]){ w = window.open(fotoFull[f.id], "_blank"); if(!w) showToast("Neuer Tab wurde vom Browser blockiert", 3500, true); return; }
+    if(f.url || fotoFull[f.id]){ w = window.open(f.url || fotoFull[f.id], "_blank"); if(!w) showToast("Neuer Tab wurde vom Browser blockiert", 3500, true); return; }
     try{ w = window.open("", "_blank"); }catch(e){}
     fotoLoadFull(f.id).then(function(url){ if(w) w.location.href = url; else showToast("Neuer Tab wurde vom Browser blockiert", 3500, true); })
       .catch(function(){ try{ if(w) w.close(); }catch(e){} showToast("Foto nicht gefunden", 3500, true); });
@@ -4892,7 +4957,7 @@
   }
   // ================= Dokumente (DOC) – Tonregie und Technik =================
   // Pro Produktion und Bereich eine eigene Liste (prod.docs = { tonregie: { <id>: {n,k,s,ts,o} }, technik: {…} }), höchstens 15 Dateien.
-  // PDF bis 5 MB unverändert; Bilder/Screenshots wie die Fotos verkleinert (1920 px, ≤ 1 MB, dazu Vorschaubild <id>_t).
+  // PDF bis 7 MB unverändert; Bilder/Screenshots wie die Fotos verkleinert (1920 px, ≤ 1 MB, dazu Vorschaubild <id>_t).
   // Dateien liegen wie BP und Fotos unter ablaufplan/files/<id>. Ansehen in der App (PDF wie BP, Bilder im Vollbild), nicht im Druck.
   var DOC_AREAS = { tonregie: "Tonregie", technik: "Technik" }, DOC_MAX = 15;
   var DOC_PDF_SVG = '<span class="doc-pdf">PDF</span>';
@@ -5022,7 +5087,7 @@
         }).catch(function(){ failed++; }).then(function(){ docBusy--; docRefresh(); });
       });
     }, Promise.resolve()).then(function(){
-      if(big.length) showToast(big.length + (big.length === 1 ? " PDF" : " PDFs") + " zu gross (max. 5 MB) – nicht übernommen", 4500, true);
+      if(big.length) showToast(big.length + (big.length === 1 ? " PDF" : " PDFs") + " zu gross (max. 7 MB) – nicht übernommen", 4500, true);
       else if(failed) showToast(failed + (failed === 1 ? " Datei" : " Dateien") + " nicht gespeichert (Format oder Verbindung prüfen)", 4500, true);
       else if(skipped) showToast("Maximal " + DOC_MAX + " Dateien – " + skipped + " nicht übernommen", 4500, true);
       else if(done) showToast(done === 1 ? "Datei gespeichert" : done + " Dateien gespeichert", 2200);
@@ -6581,14 +6646,11 @@
     renderArtPicker();
   });
 
-  // Zurück zum Spielplan: Pfeil und Schriftzug „ABLAUFPLAN“ – Tab schliessen (wenn aus dem Spielplan geöffnet),
-  // sonst zur Spielplan-Web-App (feste Adresse, funktioniert auch in der Standalone-Datei)
+  // Zurück zum Spielplan: Pfeil und Schriftzug „ABLAUFPLAN“ öffnen die Spielplan-Web-App im selben Tab
+  // (seit v230 kein window.close() mehr: Android-Chrome sprang danach in einen beliebigen anderen Tab, z. B. eine alte Download-Datei)
   var SPIELPLAN_URL = "https://raphcoda.github.io/spielplan_web-app/";
   (function(){
-    function back(){
-      try { window.close(); } catch(e) {}
-      setTimeout(function(){ if(!window.closed) location.href = SPIELPLAN_URL; }, 200);
-    }
+    function back(){ location.href = SPIELPLAN_URL; }
     ["backBtn", "appTitle"].forEach(function(id){ var el = document.getElementById(id); if(el) el.addEventListener("click", back); });
   })();
 
