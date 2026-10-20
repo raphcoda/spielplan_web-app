@@ -1504,11 +1504,22 @@
   .fv-pw{ position:relative; width:max-content; margin:0 auto 8px; -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; }
   .fv-stage.pdf .fv-pw .fv-page{ margin:0; }
   .fv-spot{ position:absolute; border-radius:8px; cursor:pointer; -webkit-touch-callout:none; -webkit-user-select:none; user-select:none; -webkit-tap-highlight-color:transparent; }
-  .fv-whole, .iv-back{ position:absolute; top:calc(12px + env(safe-area-inset-top, 0px)); right:12px; z-index:3; font:inherit; font-size:16px; font-weight:800;
+  .fv-whole, .iv-back{ position:absolute; left:0; right:0; margin:0 auto; width:max-content; bottom:calc(66px + env(safe-area-inset-bottom, 0px)); z-index:3;   /* unten mittig über der Leiste (seit v237) */ font:inherit; font-size:16px; font-weight:800;
     padding:11px 18px; border:none; border-radius:12px; background:var(--ka); color:#0b1414; box-shadow:0 4px 18px rgba(0,0,0,.55); cursor:pointer; -webkit-tap-highlight-color:transparent; }
   .fv-whole[hidden]{ display:none; }
+  .fv-stage.pdf.desk .fv-pw{ cursor:default; }
+  .fv-close-big{ display:none; }
+  /* Desktop (seit v239): Schliessen (Plan) und Zurück (Foto) unten rechts, gross, schwarzer Rahmen */
+  .file-view.desk .fv-close-big, .fv-close-big{ font:inherit; }
+  .file-view.desk .fv-close-big{ display:block; position:absolute; right:24px; bottom:calc(64px + env(safe-area-inset-bottom, 0px)); z-index:3; }
+  .file-view.desk .fv-close-big{ font-size:19px; font-weight:800; padding:14px 26px; border:3px solid #000; border-radius:14px;
+    background:var(--ka); color:#0b1414; box-shadow:0 6px 22px rgba(0,0,0,.5); cursor:pointer; }
+  @media (hover:hover) and (pointer:fine){
+    .iv-back{ left:auto; right:24px; margin:0; bottom:calc(72px + env(safe-area-inset-bottom, 0px)); font-size:19px; padding:14px 26px; border:3px solid #000; border-radius:14px; }
+  }
   .fv-stage.pdf:not(.zoomed) .fv-pw{ cursor:zoom-in; }
   .fv-stage.pdf.zoomed .fv-inner{ width:max-content; padding:50vh 50vw; }   /* Rand im Zoom: auch Geräte am Planrand kommen genau in die Mitte */
+  @media (hover:hover) and (pointer:fine){ .fv-spot:hover{ background:rgba(26,111,184,.14); box-shadow:0 0 0 2px rgba(26,111,184,.6); } }   /* Desktop: Gerät unter der Maus sichtbar */
   .fv-spot.hold{ background:rgba(26,111,184,.18); box-shadow:0 0 0 2px rgba(26,111,184,.7); transition:background .45s; }
   .fv-msg{ color:#888; font-size:14px; margin:40px 0; text-align:center; }
   .fv-stage iframe{ width:100%; height:100%; border:0; background:#fff; display:block; }
@@ -2060,6 +2071,7 @@
     <li>Mehrere Pläne: BP zeigt die Liste, im Vollbild mit ‹ › zum nächsten Plan blättern.</li>
     <li><b>Handy:</b> Der Knopf BP erscheint im Bereich Bühne nur, wenn ein Bühnenplan hochgeladen wurde. Antippen zeigt den Plan in der App, „Speichern“ lädt ihn herunter.</li>
     <li><b>Zoom und Fotos (Handy):</b> In den Plan tippen = Zoom um die getippte Stelle, Button „Ganzer Plan“ = wieder Gesamtansicht. Im Zoom ein Gerät antippen = für das Gerät hinterlegtes Foto anzeigen, Button „Zurück“ = zum Plan.</li>
+    <li><b>Fotos (Desktop):</b> Plan geht in Fensterhöhe auf, Klick aufs Gerät = für das Gerät hinterlegtes Foto anzeigen, Button „Zurück“ = zum Plan.</li>
   </ul>
   <h4>Fotos (Kamera-Symbol, Bühne)</h4>
   <ul>
@@ -2080,7 +2092,7 @@
     <li>Zum Entsperren braucht es den vierstelligen Code und das Namenskürzel.</li>
   </ul>
   <button type="button" class="info-close" id="infoClose">Schliessen</button>
-  <p class="info-ver" id="infoVer">v_ton_ap_gh_a_201026_1452</p>
+  <p class="info-ver" id="infoVer">v_ton_ap_gh_a_201026_1525</p>
 </div></div>
 <div id="printAsk" hidden><div class="info-panel print-ask" role="dialog" aria-modal="true" aria-labelledby="printAskTitle">
   <h3 id="printAskTitle">Drucken</h3>
@@ -2088,7 +2100,7 @@
   <button type="button" class="pa-btn" id="paArt">Bühne</button>
   <button type="button" class="pa-btn" id="paAll">Alles</button>
 </div></div>
-<div class="file-view" id="fileView" hidden><button type="button" class="fv-whole" id="fvWhole" hidden>Ganzer Plan</button><div class="fv-stage" id="fvStage"></div><div class="fv-bar"><span id="fvName"></span><span class="fv-nav" id="fvNav" hidden><button type="button" id="fvPrev" aria-label="Vorheriger Plan">‹</button><b id="fvPos"></b><button type="button" id="fvNext" aria-label="Nächster Plan">›</button></span><a id="fvSave" href="#">Speichern</a><button type="button" id="fvClose">Schliessen</button></div></div>
+<div class="file-view" id="fileView" hidden><button type="button" class="fv-whole" id="fvWhole" hidden>Ganzer Plan</button><button type="button" class="fv-close-big" id="fvCloseBig">Schliessen</button><div class="fv-stage" id="fvStage"></div><div class="fv-bar"><span id="fvName"></span><span class="fv-nav" id="fvNav" hidden><button type="button" id="fvPrev" aria-label="Vorheriger Plan">‹</button><b id="fvPos"></b><button type="button" id="fvNext" aria-label="Nächster Plan">›</button></span><a id="fvSave" href="#">Speichern</a><button type="button" id="fvClose">Schliessen</button></div></div>
 <input type="file" id="bpFile" accept="application/pdf,.pdf" hidden>
 <input type="file" id="fotoCam" class="foto-file" accept="image/*" capture="environment">
 <input type="file" id="fotoPick" class="foto-file" accept="image/*" multiple>
@@ -4237,7 +4249,17 @@
     var url = bpUrls[f.id];
     if(!url) return;
     setTimeout(function(){ bpNavUpdate(f); }, 0);
-    if(canEmbedPdf){
+    // Desktop (seit v239): alle Pläne in der App-Ansicht, Seite füllt die Fensterhöhe, Klick aufs Gerät = Fotos;
+    // nur wenn pdf.js nicht lädt, wie früher im PDF-Betrachter des Browsers
+    if(canEmbedPdf){ bpShowPdfJs(f, url, true); return; }
+    // Handy/Tablet: in der App anzeigen (pdf.js, wie die Fotos – nichts landet im Download-Ordner);
+    // klappt das nicht (kein Netz für pdf.js, defekte Datei), wie früher an den PDF-Betrachter des Geräts übergeben
+    bpShowPdfJs(f, url);
+  }
+  function bpShowEmbed(f, url){
+    bpViewSeq++;
+    bpZ = 1; bpPages = []; document.getElementById("fvWhole").hidden = true; fvStage.classList.remove("zoomed", "pdf", "desk"); fileView.classList.add("desk");
+    {
       // Desktop: im Vollbild in der App
       fvStage.innerHTML = "";
       var el = document.createElement("iframe");
@@ -4247,11 +4269,7 @@
       var sv = document.getElementById("fvSave");
       sv.href = url; sv.setAttribute("download", f.name);
       fileView.hidden = false;
-      return;
     }
-    // Handy/Tablet: in der App anzeigen (pdf.js, wie die Fotos – nichts landet im Download-Ordner);
-    // klappt das nicht (kein Netz für pdf.js, defekte Datei), wie früher an den PDF-Betrachter des Geräts übergeben
-    bpShowPdfJs(f, url);
   }
   var PDFJS_URL = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
   var PDFJS_WORKER = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
@@ -4295,7 +4313,7 @@
     }).catch(function(){ return null; });
   }
   // Zoom im Plan (seit v234/v235): Tipp in den Plan = 2,5-fach um die getippte Stelle; „Ganzer Plan“ = zurück; im Zoom Tipp auf Gerät = Fotos.
-  var BP_ZOOM = 2.5, bpZ = 1, bpPages = [];
+  var BP_ZOOM = 2.5, bpZ = 1, bpPages = [], bpDesk = false, bpZoomF = 2.5;   // Desktop: kein Zoom (Seite füllt die Höhe)
   function bpPlaceSpots(e){
     var cw = e.w * bpZ, ch = e.h * bpZ, min = 34; // Mindestgrösse zum Treffen mit dem Finger
     e.spots.forEach(function(sp){
@@ -4326,9 +4344,14 @@
   function bpPageTaps(e, layer){
     var down = null, moved = false;
     function at(x, y, target){
+      var spot0 = target && target.closest && target.closest(".fv-spot");
+      if(bpDesk){   // Desktop: kein Zoom, Klick aufs Gerät = Fotos
+        if(spot0 && layer){ var sp0 = e.spots.filter(function(q){ return q.d === spot0; })[0]; if(sp0) bpSpotOpen(layer, sp0.it); }
+        return;
+      }
       if(bpZ === 1){
         var r = e.pw.getBoundingClientRect();
-        bpSetZoom(BP_ZOOM, e, (x - r.left) / (e.w * bpZ), (y - r.top) / (e.h * bpZ));
+        bpSetZoom(bpZoomF, e, (x - r.left) / (e.w * bpZ), (y - r.top) / (e.h * bpZ));
         return;
       }
       var spot = target && target.closest && target.closest(".fv-spot");
@@ -4361,8 +4384,10 @@
     ivIdx = 0;
     ivOpen();
   }
-  function bpShowPdfJs(f, url){
+  function bpShowPdfJs(f, url, desk){
     var seq = ++bpViewSeq;
+    bpDesk = !!desk; bpZoomF = BP_ZOOM;
+    fvStage.classList.toggle("desk", bpDesk); fileView.classList.toggle("desk", bpDesk);
     bpZ = 1; bpPages = []; document.getElementById("fvWhole").hidden = true;
     fvStage.innerHTML = '<p class="fv-msg">Bühnenplan wird angezeigt …</p>';
     fvStage.classList.add("pdf");
@@ -4385,7 +4410,8 @@
         if(n > 1) document.getElementById("fvName").textContent = f.name + " · " + n + " Seiten";
         // Seiten nacheinander zeichnen: Breite = Bildschirmbreite, in 2,5-facher Schärfe (für den Zoom),
         // höchstens ca. 12 Mio. Pixel pro Seite (Grenze älterer iPhones)
-        var w = Math.max(200, fvStage.clientWidth - 16), pxr = Math.min(7.5, (window.devicePixelRatio || 1) * 2.5);
+        var w = Math.max(200, fvStage.clientWidth - 16), pxr = Math.min(7.5, (window.devicePixelRatio || 1) * (desk ? 1.5 : 2.5));
+        var hMax = Math.max(200, fvStage.clientHeight - 16);   // Desktop (seit v239): Seite füllt die Fensterhöhe, kein Klick-Zoom
         var chain = Promise.resolve();
         for(var i = 1; i <= n; i++) (function(num){
           var cv = document.createElement("canvas"); cv.className = "fv-page";
@@ -4394,12 +4420,13 @@
           chain = chain.then(function(){
             if(!still()) return;
             return pdf.getPage(num).then(function(page){
-              var vp1 = page.getViewport({ scale: 1 }), sc = (w * pxr) / vp1.width;
+              var vp1 = page.getViewport({ scale: 1 }), wp = desk ? Math.min(w, Math.round(hMax * vp1.width / vp1.height)) : w;
+              var sc = (wp * pxr) / vp1.width;
               var area = vp1.width * vp1.height * sc * sc;
               if(area > 12e6) sc = sc * Math.sqrt(12e6 / area);
               var vp = page.getViewport({ scale: sc });
               cv.width = Math.floor(vp.width); cv.height = Math.floor(vp.height);
-              var e = { pw: pw, cv: cv, w: w, h: Math.round(w * vp.height / vp.width), spots: [] };
+              var e = { pw: pw, cv: cv, w: wp, h: Math.round(wp * vp.height / vp.width), spots: [] };
               bpPages.push(e);
               cv.style.width = (e.w * bpZ) + "px"; cv.style.height = (e.h * bpZ) + "px";
               return page.render({ canvasContext: cv.getContext("2d"), viewport: vp }).promise.then(function(){
@@ -4414,6 +4441,7 @@
       });
     }).catch(function(){
       if(seq !== bpViewSeq) return;
+      if(desk){ bpShowEmbed(f, url); return; }
       bpPdfJsFailed = true; bpRefresh();
       closeFileView();
       bpHandOff(f, url);
@@ -4478,7 +4506,7 @@
     if(e.target.closest("#fvSave")) return;
     if(e.target.closest("#fvPrev")){ bpStep(-1); return; }
     if(e.target.closest("#fvNext")){ bpStep(1); return; }
-    if(e.target.closest("#fvClose") || (e.target === fvStage && !fvStage.classList.contains("pdf"))) closeFileView();
+    if(e.target.closest("#fvClose, #fvCloseBig") || (e.target === fvStage && !fvStage.classList.contains("pdf"))) closeFileView();
   });
   document.addEventListener("keydown", function(e){
     if(!fileView.hidden && bpViewList.length > 1 && !document.getElementById("fvNav").hidden && (e.key === "ArrowRight" || e.key === "ArrowLeft")){ e.preventDefault(); bpStep(e.key === "ArrowRight" ? 1 : -1); return; }
@@ -4893,19 +4921,20 @@
   var ivPushed = false, ivOpenedAt = 0;
   document.getElementById("ivStage").addEventListener("contextmenu", function(e){ if(Date.now() - ivOpenedAt < 1000) e.preventDefault(); });
   // Knöpfe bleiben beim Zwei-Finger-Zoom an ihrer Stelle und in normaler Grösse (seit v235):
-  // „Ganzer Plan“/„Zurück“ oben rechts, die Leisten mit „Schliessen“ unten – an den sichtbaren Ausschnitt geheftet
+  // „Ganzer Plan“/„Zurück“ unten mittig, die Leisten mit „Schliessen“ unten – an den sichtbaren Ausschnitt geheftet
   function vvPin(){
     var vv = window.visualViewport;
-    var tops = [document.getElementById("fvWhole"), document.getElementById("ivBack")];
+    var tops = [document.getElementById("fvWhole"), document.getElementById("ivBack"), document.getElementById("fvCloseBig")];
     var bars = [document.querySelector("#fileView .fv-bar"), document.querySelector("#imgView .iv-bar")];
     var reset = function(el){ if(el){ el.style.transform = ""; el.style.transformOrigin = ""; } };
     if(!vv || (vv.scale <= 1.01 && Math.abs(vv.offsetLeft) < 1 && Math.abs(vv.offsetTop) < 1)){ tops.forEach(reset); bars.forEach(reset); return; }
     var z = vv.scale, lw = document.documentElement.clientWidth, lh = window.innerHeight * z;   // innerHeight = sichtbare Höhe
     var fv = document.getElementById("fileView"); if(fv && !fv.hidden) lh = fv.clientHeight; else { var iv = document.getElementById("imgView"); if(iv && !iv.hidden) lh = iv.clientHeight; }
-    tops.forEach(function(el){
-      if(!el) return;
-      var tx = vv.offsetLeft + vv.width - 12 / z - (lw - 12), ty = vv.offsetTop + 12 / z - 12;
-      el.style.transformOrigin = "top right"; el.style.transform = "translate(" + tx + "px," + ty + "px) scale(" + (1 / z) + ")";
+    tops.forEach(function(el){   // Knöpfe behalten ihre Lage im sichtbaren Ausschnitt (unten mittig bzw. unten rechts)
+      if(!el || !el.offsetParent) return;
+      var cx = el.offsetLeft + el.offsetWidth / 2, by = el.offsetTop + el.offsetHeight;   // Lage ohne Zoom
+      var tx = vv.offsetLeft + cx / z - cx, ty = vv.offsetTop + by / z - by;
+      el.style.transformOrigin = "bottom center"; el.style.transform = "translate(" + tx + "px," + ty + "px) scale(" + (1 / z) + ")";
     });
     bars.forEach(function(el){
       if(!el) return;
