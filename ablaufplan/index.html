@@ -1498,6 +1498,8 @@
   .bp-acts span{ flex:1 1 auto; font-size:13px; color:var(--text); }
   .bp-acts button{ font:inherit; font-size:12px; font-weight:700; height:28px; padding:0 10px; border-radius:7px; border:1px solid var(--field-line); background:var(--surface-2); color:var(--text); cursor:pointer; }
   .bp-acts button.warn{ border-color:var(--warn); color:var(--warn); background:transparent; }
+  .bp-acts button[data-bp="view"]{ border-color:var(--ka); color:var(--ka); background:transparent; }   /* seit v246: Ansehen und Planname deutlicher (türkis) */
+  .bp-pop .bp-file .bp-name{ color:var(--ka); font-weight:700; }
   .file-view{ position:fixed; inset:0; z-index:70; background:#000; display:flex; flex-direction:column; }
   .file-view[hidden]{ display:none; }
   .fv-stage{ flex:1 1 auto; min-height:0; display:flex; align-items:center; justify-content:center; overflow:hidden; }
@@ -1517,6 +1519,14 @@
   /* Desktop (seit v240): grosser Knopf mittig in der unteren Leiste – Plan: „Schliessen“, rechts daneben „Speichern“;
      Foto: „Zurück“, rechts Zähler, ⤓, ↗, „Schliessen“ – Leisten-Schrift etwas grösser */
   .file-view.desk .fv-bar{ display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); column-gap:20px; font-size:16px; padding:10px 24px calc(10px + env(safe-area-inset-bottom, 0px)); }
+  /* seit v253: Name linksbündig am Fenster; „Schliessen“ bleibt mittig wie bisher, nur sehr lange Namen schieben die Knöpfe nach rechts (nie aus dem Fenster, sonst „…“) */
+  .file-view.desk .fv-bar{ display:flex; justify-content:flex-start; align-items:center; gap:20px; }
+  .file-view.desk .fv-bar #fvName{ order:1; flex:1 1 0; width:calc(100% - 600px); min-width:auto; overflow:visible; display:flex; align-items:baseline; white-space:nowrap; }
+  .file-view.desk .fv-bar #fvName .fvn-n{ flex:0 1 auto; min-width:0; overflow:hidden; text-overflow:ellipsis; }
+  .file-view.desk .fv-bar #fvName .fvn-p{ flex:0 0 auto; white-space:pre; }
+  .file-view.desk .fv-bar #fvClose{ order:2; flex:0 0 auto; }
+  .file-view.desk .fv-bar .fv-acts{ order:3; flex:1 1 0; min-width:max-content; }
+  .file-view.desk .fv-bar .fvn-p::before{ content:" · "; }
   .file-view.desk .fv-bar #fvName{ grid-column:1; grid-row:1; }
   .file-view.desk .fv-bar #fvClose{ grid-column:2; grid-row:1; min-width:148px; }   /* gleich breit wie „Zurück“ beim Foto */
   .fv-acts{ display:contents; }   /* Handy: „Speichern“ als Text wie bisher */
@@ -1525,6 +1535,11 @@
   /* Desktop: Herunterladen (fetter Pfeil) und Drucken als Symbol-Knöpfe, etwas kleiner als „Schliessen“ */
   .file-view.desk .fv-bar .fv-t{ display:none; }
   .fv-bar .fv-zb{ display:none; }
+  .file-view.desk.canprint:not(.multipage) .fv-bar .fv-pg{ display:none !important; }   /* Blättern nur bei mehreren Seiten oder Plänen (seit v253) */
+  .file-view.desk.canprint .fv-bar .fv-nav{ display:none !important; }   /* kleine Plan-Navigation ersetzt durch ‹ › */
+  /* Dateiname (+ Seite) unten links türkis und etwas grösser – Handy und Desktop (seit v253) */
+  .file-view .fv-bar #fvName{ color:var(--ka); font-weight:700; font-size:18px; }
+  .file-view .fv-bar #fvName span{ overflow:visible; }   /* so gross wie die Schrift auf „Schliessen“ */
   .file-view.desk.canprint .fv-bar .fv-zb:disabled{ opacity:.35; cursor:default; }
   .fv-stage.pdf.desk.zoomed{ cursor:grab; } .fv-stage.pdf.desk.zoomed.fv-drag{ cursor:grabbing; }
   .file-view.desk .fv-bar #fvSave, .file-view.desk.canprint .fv-bar #fvPrint, .file-view.desk.canprint .fv-bar .fv-zb{ display:flex; align-items:center; justify-content:center; width:48px; height:48px; padding:0;
@@ -1551,6 +1566,35 @@
     #imgView .iv-bar .iv-ico .fv-i{ display:block; width:28px; height:28px; }
   }
   .fv-stage.pdf:not(.zoomed):not(.desk) .fv-pw{ cursor:zoom-in; }
+  /* Handy/Tablet (seit v247): Leisten wie am Desktop – oben Dateiname/Beschriftung, darunter mittig gross „Schliessen“ bzw. „Zurück“
+     und daneben Herunterladen als Symbol-Knopf; kein zweites Schliessen, kein Text „Speichern“ */
+  /* seit v253: Dateiname · Seite n von m mittig über den Knöpfen; lange Namen umbrechen gleichmässig mittig */
+  .file-view:not(.desk) .fv-bar{ display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:8px 12px; padding:8px 14px calc(10px + env(safe-area-inset-bottom, 0px)); }
+  .file-view:not(.desk) .fv-bar #fvName{ order:0; flex:1 1 100%; min-width:0; text-align:center; font-size:17px; line-height:1.25; white-space:normal; word-break:break-word; }
+  .file-view:not(.desk) .fv-bar .fvn-p::before{ content:" · "; }
+  .file-view:not(.desk) .fv-bar .fvn-p{ white-space:nowrap; }
+  .file-view:not(.desk) .fv-bar #fvName .fvn-n{ white-space:normal; overflow-wrap:anywhere; }
+  .file-view:not(.desk) .fv-bar #fvClose{ flex:0 0 auto; min-width:0; min-width:150px; height:50px; font-size:18px; font-weight:800; padding:0 22px; border:3px solid #000; border-radius:13px;
+    background:var(--ka); color:#0b1414; box-shadow:0 4px 16px rgba(0,0,0,.45); }
+  .file-view:not(.desk) .fv-bar .fv-t{ display:none; }
+  .file-view:not(.desk) .fv-bar #fvClose{ order:1; } .file-view:not(.desk) .fv-bar .fv-nav{ order:3; }
+  .file-view:not(.desk) .fv-bar #fvSave{ order:2; flex:0 0 auto; display:flex; align-items:center; justify-content:center; width:50px; height:50px; padding:0; border-radius:12px; background:#1f3533; color:var(--ka); }
+  .file-view:not(.desk) .fv-bar #fvSave .fv-i{ display:block; width:28px; height:28px; }
+  /* Handy: ‹ › wie am Desktop, wenn mehrere Seiten oder Pläne (seit v253); alte kleine Plan-Navigation dann weg */
+  .file-view:not(.desk).multipage .fv-bar .fv-pg{ order:4; flex:0 0 auto; display:flex; align-items:center; justify-content:center; width:50px; height:50px; padding:0; border-radius:12px; background:#1f3533; color:var(--ka); }
+  .file-view:not(.desk).multipage .fv-bar .fv-pg .fv-i{ display:block; width:28px; height:28px; }
+  .file-view:not(.desk).multipage .fv-bar .fv-pg:disabled{ opacity:.35; }
+  .file-view:not(.desk).multipage .fv-bar .fv-nav{ display:none !important; }
+  .file-view:not(.desk) .fv-whole{ bottom:calc(122px + env(safe-area-inset-bottom, 0px)); }
+  @media not all and (hover:hover) and (pointer:fine){
+    #imgView .iv-bar{ flex-wrap:wrap; justify-content:center; gap:8px 12px; padding:8px 14px calc(10px + env(safe-area-inset-bottom, 0px)); }
+    #imgView .iv-bar .iv-cap{ flex:1 1 calc(100% - 70px); font-size:14px; }
+    #imgView .iv-bar .iv-n{ order:1; }
+    #imgView .iv-bar .iv-back{ order:2; position:static; margin:0; width:auto; min-width:150px; height:50px; padding:0 22px; font-size:18px; border:3px solid #000; border-radius:13px; box-shadow:0 4px 16px rgba(0,0,0,.45); }
+    #imgView .iv-bar #ivDl{ order:3; display:flex; align-items:center; justify-content:center; width:50px; height:50px; padding:0; border-radius:12px; background:#1f3533; color:var(--ka); }
+    #imgView .iv-bar #ivDl .iv-t, #imgView .iv-bar #ivClose{ display:none; }
+    #imgView .iv-bar #ivDl .fv-i{ display:block; width:28px; height:28px; }
+  }
   .fv-stage.pdf.zoomed .fv-inner{ width:max-content; padding:50vh 50vw; }   /* Rand im Zoom: auch Geräte am Planrand kommen genau in die Mitte */
   @media (hover:hover) and (pointer:fine){ .fv-spot:hover{ background:rgba(26,111,184,.14); box-shadow:0 0 0 2px rgba(26,111,184,.6); } }   /* Desktop: Gerät unter der Maus sichtbar */
   .fv-spot.hold{ background:rgba(26,111,184,.18); box-shadow:0 0 0 2px rgba(26,111,184,.7); transition:background .45s; }
@@ -1865,10 +1909,14 @@
     #prodLockBtn{ order:2; }
     header.top .walk-lane{ order:3; }
     #exportAllBtn{ order:4; }
-    #infoBtn{ order:4; width:28px; margin-right:7px; }   /* i · Archiv · Drucker: sichtbare Abstände je ca. 25px wie Drucker → Lupe */
+    /* i · Download (Doku) · Drucker · Lupe: gleich breit, gleiche Abstände (seit v252) */
+    #infoBtn, #docuBtn, #printBtn, #searchBtn{ width:28px; margin-right:14px; }
+    #searchBtn{ margin-right:0; }
+    #infoBtn{ order:4; }
     #archBtn{ order:5; margin-right:6px; }
     #archBtn.active{ color:var(--text); }
-    #printBtn{ order:6; margin-right:6px; }
+    #docuBtn{ order:5; }
+    #printBtn{ order:6; }
     #searchBtn{ order:7; }
     header.top .search-row{ order:8; flex:1 1 100%; }
     .deskbtn{ display:flex; }
@@ -2070,13 +2118,14 @@
 </g></svg></span></span></span><span class="eq-lane-eq" aria-hidden="true"><span class="eqb"><i></i><s></s></span><span class="eqb"><i></i><s></s></span><span class="eqb"><i></i><s></s></span><span class="eqb"><i></i><s></s></span><span class="eqb"><i></i><s></s></span><span class="eqb"><i></i><s></s></span></span><svg class="hs-lane-hs" viewBox="0 0 30 18" aria-hidden="true"><path class="hs-st" d="M4 9 L1.5 1M26 9 L28.5 1"></path><rect class="hs-fl" x="1" y="9" width="28" height="9" rx="1.5"></rect><rect class="rx-seg rx-s1" x="4" y="12" width="2.4" height="3" rx=".4"></rect><rect class="rx-seg rx-s3" x="10.6" y="12" width="2.4" height="3" rx=".4"></rect><rect class="rx-seg rx-s5" x="17.2" y="12" width="2.4" height="3" rx=".4"></rect><circle class="rx-knob" cx="24" cy="13.5" r="1.8"></circle></svg></span>
     <button class="exportbtn deskbtn" id="exportAllBtn" aria-label="Gesamtexport als Excel" title="Gesamtexport (Bühne, Tonregie, Technik) als Excel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="11" rx="1.5"/><path d="M3.5 7.5h17M9.5 3.5v11M15 3.5v11"/><path d="M12 15.5v5.5M9 18.5l3 3 3-3"/></svg></button>
     <button class="exportbtn deskbtn" id="printBtn" aria-label="Alles drucken" title="Alles drucken (Bühne, Tonregie, Technik)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.5 8.5V4h9v4.5"/><path d="M7.5 17H5a1.5 1.5 0 0 1-1.5-1.5v-5.5A1.5 1.5 0 0 1 5 8.5h14a1.5 1.5 0 0 1 1.5 1.5v5.5A1.5 1.5 0 0 1 19 17h-2.5"/><path d="M7.5 14h9v6h-9z"/></svg></button>
+    <button class="exportbtn deskbtn" id="docuBtn" aria-label="Doku herunterladen" title="Doku herunterladen (ZIP: Gesamtablaufplan als PDF, Bühnenpläne, Fotos)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11"/><path d="M7 10.5 12 15.5l5-5"/><path d="M5 20h14"/></svg></button>
     <button class="exportbtn searchbtn" id="searchBtn" aria-label="Suchen" title="Suchen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L20 20"/></svg></button>
     <button class="exportbtn deskbtn" id="archBtn" aria-label="Archiv" title="Archivierte Produktionen" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="4" rx="1"/><path d="M5 8.5v10a1.5 1.5 0 0 0 1.5 1.5h11a1.5 1.5 0 0 0 1.5-1.5v-10"/><path d="M10 12.5h4"/></svg></button>
     <div class="arch-pop" id="archPop" hidden></div>
     <button class="exportbtn infobtn" id="infoBtn" aria-label="Kurzinfo" title="Kurzinfo"><span aria-hidden="true">i</span></button>
     <button class="exportbtn mobbtn" id="printArtBtn" aria-label="Drucken" title="Drucken"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.5 8.5V4h9v4.5"/><path d="M7.5 17H5a1.5 1.5 0 0 1-1.5-1.5v-5.5A1.5 1.5 0 0 1 5 8.5h14a1.5 1.5 0 0 1 1.5 1.5v5.5A1.5 1.5 0 0 1 19 17h-2.5"/><path d="M7.5 14h9v6h-9z"/></svg></button>
     <button class="exportbtn mobbtn menubtn" id="mobMenuBtn" aria-label="Menü" title="Menü" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
-    <div class="mob-menu" id="mobMenu" hidden><button type="button" data-mm="print"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.5 8.5V4h9v4.5"/><path d="M7.5 17H5a1.5 1.5 0 0 1-1.5-1.5v-5.5A1.5 1.5 0 0 1 5 8.5h14a1.5 1.5 0 0 1 1.5 1.5v5.5A1.5 1.5 0 0 1 19 17h-2.5"/><path d="M7.5 14h9v6h-9z"/></svg>Drucken</button><button type="button" data-mm="info"><span class="mm-i" aria-hidden="true">i</span>Über</button></div>
+    <div class="mob-menu" id="mobMenu" hidden><button type="button" data-mm="print"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.5 8.5V4h9v4.5"/><path d="M7.5 17H5a1.5 1.5 0 0 1-1.5-1.5v-5.5A1.5 1.5 0 0 1 5 8.5h14a1.5 1.5 0 0 1 1.5 1.5v5.5A1.5 1.5 0 0 1 19 17h-2.5"/><path d="M7.5 14h9v6h-9z"/></svg>Drucken</button><button type="button" data-mm="info"><span class="mm-i" aria-hidden="true">i</span>Über</button><button type="button" data-mm="docu"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11"/><path d="M7 10.5 12 15.5l5-5"/><path d="M5 20h14"/></svg>Download Doku</button></div>
     <button class="exportbtn" id="numbersBtn" aria-label="Tabelle für Numbers exportieren" title="Tabelle für Numbers exportieren (Bühne, Tonregie, Technik)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="11" rx="1.5"/><path d="M3.5 7.5h17M9.5 3.5v11M15 3.5v11"/><path d="M12 15.5v5.5M9 18.5l3 3 3-3"/></svg></button>
     <button class="exportbtn" id="exportBtn" aria-label="Ablauf als Excel exportieren" title="Als Excel exportieren"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 17v3h16v-3"/></svg></button>
     <button class="addbtn" id="addBtn" aria-label="Neuer Eintrag">+</button>
@@ -2105,7 +2154,7 @@
   <ul>
     <li><b>Desktop, obere Zeile:</b> druckt den Gesamtablaufplan mit Bühne, Tonregie und Technik.</li>
     <li><b>Desktop, Drucker im Bereich Bühne/Tonregie/Technik:</b> druckt nur diesen Bereich.</li>
-    <li><b>Handy:</b> Menü ☰ → „Drucken“, fragt vor dem Druck „Bereich oder Alles“. Diese Kurzinfo steht dort unter „Über“.</li>
+    <li><b>Handy:</b> Menü ☰ → „Drucken“, fragt vor dem Druck „Bereich oder Alles“.</li>
     <li>Das PDF sollte zur Produktionsdokumentation auf dem Server abgelegt werden.</li>
   </ul>
   <h4>Bühnenplan (BP)</h4>
@@ -2120,7 +2169,6 @@
   <ul>
     <li>Grau = noch keine Fotos, grün = Fotos vorhanden. Bis zu 10 Fotos pro Produktion, jedes mit kurzer Beschriftung.</li>
     <li><b>Handy:</b> Antippen öffnet die Fotoliste mit „Foto machen“ und „Aus Gallery“. <b>Desktop:</b> Fotos auf das Kamera-Symbol ziehen oder anklicken. Der Dateiname wird als Beschriftung übernommen.</li>
-    <li>Im Vollbild: ⤓ lädt nur dieses Foto herunter, ↗ öffnet es in einem neuen Tab (dort zoomen).</li>
     <li>„Alle herunterladen“ speichert alle Fotos als ZIP – zur Ablage auf dem Server.</li>
   </ul>
   <h4>Dokumente (DOC, Tonregie und Technik)</h4>
@@ -2134,7 +2182,12 @@
     <li>Mit dem Schloss neben der Produktion wird die ganze Produktion gesperrt.</li>
     <li>Zum Entsperren braucht es den vierstelligen Code und das Namenskürzel.</li>
   </ul>
-  <p class="info-ver" id="infoVer">v_ton_ap_gh_a_201026_1946</p>
+  <h4>Gesamtdokumentation</h4>
+  <ul>
+    <li>Lädt die Produktion als ZIP herunter: Gesamtablaufplan (Bühne, Tonregie, Technik) als PDF, Bühnenpläne und Fotos – entpackt ein Ordner „Doku_Produktion_Datum“.</li>
+    <li><b>Desktop:</b> Download-Knopf oben rechts. <b>Handy:</b> Menü ☰ → „Download Doku“.</li>
+  </ul>
+  <p class="info-ver" id="infoVer">v_ton_ap_gh_a_211026_1311</p>
 </div></div>
 <div id="printAsk" hidden><div class="info-panel print-ask" role="dialog" aria-modal="true" aria-labelledby="printAskTitle">
   <h3 id="printAskTitle">Drucken</h3>
@@ -2142,7 +2195,7 @@
   <button type="button" class="pa-btn" id="paArt">Bühne</button>
   <button type="button" class="pa-btn" id="paAll">Alles</button>
 </div></div>
-<div class="file-view" id="fileView" hidden><button type="button" class="fv-whole" id="fvWhole" hidden>Ganzer Plan</button><div class="fv-stage" id="fvStage"></div><div class="fv-bar"><span id="fvName"></span><span class="fv-nav" id="fvNav" hidden><button type="button" id="fvPrev" aria-label="Vorheriger Plan">‹</button><b id="fvPos"></b><button type="button" id="fvNext" aria-label="Nächster Plan">›</button></span><span class="fv-acts"><a id="fvSave" href="#" title="Herunterladen" aria-label="Herunterladen"><span class="fv-t">Speichern</span><svg class="fv-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5v12"/><path d="M6.5 10.5 12 16l5.5-5.5"/><path d="M5 20.5h14"/></svg></a><button type="button" id="fvPrint" title="Drucken" aria-label="Drucken"><svg class="fv-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.5 8.5V4h9v4.5"/><path d="M7.5 17H5a1.5 1.5 0 0 1-1.5-1.5v-5.5A1.5 1.5 0 0 1 5 8.5h14a1.5 1.5 0 0 1 1.5 1.5v5.5A1.5 1.5 0 0 1 19 17h-2.5"/><path d="M7.5 14h9v6h-9z"/></svg></button><button type="button" class="fv-zb" id="fvZoomOut" title="Verkleinern" aria-label="Verkleinern"><svg class="fv-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"/></svg></button><button type="button" class="fv-zb" id="fvZoomIn" title="Vergrössern" aria-label="Vergrössern"><svg class="fv-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button></span><button type="button" id="fvClose">Schliessen</button></div></div>
+<div class="file-view" id="fileView" hidden><button type="button" class="fv-whole" id="fvWhole" hidden>Ganzer Plan</button><div class="fv-stage" id="fvStage"></div><div class="fv-bar"><span id="fvName"></span><span class="fv-nav" id="fvNav" hidden><button type="button" id="fvPrev" aria-label="Vorheriger Plan">‹</button><b id="fvPos"></b><button type="button" id="fvNext" aria-label="Nächster Plan">›</button></span><span class="fv-acts"><a id="fvSave" href="#" title="Herunterladen" aria-label="Herunterladen"><span class="fv-t">Speichern</span><svg class="fv-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5v12"/><path d="M6.5 10.5 12 16l5.5-5.5"/><path d="M5 20.5h14"/></svg></a><button type="button" id="fvPrint" title="Drucken" aria-label="Drucken"><svg class="fv-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.5 8.5V4h9v4.5"/><path d="M7.5 17H5a1.5 1.5 0 0 1-1.5-1.5v-5.5A1.5 1.5 0 0 1 5 8.5h14a1.5 1.5 0 0 1 1.5 1.5v5.5A1.5 1.5 0 0 1 19 17h-2.5"/><path d="M7.5 14h9v6h-9z"/></svg></button><button type="button" class="fv-zb" id="fvZoomOut" title="Verkleinern" aria-label="Verkleinern"><svg class="fv-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"/></svg></button><button type="button" class="fv-zb" id="fvZoomIn" title="Vergrössern" aria-label="Vergrössern"><svg class="fv-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button><button type="button" class="fv-zb fv-pg" id="fvPgPrev" title="Vorherige Seite" aria-label="Vorherige Seite"><svg class="fv-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button><button type="button" class="fv-zb fv-pg" id="fvPgNext" title="Nächste Seite" aria-label="Nächste Seite"><svg class="fv-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button></span><button type="button" id="fvClose">Schliessen</button></div></div>
 <input type="file" id="bpFile" accept="application/pdf,.pdf" hidden>
 <input type="file" id="fotoCam" class="foto-file" accept="image/*" capture="environment">
 <input type="file" id="fotoPick" class="foto-file" accept="image/*" multiple>
@@ -4433,6 +4486,38 @@
   // ein Gerät muss nicht getroffen werden. Im Zoom öffnet ein Tipp auf ein Gerät dessen Fotos. Wischen/zwei Finger = kein Tipp.
   // Desktop (seit v244): − / + in der Leiste zoomt den Plan um die Bildschirmmitte (100–400 %), vergrösserter Plan mit der Maus ziehen
   var BP_DZ = [1, 1.5, 2, 3, 4], bpDzi = 0;
+  // Seiten blättern (Desktop, mehrseitige Pläne): Seite oben an den Fensterrand, Anzeige „n / m“
+  var bpPgForce = null, bpPgAt = 0;   // per ‹ › gewählte Seite (wenn sich nicht weiter scrollen lässt, z. B. zwei kurze Seiten am Handy)
+  function bpCurPage(){   // aktuelle Seite = letzte, deren Oberkante den oberen Fensterrand erreicht hat; ganz unten = letzte Seite
+    if(!bpPages.length) return 0;
+    if(bpPgForce != null && bpPgForce < bpPages.length) return bpPgForce;
+    var sr = fvStage.getBoundingClientRect(), best = 0;
+    if(fvStage.scrollTop > 0 && fvStage.scrollTop + fvStage.clientHeight >= fvStage.scrollHeight - 2) return bpPages.length - 1;
+    bpPages.forEach(function(p, i){ if(p.pw.getBoundingClientRect().top <= sr.top + 24) best = i; });
+    return best;
+  }
+  function fvLabel(name, pg){   /* Dateiname + darunter (Handy) bzw. daneben (Desktop) „Seite n von m“ (seit v253) */
+    var el = document.getElementById("fvName"); el.textContent = "";
+    var a = document.createElement("span"); a.className = "fvn-n"; a.textContent = name; el.appendChild(a);
+    if(pg){ var b = document.createElement("span"); b.className = "fvn-p"; b.textContent = pg; el.appendChild(b); }
+    el.title = name + (pg ? " · " + pg : ""); }
+  function bpPageUpd(){   // unten links: „Dateiname · Seite n von m“ – geht beim Blättern und Scrollen mit
+    if(!bpCurPdf || !bpPages.length) return;
+    var n = bpCurPdf.numPages, c = bpCurPage(), plans = bpViewList.length;
+    fvLabel(bpCurName, n > 1 ? "Seite " + (c + 1) + " von " + n : "");
+    document.getElementById("fvPgPrev").disabled = plans < 2 && c === 0;
+    document.getElementById("fvPgNext").disabled = plans < 2 && c >= n - 1;
+  }
+  function bpPageStep(d){   // über die letzte/erste Seite hinaus: nächster/voriger Plan (bei mehreren Plänen)
+    var c = bpCurPage(), n = bpCurPdf ? bpCurPdf.numPages : bpPages.length;
+    if((c + d < 0 || c + d > n - 1) && bpViewList.length > 1){ bpStep(d); return; }
+    var i = Math.max(0, Math.min(bpPages.length - 1, c + d)), p = bpPages[i]; if(!p) return;
+    var sr = fvStage.getBoundingClientRect(), pr = p.pw.getBoundingClientRect();
+    bpPgForce = i; bpPgAt = Date.now();
+    fvStage.scrollTop += pr.top - sr.top - 8;
+    bpPageUpd();
+  }
+  fvStage.addEventListener("scroll", function(){ if(Date.now() - bpPgAt > 400) bpPgForce = null; if(bpCurPdf) bpPageUpd(); }, { passive: true });   // eigenes Scrollen hebt die Wahl auf
   function bpDeskZoomBtns(){
     var o = document.getElementById("fvZoomOut"), n = document.getElementById("fvZoomIn");
     if(o) o.disabled = bpDzi === 0; if(n) n.disabled = bpDzi === BP_DZ.length - 1;
@@ -4500,8 +4585,8 @@
     var seq = ++bpViewSeq;
     bpDesk = !!desk; bpZoomF = BP_ZOOM;
     fvStage.classList.toggle("desk", bpDesk); fileView.classList.toggle("desk", bpDesk);
-    bpCurPdf = null; fileView.classList.remove("canprint"); bpDzi = 0; bpDeskZoomBtns();
-    bpZ = 1; bpPages = []; document.getElementById("fvWhole").hidden = true;
+    bpCurPdf = null; fileView.classList.remove("canprint", "multipage"); bpDzi = 0; bpDeskZoomBtns();
+    bpZ = 1; bpPages = []; bpPgForce = null; document.getElementById("fvWhole").hidden = true;
     fvStage.innerHTML = '<p class="fv-msg">Bühnenplan wird angezeigt …</p>';
     fvStage.classList.add("pdf");
     document.getElementById("fvName").textContent = f.name;
@@ -4521,7 +4606,9 @@
         fvStage.innerHTML = "";
         var inner = document.createElement("div"); inner.className = "fv-inner"; fvStage.appendChild(inner);
         var n = pdf.numPages;
-        if(n > 1) document.getElementById("fvName").textContent = f.name + " · " + n + " Seiten";
+        fileView.classList.toggle("multipage", n > 1 || bpViewList.length > 1);
+        bpCurName = f.name;
+        if(n > 1) fvLabel(f.name, "Seite 1 von " + n);
         // Seiten nacheinander zeichnen: Breite = Bildschirmbreite, in 2,5-facher Schärfe (für den Zoom),
         // höchstens ca. 12 Mio. Pixel pro Seite (Grenze älterer iPhones)
         var w = Math.max(200, fvStage.clientWidth - 16), pxr = Math.min(7.5, (window.devicePixelRatio || 1) * (desk ? 3 : 2.5));
@@ -4547,6 +4634,7 @@
                 if(!still()) return;
                 if(layer) bpPhotoSpots(e, layer, num - 1);
                 bpPageTaps(e, layer);
+                bpPageUpd();
               });
             });
           });
@@ -4622,6 +4710,8 @@
     if(e.target.closest("#fvNext")){ bpStep(1); return; }
     if(e.target.closest("#fvPrint")){ bpPrint(); return; }
     if(e.target.closest("#fvZoomIn")){ bpDeskZoom(1); return; }
+    if(e.target.closest("#fvPgPrev")){ bpPageStep(-1); return; }
+    if(e.target.closest("#fvPgNext")){ bpPageStep(1); return; }
     if(e.target.closest("#fvZoomOut")){ bpDeskZoom(-1); return; }
     if(e.target.closest("#fvClose") || (e.target === fvStage && !fvStage.classList.contains("pdf"))) closeFileView();
   });
@@ -6451,6 +6541,175 @@
     });
     return html + '</div></div>';
   }
+  // ---- Gesamtablaufplan als PDF ohne Druckdialog (seit v252, für die Doku-Mappe) ----
+  // Die Druckseite (Bühne · Tonregie · Technik, A4 quer) wird in einem unsichtbaren Rahmen aufgebaut, selbst auf ein Canvas gezeichnet
+  // (ca. 190 dpi, auf allen Geräten gleich) und spaltenweise auf A4-Seiten verteilt – geschnitten wird nur zwischen Einträgen,
+  // auf Folgeseiten wiederholt sich der Spaltenkopf. Die Seiten kommen als JPEG in eine schlichte PDF-Datei.
+  function ablaufPdf(){
+    var MM = 96 / 25.4, CW = Math.round(277 * MM), CH = Math.round(190 * MM), SC = 2;   // Inhalt 277 × 190 mm (A4 quer, 10 mm Rand)
+    var arts = ARTS.filter(function(a){ return a.ready; }).map(function(a){ return a.id; });
+    var css = 'html,body{margin:0;padding:0;background:#fff;color:#000;}' + PRINT_CSS;
+    var body = buildPrintHtml(arts);
+    return new Promise(function(resolve, reject){
+      var fr = document.createElement("iframe");
+      fr.setAttribute("aria-hidden", "true");
+      fr.style.cssText = "position:fixed;left:-20000px;top:0;width:" + CW + "px;height:" + CH + "px;border:0;visibility:hidden;";
+      document.body.appendChild(fr);
+      var done = function(err, val){ try{ fr.remove(); }catch(e){} if(err) reject(err); else resolve(val); };
+      var fd = fr.contentDocument;
+      fd.open(); fd.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><style>' + css + '</style></head><body>' + body + '</body></html>'); fd.close();
+      setTimeout(function(){
+        try{
+          var root = fd.body, H = Math.ceil(root.scrollHeight);
+          var top = function(el){ return el.getBoundingClientRect().top + fd.documentElement.scrollTop; };
+          var cols = Array.prototype.map.call(fd.querySelectorAll(".pv-col"), function(c){
+            var r = c.getBoundingClientRect(), th = c.querySelector("thead"), h2 = c.querySelector("h2");
+            var hdrTop = top(c), hdrBot = th ? top(th) + th.getBoundingClientRect().height : (h2 ? top(h2) + h2.getBoundingClientRect().height : hdrTop);
+            var cuts = Array.prototype.map.call(c.querySelectorAll("tbody, .pv-note, .pv-chg, .pv-empty, .pv-bv"), function(b){ return Math.ceil(top(b) + b.getBoundingClientRect().height); });
+            cuts.push(Math.ceil(top(c) + r.height));
+            cuts = cuts.filter(function(y){ return y > hdrBot; }).sort(function(a, b){ return a - b; });
+            return { x: Math.floor(r.left), w: Math.ceil(r.width), top: hdrTop, hdrBot: Math.ceil(hdrBot), end: Math.ceil(top(c) + r.height), cuts: cuts };
+          });
+          var headEnd = cols.length ? Math.min.apply(null, cols.map(function(c){ return c.top; })) : 0;
+          // Seite 1 bis zur Fusszeile, danach je Spalte: Kopf wiederholen + nächstes Stück
+          var pages = [];
+          cols.forEach(function(c){
+            var from = c.top, pg = 0;
+            while(from < c.end - 1){
+              var first = from === c.top, room = first ? CH : CH - (c.hdrBot - c.top);
+              var limit = first ? CH : from + room;
+              var cut = c.cuts.filter(function(y){ return y <= limit; }).pop();
+              if(!cut || cut <= from) cut = Math.min(c.end, limit);   // einzelner Eintrag länger als eine Seite: hart schneiden
+              (pages[pg] = pages[pg] || []).push({ c: c, from: first ? c.top : from, to: cut, head: !first });
+              from = cut; pg++;
+            }
+          });
+          if(!pages.length) pages = [[]];
+          // Druckseite selbst auf ein Canvas zeichnen (Hintergründe, Linien, Text an den gemessenen Stellen) – kein foreignObject,
+          // damit es auch auf dem iPhone (Safari sperrt sonst das Canvas) gleich herauskommt wie am Desktop
+          var big = document.createElement("canvas"); big.width = CW * SC; big.height = H * SC;
+          var bx = big.getContext("2d"); bx.fillStyle = "#fff"; bx.fillRect(0, 0, big.width, big.height);
+          drawDomToCanvas(fd, bx, SC);
+          var jobs = pages.map(function(parts, pi){
+            var cv = document.createElement("canvas"); cv.width = CW * SC; cv.height = CH * SC;
+            var cx = cv.getContext("2d"); cx.fillStyle = "#fff"; cx.fillRect(0, 0, cv.width, cv.height);
+            if(pi === 0 && headEnd > 0) cx.drawImage(big, 0, 0, CW * SC, headEnd * SC, 0, 0, CW * SC, headEnd * SC);
+            parts.forEach(function(pt){
+              var c = pt.c, y = 0;
+              if(pt.head){ var hh = c.hdrBot - c.top; cx.drawImage(big, c.x * SC, c.top * SC, c.w * SC, hh * SC, c.x * SC, 0, c.w * SC, hh * SC); y = hh; }
+              else y = pt.from;
+              var h = pt.to - pt.from;
+              if(h > 0) cx.drawImage(big, c.x * SC, pt.from * SC, c.w * SC, h * SC, c.x * SC, y * SC, c.w * SC, h * SC);
+            });
+            return new Promise(function(res, rej){ cv.toBlob(function(b){ if(!b){ rej(new Error("toBlob")); return; } b.arrayBuffer().then(function(ab){ res({ jpg: new Uint8Array(ab), w: cv.width, h: cv.height }); }, rej); }, "image/jpeg", 0.92); });
+          });
+          Promise.all(jobs).then(function(imgs){ done(null, pdfFromJpegs(imgs)); }).catch(function(e){ done(e); });
+        }catch(e){ done(e); }
+      }, 120);
+    });
+  }
+  // kleine „HTML → Canvas“-Zeichnung für die Druckseite: Hintergründe und Rahmenlinien aller Elemente, danach jedes Wort
+  // an der Stelle, an der der Browser es gesetzt hat (Schrift, Grösse, Farbe, Grossschreibung, Sperrung übernommen)
+  function drawDomToCanvas(doc, ctx, sc){
+    var win = doc.defaultView, oy = doc.documentElement.scrollTop || 0, ox = doc.documentElement.scrollLeft || 0;
+    var col = function(c){ var m = /rgba?\(([^)]+)\)/.exec(c || ""); if(!m) return null; var v = m[1].split(",").map(parseFloat); return (v.length > 3 && v[3] === 0) ? null : c; };
+    Array.prototype.forEach.call(doc.body.querySelectorAll("*"), function(el){
+      var cs = win.getComputedStyle(el); if(cs.display === "none" || cs.visibility === "hidden") return;
+      var r = el.getBoundingClientRect(); if(!r.width || !r.height) return;
+      var x = (r.left + ox) * sc, y = (r.top + oy) * sc, w = r.width * sc, h = r.height * sc;
+      var bg = col(cs.backgroundColor); if(bg){ ctx.fillStyle = bg; ctx.fillRect(x, y, w, h); }
+      [["Top", 0], ["Bottom", 1], ["Left", 2], ["Right", 3]].forEach(function(sd){
+        var bw = parseFloat(cs["border" + sd[0] + "Width"]) || 0, bs = cs["border" + sd[0] + "Style"], bc = col(cs["border" + sd[0] + "Color"]);
+        if(!bw || bs === "none" || !bc) return;
+        ctx.fillStyle = bc; var t = Math.max(1, bw * sc);
+        if(sd[1] === 0) ctx.fillRect(x, y, w, t); else if(sd[1] === 1) ctx.fillRect(x, y + h - t, w, t);
+        else if(sd[1] === 2) ctx.fillRect(x, y, t, h); else ctx.fillRect(x + w - t, y, t, h);
+      });
+    });
+    var tw = doc.createTreeWalker(doc.body, 4 /* Text */), node, rg = doc.createRange();
+    while((node = tw.nextNode())){
+      var txt = node.nodeValue; if(!txt || !/\S/.test(txt)) continue;
+      var pe = node.parentElement, cs = win.getComputedStyle(pe);
+      if(cs.display === "none" || cs.visibility === "hidden" || pe.closest("style, script")) continue;
+      ctx.font = cs.fontStyle + " " + cs.fontWeight + " " + (parseFloat(cs.fontSize) * sc) + "px " + cs.fontFamily;
+      ctx.fillStyle = cs.color; ctx.textBaseline = "alphabetic";
+      var up = cs.textTransform === "uppercase", spaced = cs.letterSpacing && cs.letterSpacing !== "normal" && parseFloat(cs.letterSpacing) !== 0;
+      var re = spaced ? /\S/g : /\S+/g, m;
+      while((m = re.exec(txt))){
+        rg.setStart(node, m.index); rg.setEnd(node, m.index + m[0].length);
+        var rs = rg.getClientRects(); if(!rs.length) continue;
+        var word = up ? m[0].toUpperCase() : m[0];
+        if(rs.length > 1 && !spaced){   // Wort über zwei Zeilen: Zeichen einzeln setzen
+          for(var k = 0; k < m[0].length; k++){
+            rg.setStart(node, m.index + k); rg.setEnd(node, m.index + k + 1);
+            var r1 = rg.getClientRects()[0]; if(!r1) continue;
+            var ch = up ? m[0][k].toUpperCase() : m[0][k], mt1 = ctx.measureText(ch), d1 = (mt1.fontBoundingBoxDescent != null ? mt1.fontBoundingBoxDescent : parseFloat(cs.fontSize) * 0.21 * sc);
+            ctx.fillText(ch, (r1.left + ox) * sc, (r1.bottom + oy) * sc - d1);
+          }
+          continue;
+        }
+        var r0 = rs[0], mt = ctx.measureText(word), d = (mt.fontBoundingBoxDescent != null ? mt.fontBoundingBoxDescent : parseFloat(cs.fontSize) * 0.21 * sc);
+        ctx.fillText(word, (r0.left + ox) * sc, (r0.bottom + oy) * sc - d);
+      }
+    }
+  }
+  // schlichte PDF-Datei: je Seite ein JPEG, A4 quer mit 10 mm Rand
+  function pdfFromJpegs(imgs){
+    var enc = new TextEncoder(), parts = [], offs = [], pos = 0;
+    var push = function(x){ var u = typeof x === "string" ? enc.encode(x) : x; parts.push(u); pos += u.length; };
+    var obj = function(n, str){ offs[n] = pos; push(n + " 0 obj\n" + str + "\nendobj\n"); };
+    var PW = 841.89, PH = 595.28, M = 28.35, n = imgs.length;
+    push("%PDF-1.4\n%âãÏÓ\n");
+    var kids = []; for(var i = 0; i < n; i++) kids.push((3 + i * 3) + " 0 R");
+    obj(1, "<< /Type /Catalog /Pages 2 0 R >>");
+    obj(2, "<< /Type /Pages /Count " + n + " /Kids [" + kids.join(" ") + "] >>");
+    imgs.forEach(function(im, i){
+      var pN = 3 + i * 3, cN = pN + 1, iN = pN + 2;
+      obj(pN, "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 " + PW + " " + PH + "] /Resources << /XObject << /Im" + i + " " + iN + " 0 R >> >> /Contents " + cN + " 0 R >>");
+      var cs = "q " + (PW - 2 * M).toFixed(2) + " 0 0 " + (PH - 2 * M).toFixed(2) + " " + M + " " + M + " cm /Im" + i + " Do Q";
+      obj(cN, "<< /Length " + cs.length + " >>\nstream\n" + cs + "\nendstream");
+      offs[iN] = pos;
+      push(iN + " 0 obj\n<< /Type /XObject /Subtype /Image /Width " + im.w + " /Height " + im.h + " /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length " + im.jpg.length + " >>\nstream\n");
+      push(im.jpg); push("\nendstream\nendobj\n");
+    });
+    var total = 3 + n * 3, xref = pos, x = "xref\n0 " + total + "\n0000000000 65535 f \n";
+    for(var k = 1; k < total; k++) x += String(offs[k]).padStart(10, "0") + " 00000 n \n";
+    push(x + "trailer\n<< /Size " + total + " /Root 1 0 R >>\nstartxref\n" + xref + "\n%%EOF");
+    return new Blob(parts, { type: "application/pdf" });
+  }
+  // ---- Doku-Mappe als ZIP (seit v252): entpackt genau ein Ordner „Doku_<Produktion>_<Datum>“ mit
+  // Gesamtablaufplan (PDF), allen Bühnenplänen und dem Ordner „Fotos“
+  function docuZip(){
+    var p = currentProd();
+    if(!p){ showToast("Erst eine Produktion wählen", 2500, true); return; }
+    if(editing) commitEdit(true);
+    var d = new Date(), day = d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate());
+    var safeP = String(p.name || "Produktion").replace(/[\\\/:*?"<>|]+/g, "").replace(/\s+/g, "_");
+    var base = "Doku_" + safeP + "_" + day, root = base + "/", entries = [], used = {};
+    var clean = function(t, max){ return String(t || "").replace(/[\\\/:*?"<>|\u0000-\u001f]+/g, " ").replace(/\s+/g, " ").trim().slice(0, max || 80); };
+    var add = function(name, data){ var n = name, k = 1; while(used[n]){ k++; n = name.replace(/(\.[a-z0-9]+)?$/i, "_" + k + "$1"); } used[n] = true; entries.push({ name: root + n, data: data }); };
+    showToast("Doku wird zusammengestellt …", 120000);
+    var jobs = [];
+    jobs.push(ablaufPdf().then(function(blob){ return blob.arrayBuffer(); }).then(function(ab){ add("Ablaufplan_" + safeP + "_" + day + ".pdf", new Uint8Array(ab)); }));
+    bpList(p).forEach(function(f){
+      jobs.push((bpLocal[f.id] ? Promise.resolve(bpLocal[f.id]) : fotoGet(f.id)).then(function(rec){
+        if(rec && rec.data) add(clean(String(f.name || "Buehnenplan").replace(/\.pdf$/i, "")) + ".pdf", b64ToU8(rec.data));
+      }));
+    });
+    prodFotos(p).forEach(function(f, i){
+      jobs.push(fotoGet(f.id).then(function(rec){
+        if(rec && rec.data) add("Fotos/" + (i + 1 < 10 ? "0" : "") + (i + 1) + "_" + (clean(f.t, 60) || "Foto") + ".jpg", b64ToU8(rec.data));
+      }));
+    });
+    var pdfOk = true;
+    Promise.all(jobs.map(function(j, i){ return j.catch(function(){ if(i === 0) pdfOk = false; return null; }); })).then(function(){
+      entries.sort(function(a, b){ var da = a.name.split("/").length, db2 = b.name.split("/").length; return (da - db2) || a.name.localeCompare(b.name, "de"); });
+      return saveFile(base + ".zip", makeZip(entries));
+    }).then(function(){
+      if(pdfOk) showToast("Doku heruntergeladen (" + entries.length + (entries.length === 1 ? " Datei" : " Dateien") + ")", 3000);
+      else showToast("Doku heruntergeladen – Ablaufplan-PDF ging in diesem Browser nicht, bitte über Drucken speichern", 6000, true);
+    }).catch(function(){ showToast("Herunterladen fehlgeschlagen (Verbindung prüfen)", 4500, true); });
+  }
   // artIds: alle Arten (A4 quer, nebeneinander) oder eine Art (A4 hoch, volle Breite)
   var BASE_TITLE = document.title;
   function printView(artIds){
@@ -6485,6 +6744,7 @@
     setTimeout(function(){ if(document.title === docName) document.title = oldTitle; }, 1500);
   }
   document.getElementById("printBtn").addEventListener("click", function(){ printView(); });
+  document.getElementById("docuBtn").addEventListener("click", function(){ docuZip(); });
   // Handy: erst fragen – nur der angezeigte Bereich oder alles (Bühne, Tonregie, Technik)
   (function(){
     var dlg = document.getElementById("printAsk");
@@ -6509,6 +6769,7 @@
       setOpen(false);
       if(b.dataset.mm === "print"){ var pb = document.getElementById("printArtBtn"); if(pb.disabled){ showToast("Erst eine Produktion wählen", 2500, true); return; } pb.click(); }
       else if(b.dataset.mm === "info") document.getElementById("infoBtn").click();
+      else if(b.dataset.mm === "docu") docuZip();
     });
     document.addEventListener("click", function(e){ if(!mm.hidden && !e.target.closest("#mobMenu, #mobMenuBtn")) setOpen(false); }, true);
     document.addEventListener("keydown", function(e){ if(e.key === "Escape" && !mm.hidden) setOpen(false); });
