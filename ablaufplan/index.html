@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="dark">
-<title>Bühnenablauf</title>
+<title>TONDOKU</title>
 <style>
   /* Immer dunkel – auch wenn das Handy auf hell steht */
   :root{
@@ -114,7 +114,7 @@
     :root,
     :root:not([data-theme="light"]),
     :root[data-theme="dark"]{
-      /* Desktop: dunkle Flächen wie in der Notizen-App, eigene Akzentfarben des Ablaufplans */
+      /* Desktop: dunkle Flächen wie in der Notizen-App, eigene Akzentfarben der TONDOKU */
       --bg:#121212;
       --surface:#222222;
       --surface-2:#2a2a2a;
@@ -184,11 +184,12 @@
     background:linear-gradient(90deg, transparent, var(--accent), transparent);
     pointer-events:none;
   }
-  /* Zurückpfeil vor ABLAUFPLAN → Spielplan (wie Notizen-App); grau wie Lupe, ohne Rahmen, grosse Tippfläche */
+  /* Zurückpfeil vor TONDOKU → Spielplan (wie Notizen-App); grau wie Lupe, ohne Rahmen, grosse Tippfläche */
   .backbtn{ flex:0 0 auto; display:flex; align-items:center; background:none; border:0; padding:8px; margin:-8px -6px -8px -8px;
     color:var(--text-dim); cursor:pointer; -webkit-tap-highlight-color:transparent; position:relative; z-index:3; }
   .backbtn svg{ width:11px; height:18px; display:block; }
   #appTitle{ cursor:pointer; -webkit-tap-highlight-color:transparent; }
+  #appTitle .t-ton{ color:#e6e6e6; }   /* seit v255: „TON“ gebrochenes Weiss, „DOKU“ in Akzentfarbe */
   .title-row{
     display:flex;
     align-items:center;
@@ -314,7 +315,7 @@
     display:none;
     position:absolute;
     left:50%;
-    bottom:var(--eq-bottom, 9px); /* Unterkante auf Höhe der Unterkante von „ABLAUFPLAN“ */
+    bottom:var(--eq-bottom, 9px); /* Unterkante auf Höhe der Unterkante von „TONDOKU“ */
     transform:translateX(-50%);
     height:12px;
     align-items:flex-end;
@@ -340,7 +341,7 @@
     display:none;
     position:absolute;
     left:50%;
-    bottom:9px; /* Unterkante auf Höhe der Unterkante von „ABLAUFPLAN“ */
+    bottom:9px; /* Unterkante auf Höhe der Unterkante von „TONDOKU“ */
     transform:translateX(-50%);
     width:28px;
     height:17px;
@@ -1899,7 +1900,7 @@
   @media (min-width: 1100px){
     html, body{ height:100%; }
     body{ display:flex; flex-direction:column; overflow:hidden; }
-    /* Kopfzeile in einer Zeile: ABLAUFPLAN · Produktion · (Männchen) · TON & BILD (Bildschirmmitte) · Gesamtexport · Drucken · Lupe */
+    /* Kopfzeile in einer Zeile: TONDOKU · Produktion · (Männchen) · TON & BILD (Bildschirmmitte) · Gesamtexport · Drucken · Lupe */
     header.top{ flex:0 0 auto; position:relative; top:auto; width:auto; display:flex; flex-wrap:wrap; align-items:center; column-gap:7px; }
     header.top .title-row, header.top .prod-row{ display:contents; }
     header.top .backbtn{ order:0; }
@@ -2100,7 +2101,7 @@
 <header class="top">
   <div class="title-row">
     <button class="backbtn" id="backBtn" type="button" aria-label="Zurück zum Spielplan" title="Zurück zum Spielplan"><svg viewBox="0 0 11 18" aria-hidden="true"><path d="M9 1.5L2 9l7 7.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-    <h1 id="appTitle" title="Zurück zum Spielplan">Ablaufplan</h1>
+    <h1 id="appTitle" title="Zurück zum Spielplan"><span class="t-ton">TON</span>DOKU</h1>
     <span class="brand-logo">TON &amp; BILD</span>
     <span class="walk-lane" id="walkLane" aria-hidden="true"><svg class="wk-obst wk-spk" width="15" height="11" viewBox="0 0 15 11"><g class="spk-body"><rect x=".6" y=".6" width="7.4" height="9.8" rx="1"></rect><circle class="spk-cone" cx="4.3" cy="6.6" r="2.2"></circle><circle class="spk-tw" cx="4.3" cy="2.7" r=".9"></circle></g><path class="spk-w w1" d="M9.6 3.6 Q11 5.5 9.6 7.4"></path><path class="spk-w w2" d="M11.4 2.2 Q13.6 5.5 11.4 8.8"></path></svg><span class="wk-obst wk-ton">TON</span><svg class="wk-obst wk-cable" width="14" height="4" viewBox="0 0 14 4"><path d="M.8 3.2 Q3.5 .6 7 2.2 T13.2 1.4"></path><circle cx="13.2" cy="1.4" r="1.2"></circle></svg><span class="wk-walker"><span class="wk-hop"><span class="wk-flip"><svg viewBox="0 0 22 20"><g class="wk-fig">
 <g class="wk-body">
@@ -2118,7 +2119,7 @@
 </g></svg></span></span></span><span class="eq-lane-eq" aria-hidden="true"><span class="eqb"><i></i><s></s></span><span class="eqb"><i></i><s></s></span><span class="eqb"><i></i><s></s></span><span class="eqb"><i></i><s></s></span><span class="eqb"><i></i><s></s></span><span class="eqb"><i></i><s></s></span></span><svg class="hs-lane-hs" viewBox="0 0 30 18" aria-hidden="true"><path class="hs-st" d="M4 9 L1.5 1M26 9 L28.5 1"></path><rect class="hs-fl" x="1" y="9" width="28" height="9" rx="1.5"></rect><rect class="rx-seg rx-s1" x="4" y="12" width="2.4" height="3" rx=".4"></rect><rect class="rx-seg rx-s3" x="10.6" y="12" width="2.4" height="3" rx=".4"></rect><rect class="rx-seg rx-s5" x="17.2" y="12" width="2.4" height="3" rx=".4"></rect><circle class="rx-knob" cx="24" cy="13.5" r="1.8"></circle></svg></span>
     <button class="exportbtn deskbtn" id="exportAllBtn" aria-label="Gesamtexport als Excel" title="Gesamtexport (Bühne, Tonregie, Technik) als Excel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="11" rx="1.5"/><path d="M3.5 7.5h17M9.5 3.5v11M15 3.5v11"/><path d="M12 15.5v5.5M9 18.5l3 3 3-3"/></svg></button>
     <button class="exportbtn deskbtn" id="printBtn" aria-label="Alles drucken" title="Alles drucken (Bühne, Tonregie, Technik)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.5 8.5V4h9v4.5"/><path d="M7.5 17H5a1.5 1.5 0 0 1-1.5-1.5v-5.5A1.5 1.5 0 0 1 5 8.5h14a1.5 1.5 0 0 1 1.5 1.5v5.5A1.5 1.5 0 0 1 19 17h-2.5"/><path d="M7.5 14h9v6h-9z"/></svg></button>
-    <button class="exportbtn deskbtn" id="docuBtn" aria-label="Doku herunterladen" title="Doku herunterladen (ZIP: Gesamtablaufplan als PDF, Bühnenpläne, Fotos)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11"/><path d="M7 10.5 12 15.5l5-5"/><path d="M5 20h14"/></svg></button>
+    <button class="exportbtn deskbtn" id="docuBtn" aria-label="Doku herunterladen" title="Doku herunterladen (ZIP: DOKU als PDF, Bühnenpläne, Fotos)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11"/><path d="M7 10.5 12 15.5l5-5"/><path d="M5 20h14"/></svg></button>
     <button class="exportbtn searchbtn" id="searchBtn" aria-label="Suchen" title="Suchen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L20 20"/></svg></button>
     <button class="exportbtn deskbtn" id="archBtn" aria-label="Archiv" title="Archivierte Produktionen" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="4" rx="1"/><path d="M5 8.5v10a1.5 1.5 0 0 0 1.5 1.5h11a1.5 1.5 0 0 0 1.5-1.5v-10"/><path d="M10 12.5h4"/></svg></button>
     <div class="arch-pop" id="archPop" hidden></div>
@@ -2137,7 +2138,7 @@
   </div>
   <div class="search-row" id="searchRow" hidden>
     <div class="search-field">
-      <input type="search" id="searchInput" placeholder="Im ganzen Ablaufplan suchen…" autocomplete="off" spellcheck="false" enterkeyhint="search">
+      <input type="search" id="searchInput" placeholder="In der ganzen TONDOKU suchen…" autocomplete="off" spellcheck="false" enterkeyhint="search">
       <button type="button" class="search-close" id="searchClose" aria-label="Suche schliessen">✕</button>
     </div>
     <div class="search-results" id="searchResults"></div>
@@ -2149,10 +2150,10 @@
 <div id="lockDlg" hidden></div>
 <div id="infoDlg" hidden><div class="info-panel" role="dialog" aria-modal="true" aria-labelledby="infoTitle">
   <button type="button" class="info-close" id="infoClose">Schliessen</button>
-  <h3 id="infoTitle">Kurzinfo Ablaufplan</h3>
+  <h3 id="infoTitle">Kurzinfo TONDOKU</h3>
   <h4>Drucken und PDF</h4>
   <ul>
-    <li><b>Desktop, obere Zeile:</b> druckt den Gesamtablaufplan mit Bühne, Tonregie und Technik.</li>
+    <li><b>Desktop, obere Zeile:</b> druckt die ganze DOKU mit Bühne, Tonregie und Technik.</li>
     <li><b>Desktop, Drucker im Bereich Bühne/Tonregie/Technik:</b> druckt nur diesen Bereich.</li>
     <li><b>Handy:</b> Menü ☰ → „Drucken“, fragt vor dem Druck „Bereich oder Alles“.</li>
     <li>Das PDF sollte zur Produktionsdokumentation auf dem Server abgelegt werden.</li>
@@ -2184,10 +2185,10 @@
   </ul>
   <h4>Gesamtdokumentation</h4>
   <ul>
-    <li>Lädt die Produktion als ZIP herunter: Gesamtablaufplan (Bühne, Tonregie, Technik) als PDF, Bühnenpläne und Fotos – entpackt ein Ordner „Doku_Produktion_Datum“.</li>
+    <li>Lädt die Produktion als ZIP herunter: DOKU (Bühne, Tonregie, Technik) als PDF, Bühnenpläne und Fotos – entpackt ein Ordner „Dokumentation_Produktion_Datum“.</li>
     <li><b>Desktop:</b> Download-Knopf oben rechts. <b>Handy:</b> Menü ☰ → „Download Doku“.</li>
   </ul>
-  <p class="info-ver" id="infoVer">v_ton_ap_gh_a_211026_1311</p>
+  <p class="info-ver" id="infoVer">v_ton_ap_gh_a_241026_1244</p>
 </div></div>
 <div id="printAsk" hidden><div class="info-panel print-ask" role="dialog" aria-modal="true" aria-labelledby="printAskTitle">
   <h3 id="printAskTitle">Drucken</h3>
@@ -4449,9 +4450,9 @@
       return meta;
     }).catch(function(){ return null; });
   }
-  // Zoom im Plan (seit v234/v235): Tipp in den Plan = 2,5-fach um die getippte Stelle; „Ganzer Plan“ = zurück; im Zoom Tipp auf Gerät = Fotos.
+  // Zoom im Plan (seit v234/v235): Tipp in den Plan = 3-fach (seit v254, vorher 2,5) um die getippte Stelle; „Ganzer Plan“ = zurück; im Zoom Tipp auf Gerät = Fotos.
   var bpCurPdf = null, bpCurName = "";
-  var BP_ZOOM = 2.5, bpZ = 1, bpPages = [], bpDesk = false, bpZoomF = 2.5;   // Desktop: kein Zoom (Seite füllt die Höhe)
+  var BP_ZOOM = 3, bpZ = 1, bpPages = [], bpDesk = false, bpZoomF = 3;   // Desktop: kein Zoom (Seite füllt die Höhe)
   function bpPlaceSpots(e){
     var cw = e.w * bpZ, ch = e.h * bpZ, min = 34; // Mindestgrösse zum Treffen mit dem Finger
     e.spots.forEach(function(sp){
@@ -4482,7 +4483,7 @@
       fvStage.scrollTop = pr.top - sr.top + fvStage.scrollTop + fy * e.h * z - fvStage.clientHeight / 2;
     }
   }
-  // Tipp in den Plan (seit v235): im ganzen Plan = um die getippte Stelle 2,5-fach vergrössern (Stelle in die Bildschirmmitte),
+  // Tipp in den Plan (seit v235): im ganzen Plan = um die getippte Stelle 3-fach vergrössern (Stelle in die Bildschirmmitte),
   // ein Gerät muss nicht getroffen werden. Im Zoom öffnet ein Tipp auf ein Gerät dessen Fotos. Wischen/zwei Finger = kein Tipp.
   // Desktop (seit v244): − / + in der Leiste zoomt den Plan um die Bildschirmmitte (100–400 %), vergrösserter Plan mit der Maus ziehen
   var BP_DZ = [1, 1.5, 2, 3, 4], bpDzi = 0;
@@ -4609,9 +4610,9 @@
         fileView.classList.toggle("multipage", n > 1 || bpViewList.length > 1);
         bpCurName = f.name;
         if(n > 1) fvLabel(f.name, "Seite 1 von " + n);
-        // Seiten nacheinander zeichnen: Breite = Bildschirmbreite, in 2,5-facher Schärfe (für den Zoom),
+        // Seiten nacheinander zeichnen: Breite = Bildschirmbreite, in 3-facher Schärfe (für den Zoom),
         // höchstens ca. 12 Mio. Pixel pro Seite (Grenze älterer iPhones)
-        var w = Math.max(200, fvStage.clientWidth - 16), pxr = Math.min(7.5, (window.devicePixelRatio || 1) * (desk ? 3 : 2.5));
+        var w = Math.max(200, fvStage.clientWidth - 16), pxr = Math.min(9, (window.devicePixelRatio || 1) * 3);
         var hMax = Math.max(200, fvStage.clientHeight - 16);   // Desktop (seit v239): Seite füllt die Fensterhöhe, kein Klick-Zoom
         var chain = Promise.resolve();
         for(var i = 1; i <= n; i++) (function(num){
@@ -6123,7 +6124,7 @@
       return wb.xlsx.writeBuffer().then(function(buf){
         var blob = new Blob([buf], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
         var safe = prodName.replace(/[\\\/:*?"<>|]+/g, "").replace(/\s+/g, "_") || "Produktion";
-        var fname = "Ablaufplan_" + safe + "_Numbers_" + now.getFullYear() + "-" + pad2(now.getMonth() + 1) + "-" + pad2(now.getDate()) + ".xlsx";
+        var fname = "Doku_" + safe + "_Numbers_" + now.getFullYear() + "-" + pad2(now.getMonth() + 1) + "-" + pad2(now.getDate()) + ".xlsx";
         return saveFile(fname, blob);
       });
     }).catch(function(){
@@ -6337,7 +6338,7 @@
       return wb.xlsx.writeBuffer().then(function(buf){
         var blob = new Blob([buf], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
         var safe = prodName.replace(/[\\\/:*?"<>|]+/g, "").replace(/\s+/g, "_") || "Produktion";
-        var fname = "Ablaufplan_" + safe + "_Gesamt_" + now.getFullYear() + "-" + pad2(now.getMonth() + 1) + "-" + pad2(now.getDate()) + ".xlsx";
+        var fname = "Doku_" + safe + "_Gesamt_" + now.getFullYear() + "-" + pad2(now.getMonth() + 1) + "-" + pad2(now.getDate()) + ".xlsx";
         return saveFile(fname, blob);
       });
     }).catch(function(){
@@ -6350,6 +6351,7 @@
   document.getElementById("exportAllBtn").addEventListener("click", exportAll);
 
   // ---- Drucken: schwarz auf weiss, drei Tabellen nebeneinander (A4 quer) ----
+  var PRINT_FOOT = "Bild und Ton · Opernhaus Zürich";   // Fusszeile aller Druck-PDFs (seit v256)
   var PRINT_CSS =
     '.pv{ color:#000; background:#fff; font-family:Arial, Helvetica, sans-serif; font-size:10pt; line-height:1.3; }' +
     '.pv *{ color:#000 !important; background:transparent !important; box-shadow:none !important; }' +
@@ -6357,7 +6359,10 @@
     '.pv-head{ display:grid; grid-template-columns:minmax(max-content,1fr) auto minmax(max-content,1fr); align-items:baseline; column-gap:6mm; border-bottom:1.5pt solid #000; padding-bottom:2mm; margin-bottom:4mm; }' +
     '.pv-title{ font-size:14pt; font-weight:700; white-space:nowrap; }' +
     // „Export: … letzte Änderung: …“ – gleiche Schriftgrösse, kleiner Abstand; bei wenig Platz (langer Titel) zweizeilig
-    '.pv-date{ font-size:10.5pt; text-align:center; }' +
+    '.pv-date{ font-size:10.5pt; text-align:center; grid-column:2; grid-row:2; }' +
+    '.pv-title{ grid-column:1; grid-row:1; } .pv-prod{ grid-column:3; grid-row:1; }' +
+    '.pv-sub{ font-size:10.5pt; grid-column:1; grid-row:2; white-space:nowrap; margin-top:1mm; }' +
+    '.pv-head{ row-gap:0; } .pv-head .pv-date{ margin-top:1mm; }' +
     '.pv-date span{ display:inline-block; white-space:nowrap; margin:0 2mm; }' +
     // Produktionsname: bekommt bei Bedarf mehr Platz als die linke Seite (Datum rückt dann leicht aus der Mitte),
     // bricht erst um, wenn er breiter ist als der Platz neben Titel und Datum
@@ -6524,10 +6529,12 @@
     var single = artIds.length === 1;
     // Überschrift: Kategorie (bzw. Ablaufplan), Produktion, Datum
     var html = '<div class="pv' + (single ? ' pv-single' : '') + '"><div class="pv-head">' +
-      '<div class="pv-title">' + (single ? (artCfg(artIds[0]).sheet ? '' : 'Ablaufplan ') + esc(artCfg(artIds[0]).label) : 'Ablaufplan Bühne · Tonregie · Technik') + '</div>' +
+      '<div class="pv-title">' + (single ? (artCfg(artIds[0]).sheet ? 'DOKU ' : 'Ablaufplan ') + esc(artCfg(artIds[0]).label) : 'DOKU Bühne · Tonregie · Technik') + '</div>' +
+      '<div class="pv-prod"><b>' + esc(prod ? prod.name : "") + '</b></div>' +
+      // zweite Kopfzeile (seit v256): „Dokumentation Tonabteilung OHZ“ links, Export/letzte Änderung in derselben Zeile
+      '<div class="pv-sub">Dokumentation Tonabteilung OHZ</div>' +
       '<div class="pv-date"><span>Export: ' + dateStr + '</span>' +
         (prod && prod.upd ? ' <span>letzte Änderung: ' + fmtDay(prod.upd) + '</span>' : '') + '</div>' +
-      '<div class="pv-prod"><b>' + esc(prod ? prod.name : "") + '</b></div>' +
       '</div><div class="pv-cols">';
     ARTS.forEach(function(a){
       if(!a.ready || artIds.indexOf(a.id) < 0) return;
@@ -6546,7 +6553,7 @@
   // (ca. 190 dpi, auf allen Geräten gleich) und spaltenweise auf A4-Seiten verteilt – geschnitten wird nur zwischen Einträgen,
   // auf Folgeseiten wiederholt sich der Spaltenkopf. Die Seiten kommen als JPEG in eine schlichte PDF-Datei.
   function ablaufPdf(){
-    var MM = 96 / 25.4, CW = Math.round(277 * MM), CH = Math.round(190 * MM), SC = 2;   // Inhalt 277 × 190 mm (A4 quer, 10 mm Rand)
+    var MM = 96 / 25.4, CW = Math.round(277 * MM), CH = Math.round(190 * MM), SC = 2, CHC = CH - Math.round(6 * MM);   // CHC: Inhalt ohne Fusszeile   // Inhalt 277 × 190 mm (A4 quer, 10 mm Rand)
     var arts = ARTS.filter(function(a){ return a.ready; }).map(function(a){ return a.id; });
     var css = 'html,body{margin:0;padding:0;background:#fff;color:#000;}' + PRINT_CSS;
     var body = buildPrintHtml(arts);
@@ -6576,8 +6583,8 @@
           cols.forEach(function(c){
             var from = c.top, pg = 0;
             while(from < c.end - 1){
-              var first = from === c.top, room = first ? CH : CH - (c.hdrBot - c.top);
-              var limit = first ? CH : from + room;
+              var first = from === c.top, room = first ? CHC : CHC - (c.hdrBot - c.top);
+              var limit = first ? CHC : from + room;
               var cut = c.cuts.filter(function(y){ return y <= limit; }).pop();
               if(!cut || cut <= from) cut = Math.min(c.end, limit);   // einzelner Eintrag länger als eine Seite: hart schneiden
               (pages[pg] = pages[pg] || []).push({ c: c, from: first ? c.top : from, to: cut, head: !first });
@@ -6601,6 +6608,8 @@
               var h = pt.to - pt.from;
               if(h > 0) cx.drawImage(big, c.x * SC, pt.from * SC, c.w * SC, h * SC, c.x * SC, y * SC, c.w * SC, h * SC);
             });
+            cx.fillStyle = "#000"; cx.font = (8 * 96 / 72 * SC) + "px Arial, Helvetica, sans-serif"; cx.textAlign = "center"; cx.textBaseline = "alphabetic";
+            cx.fillText(PRINT_FOOT, CW * SC / 2, (CH - 1.2 * MM) * SC);   // Fusszeile unten Mitte
             return new Promise(function(res, rej){ cv.toBlob(function(b){ if(!b){ rej(new Error("toBlob")); return; } b.arrayBuffer().then(function(ab){ res({ jpg: new Uint8Array(ab), w: cv.width, h: cv.height }); }, rej); }, "image/jpeg", 0.92); });
           });
           Promise.all(jobs).then(function(imgs){ done(null, pdfFromJpegs(imgs)); }).catch(function(e){ done(e); });
@@ -6677,20 +6686,20 @@
     push(x + "trailer\n<< /Size " + total + " /Root 1 0 R >>\nstartxref\n" + xref + "\n%%EOF");
     return new Blob(parts, { type: "application/pdf" });
   }
-  // ---- Doku-Mappe als ZIP (seit v252): entpackt genau ein Ordner „Doku_<Produktion>_<Datum>“ mit
-  // Gesamtablaufplan (PDF), allen Bühnenplänen und dem Ordner „Fotos“
+  // ---- Doku-Mappe als ZIP (seit v252): entpackt genau ein Ordner „Dokumentation_<Produktion>_<Datum>“ (seit v256, vorher Doku_) mit
+  // DOKU-PDF (Doku_<Produktion>_<Datum>.pdf), allen Bühnenplänen und dem Ordner „Fotos“
   function docuZip(){
     var p = currentProd();
     if(!p){ showToast("Erst eine Produktion wählen", 2500, true); return; }
     if(editing) commitEdit(true);
     var d = new Date(), day = d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate());
     var safeP = String(p.name || "Produktion").replace(/[\\\/:*?"<>|]+/g, "").replace(/\s+/g, "_");
-    var base = "Doku_" + safeP + "_" + day, root = base + "/", entries = [], used = {};
+    var base = "Dokumentation_" + safeP + "_" + day, root = base + "/", entries = [], used = {};
     var clean = function(t, max){ return String(t || "").replace(/[\\\/:*?"<>|\u0000-\u001f]+/g, " ").replace(/\s+/g, " ").trim().slice(0, max || 80); };
     var add = function(name, data){ var n = name, k = 1; while(used[n]){ k++; n = name.replace(/(\.[a-z0-9]+)?$/i, "_" + k + "$1"); } used[n] = true; entries.push({ name: root + n, data: data }); };
     showToast("Doku wird zusammengestellt …", 120000);
     var jobs = [];
-    jobs.push(ablaufPdf().then(function(blob){ return blob.arrayBuffer(); }).then(function(ab){ add("Ablaufplan_" + safeP + "_" + day + ".pdf", new Uint8Array(ab)); }));
+    jobs.push(ablaufPdf().then(function(blob){ return blob.arrayBuffer(); }).then(function(ab){ add("Doku_" + safeP + "_" + day + ".pdf", new Uint8Array(ab)); }));
     bpList(p).forEach(function(f){
       jobs.push((bpLocal[f.id] ? Promise.resolve(bpLocal[f.id]) : fotoGet(f.id)).then(function(rec){
         if(rec && rec.data) add(clean(String(f.name || "Buehnenplan").replace(/\.pdf$/i, "")) + ".pdf", b64ToU8(rec.data));
@@ -6707,7 +6716,7 @@
       return saveFile(base + ".zip", makeZip(entries));
     }).then(function(){
       if(pdfOk) showToast("Doku heruntergeladen (" + entries.length + (entries.length === 1 ? " Datei" : " Dateien") + ")", 3000);
-      else showToast("Doku heruntergeladen – Ablaufplan-PDF ging in diesem Browser nicht, bitte über Drucken speichern", 6000, true);
+      else showToast("Doku heruntergeladen – DOKU-PDF ging in diesem Browser nicht, bitte über Drucken speichern", 6000, true);
     }).catch(function(){ showToast("Herunterladen fehlgeschlagen (Verbindung prüfen)", 4500, true); });
   }
   // artIds: alle Arten (A4 quer, nebeneinander) oder eine Art (A4 hoch, volle Breite)
@@ -6717,14 +6726,19 @@
     if(editing) commitEdit(true);
     if(!Array.isArray(artIds)) artIds = ARTS.filter(function(a){ return a.ready; }).map(function(a){ return a.id; });
     var single = artIds.length === 1;
-    var css = '@page{ size:A4 ' + (single ? 'portrait; margin:12mm' : 'landscape; margin:10mm') + '; }' + PRINT_CSS;
-    var body = buildPrintHtml(artIds);
-    // Dateiname: Ablaufplan_<Produktion>_<Datum> · Ablaufplan-Bühne/-Tonregie_… · Technik_…
+    // Fusszeile „Bild und Ton · Opernhaus Zürich“ unten Mitte auf jeder Seite (seit v256):
+    // Chrome/Edge über den Seitenrand (@bottom-center), andere Browser (Safari, Firefox) als fixierte Zeile
+    var chromium = /Chrome\/|Chromium\/|Edg\//.test(navigator.userAgent) && !/CriOS|FxiOS|EdgiOS/.test(navigator.userAgent);
+    var css = '@page{ size:A4 ' + (single ? 'portrait; margin:12mm 12mm 14mm' : 'landscape; margin:10mm 10mm 12mm') + ';' +
+      (chromium ? ' @bottom-center{ content:"' + PRINT_FOOT + '"; font-family:Arial, Helvetica, sans-serif; font-size:8pt; color:#000; vertical-align:middle; }' : '') + ' }' +
+      PRINT_CSS + (chromium ? '' : '.pv-foot{ position:fixed; left:0; right:0; bottom:0; text-align:center; font-family:Arial, Helvetica, sans-serif; font-size:8pt; color:#000; background:#fff; }');
+    var body = buildPrintHtml(artIds) + (chromium ? '' : '<div class="pv-foot">' + PRINT_FOOT + '</div>');
+    // Dateiname: Doku_<Produktion>_<Datum> (gesamt, seit v255) · Ablaufplan-Bühne/-Tonregie_… · Technik_…
     var prodP = productions.find(function(p){ return p.id === currentProdId; });
     var safeP = (prodP ? prodP.name : "").replace(/[\\\/:*?"<>|]+/g, "").replace(/\s+/g, "_") || "Produktion";
     var nowP = new Date();
     var dateP = nowP.getFullYear() + "-" + pad2(nowP.getMonth() + 1) + "-" + pad2(nowP.getDate());
-    var prefix = !single ? "Ablaufplan" : artCfg(artIds[0]).sheet ? artCfg(artIds[0]).label : "Ablaufplan-" + artCfg(artIds[0]).label;
+    var prefix = !single ? "Doku" : artCfg(artIds[0]).sheet ? artCfg(artIds[0]).label : "Ablaufplan-" + artCfg(artIds[0]).label;
     var docName = prefix + "_" + safeP + "_" + dateP;
     // Im Claude-Artifact ist window.print() gesperrt -> Druckseite als Datei speichern (öffnet den Druckdialog)
     if(window.claude && typeof window.claude.use === "function"){
