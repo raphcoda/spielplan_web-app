@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="dark">
 <meta name="theme-color" content="#121212">
-<title>Notizen</title>
+<title>NOTES TON</title>
 <style>
   /* Seit v77: EINE feste Farbgebung (dunkel) – unabhängig von Hell-/Dunkel-Einstellung des Geräts
      und von der Bildschirmbreite. Die frühere helle Palette wurde entfernt. */
@@ -37,6 +37,8 @@
     color-scheme: dark;
   }
 
+  /* Breite der Notizspalte am Desktop: ein Drittel, mind. 420px (v121 kurz halbe Breite, in v122 zurückgenommen) */
+  :root{ --colw:max(420px, 33.333vw); }
   *{box-sizing:border-box;}
   body{
     background:var(--bg);
@@ -75,8 +77,8 @@
   @media (min-width:700px){
     header.top::after{
       right:auto;
-      left:calc(16px + min(max(420px, 33.333vw), 100% - 32px) * .08);
-      width:calc(min(max(420px, 33.333vw), 100% - 32px) * .84);
+      left:calc(16px + min(var(--colw), 100% - 32px) * .08);
+      width:calc(min(var(--colw), 100% - 32px) * .84);
     }
   }
   .title-row{
@@ -186,7 +188,7 @@
   }
   @media (min-width: 700px){
     /* Desktop: Inhalt links, ca. 1/3 der Bildschirmbreite (min. 420px) */
-    .title-row, main{ width:max(420px, 33.333vw); max-width:100%; }
+    .title-row, main{ width:var(--colw); max-width:100%; }
   }
   .addbtn{
     flex:0 0 auto;
@@ -258,7 +260,7 @@
     margin-top:10px;
   }
   .search-row[hidden]{ display:none; }
-  @media (min-width:700px){ .search-row{ width:max(420px, 33.333vw); max-width:100%; } }
+  @media (min-width:700px){ .search-row{ width:var(--colw); max-width:100%; } }
   .search-input{
     flex:1 1 auto;
     min-width:0;
@@ -287,7 +289,7 @@
   }
   .search-hint{ font-size:13px; color:var(--text-dim); margin-top:6px; line-height:1.35; }
   .search-hint[hidden]{ display:none; }
-  @media (min-width:700px){ .search-hint{ width:max(420px, 33.333vw); max-width:100%; } }
+  @media (min-width:700px){ .search-hint{ width:var(--colw); max-width:100%; } }
   .search-more{
     margin-top:18px;
     font-size:13px;
@@ -889,7 +891,7 @@
   @media (min-width:820px) and (hover:hover) and (pointer:fine){
     .drop-hint{
       display:block; position:fixed; top:50%; z-index:0; pointer-events:none;
-      left:calc(max(420px, 33.333vw) + 32px + (100vw - max(420px, 33.333vw) - 32px) / 2);
+      left:calc(var(--colw) + 32px + (100vw - var(--colw) - 32px) / 2);
       transform:translate(-50%, -50%); white-space:nowrap;   /* einzeilig, sonst bricht der Text in schmalen Fenstern um (und die Szene entfällt) */
       color:var(--text-dim); font-size:18px; letter-spacing:.04em; text-align:center;   /* 18px seit v83 (vorher 14px) */
     }
@@ -2411,7 +2413,7 @@
   }
 
   // ---- Kurzinfo „i“ (seit v98) ----
-  var APP_VERSION = "v_ton_nt_gh_a_111026_0834";   // bei jeder Änderung anpassen: v_ton_nt_gh_a_TTMMJJ_HHMM
+  var APP_VERSION = "v_ton_nt_gh_a_241026_1345";   // bei jeder Änderung anpassen: v_ton_nt_gh_a_TTMMJJ_HHMM
   var infoOpen = false;
   var infoPanel = document.getElementById("infoPanel");
   if(document.getElementById("infoVer")) document.getElementById("infoVer").textContent = APP_VERSION;
