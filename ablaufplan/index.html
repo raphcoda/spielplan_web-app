@@ -1877,6 +1877,10 @@
   }
   .info-panel .info-close:focus{ outline:none; }   /* Knopf ist schon orange umrandet */
   .info-panel .info-ver{ margin:10px 0 0; font-size:12px; color:#888; }
+  .info-panel .info-ver{ display:flex; justify-content:space-between; align-items:baseline; gap:12px; flex-wrap:wrap; }   /* seit v257: rechts Absender */
+  .info-panel .info-brand{ text-transform:uppercase; letter-spacing:.06em; margin-left:auto; }
+  @media (max-width:520px){ .info-panel .info-ver{ flex-wrap:nowrap; gap:8px; font-size:10px; } .info-panel .info-ver span{ white-space:nowrap; } .info-panel .info-brand{ letter-spacing:0; } }
+  @media (max-width:350px){ .info-panel .info-ver{ flex-wrap:wrap; } }
   /* Handy: Rückfrage vor dem Druck – Bereich oder Alles */
   /* schlicht: Titel, oranges × oben rechts, zwei ruhige Zeilen */
   /* Datei-Eingaben unsichtbar, aber nicht display:none (manche Handys öffnen sonst die Kamera nicht) */
@@ -2188,7 +2192,7 @@
     <li>Lädt die Produktion als ZIP herunter: DOKU (Bühne, Tonregie, Technik) als PDF, Bühnenpläne und Fotos – entpackt ein Ordner „Dokumentation_Produktion_Datum“.</li>
     <li><b>Desktop:</b> Download-Knopf oben rechts. <b>Handy:</b> Menü ☰ → „Download Doku“.</li>
   </ul>
-  <p class="info-ver" id="infoVer">v_ton_ap_gh_a_241026_1244</p>
+  <p class="info-ver"><span id="infoVer">v_ton_ap_gh_a_241026_1329</span><span class="info-brand">TON UND BILD · OPERNHAUS ZÜRICH</span></p>
 </div></div>
 <div id="printAsk" hidden><div class="info-panel print-ask" role="dialog" aria-modal="true" aria-labelledby="printAskTitle">
   <h3 id="printAskTitle">Drucken</h3>
@@ -6351,7 +6355,7 @@
   document.getElementById("exportAllBtn").addEventListener("click", exportAll);
 
   // ---- Drucken: schwarz auf weiss, drei Tabellen nebeneinander (A4 quer) ----
-  var PRINT_FOOT = "Bild und Ton · Opernhaus Zürich";   // Fusszeile aller Druck-PDFs (seit v256)
+  var PRINT_FOOT = "Ton und Bild · Opernhaus Zürich";   // Fusszeile aller Druck-PDFs (seit v256)
   var PRINT_CSS =
     '.pv{ color:#000; background:#fff; font-family:Arial, Helvetica, sans-serif; font-size:10pt; line-height:1.3; }' +
     '.pv *{ color:#000 !important; background:transparent !important; box-shadow:none !important; }' +
@@ -6532,7 +6536,7 @@
       '<div class="pv-title">' + (single ? (artCfg(artIds[0]).sheet ? 'DOKU ' : 'Ablaufplan ') + esc(artCfg(artIds[0]).label) : 'DOKU Bühne · Tonregie · Technik') + '</div>' +
       '<div class="pv-prod"><b>' + esc(prod ? prod.name : "") + '</b></div>' +
       // zweite Kopfzeile (seit v256): „Dokumentation Tonabteilung OHZ“ links, Export/letzte Änderung in derselben Zeile
-      '<div class="pv-sub">Dokumentation Tonabteilung OHZ</div>' +
+      '<div class="pv-sub">' + (single ? 'Tonabteilung OHZ' : 'Dokumentation Tonabteilung Opernhaus Zürich') + '</div>' +
       '<div class="pv-date"><span>Export: ' + dateStr + '</span>' +
         (prod && prod.upd ? ' <span>letzte Änderung: ' + fmtDay(prod.upd) + '</span>' : '') + '</div>' +
       '</div><div class="pv-cols">';
@@ -6726,13 +6730,14 @@
     if(editing) commitEdit(true);
     if(!Array.isArray(artIds)) artIds = ARTS.filter(function(a){ return a.ready; }).map(function(a){ return a.id; });
     var single = artIds.length === 1;
-    // Fusszeile „Bild und Ton · Opernhaus Zürich“ unten Mitte auf jeder Seite (seit v256):
-    // Chrome/Edge über den Seitenrand (@bottom-center), andere Browser (Safari, Firefox) als fixierte Zeile
-    var chromium = /Chrome\/|Chromium\/|Edg\//.test(navigator.userAgent) && !/CriOS|FxiOS|EdgiOS/.test(navigator.userAgent);
-    var css = '@page{ size:A4 ' + (single ? 'portrait; margin:12mm 12mm 14mm' : 'landscape; margin:10mm 10mm 12mm') + ';' +
-      (chromium ? ' @bottom-center{ content:"' + PRINT_FOOT + '"; font-family:Arial, Helvetica, sans-serif; font-size:8pt; color:#000; vertical-align:middle; }' : '') + ' }' +
-      PRINT_CSS + (chromium ? '' : '.pv-foot{ position:fixed; left:0; right:0; bottom:0; text-align:center; font-family:Arial, Helvetica, sans-serif; font-size:8pt; color:#000; background:#fff; }');
-    var body = buildPrintHtml(artIds) + (chromium ? '' : '<div class="pv-foot">' + PRINT_FOOT + '</div>');
+    // Fusszeile PRINT_FOOT unten Mitte auf jeder Seite (seit v256, v257 für alle Browser gleich):
+    // fixierte Zeile am Seitenende (wird je Seite wiederholt); die Tabelle drumherum wiederholt ihren tfoot auf jeder Seite
+    // als Platzhalter, damit kein Eintrag unter der Fusszeile verschwindet
+    var css = '@page{ size:A4 ' + (single ? 'portrait; margin:12mm 12mm 8mm' : 'landscape; margin:10mm 10mm 6mm') + '; }' + PRINT_CSS +
+      '.pv-pg{ width:100%; border-collapse:collapse; } .pv-pg > tbody > tr > td, .pv-pg > tfoot > tr > td{ padding:0; border:0; }' +
+      '.pv-fsp{ height:8mm; } .pv-foot{ position:fixed; left:0; right:0; bottom:0; height:5mm; line-height:5mm; text-align:center; font-family:Arial, Helvetica, sans-serif; font-size:8pt; color:#000; }';
+    var body = '<table class="pv-pg"><tfoot><tr><td><div class="pv-fsp"></div></td></tr></tfoot><tbody><tr><td>' + buildPrintHtml(artIds) +
+      '</td></tr></tbody></table><div class="pv-foot">' + PRINT_FOOT + '</div>';
     // Dateiname: Doku_<Produktion>_<Datum> (gesamt, seit v255) · Ablaufplan-Bühne/-Tonregie_… · Technik_…
     var prodP = productions.find(function(p){ return p.id === currentProdId; });
     var safeP = (prodP ? prodP.name : "").replace(/[\\\/:*?"<>|]+/g, "").replace(/\s+/g, "_") || "Produktion";
