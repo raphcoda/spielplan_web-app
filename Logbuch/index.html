@@ -441,7 +441,7 @@ textarea:focus, .auswahl-feld:focus, #waehlSuche:focus { border-color: #4db8b8; 
 .nf-all .nf-all-sub { margin-left: auto; font-weight: 400; font-size: 12.5px; color: #9a9a9a; }
 .nf-all.loading { opacity: .55; cursor: progress; }
 .fv-stage.zoomt { overflow: auto; -webkit-overflow-scrolling: touch; }
-.fv-stage.zoomt img { flex: none; max-width: none; max-height: none; height: auto; margin: auto; }
+.fv-stage.zoomt img { flex: none; max-width: none; max-height: none; margin: auto; object-fit: fill; }
 @media (max-width: 899px) {
   .header-aktionen { gap: 9px; }
   .row-foot .icon-btn { width: 28px; height: 28px; border-radius: 7px; }
@@ -619,7 +619,7 @@ textarea:focus, .auswahl-feld:focus, #waehlSuche:focus { border-color: #4db8b8; 
         <li><b>CSV-Export:</b> Button CSV in der Titelzeile. Die Tabelle enthält alle Einträge, ist spaltenweise sortierbar und kann zur Dokumentation auf dem Server abgelegt werden.</li>
         <li><b>PDF-Export:</b> Button PDF in der Titelzeile. Das PDF folgt den gesetzten Filtern. Beispiel: Filter «Erfasst» und Art «Tonregie» ergibt nur erfasste Einträge der Art Tonregie.</li>
       </ul>
-      <div class="info-version">v_ton_lb_a_281026_1135</div>
+      <div class="info-version">v_ton_lb_a_281026_1147</div>
     </div>
   </div>
 </div>
@@ -920,8 +920,8 @@ function inAnsicht(e){
    ===================================================================== */
 var FILE_PATH = "logbuchFiles";
 var ATTACH_MAX = 5 * 1024 * 1024;     // Datei: bis 5 MB
-var PHOTO_MAX  = 3 * 1024 * 1024;     // Foto: höchstens 3 MB
-var PHOTO_EDGE = 3000;                // längere Seite in Pixel
+var PHOTO_MAX  = 1.5 * 1024 * 1024;   // Foto: höchstens 1,5 MB (nach dem Verkleinern)
+var PHOTO_EDGE = 2000;                // längere Seite in Pixel (maximal)
 var MAX_PHOTOS = 3, MAX_FILES = 10;   // pro Eintrag
 var pendingRemove = null;             // { id, fid, foto }
 var pickTarget = null;
@@ -1022,16 +1022,21 @@ function dateiLoeschen(fid){
 
 var fileView = document.getElementById("fileView"), fvStage = document.getElementById("fvStage");
 var fvZoom = 1;
-var fvBasis = 0;
+var fvLetzterZoom = 0;
 function fvZoomSetzen(z){
-  var img = fvStage.querySelector("img"); if (!img) return;
+  var img = fvStage.querySelector("img"); if (!img || !img.naturalWidth) return;
+  var jetzt = Date.now(); if (jetzt - fvLetzterZoom < 250) return;   // Doppelauslösung vermeiden
+  fvLetzterZoom = jetzt;
   var war = fvZoom;
-  fvZoom = Math.max(1, Math.min(5, Math.round(z * 100) / 100));
-  if (war === 1 && fvZoom > 1) fvBasis = img.getBoundingClientRect().width;   // angezeigte Breite bei 100 %
+  fvZoom = Math.max(1, Math.min(4, Math.round(z * 100) / 100));
   if (fvZoom <= 1){ fvZoom = 1; fvStage.classList.remove("zoomt"); img.style.width = ""; img.style.height = ""; fvStage.scrollLeft = fvStage.scrollTop = 0; return; }
+  // angezeigte Bildgrösse bei 100 % (Bild passt komplett in die Fläche)
+  var sw = fvStage.clientWidth, sh = fvStage.clientHeight;
+  var fit = Math.min(sw / img.naturalWidth, sh / img.naturalHeight);
   fvStage.classList.add("zoomt");
-  img.style.width = (fvBasis * fvZoom) + "px"; img.style.height = "auto";
-  if (war === 1) fvStage.scrollLeft = (fvStage.scrollWidth - fvStage.clientWidth) / 2;
+  img.style.width = Math.round(img.naturalWidth * fit * fvZoom) + "px";
+  img.style.height = Math.round(img.naturalHeight * fit * fvZoom) + "px";
+  if (war === 1){ fvStage.scrollLeft = (fvStage.scrollWidth - fvStage.clientWidth) / 2; fvStage.scrollTop = (fvStage.scrollHeight - fvStage.clientHeight) / 2; }
 }
 function closeFileView(){
   if (!fileView || fileView.hidden) return;
@@ -1260,7 +1265,7 @@ function makeThumb(img){
 // Stufen [längere Seite, JPEG-Qualität]: die erste, die unter max bleibt
 function shrinkImage(file, max){
   return loadImage(file).then(function(r){
-    var thumb = makeThumb(r.img), steps = [[PHOTO_EDGE, .88], [PHOTO_EDGE, .8], [2560, .8], [2048, .78], [1600, .75]], i = 0;
+    var thumb = makeThumb(r.img), steps = [[PHOTO_EDGE, .85], [PHOTO_EDGE, .75], [1600, .75], [1280, .7]], i = 0;
     function next(){
       var st = steps[i++];
       return canvasBlob(drawScaled(r.img, st[0]), st[1]).then(function(bl){ return (bl.size <= max || i >= steps.length) ? bl : next(); });
