@@ -436,6 +436,10 @@ textarea:focus, .auswahl-feld:focus, #waehlSuche:focus { border-color: #4db8b8; 
 .fv-bar .fv-g, .fv-bar .fv-z { display: none; }
 .file-view.galerie .fv-bar .fv-g { display: flex; }
 .file-view.zoombar .fv-bar .fv-z { display: flex; }
+.nf-all { display: flex; align-items: center; gap: 8px; width: 100%; margin: 6px 0; padding: 9px 12px; border: 1px solid #3a3a3a; border-radius: 8px; background: #202020; color: #4db8b8; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.nf-all svg { width: 18px; height: 18px; flex: 0 0 auto; }
+.nf-all .nf-all-sub { margin-left: auto; font-weight: 400; font-size: 12.5px; color: #9a9a9a; }
+.nf-all.loading { opacity: .55; cursor: progress; }
 .fv-stage.zoomt { overflow: auto; -webkit-overflow-scrolling: touch; }
 .fv-stage.zoomt img { flex: none; max-width: none; max-height: none; height: auto; margin: auto; }
 @media (max-width: 899px) {
@@ -615,7 +619,7 @@ textarea:focus, .auswahl-feld:focus, #waehlSuche:focus { border-color: #4db8b8; 
         <li><b>CSV-Export:</b> Button CSV in der Titelzeile. Die Tabelle enthält alle Einträge, ist spaltenweise sortierbar und kann zur Dokumentation auf dem Server abgelegt werden.</li>
         <li><b>PDF-Export:</b> Button PDF in der Titelzeile. Das PDF folgt den gesetzten Filtern. Beispiel: Filter «Erfasst» und Art «Tonregie» ergibt nur erfasste Einträge der Art Tonregie.</li>
       </ul>
-      <div class="info-version">v_ton_lb_a_281026_1049</div>
+      <div class="info-version">v_ton_lb_a_281026_1058</div>
     </div>
   </div>
 </div>
