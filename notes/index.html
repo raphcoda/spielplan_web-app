@@ -912,10 +912,6 @@
   /* Vollbild-Ansicht für Dateien (Bild, PDF am Desktop, Text, Audio, Video) */
   .file-view{ position:fixed; inset:0; z-index:55; background:#000; display:flex; flex-direction:column; }
   .file-view[hidden]{ display:none; }
-  .fv-nav{ position:absolute; top:50%; transform:translateY(-50%); width:44px; height:64px; border:0; border-radius:10px;
-    background:rgba(0,0,0,.35); color:#fff; font-size:38px; line-height:1; cursor:pointer; -webkit-tap-highlight-color:transparent; z-index:1; }
-  .fv-prev{ left:8px; } .fv-next{ right:8px; }
-  .fv-nav:hover{ background:rgba(0,0,0,.6); }
   .fv-stage{ position:relative; }
   .fv-stage{ flex:1 1 auto; min-height:0; display:flex; align-items:center; justify-content:center; overflow:hidden; }
   .fv-stage img, .fv-stage video{ width:100%; height:100%; object-fit:contain; display:block; }
@@ -923,10 +919,24 @@
   .fv-stage pre{ width:100%; height:100%; margin:0; padding:16px; overflow:auto; white-space:pre-wrap; word-wrap:break-word;
     color:var(--text); font-size:14px; line-height:1.45; font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
   .fv-stage audio{ width:min(520px, 90%); }
-  .fv-bar{ flex:0 0 auto; display:flex; align-items:center; gap:16px; font-size:14px; color:var(--text-dim);
+  /* Untere Leiste (seit v124): Name klein oben, darunter mittig grosse Knöpfe ✕ · ⤓ · ‹ › · − + */
+  .fv-bar{ flex:0 0 auto; display:flex; flex-direction:column; align-items:center; gap:8px; font-size:13px; color:var(--text-dim);
     padding:10px 16px calc(10px + env(safe-area-inset-bottom, 0px)); background:var(--surface); border-top:1px solid var(--line); }
-  .fv-bar span{ flex:1 1 auto; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .fv-bar a, .fv-bar button{ flex:0 0 auto; background:none; border:0; font:inherit; font-weight:700; color:var(--ka); text-decoration:none; cursor:pointer; padding:6px 2px; }
+  .fv-name{ max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-align:center; }
+  .fv-tools{ display:flex; align-items:center; justify-content:center; gap:10px; }
+  .fv-btn{ flex:0 0 auto; width:48px; height:48px; display:flex; align-items:center; justify-content:center; border-radius:12px;
+    border:1px solid var(--line); background:var(--surface-2); color:var(--ka); font:inherit; font-size:26px; line-height:1;
+    text-decoration:none; cursor:pointer; padding:0; -webkit-tap-highlight-color:transparent; }
+  .fv-btn svg{ width:24px; height:24px; display:block; }
+  .fv-btn:disabled{ opacity:.3; cursor:default; }
+  #fvClose{ font-size:22px; }
+  .fv-sep{ width:6px; }
+  .file-view.not-img .fv-imgonly{ display:none; }
+  @media (max-width:380px){ .fv-tools{ gap:6px; } .fv-btn{ width:44px; height:44px; } .fv-sep{ width:2px; } }
+  /* Zoom: Bild in einer scrollbaren Box, sicher zentriert (margin:auto) */
+  .fv-stage.zoomed{ display:block; overflow:auto; -webkit-overflow-scrolling:touch; }
+  .fv-zoombox{ display:flex; min-width:100%; min-height:100%; width:max-content; height:max-content; }
+  .fv-zoombox img{ margin:auto; max-width:none; max-height:none; object-fit:fill; }
 
   /* ---- Team-Login (seit v80): erscheint nur, wenn die Datenbank eine Anmeldung verlangt ---- */
   .gate{ position:fixed; inset:0; z-index:80; background:var(--bg); display:flex; align-items:center; justify-content:center; padding:24px; }
@@ -1023,7 +1033,7 @@
 <div id="printArea" aria-hidden="true"></div>
 <div class="drop-overlay" id="dropOverlay" hidden><div class="drop-box"><b>Schmeiss rein</b><span>wird als neuer Eintrag<br>„Einwurf“ hochgeladen<br>max. 5 MB</span></div></div>
 <div class="drop-hint" id="dropHint" aria-hidden="true"><span class="drop-hint-text" id="dropHintText">Schieb drauf zum Hochladen</span></div>
-<div class="file-view" id="fileView" hidden><div class="fv-stage" id="fvStage"></div><div class="fv-bar"><span id="fvName"></span><a id="fvSave" href="#">Speichern</a><button type="button" id="fvClose">Schliessen</button></div></div>
+<div class="file-view" id="fileView" hidden><div class="fv-stage" id="fvStage"></div><div class="fv-bar"><div class="fv-name" id="fvName"></div><div class="fv-tools"><button type="button" class="fv-btn" id="fvClose" aria-label="Schliessen" title="Schliessen">✕</button><a class="fv-btn" id="fvSave" href="#" aria-label="Herunterladen" title="Herunterladen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.5v11M7.5 11.5L12 16l4.5-4.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 19.5h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></a><span class="fv-sep fv-imgonly"></span><button type="button" class="fv-btn fv-imgonly" id="fvPrev" data-fv-step="-1" aria-label="Vorheriges Bild" title="Vorheriges Bild">‹</button><button type="button" class="fv-btn fv-imgonly" id="fvNext" data-fv-step="1" aria-label="Nächstes Bild" title="Nächstes Bild">›</button><span class="fv-sep fv-imgonly"></span><button type="button" class="fv-btn fv-imgonly" id="fvZoomOut" data-fv-zoom="-1" aria-label="Verkleinern" title="Verkleinern">−</button><button type="button" class="fv-btn fv-imgonly" id="fvZoomIn" data-fv-zoom="1" aria-label="Vergrössern" title="Vergrössern">+</button></div></div></div>
 <div class="toast" id="toast" role="status" hidden></div>
 <input type="file" id="pickFile" multiple hidden tabindex="-1" aria-hidden="true">
 <input type="file" id="pickPhoto" accept="image/*" capture="environment" hidden tabindex="-1" aria-hidden="true">
@@ -1621,6 +1631,7 @@
     if(!fileView || fileView.hidden) return;
     fileView.hidden = true;
     fvStage.innerHTML = "";   // stoppt auch Audio/Video
+    fvStage.classList.remove("zoomed"); fvZoom = 1;
   }
   // ---- Blättern im Vollbild (seit v118) ----
   var fvCtx = null;   // { nid, fid } – zuletzt geöffneter Anhang
@@ -1649,6 +1660,49 @@
       }, function(){});
     });
   }
+  // ---- Zoom im Vollbild (seit v124): − / + in Stufen, Bild verschiebbar durch Scrollen/Wischen ----
+  var FV_ZOOMS = [1, 1.5, 2, 3, 4], fvZoom = 1;
+  function fvApplyZoom(keepCenter){
+    var img = fvStage.querySelector("img");
+    var zin = document.getElementById("fvZoomIn"), zout = document.getElementById("fvZoomOut");
+    if(zin) zin.disabled = fvZoom >= FV_ZOOMS[FV_ZOOMS.length - 1];
+    if(zout) zout.disabled = fvZoom <= 1;
+    if(!img) return;
+    if(fvZoom <= 1){
+      // Standard: ganzes Bild eingepasst
+      if(img.parentNode !== fvStage) fvStage.replaceChild(img, img.parentNode);
+      fvStage.classList.remove("zoomed");
+      img.style.width = img.style.height = "";
+      return;
+    }
+    var go = function(){
+      var nw = img.naturalWidth, nh = img.naturalHeight;
+      if(!nw || !nh) return;
+      var cx = 0.5, cy = 0.5;
+      if(keepCenter && fvStage.classList.contains("zoomed") && fvStage.scrollWidth){
+        cx = (fvStage.scrollLeft + fvStage.clientWidth / 2) / fvStage.scrollWidth;
+        cy = (fvStage.scrollTop + fvStage.clientHeight / 2) / fvStage.scrollHeight;
+      }
+      var box = img.parentNode;
+      if(!box.classList || !box.classList.contains("fv-zoombox")){
+        box = document.createElement("div"); box.className = "fv-zoombox";
+        fvStage.replaceChild(box, img); box.appendChild(img);
+      }
+      fvStage.classList.add("zoomed");
+      var sw = fvStage.clientWidth, sh = fvStage.clientHeight, fit = Math.min(sw / nw, sh / nh);
+      img.style.width = Math.round(nw * fit * fvZoom) + "px";
+      img.style.height = Math.round(nh * fit * fvZoom) + "px";
+      fvStage.scrollLeft = cx * fvStage.scrollWidth - sw / 2;
+      fvStage.scrollTop = cy * fvStage.scrollHeight - sh / 2;
+    };
+    if(img.complete && img.naturalWidth) go(); else img.addEventListener("load", go, { once: true });
+  }
+  function fvZoomStep(d){
+    var i = FV_ZOOMS.indexOf(fvZoom), j = Math.max(0, Math.min(FV_ZOOMS.length - 1, i + d));
+    if(j === i) return;
+    fvZoom = FV_ZOOMS[j];
+    fvApplyZoom(true);
+  }
   function showFile(f){
     var url = fileUrls[f.id];
     if(!url) return;
@@ -1674,11 +1728,13 @@
       if(toastEl){ clearTimeout(toastTimer); toastEl.hidden = true; }
       // Blättern zwischen den Bildern derselben Notiz (seit v118)
       var gal = (kind === "img") ? fvGallery() : null, pos = gal ? gal.list.indexOf(f) : -1;
-      if(gal && gal.list.length > 1 && pos >= 0){
-        if(pos > 0) fvStage.insertAdjacentHTML("beforeend", '<button type="button" class="fv-nav fv-prev" data-fv-step="-1" aria-label="Vorheriges Bild">‹</button>');
-        if(pos < gal.list.length - 1) fvStage.insertAdjacentHTML("beforeend", '<button type="button" class="fv-nav fv-next" data-fv-step="1" aria-label="Nächstes Bild">›</button>');
-        fvPreload(gal, pos);
-      }
+      fileView.classList.toggle("not-img", kind !== "img");
+      var mehr = !!(gal && gal.list.length > 1 && pos >= 0);
+      document.getElementById("fvPrev").disabled = !mehr || pos <= 0;
+      document.getElementById("fvNext").disabled = !mehr || pos >= gal.list.length - 1;
+      if(mehr) fvPreload(gal, pos);
+      fvZoom = 1; fvStage.classList.remove("zoomed");
+      if(kind === "img") fvApplyZoom();
       document.getElementById("fvName").textContent = f.name + (gal && gal.list.length > 1 && pos >= 0 ? "  ·  " + (pos + 1) + " / " + gal.list.length : "");
       var sv = document.getElementById("fvSave");
       sv.href = url; sv.setAttribute("download", f.name);
@@ -1743,6 +1799,7 @@
       if(!fvTouch) return;
       var t = e.changedTouches[0], dx = t.clientX - fvTouch.x, dy = t.clientY - fvTouch.y;
       fvTouch = null;
+      if(fvZoom > 1) return;   // im Zoom verschiebt Wischen das Bild
       if(Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.3){
         fvSwiped = true; setTimeout(function(){ fvSwiped = false; }, 400);
         fvStep(dx < 0 ? 1 : -1);
@@ -1752,11 +1809,16 @@
       if(fileView.hidden) return;
       if(e.key === "ArrowRight"){ e.preventDefault(); fvStep(1); }
       else if(e.key === "ArrowLeft"){ e.preventDefault(); fvStep(-1); }
+      else if(e.key === "+" || e.key === "="){ e.preventDefault(); fvZoomStep(1); }
+      else if(e.key === "-"){ e.preventDefault(); fvZoomStep(-1); }
     });
     fileView.addEventListener("click", function(e){
       if(fvSwiped) return;   // nach dem Wischen nicht gleich schliessen
       var nav = e.target.closest("[data-fv-step]");
-      if(nav){ e.stopPropagation(); fvStep(Number(nav.getAttribute("data-fv-step"))); return; }
+      if(nav){ e.stopPropagation(); if(!nav.disabled) fvStep(Number(nav.getAttribute("data-fv-step"))); return; }
+      var zb = e.target.closest("[data-fv-zoom]");
+      if(zb){ e.stopPropagation(); fvZoomStep(Number(zb.getAttribute("data-fv-zoom"))); return; }
+      if(fvZoom > 1 && !e.target.closest("#fvClose")) return;   // im Zoom schliesst ein Tipp aufs Bild nicht
       if(e.target.closest("#fvSave")) return;
       // Schliessen über den Knopf oder Tipp auf das Bild / die freie Fläche (nicht auf PDF, Text, Player)
       if(e.target.closest("#fvClose") || e.target === fvStage || e.target.tagName === "IMG") closeFileView();
@@ -2413,7 +2475,7 @@
   }
 
   // ---- Kurzinfo „i“ (seit v98) ----
-  var APP_VERSION = "v_ton_nt_gh_a_241026_1345";   // bei jeder Änderung anpassen: v_ton_nt_gh_a_TTMMJJ_HHMM
+  var APP_VERSION = "v_ton_nt_gh_a_281026_0823";   // bei jeder Änderung anpassen: v_ton_nt_gh_a_TTMMJJ_HHMM
   var infoOpen = false;
   var infoPanel = document.getElementById("infoPanel");
   if(document.getElementById("infoVer")) document.getElementById("infoVer").textContent = APP_VERSION;
