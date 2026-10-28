@@ -619,7 +619,7 @@ textarea:focus, .auswahl-feld:focus, #waehlSuche:focus { border-color: #4db8b8; 
         <li><b>CSV-Export:</b> Button CSV in der Titelzeile. Die Tabelle enthält alle Einträge, ist spaltenweise sortierbar und kann zur Dokumentation auf dem Server abgelegt werden.</li>
         <li><b>PDF-Export:</b> Button PDF in der Titelzeile. Das PDF folgt den gesetzten Filtern. Beispiel: Filter «Erfasst» und Art «Tonregie» ergibt nur erfasste Einträge der Art Tonregie.</li>
       </ul>
-      <div class="info-version">v_ton_lb_a_281026_1058</div>
+      <div class="info-version">v_ton_lb_a_281026_1135</div>
     </div>
   </div>
 </div>
@@ -1022,12 +1022,15 @@ function dateiLoeschen(fid){
 
 var fileView = document.getElementById("fileView"), fvStage = document.getElementById("fvStage");
 var fvZoom = 1;
+var fvBasis = 0;
 function fvZoomSetzen(z){
   var img = fvStage.querySelector("img"); if (!img) return;
-  var war = fvZoom; fvZoom = Math.max(1, Math.min(6, z));
-  if (fvZoom <= 1.01){ fvZoom = 1; fvStage.classList.remove("zoomt"); img.style.width = ""; img.style.height = ""; fvStage.scrollLeft = fvStage.scrollTop = 0; return; }
+  var war = fvZoom;
+  fvZoom = Math.max(1, Math.min(5, Math.round(z * 100) / 100));
+  if (war === 1 && fvZoom > 1) fvBasis = img.getBoundingClientRect().width;   // angezeigte Breite bei 100 %
+  if (fvZoom <= 1){ fvZoom = 1; fvStage.classList.remove("zoomt"); img.style.width = ""; img.style.height = ""; fvStage.scrollLeft = fvStage.scrollTop = 0; return; }
   fvStage.classList.add("zoomt");
-  img.style.width = (fvZoom * 100) + "%"; img.style.height = "auto";
+  img.style.width = (fvBasis * fvZoom) + "px"; img.style.height = "auto";
   if (war === 1) fvStage.scrollLeft = (fvStage.scrollWidth - fvStage.clientWidth) / 2;
 }
 function closeFileView(){
@@ -1074,8 +1077,8 @@ if (fileView){
   });
   document.getElementById("fvPrev").addEventListener("click", function(ev){ ev.stopPropagation(); galerieWeiter(-1); });
   document.getElementById("fvNext").addEventListener("click", function(ev){ ev.stopPropagation(); galerieWeiter(1); });
-  document.getElementById("fvMinus").addEventListener("click", function(ev){ ev.stopPropagation(); fvZoomSetzen(fvZoom / 1.5); });
-  document.getElementById("fvPlus").addEventListener("click", function(ev){ ev.stopPropagation(); fvZoomSetzen(fvZoom * 1.5); });
+  document.getElementById("fvMinus").addEventListener("click", function(ev){ ev.stopPropagation(); fvZoomSetzen(fvZoom - 0.25); });
+  document.getElementById("fvPlus").addEventListener("click", function(ev){ ev.stopPropagation(); fvZoomSetzen(fvZoom + 0.25); });
   // Wischen nach links/rechts blättert; ein Wisch soll das Bild nicht schliessen
   var wx = null, wischte = false;
   fvStage.addEventListener("touchstart", function(ev){ wx = ev.touches.length === 1 ? ev.touches[0].clientX : null; wischte = false; }, { passive: true });
