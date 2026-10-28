@@ -200,10 +200,11 @@ h1 { font-size: 18px; font-weight: 500; color: #fff; line-height: 1.1; }
 .badge-erledigt { background: #5f9a72; color: #06180c; }
 .row-art { font-size: 18px; color: #4db8b8; }
 .row-prod { display: block; font-size: 18px; color: #bbb; margin-bottom: 6px; }
-.rf-dot { width: 6px; height: 6px; border-radius: 50%; background: #c04545; box-shadow: 0 0 5px #c04545; margin-left: 5px; }
+.rf-flag { display: inline-flex; align-items: flex-end; margin-left: 6px; position: relative; top: 2px; color: #e04848; line-height: 0; }
+.rf-flag svg { width: 17px; height: 17px; display: block; }
 .row-date { font-size: 18px; color: #bbb; margin-left: auto; white-space: nowrap; }
 
-.row-txt { font-size: 19px; color: #fff; margin-bottom: 8px; }
+.row-txt { font-size: 19px; color: #fff; margin-bottom: 8px; white-space: pre-wrap; overflow-wrap: anywhere; }
 .row.erledigt .row-txt { color: #999; }
 
 .row-foot { display: flex; align-items: center; gap: 10px; }
@@ -428,18 +429,15 @@ textarea:focus, .auswahl-feld:focus, #waehlSuche:focus { border-color: #4db8b8; 
 .fv-stage iframe { width: 100%; height: 100%; border: 0; background: #fff; display: block; }
 .fv-stage pre { width: 100%; height: 100%; margin: 0; padding: 16px; overflow: auto; white-space: pre-wrap; word-wrap: break-word; color: #eee; font-size: 14px; line-height: 1.45; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
 .fv-stage audio { width: min(520px, 90%); }
-.fv-bar { flex: 0 0 auto; display: flex; align-items: center; gap: 16px; font-size: 14px; color: #9a9a9a; padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px)); background: #1c1c1c; border-top: 1px solid #333; }
-.fv-bar span { flex: 1 1 auto; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.nf-all { display: flex; align-items: center; gap: 8px; width: 100%; margin: 6px 0; padding: 9px 12px; border: 1px solid #3a3a3a; border-radius: 8px; background: #202020; color: #4db8b8; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; -webkit-tap-highlight-color: transparent; }
-.nf-all svg { width: 18px; height: 18px; flex: 0 0 auto; }
-.nf-all .nf-all-sub { margin-left: auto; font-weight: 400; font-size: 12.5px; color: #9a9a9a; }
-.nf-all.loading { opacity: .55; cursor: progress; }
-.fv-nav { position: absolute; top: 50%; transform: translateY(-50%); z-index: 2; width: 44px; height: 56px; border: 0; padding: 0; border-radius: 10px; background: rgba(28,28,28,.62); color: #eee; display: none; align-items: center; justify-content: center; cursor: pointer; -webkit-tap-highlight-color: transparent; }
-#fvPrev { left: 8px; } #fvNext { right: 8px; }
-.file-view.galerie .fv-nav { display: flex; }
-.fv-nav:active { background: rgba(60,60,60,.85); }
-.fv-bar a svg { display: block; }
-.fv-bar a, .fv-bar button { flex: 0 0 auto; background: none; border: 0; font: inherit; font-weight: 700; color: #4db8b8; text-decoration: none; cursor: pointer; padding: 6px 2px; }
+.fv-bar { flex: 0 0 auto; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 10px calc(12px + env(safe-area-inset-bottom, 0px)); background: #1c1c1c; border-top: 1px solid #333; }
+.fv-bar a, .fv-bar button { flex: 0 0 auto; width: 46px; height: 46px; display: flex; align-items: center; justify-content: center; padding: 0; border: 1px solid #3a3a3a; border-radius: 12px; background: #242424; color: #4db8b8; text-decoration: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.fv-bar a:active, .fv-bar button:active { background: #333; }
+.fv-bar svg { width: 26px; height: 26px; display: block; }
+.fv-bar .fv-g, .fv-bar .fv-z { display: none; }
+.file-view.galerie .fv-bar .fv-g { display: flex; }
+.file-view.zoombar .fv-bar .fv-z { display: flex; }
+.fv-stage.zoomt { overflow: auto; -webkit-overflow-scrolling: touch; }
+.fv-stage.zoomt img { flex: none; max-width: none; max-height: none; height: auto; margin: auto; }
 @media (max-width: 899px) {
   .header-aktionen { gap: 9px; }
   .row-foot .icon-btn { width: 28px; height: 28px; border-radius: 7px; }
@@ -617,7 +615,7 @@ textarea:focus, .auswahl-feld:focus, #waehlSuche:focus { border-color: #4db8b8; 
         <li><b>CSV-Export:</b> Button CSV in der Titelzeile. Die Tabelle enthält alle Einträge, ist spaltenweise sortierbar und kann zur Dokumentation auf dem Server abgelegt werden.</li>
         <li><b>PDF-Export:</b> Button PDF in der Titelzeile. Das PDF folgt den gesetzten Filtern. Beispiel: Filter «Erfasst» und Art «Tonregie» ergibt nur erfasste Einträge der Art Tonregie.</li>
       </ul>
-      <div class="info-version">v_ton_lb_a_101026_2123</div>
+      <div class="info-version">v_ton_lb_a_281026_1049</div>
     </div>
   </div>
 </div>
@@ -687,7 +685,7 @@ textarea:focus, .auswahl-feld:focus, #waehlSuche:focus { border-color: #4db8b8; 
   </div>
 </div>
 
-<div class="file-view" id="fileView" hidden><div class="fv-stage" id="fvStage"></div><button type="button" class="fv-nav" id="fvPrev" aria-label="Vorheriges Bild"><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="fv-nav" id="fvNext" aria-label="Nächstes Bild"><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="fv-bar"><span id="fvName"></span><a id="fvTab" href="#" target="_blank" rel="noopener" title="In neuem Tab öffnen (zoomen)" aria-label="In neuem Tab öffnen"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M8 16L18 6M10 6h8v8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a><a id="fvSave" href="#">Speichern</a><button type="button" id="fvClose">Schliessen</button></div></div>
+<div class="file-view" id="fileView" hidden><div class="fv-stage" id="fvStage"></div><div class="fv-bar"><button type="button" id="fvClose" aria-label="Schliessen" title="Schliessen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button><a id="fvSave" href="#" aria-label="Speichern" title="Speichern"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.5v11M7.5 11.5L12 16l4.5-4.5M5 19.5h14" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></a><button type="button" class="fv-g" id="fvPrev" aria-label="Vorheriges Bild" title="Vorheriges Bild"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5l-6.5 6.5 6.5 6.5" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="fv-g" id="fvNext" aria-label="Nächstes Bild" title="Nächstes Bild"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 5.5l6.5 6.5-6.5 6.5" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="fv-z" id="fvMinus" aria-label="Verkleinern" title="Verkleinern"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button type="button" class="fv-z" id="fvPlus" aria-label="Vergrössern" title="Vergrössern"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12M12 6v12" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div></div>
 <div id="hinweis" role="status" hidden></div>
 <input type="file" id="pickFile" multiple hidden tabindex="-1" aria-hidden="true">
 <input type="file" id="pickPhoto" accept="image/*" capture="environment" hidden tabindex="-1" aria-hidden="true">
@@ -1019,9 +1017,18 @@ function dateiLoeschen(fid){
 }
 
 var fileView = document.getElementById("fileView"), fvStage = document.getElementById("fvStage");
+var fvZoom = 1;
+function fvZoomSetzen(z){
+  var img = fvStage.querySelector("img"); if (!img) return;
+  var war = fvZoom; fvZoom = Math.max(1, Math.min(6, z));
+  if (fvZoom <= 1.01){ fvZoom = 1; fvStage.classList.remove("zoomt"); img.style.width = ""; img.style.height = ""; fvStage.scrollLeft = fvStage.scrollTop = 0; return; }
+  fvStage.classList.add("zoomt");
+  img.style.width = (fvZoom * 100) + "%"; img.style.height = "auto";
+  if (war === 1) fvStage.scrollLeft = (fvStage.scrollWidth - fvStage.clientWidth) / 2;
+}
 function closeFileView(){
   if (!fileView || fileView.hidden) return;
-  fileView.hidden = true; fvStage.innerHTML = ""; fileView.classList.remove("galerie"); galerie = null;
+  fileView.hidden = true; fvStage.innerHTML = ""; fileView.classList.remove("galerie", "zoombar"); fvZoom = 1; fvStage.classList.remove("zoomt"); galerie = null;
 }
 function showFile(f){
   var url = fileUrls[f.id]; if (!url) return;
@@ -1040,9 +1047,8 @@ function showFile(f){
     }
     fvStage.appendChild(el);
     if (hinweisEl){ clearTimeout(hinweisTimer); hinweisEl.hidden = true; }
-    document.getElementById("fvName").textContent = f.name;
     var sv = document.getElementById("fvSave"); sv.href = url; sv.setAttribute("download", f.name);
-    var tb = document.getElementById("fvTab"); tb.href = url; tb.style.display = (kind === "img" || kind === "pdf" || kind === "video") ? "" : "none";
+    fvZoom = 1; fvStage.classList.remove("zoomt"); fileView.classList.toggle("zoombar", kind === "img");
     fileView.hidden = false;
     return;
   }
@@ -1054,8 +1060,8 @@ function showFile(f){
 }
 if (fileView){
   fileView.addEventListener("click", function(ev){
-    if (ev.target.closest("#fvSave") || ev.target.closest("#fvTab")) return;
-    if (ev.target.closest("#fvClose") || ev.target === fvStage || ev.target.tagName === "IMG") closeFileView();
+    if (ev.target.closest("#fvSave")) return;
+    if (ev.target.closest("#fvClose") || (fvZoom === 1 && (ev.target === fvStage || ev.target.tagName === "IMG"))) closeFileView();
   });
   document.addEventListener("keydown", function(ev){
     if (ev.key === "Escape") closeFileView();
@@ -1064,13 +1070,15 @@ if (fileView){
   });
   document.getElementById("fvPrev").addEventListener("click", function(ev){ ev.stopPropagation(); galerieWeiter(-1); });
   document.getElementById("fvNext").addEventListener("click", function(ev){ ev.stopPropagation(); galerieWeiter(1); });
+  document.getElementById("fvMinus").addEventListener("click", function(ev){ ev.stopPropagation(); fvZoomSetzen(fvZoom / 1.5); });
+  document.getElementById("fvPlus").addEventListener("click", function(ev){ ev.stopPropagation(); fvZoomSetzen(fvZoom * 1.5); });
   // Wischen nach links/rechts blättert; ein Wisch soll das Bild nicht schliessen
   var wx = null, wischte = false;
   fvStage.addEventListener("touchstart", function(ev){ wx = ev.touches.length === 1 ? ev.touches[0].clientX : null; wischte = false; }, { passive: true });
   fvStage.addEventListener("touchend", function(ev){
     if (wx === null || !ev.changedTouches.length) return;
     var dx = ev.changedTouches[0].clientX - wx; wx = null;
-    if (Math.abs(dx) > 50){ wischte = true; galerieWeiter(dx < 0 ? 1 : -1); setTimeout(function(){ wischte = false; }, 400); }
+    if (fvZoom === 1 && Math.abs(dx) > 50){ wischte = true; galerieWeiter(dx < 0 ? 1 : -1); setTimeout(function(){ wischte = false; }, 400); }
   }, { passive: true });
   fvStage.addEventListener("click", function(ev){ if (wischte){ ev.stopPropagation(); ev.preventDefault(); } }, true);
 }
@@ -1167,7 +1175,6 @@ function galerieZeigen(){
   showFile(f);
   var n = galerie.list.length;
   fileView.classList.toggle("galerie", n > 1 && viewKind(f) === "img");
-  if (n > 1) document.getElementById("fvName").textContent = (galerie.idx + 1) + " / " + n + " · " + f.name;
 }
 function galerieWeiter(d){
   if (!galerie || galerie.list.length < 2 || fileView.hidden) return;
@@ -1611,7 +1618,7 @@ function zeileHtml(e, i){
        + "<div class='row-top'>"
        + "<span class='badge badge-"+e.status+"' onclick='statusOeffnen("+i+")'>"+STATUS_LABEL[e.status]+"</span>"
        + (e.art ? "<span class='row-art'>"+esc(e.art)+"</span>" : "")
-       + (e.rot ? "<span class='rf-dot'></span>" : "")
+       + (e.rot ? "<span class='rf-flag' title='Dringend'><svg viewBox='0 0 20 20' aria-hidden='true'><path d='M5 17V3M5 3h10l-2.3 3.2L15 9.4H5' fill='currentColor' stroke='currentColor' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'/></svg></span>" : "")
        + "<span class='row-date'>"+uhr(e.zeit)+"</span>"
        + "</div>"
        + (e.prod ? "<div class='row-prod'>"+esc(kurzProd(e.prod))+"</div>" : "")
@@ -2011,6 +2018,12 @@ function pdfHex(t){
   return "<" + h + ">";
 }
 function pdfUmbruch(text, breite, groesse, fett){
+  var absaetze = String(text).split(/\r?\n/);
+  if (absaetze.length > 1){
+    var alle = [];
+    absaetze.forEach(function(a){ alle = alle.concat(pdfUmbruch(a, breite, groesse, fett)); });
+    return alle;
+  }
   var zeilen = [], aktuell = "";
   String(text).split(" ").forEach(function(wort){
     while (pdfTextBreite(wort, groesse, fett) > breite && wort.length > 1){
@@ -2172,7 +2185,7 @@ function toastZeigen(text, ankerId){
 function csvExportieren(){
   var t = exportTabelle();
   function zelle(w){
-    return /[";]/.test(w) ? '"' + w.replace(/"/g, '""') + '"' : w;
+    return /[";\r\n]/.test(w) ? '"' + w.replace(/"/g, '""') + '"' : w;
   }
   var text = "\uFEFF" + [t.kopf].concat(t.zeilen).map(function(z){ return z.map(zelle).join(";"); }).join("\r\n");
   dateiHerunterladen(new Blob([text], { type: "text/csv;charset=utf-8" }), exportDateiname("csv"));
@@ -2213,11 +2226,12 @@ function logoKickerAusrichten(){
   if (sub) sub.style.width = h1.getBoundingClientRect().width + "px";
 }
 
+var SPIELPLAN_URL = "https://raphcoda.github.io/spielplan_web-app/";
 (function(){
   var w = document.getElementById("logoWrap");
   if (w) w.addEventListener("click", function(){
     try { window.close(); } catch(e) {}
-    setTimeout(function(){ if (!window.closed) location.href = "../"; }, 200);
+    setTimeout(function(){ if (!window.closed) location.href = SPIELPLAN_URL; }, 200);
   });
 })();
 
