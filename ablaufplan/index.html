@@ -2099,6 +2099,22 @@
   li.cue.editing .note-item{ align-items:center; }
   li.cue.editing .note-check{ margin-top:0; border-width:1px; border-color:var(--field-focus); }
   li.cue.editing .note-add{ margin-top:0; }
+  /* Fotobetrachter-Leiste (seit v260): oben klein mittig Beschriftung · n / m, darunter alle Knöpfe mittig:
+     Zurück · Herunterladen · − · + (nur Desktop) · ‹ · › (nur bei mehreren Fotos); runde Pfeile im Bild entfallen */
+  #imgView .iv-nav{ display:none !important; }
+  #imgView .iv-bar{ display:flex !important; flex-wrap:wrap; justify-content:center; align-items:center; gap:8px 12px; padding:8px 14px calc(10px + env(safe-area-inset-bottom, 0px)); }
+  #imgView .iv-right{ display:contents !important; }
+  #imgView .iv-bar .iv-cap{ order:0; flex:0 1 auto; max-width:calc(100% - 70px); font-size:14px; font-weight:600; color:#ddd; text-align:center; }
+  #imgView .iv-bar .iv-n{ order:0; margin:0 0 0 -6px !important; font-size:13px; color:#999; }
+  #imgView .iv-bar .iv-n::before{ content:"· "; }
+  #imgView .iv-bar .iv-br{ order:1; flex:0 0 100%; height:0; }
+  #imgView .iv-bar .iv-back{ order:2; grid-column:auto; }
+  #imgView .iv-bar #ivDl{ order:3; }
+  #imgView .iv-bar .iv-zoom{ order:4; }
+  #imgView .iv-bar .iv-pg{ order:5; display:none; }
+  #imgView.multi .iv-bar .iv-pg{ display:flex; align-items:center; justify-content:center; width:50px; height:50px; padding:0; border-radius:12px; background:#1f3533; color:var(--ka); }
+  #imgView.multi .iv-bar .iv-pg .fv-i{ display:block; width:28px; height:28px; }
+  @media (hover:hover) and (pointer:fine){ #imgView.multi .iv-bar .iv-pg{ width:48px; height:48px; } #imgView .iv-bar .iv-pg:hover{ background:#28504c; } }
 </style>
 </head>
 <body>
@@ -2123,7 +2139,7 @@
 </g></svg></span></span></span><span class="eq-lane-eq" aria-hidden="true"><span class="eqb"><i></i><s></s></span><span class="eqb"><i></i><s></s></span><span class="eqb"><i></i><s></s></span><span class="eqb"><i></i><s></s></span><span class="eqb"><i></i><s></s></span><span class="eqb"><i></i><s></s></span></span><svg class="hs-lane-hs" viewBox="0 0 30 18" aria-hidden="true"><path class="hs-st" d="M4 9 L1.5 1M26 9 L28.5 1"></path><rect class="hs-fl" x="1" y="9" width="28" height="9" rx="1.5"></rect><rect class="rx-seg rx-s1" x="4" y="12" width="2.4" height="3" rx=".4"></rect><rect class="rx-seg rx-s3" x="10.6" y="12" width="2.4" height="3" rx=".4"></rect><rect class="rx-seg rx-s5" x="17.2" y="12" width="2.4" height="3" rx=".4"></rect><circle class="rx-knob" cx="24" cy="13.5" r="1.8"></circle></svg></span>
     <button class="exportbtn deskbtn" id="exportAllBtn" aria-label="Gesamtexport als Excel" title="Gesamtexport (Bühne, Tonregie, Technik) als Excel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="11" rx="1.5"/><path d="M3.5 7.5h17M9.5 3.5v11M15 3.5v11"/><path d="M12 15.5v5.5M9 18.5l3 3 3-3"/></svg></button>
     <button class="exportbtn deskbtn" id="printBtn" aria-label="Alles drucken" title="Alles drucken (Bühne, Tonregie, Technik)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.5 8.5V4h9v4.5"/><path d="M7.5 17H5a1.5 1.5 0 0 1-1.5-1.5v-5.5A1.5 1.5 0 0 1 5 8.5h14a1.5 1.5 0 0 1 1.5 1.5v5.5A1.5 1.5 0 0 1 19 17h-2.5"/><path d="M7.5 14h9v6h-9z"/></svg></button>
-    <button class="exportbtn deskbtn" id="docuBtn" aria-label="Doku herunterladen" title="Doku herunterladen (ZIP: DOKU als PDF, Bühnenpläne, Fotos)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11"/><path d="M7 10.5 12 15.5l5-5"/><path d="M5 20h14"/></svg></button>
+    <button class="exportbtn deskbtn" id="docuBtn" aria-label="Doku herunterladen" title="Doku herunterladen (ZIP: DOKU als PDF, Bühnenpläne, Fotos, Dokumente)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11"/><path d="M7 10.5 12 15.5l5-5"/><path d="M5 20h14"/></svg></button>
     <button class="exportbtn searchbtn" id="searchBtn" aria-label="Suchen" title="Suchen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L20 20"/></svg></button>
     <button class="exportbtn deskbtn" id="archBtn" aria-label="Archiv" title="Archivierte Produktionen" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="4" rx="1"/><path d="M5 8.5v10a1.5 1.5 0 0 0 1.5 1.5h11a1.5 1.5 0 0 0 1.5-1.5v-10"/><path d="M10 12.5h4"/></svg></button>
     <div class="arch-pop" id="archPop" hidden></div>
@@ -2189,10 +2205,10 @@
   </ul>
   <h4>Gesamtdokumentation</h4>
   <ul>
-    <li>Lädt die Produktion als ZIP herunter: DOKU (Bühne, Tonregie, Technik) als PDF, Bühnenpläne und Fotos – entpackt ein Ordner „Dokumentation_Produktion_Datum“.</li>
+    <li>Lädt die Produktion als ZIP herunter: DOKU (Bühne, Tonregie, Technik) als PDF, Bühnenpläne, Fotos und im Ordner „Dokumente“ alle Dateien aus DOC bei Tonregie und Technik – entpackt ein Ordner „Dokumentation_Produktion_Datum“.</li>
     <li><b>Desktop:</b> Download-Knopf oben rechts. <b>Handy:</b> Menü ☰ → „Download Doku“.</li>
   </ul>
-  <p class="info-ver"><span id="infoVer">v_ton_ap_gh_a_291026_1249</span><span class="info-brand">TON UND BILD · OPERNHAUS ZÜRICH</span></p>
+  <p class="info-ver"><span id="infoVer">v_ton_ap_gh_a_291026_1351</span><span class="info-brand">TON UND BILD · OPERNHAUS ZÜRICH</span></p>
 </div></div>
 <div id="printAsk" hidden><div class="info-panel print-ask" role="dialog" aria-modal="true" aria-labelledby="printAskTitle">
   <h3 id="printAskTitle">Drucken</h3>
@@ -2209,7 +2225,7 @@
 <input type="file" id="docPick" class="foto-file" accept="application/pdf,.pdf,image/*" multiple>
 <input type="file" id="docCam" class="foto-file" accept="image/*" capture="environment">
 <div id="fotoDlg" hidden><div class="foto-panel" role="dialog" aria-modal="true" aria-label="Fotos"></div></div>
-<div id="imgView" hidden><div class="iv-stage" id="ivStage"><button type="button" class="iv-nav iv-prev" id="ivPrev" aria-label="Vorheriges Foto">‹</button><button type="button" class="iv-nav iv-next" id="ivNext" aria-label="Nächstes Foto">›</button></div><div class="iv-bar"><span class="iv-cap" id="ivCap"></span><button type="button" class="iv-back" id="ivBack">Zurück</button><span class="iv-right"><span class="iv-n" id="ivN"></span><button type="button" class="iv-ico" id="ivDl" title="Dieses Foto herunterladen" aria-label="Dieses Foto herunterladen"><span class="iv-t">⤓</span><svg class="fv-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5v12"/><path d="M6.5 10.5 12 16l5.5-5.5"/><path d="M5 20.5h14"/></svg></button><button type="button" class="iv-ico" id="ivTab" title="In neuem Tab öffnen (zum Zoomen)" aria-label="In neuem Tab öffnen"><span class="iv-t">↗</span><svg class="fv-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M9 7h8v8"/></svg></button><button type="button" class="iv-ico iv-zoom" id="ivZoomOut" title="Verkleinern" aria-label="Verkleinern"><svg class="fv-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"/></svg></button><button type="button" class="iv-ico iv-zoom" id="ivZoomIn" title="Vergrössern" aria-label="Vergrössern"><svg class="fv-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button><button type="button" id="ivClose">Schliessen</button></span></div></div>
+<div id="imgView" hidden><div class="iv-stage" id="ivStage"><button type="button" class="iv-nav iv-prev" id="ivPrev" aria-label="Vorheriges Foto">‹</button><button type="button" class="iv-nav iv-next" id="ivNext" aria-label="Nächstes Foto">›</button></div><div class="iv-bar"><span class="iv-cap" id="ivCap"></span><span class="iv-br" aria-hidden="true"></span><button type="button" class="iv-back" id="ivBack">Zurück</button><span class="iv-right"><span class="iv-n" id="ivN"></span><button type="button" class="iv-ico" id="ivDl" title="Dieses Foto herunterladen" aria-label="Dieses Foto herunterladen"><span class="iv-t">⤓</span><svg class="fv-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5v12"/><path d="M6.5 10.5 12 16l5.5-5.5"/><path d="M5 20.5h14"/></svg></button><button type="button" class="iv-ico" id="ivTab" title="In neuem Tab öffnen (zum Zoomen)" aria-label="In neuem Tab öffnen"><span class="iv-t">↗</span><svg class="fv-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M9 7h8v8"/></svg></button><button type="button" class="iv-ico iv-zoom" id="ivZoomOut" title="Verkleinern" aria-label="Verkleinern"><svg class="fv-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"/></svg></button><button type="button" class="iv-ico iv-zoom" id="ivZoomIn" title="Vergrössern" aria-label="Vergrössern"><svg class="fv-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button><button type="button" class="iv-ico iv-pg" id="ivPgPrev" title="Vorheriges Foto" aria-label="Vorheriges Foto"><svg class="fv-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button><button type="button" class="iv-ico iv-pg" id="ivPgNext" title="Nächstes Foto" aria-label="Nächstes Foto"><svg class="fv-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button><button type="button" id="ivClose">Schliessen</button></span></div></div>
 <div id="printView" aria-hidden="true"></div>
 
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
@@ -5183,6 +5199,7 @@
     document.getElementById("ivN").textContent = (ivIdx + 1) + " / " + ivList.length;
     document.getElementById("ivPrev").hidden = ivList.length < 2;
     document.getElementById("ivNext").hidden = ivList.length < 2;
+    document.getElementById("imgView").classList.toggle("multi", ivList.length > 1);   // ‹ › in der Leiste (seit v260)
     var ld = document.createElement("span"); ld.className = "iv-load"; ld.textContent = "Foto lädt …";
     st.insertBefore(ld, st.firstChild);
     var want = f.id;
@@ -5238,6 +5255,8 @@
     var iv = document.getElementById("imgView"), sx = null, sy = null, multi = false;
     document.getElementById("ivPrev").addEventListener("click", function(e){ e.stopPropagation(); ivStep(-1); });
     document.getElementById("ivNext").addEventListener("click", function(e){ e.stopPropagation(); ivStep(1); });
+    document.getElementById("ivPgPrev").addEventListener("click", function(e){ e.stopPropagation(); ivStep(-1); });
+    document.getElementById("ivPgNext").addEventListener("click", function(e){ e.stopPropagation(); ivStep(1); });
     document.getElementById("ivClose").addEventListener("click", ivClose);
     document.getElementById("ivBack").addEventListener("click", ivClose);
     document.getElementById("fvWhole").addEventListener("click", function(){ bpSetZoom(1); });
@@ -6708,6 +6727,16 @@
       jobs.push((bpLocal[f.id] ? Promise.resolve(bpLocal[f.id]) : fotoGet(f.id)).then(function(rec){
         if(rec && rec.data) add(clean(String(f.name || "Buehnenplan").replace(/\.pdf$/i, "")) + ".pdf", b64ToU8(rec.data));
       }));
+    });
+    // Ordner „Dokumente“ (seit v260): alle DOC-Dateien aus Tonregie und Technik
+    Object.keys(DOC_AREAS).forEach(function(area){
+      prodDocs(p, area).forEach(function(d){
+        jobs.push(fotoGet(d.id).then(function(rec){
+          if(!rec || !rec.data) return;
+          var base = clean(String(d.n || "").replace(/\.(pdf|jpe?g|png|heic|heif|webp|gif)$/i, "")) || "Datei";
+          add("Dokumente/" + base + (d.k === "pdf" ? ".pdf" : ".jpg"), b64ToU8(rec.data));
+        }));
+      });
     });
     prodFotos(p).forEach(function(f, i){
       jobs.push(fotoGet(f.id).then(function(rec){
