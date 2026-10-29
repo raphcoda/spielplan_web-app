@@ -2172,7 +2172,7 @@
   </ul>
   <h4>Fotos (Kamera-Symbol, Bühne)</h4>
   <ul>
-    <li>Grau = noch keine Fotos, grün = Fotos vorhanden. Bis zu 10 Fotos pro Produktion, jedes mit kurzer Beschriftung.</li>
+    <li>Grau = noch keine Fotos, grün = Fotos vorhanden. Bis zu 15 Fotos pro Produktion, jedes mit kurzer Beschriftung.</li>
     <li><b>Handy:</b> Antippen öffnet die Fotoliste mit „Foto machen“ und „Aus Gallery“. <b>Desktop:</b> Fotos auf das Kamera-Symbol ziehen oder anklicken. Der Dateiname wird als Beschriftung übernommen.</li>
     <li>„Alle herunterladen“ speichert alle Fotos als ZIP – zur Ablage auf dem Server.</li>
   </ul>
@@ -2192,7 +2192,7 @@
     <li>Lädt die Produktion als ZIP herunter: DOKU (Bühne, Tonregie, Technik) als PDF, Bühnenpläne und Fotos – entpackt ein Ordner „Dokumentation_Produktion_Datum“.</li>
     <li><b>Desktop:</b> Download-Knopf oben rechts. <b>Handy:</b> Menü ☰ → „Download Doku“.</li>
   </ul>
-  <p class="info-ver"><span id="infoVer">v_ton_ap_gh_a_281026_1103</span><span class="info-brand">TON UND BILD · OPERNHAUS ZÜRICH</span></p>
+  <p class="info-ver"><span id="infoVer">v_ton_ap_gh_a_291026_1249</span><span class="info-brand">TON UND BILD · OPERNHAUS ZÜRICH</span></p>
 </div></div>
 <div id="printAsk" hidden><div class="info-panel print-ask" role="dialog" aria-modal="true" aria-labelledby="printAskTitle">
   <h3 id="printAskTitle">Drucken</h3>
@@ -4794,11 +4794,11 @@
 
 
   // ================= Fotos (nur Bühne) =================
-  // Pro Produktion höchstens 10 Fotos. Jedes Foto wird auf dem Gerät auf 1920 px (längere Kante) und höchstens 1 MB
+  // Pro Produktion höchstens 15 Fotos (seit v259, vorher 10). Jedes Foto wird auf dem Gerät auf 1920 px (längere Kante) und höchstens 1 MB
   // verkleinert (JPEG) und unter ablaufplan/files/<id> gespeichert, dazu ein kleines Vorschaubild unter <id>_t.
   // An der Produktion steht nur die Liste prod.fotos = { <id>: { t: Beschriftung, ts, o: Reihenfolge } }.
   // Löschen (Foto oder ganze Produktion) entfernt die Dateien wieder aus Firebase. Fotos erscheinen nicht im Druck.
-  var FOTO_MAX = 10, FOTO_EDGE = 1920, FOTO_BYTES = 1024 * 1024, FOTO_THUMB = 320;
+  var FOTO_MAX = 15, FOTO_EDGE = 1920, FOTO_BYTES = 1024 * 1024, FOTO_THUMB = 320;
   var CAM_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8.5h3l1.6-2.5h6.8L17 8.5h3a1 1 0 0 1 1 1V18a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5a1 1 0 0 1 1-1z"/><circle cx="12" cy="13.5" r="3.4"/></svg>';
   var fotoOpen = false, fotoAsk = null, fotoBusy = 0, fotoFocus = null, fotoDlPending = false;
   var fotoThumbs = {}, fotoFull = {}, fotoLocal = {}, fotoLoading = {};
