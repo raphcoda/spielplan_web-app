@@ -38,6 +38,10 @@ body {
   padding: 19px 80px 14px 16px; border-bottom: 1px solid #2c2c2c; background: #1c1c1c; flex-shrink: 0;
   box-shadow: 0 1px 0 rgba(255,255,255,0.05), 0 2px 4px rgba(0,0,0,0.35); position: relative; z-index: 5;
 }
+#quittBtn { position: absolute; z-index: 6; display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; background: #241a10; color: #f0a050; font: inherit; font-weight: 700; letter-spacing: .01em; line-height: 1; border: 1.2px solid rgba(240,160,80,.55); box-shadow: 0 0 6px rgba(240,160,80,.3); white-space: nowrap; cursor: pointer; -webkit-tap-highlight-color: transparent; padding: 0; }
+#quittBtn[hidden] { display: none; }
+#quittBtn:active { filter: brightness(1.25); }
+#quittBtn::after { content: ""; position: absolute; inset: -6px -2px; }
 .kopf-zeile { display: grid; grid-template-columns: auto 1fr auto; align-items: center; }
 .logo-wrap { grid-column: 1; display: flex; flex-direction: column; position: relative; margin-left: 20px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .backbtn { position: absolute; left: -26px; top: 50%; transform: translateY(-50%); display: flex; align-items: center; background: none; border: 0; padding: 12px 10px 12px 8px; color: #9a9a9a; cursor: pointer; -webkit-tap-highlight-color: transparent; }
@@ -487,6 +491,7 @@ textarea:focus, .auswahl-feld:focus, #waehlSuche:focus { border-color: #4db8b8; 
 <div id="seitenEqualizer"><div class="side-eq"><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div></div></div>
 
 <div id="header">
+  <button type="button" id="quittBtn" hidden title="Neue Einträge quittieren">Quittieren</button>
   <div class="kopf-zeile">
     <div class="logo-wrap" id="logoWrap" title="Zurück zum Spielplan">
       <button class="backbtn" id="backBtn" type="button" aria-label="Zurück zum Spielplan"><svg viewBox="0 0 11 18" aria-hidden="true"><path d="M9 1.5L2 9l7 7.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
@@ -619,7 +624,7 @@ textarea:focus, .auswahl-feld:focus, #waehlSuche:focus { border-color: #4db8b8; 
         <li><b>CSV-Export:</b> Button CSV in der Titelzeile. Die Tabelle enthält alle Einträge, ist spaltenweise sortierbar und kann zur Dokumentation auf dem Server abgelegt werden.</li>
         <li><b>PDF-Export:</b> Button PDF in der Titelzeile. Das PDF folgt den gesetzten Filtern. Beispiel: Filter «Erfasst» und Art «Tonregie» ergibt nur erfasste Einträge der Art Tonregie.</li>
       </ul>
-      <div class="info-version">v_ton_lb_a_281026_1147</div>
+      <div class="info-version">v_ton_lb_a_301026_1833</div>
     </div>
   </div>
 </div>
@@ -822,6 +827,11 @@ function dbEmpfangen(snap){
 function dbAnhaengen(){
   if (syncAktiv || !dbRef) return;
   syncAktiv = true;
+  try {
+    dbRoot.ref("logbuch/quittiert").on("value", function(snap){
+      var v = snap.val(); quittFb = (typeof v === "number") ? v : 0; quittAktualisieren();
+    }, function(){});
+  } catch (e) {}
   dbRef.on("value", dbEmpfangen, function(){
     // Zugriff verweigert: Regeln verlangen Anmeldung (oder sie ist abgelaufen)
     syncAktiv = false;
@@ -1650,10 +1660,59 @@ function zeileHtml(e, i){
        + "</div></div>";
 }
 
+
+/* ---------- Quittieren: Hinweis „neue erfasste Einträge“ bestätigen ---------- */
+var QUITT_KEY = "logbuchQuittiert", quittLokal = 0, quittFb = 0;
+try { quittLokal = parseInt(localStorage.getItem(QUITT_KEY), 10) || 0; } catch (e) {}
+function quittZeit(){ return Math.max(quittLokal, quittFb); }
+function quittOffen(){
+  var q = quittZeit();
+  return eintraege.some(function(e){ return !e.archiviert && e.status === "erfasst" && new Date(e.zeit).getTime() > q; });
+}
+function quittPositionieren(){
+  var b = document.getElementById("quittBtn"), hd = document.getElementById("header");
+  if (!b || b.hidden) return;
+  var wrap = document.querySelector(".logo-wrap"), akt = document.querySelector(".header-aktionen"), eb = document.querySelector(".eyebrow");
+  var hr = hd.getBoundingClientRect(), wr = wrap.getBoundingClientRect();
+  var ebR = null;
+  if (eb && eb.offsetParent !== null){ var rg = document.createRange(); rg.selectNodeContents(eb); ebR = rg.getBoundingClientRect(); }
+  var links = wr.right, rechts = ebR ? ebR.left : akt.getBoundingClientRect().left;
+  var luecke = rechts - links, rand = ebR ? 18 : 8;
+  var fs = ebR ? 15 : 11, min = ebR ? 9 : 6.5;
+  function setze(){ b.style.fontSize = fs + "px"; b.style.padding = (fs * 0.3) + "px " + (fs * (ebR ? 0.75 : 0.45)) + "px"; }
+  b.textContent = "Quittieren"; b.style.minWidth = ""; setze();
+  while (b.getBoundingClientRect().width > luecke - 2 * rand && fs > min){ fs -= 0.25; setze(); }
+  if (b.getBoundingClientRect().width > luecke - 2 * rand){   // zu eng: nur Häkchen
+    b.textContent = "\u2713"; fs = 12; b.style.fontSize = "12px"; b.style.padding = "0"; b.style.minWidth = "20px"; b.style.height = "20px";
+  } else b.style.height = "";
+  var br = b.getBoundingClientRect();
+  var cy = ebR ? ebR.top + ebR.height / 2 : wr.top + wr.height / 2;
+  b.style.left = (links + (luecke - br.width) / 2 - hr.left).toFixed(1) + "px";
+  b.style.top = (cy - br.height / 2 - hr.top).toFixed(1) + "px";
+}
+function quittAktualisieren(){
+  var b = document.getElementById("quittBtn"); if (!b) return;
+  var an = quittOffen();
+  if (b.hidden === !an){ if (an) quittPositionieren(); return; }
+  b.hidden = !an;
+  if (an) quittPositionieren();
+}
+(function(){
+  var b = document.getElementById("quittBtn"); if (!b) return;
+  b.addEventListener("click", function(){
+    quittLokal = Date.now();
+    try { localStorage.setItem(QUITT_KEY, String(quittLokal)); } catch (e) {}
+    if (dbRoot) { try { dbRoot.ref("logbuch/quittiert").set(quittLokal).catch(function(){}); } catch (e) {} }
+    quittAktualisieren();
+  });
+  window.addEventListener("resize", quittPositionieren);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(quittPositionieren);
+})();
 function zeichne(){
   if (teilenId && document.getElementById("teilenHinter").classList.contains("offen")) teilenZeichnen();
   if (typeof medienZeichne === "function" && document.getElementById("medienHinter").classList.contains("offen")) medienZeichne();
   eintraege.sort(function(a,b){ return new Date(b.zeit) - new Date(a.zeit); });
+  quittAktualisieren();
 
   var sicht = eintraege.filter(inAnsicht);
 
@@ -1941,6 +2000,18 @@ function waehlWahl(val){
   waehlHinter.classList.remove("offen");
 }
 
+/* ---------- Red-Flag-Mail (über ein Google-Apps-Script, siehe ANLEITUNG_MAIL.md) ---------- */
+var MAIL_URL = "https://script.google.com/macros/s/AKfycbzSwi3aAk_f4WMqr9zTa4t4YHjSOtG9St11_YjIPQJz_QGK0US-zWo3KAwxfGn8G5hqJw/exec";     // Web-App-URL des Apps-Scripts (…/exec). Leer = keine Mails.
+var MAIL_TOKEN = "vhzy970uy4mwpb";   // Geheimwort, muss mit dem Script übereinstimmen
+function rotMailSenden(e){
+  if (!MAIL_URL || !e) return;
+  try {
+    fetch(MAIL_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ token: MAIL_TOKEN, art: e.art || "", prod: e.prod || "", txt: e.txt || "", von: e.von || "", zeit: e.zeit || "", link: SHARE_BASE })
+    }).catch(function(){});
+    if (typeof toastZeigen === "function") toastZeigen("Red Flag: Mail wird verschickt");
+  } catch (x) {}
+}
 document.getElementById("sendenBtn").onclick = function(){
   var txt = document.getElementById("txt").value.trim();
   if (!txt){ document.getElementById("txt").focus(); return; }
@@ -1951,13 +2022,16 @@ document.getElementById("sendenBtn").onclick = function(){
     bearbeitungsEintrag.art = formArt;
     bearbeitungsEintrag.prod = formProd;
     bearbeitungsEintrag.von = formVon;
+    var warRot = !!bearbeitungsEintrag.rot;
     bearbeitungsEintrag.rot = formRot;
     speichere(bearbeitungsEintrag);
+    if (formRot && !warRot) rotMailSenden(bearbeitungsEintrag);
     bearbeitungsEintrag = null;
   } else {
     var neuer = { zeit: new Date().toISOString(), txt: txt, art: formArt, prod: formProd, status: "erfasst", von: formVon, rot: formRot };
     eintraege.unshift(neuer);
     speichere(neuer);
+    if (formRot) rotMailSenden(neuer);
   }
 
   formularZuruecksetzen();
