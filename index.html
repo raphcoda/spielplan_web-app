@@ -596,19 +596,7 @@ input[type=date]::-webkit-calendar-picker-indicator { filter: invert(0.8) bright
 }
 .sonne-glow { display:inline-block; animation: sonne-puls 2.2s ease-in-out infinite; }
 #info-i { animation: i-fade-first 10s ease-in-out 1s 1, i-fade 10s ease-in-out 11s infinite; }
-/* Glow-Effekt, frueher auf dem i-Symbol, jetzt auf dem Menue-Button */
-@keyframes menu-fade-first {
-  0%, 12%, 100% { box-shadow: none; }
-  20% { box-shadow: 0 0 10px 2px rgba(220,238,255,0.8), 0 0 22px 5px rgba(205,230,255,0.5), 0 0 38px 11px rgba(195,225,255,0.25); }
-  28% { box-shadow: none; }
-}
-/* Der Glow liegt auf dem Fragezeichen-Button der Hauptansicht.
-   Auf dem Handy bleibt er beim Menue-Button. */
-#menu-btn { animation: menu-fade-first 10s ease-in-out 1s 1; }
-@media (min-width: 1000px) and (hover: hover) and (pointer: fine) {
-  #menu-btn { animation: none; }
-  #about-desk { animation: menu-fade-first 10s ease-in-out 1s 1; }
-}
+/* Seit 30.10.2026 entfernt: Einblend-Glow (weisser Schein) auf Menue-Knopf (Handy) und Fragezeichen (Desktop). */
 /* Seit 24.10.2026 - Desktop-Titelzeile: SPiELPLAN - PROBENPLAN - DOKU - LOGBUCH -
    DRIVE - NOTES - Menue - ? - Logo (mittig zwischen ? und KALENDER) - KALENDER.
    Graue Text-Buttons wie der Menue-Button; Koffer/Stift entfallen auf dem Desktop,
@@ -4422,8 +4410,8 @@ filterAktuell();
       <div style="height:1px;background:#4d4d4d;margin:22px 0 18px"></div>
       <p style="margin-top:0">Die Daten des Spielplans basieren auf den Spielplanunterlagen der technischen Direktion, des KBB sowie der Website des Opernhauses Z&uuml;rich. &Auml;nderungen w&auml;hrend laufender Spielzeit sind m&ouml;glicherweise nicht ber&uuml;cksichtigt, werden aber kontinuierlich aktualisiert.</p>
       <p>Diese WebApp ist als Hilfsmittel f&uuml;r den Produktionsalltag gedacht. F&uuml;r die Richtigkeit, Vollst&auml;ndigkeit und Aktualit&auml;t der Inhalte wird keine Gew&auml;hr &uuml;bernommen.</p>
-      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_291026_1419" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
-      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_291026_1419</p>
+      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_301026_2000" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
+      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_301026_2000</p>
       <p class="pb-stand-rm" style="color:#888;margin-top:2px">PB aktual. 26.10.2026 (KW44-45)</p>
       </div>
   </div>
@@ -4524,6 +4512,90 @@ filterAktuell();
   });
   if (document.readyState !== 'loading') { versetzeLupe(); titelBreiten(); logoBreite(); }
   else document.addEventListener('DOMContentLoaded', function(){ versetzeLupe(); titelBreiten(); logoBreite(); });
+})();
+</script>
+<script>
+/* Seit 30.10.2026 - Logbuch-Hinweis (orange #f0a050), solange es neue Eintraege mit Status
+   "erfasst" gibt, die im Logbuch noch nicht quittiert wurden.
+   Handy: mittlerer Strich des Menue-Knopfs und der Menuepunkt LOGBUCH dauerhaft orange.
+   Desktop: kurzes, dezentes Lauflicht um den Knopf LOGBUCH. Nur Lesen (Firebase REST). */
+(function(){
+  var DB = "https://notizen-webapp-ton-default-rtdb.europe-west1.firebasedatabase.app";
+  var QKEY = "logbuchQuittiert", NS = "http://www.w3.org/2000/svg", ORANGE = "#f0a050";
+  var DESK = "(min-width:1000px) and (hover:hover) and (pointer:fine)";
+  var st = document.createElement("style");
+  st.textContent =
+    "@media not all and " + DESK + "{" +
+      "html.lb-neu #menu-btn svg line:nth-child(2){stroke:" + ORANGE + "}" +
+      "html.lb-neu #menu-drop a[href*='/Logbuch/']{color:" + ORANGE + "}}" +
+    "a.gr-btn.lb-lauf{position:relative}" +
+    "a.gr-btn.lb-lauf>svg.lb-svg{position:absolute;left:-1px;top:-1px;pointer-events:none;overflow:visible}" +
+    ".lb-svg rect{fill:none;stroke:" + ORANGE + ";stroke-width:1.2;stroke-linecap:round}" +
+    ".lb-svg .l1{stroke-dasharray:8 92;opacity:.35;animation:lbk1 2s linear infinite}" +
+    ".lb-svg .l2{stroke-dasharray:3 97;animation:lbk2 2s linear infinite}" +
+    "@keyframes lbk1{from{stroke-dashoffset:0}to{stroke-dashoffset:-100}}" +
+    "@keyframes lbk2{from{stroke-dashoffset:-5}to{stroke-dashoffset:-105}}" +
+    "@media (prefers-reduced-motion:reduce){.lb-svg{display:none}}";
+  document.head.appendChild(st);
+
+  function desk(){ return window.matchMedia && window.matchMedia(DESK).matches; }
+  function knopf(){ return document.querySelector('a.gr-btn[href*="/Logbuch/"]'); }
+  function mass(el){
+    var s = el.querySelector(":scope>svg.lb-svg"); if (!s) return;
+    var w = el.offsetWidth, h = el.offsetHeight; if (!w || !h) return;
+    s.setAttribute("width", w); s.setAttribute("height", h);
+    var rs = s.querySelectorAll("rect");
+    for (var i = 0; i < rs.length; i++){
+      rs[i].setAttribute("x", 1); rs[i].setAttribute("y", 1);
+      rs[i].setAttribute("width", Math.max(w - 2, 1)); rs[i].setAttribute("height", Math.max(h - 2, 1));
+      rs[i].setAttribute("rx", 3);
+    }
+  }
+  var an = false;
+  function setze(ein){
+    an = ein;
+    document.documentElement.classList.toggle("lb-neu", ein);
+    var el = knopf(); if (!el) return;
+    var s = el.querySelector(":scope>svg.lb-svg");
+    if (ein && !s){
+      el.classList.add("lb-lauf");
+      s = document.createElementNS(NS, "svg"); s.setAttribute("class", "lb-svg");
+      ["l1", "l2"].forEach(function(c){
+        var r = document.createElementNS(NS, "rect"); r.setAttribute("class", c);
+        r.setAttribute("pathLength", "100"); s.appendChild(r);
+      });
+      el.appendChild(s); mass(el);
+      if (window.ResizeObserver) new ResizeObserver(function(){ mass(el); }).observe(el);
+    } else if (!ein && s){ s.remove(); el.classList.remove("lb-lauf"); }
+  }
+  window.addEventListener("resize", function(){ var el = knopf(); if (an && el) mass(el); });
+
+  var quittLokal = function(){ try { return parseInt(localStorage.getItem(QKEY), 10) || 0; } catch (e) { return 0; } };
+  function pruefe(){
+    var ctl = ("AbortController" in window) ? new AbortController() : null;
+    var to = ctl ? setTimeout(function(){ ctl.abort(); }, 10000) : 0;
+    var o = ctl ? { signal: ctl.signal, cache: "no-store" } : { cache: "no-store" };
+    Promise.all([
+      fetch(DB + "/logbuch/eintraege.json", o).then(function(r){ return r.ok ? r.json() : null; }),
+      fetch(DB + "/logbuch/quittiert.json", o).then(function(r){ return r.ok ? r.json() : null; })
+    ]).then(function(res){
+      clearTimeout(to);
+      var eint = res[0] || {}, q = Math.max(Number(res[1]) || 0, quittLokal());
+      var offen = Object.keys(eint).some(function(k){
+        var e = eint[k]; if (!e || typeof e !== "object") return false;
+        return !e.archiviert && e.status === "erfasst" && new Date(e.zeit).getTime() > q;
+      });
+      setze(offen);
+    }).catch(function(){ clearTimeout(to); });
+  }
+  function start(){
+    pruefe();
+    setInterval(function(){ if (!document.hidden) pruefe(); }, 60000);
+    document.addEventListener("visibilitychange", function(){ if (!document.hidden) pruefe(); });
+    window.addEventListener("pageshow", pruefe);
+    window.addEventListener("focus", pruefe);
+  }
+  if (document.readyState !== "loading") start(); else document.addEventListener("DOMContentLoaded", start);
 })();
 </script>
 </body>
