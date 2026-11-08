@@ -639,6 +639,22 @@ input[type=date]::-webkit-calendar-picker-indicator { filter: invert(0.8) bright
   #main-h1 .ohz-logo { display: none !important; }
   #main-h1 #kal-btn { margin-left: auto !important; }
 }
+/* Seit 06.11.2026 - Vermerke in Klammern: mobil eigene Zeile */
+@media (max-width: 999px) {
+  #list .row:has(.row-notiz) { flex-wrap: wrap; min-width: 0; row-gap: 2px; }
+  #list .row .row-notiz { flex-basis: 100%; margin-left: 0 !important; font-size: 14px; white-space: normal; }
+}
+/* Seit 07.11.2026 - mobil und Desktop: einmaliger weisser Glow auf dem Logo SPiELPLAN, 1 s nach dem Start */
+@keyframes sp-start-glow {
+  0%, 100% { text-shadow: 0 0 0 rgba(255,255,255,0); }
+  45% { text-shadow: 0 0 3px #fff, 0 0 8px rgba(255,255,255,1), 0 0 18px rgba(255,255,255,.95), 0 0 34px rgba(255,255,255,.75), 0 0 56px rgba(255,255,255,.45); }
+}
+@media (max-width: 999px) and (prefers-reduced-motion: no-preference) {
+  #sp-titel .sp-zwei { animation: sp-start-glow 1.8s ease-in-out 1s 1; }
+}
+@media (min-width: 1000px) and (prefers-reduced-motion: no-preference) {
+  #sp-titel .sp-eine { animation: sp-start-glow 1.8s ease-in-out 1s 1; }
+}
 </style>
 </head>
 <body>
@@ -734,10 +750,10 @@ var P = [
   {saison:"26/27",vorstellungen:["2026-09-29","2026-10-08","2026-10-17","2026-10-23","2026-10-25"],vzeit:["19.00","19.30","19.00","19.00","13.00"],url:"https://www.opernhaus.ch/spielplan/kalendarium/die-fledermaus-1/2026-2027",probenz:["P 19:00-22:00 , Tonprobe 22:00-23:00","BO1 10:00-13:00"],proben:["2026-09-17","2026-09-24"],titel:"Die Fledermaus",typ:"WA",kat:"Oper",prem:"2026-09-29",lv:"2026-10-25",prob:"2026-09-07",ete:"2026-09-09",khp:"",gp:"",ohp:"2026-09-25",ohpz:"11:00-14:15",bm:"René Hürlimann",licht:"Dino Strucken/ Stephan Grosse",ton:"Zdravkovic",insp:"Pascal Pointet",graben:"gross",reasist:"Stephanie Lenzen",projleit:"",regie:"Bernreitner",dirig:"Jonathan Bloxham",dauer:"ca. 3 Std.",komp:"Johann Strauss (1874)",dram:"Jana Beckmann",team:["Bo Skovhus (Eisenstein)","Camilla Nylund (Rosalinde)","Siena Licht Miller (Adele)","Johan Krogius (Alfred)","Kathrin Zukowski (Prinz Orlofsky)"]},
   {saison:"26/27",vorstellungen:["2026-10-03"],vzeit:["20.30"],probenz:["P 12:30-15:30 , 15:30-19:00"],proben:["2026-10-03"],titel:"ZFF - Zürcher Filmfestival",typ:"SF",kat:"Extra",prem:"2026-10-03",lv:"2026-10-03",prob:"",ete:"",khp:"",gp:"",ohp:"",bm:"Roger Studer / Andreas Rasche",licht:"Martin Gebhardt/ Dino Strucken",ton:"",insp:"Felix Bierich",graben:"",reasist:"",projleit:"",regie:"",dirig:"",dauer:"",komp:"",team:[]},
   {saison:"26/27",vorstellungen:["2026-10-11","2026-10-16","2026-10-18","2026-10-25","2026-10-28","2026-10-29","2026-10-31","2026-11-12","2026-11-13","2026-11-14","2027-06-19","2027-06-22","2027-06-29","2027-07-03"],vzeit:["18.00","19.00","20.00","20.00","19.30","19.30","19.00","20.00","19.00","18.00","19.00","19.00","19.00","19.00"],url:"https://www.opernhaus.ch/spielplan/kalendarium/ein-sommernachtstraum/2026-2027",probenz:["Tonprobe 12:00-13:00 , P 18:00-21:00","P 11:00-14:00","Tonprobe 12:00-13:00","P 11:00-14:00","P 11:00-14:00 , P 15:00-18:00","P 11:00-14:00","BO1 10:00-13:00","BO2 10:00-13:00 , Tonprobe 13:00-14:00 , BO3 19:00-22:00"],proben:["2026-09-21","2026-09-26","2026-09-28","2026-09-29","2026-09-30","2026-10-01","2026-10-06","2026-10-07"],khpz:"11:00-15:00",ohpz:"11:00-15:00",gpz:"11:30-14:45",titel:"Ballett 1 - Sommernachtstraum",typ:"Premiere",kat:"Ballett",prem:"2026-10-11",lv:"2027-07-03",prob:"2026-09-21",ete:"2026-08-27",khp:"2026-10-02",gp:"2026-10-10",ohp:"2026-10-08",bm:"Reto Landolt",licht:"Martin Gebhardt",ton:"Granda",insp:"Peter Warthmann",graben:"gross",reasist:"",projleit:"Larissa Moreno",regie:"Marston",dirig:"Robert Houssart",dauer:"ca. 2 Std. 30 Min.",komp:"Felix Mendelssohn Bartholdy; Gabriel Prokofiev",dram:"Michael Küster",pteam:["Hudson"],team:[],pause:["2026-11-14","2027-06-19"]},
-  {saison:"26/27",vorstellungen:["2026-11-01","2026-11-04","2026-11-08","2026-11-15","2026-11-18","2026-11-21","2026-11-28"],vzeit:["18.00","19.00","19.30","19.30","19.00","19.00","19.00"],url:"https://www.opernhaus.ch/spielplan/kalendarium/rachmaninov-die-drei-opern/2026-2027",probenz:["P 10:00-13:00","Tonprobe 18:00-19:00 , P 19:00-22:00","P 10:00-13:00","P 10:30-13:30","TeP 09:45-10:45 , P 11:00-14:00","TeP 08:30-09:30 , BO1 10:00-13:00","BO2 10:30-13:30","BO3 10:00-13:00 , Tonprobe 13:00-14:00","TeP 11:00-13:00","BO4 10:30-13:30"],proben:["2026-10-13","2026-10-14","2026-10-16","2026-10-17","2026-10-20","2026-10-21","2026-10-23","2026-10-24","2026-10-27","2026-10-28"],khpz:"17:30-22:30",ohpz:"18:00-22:00",gpz:"11:00-15:00",titel:"Rachmaninov - die 3 Opern",typ:"Premiere",kat:"Oper",prem:"2026-11-01",lv:"2026-11-28",prob:"2026-09-21",ete:"2026-10-12",khp:"2026-10-22",gp:"2026-10-29",ohp:"2026-10-27",bm:"Marco Willi",licht:"Filshtinsky/ Vera Ostfalk",ton:"Surgutschow",insp:"Felix Bierich",graben:"gross",reasist:"Ulrich Senn",projleit:"Moritz Noll",regie:"Tcherniakov",dirig:"Gianandrea Noseda",dauer:"ca. 3 Std. 25 Min.",komp:"Sergej Rachmaninow (1904/05/06)",dram:"Jana Beckmann",pteam:["Zaytseva"],team:["Elena Stikhina","Vladislav Sulimsky","Bekhzod Davronov","Ain Anger","Dmytro Popov"]},
+  {saison:"26/27",vorstellungen:["2026-11-01","2026-11-04","2026-11-08","2026-11-15","2026-11-18","2026-11-21","2026-11-28"],vzeit:["18.00","19.00","19.30","19.30","19.00","19.00","19.00"],url:"https://www.opernhaus.ch/spielplan/kalendarium/rachmaninov-die-drei-opern/2026-2027",probenz:["P 10:00-13:00","Tonprobe 18:00-19:00 , P 19:00-22:00","P 10:00-13:00","P 10:30-13:30","TeP 09:45-10:45 , P 11:00-14:00","TeP 08:30-09:30 , BO1 10:00-13:00","BO2 10:30-13:30","BO3 10:00-13:00 , Tonprobe 13:00-14:00","TeP 11:00-13:00","BO4 10:30-13:30"],proben:["2026-10-13","2026-10-14","2026-10-16","2026-10-17","2026-10-20","2026-10-21","2026-10-23","2026-10-24","2026-10-27","2026-10-28"],khpz:"17:30-22:30",ohpz:"18:00-22:00",gpz:"11:00-15:00",vnotiz:["","","","","TV-Aufzeichnung / Orchester: Frack","",""],titel:"Rachmaninov - die 3 Opern",typ:"Premiere",kat:"Oper",prem:"2026-11-01",lv:"2026-11-28",prob:"2026-09-21",ete:"2026-10-12",khp:"2026-10-22",gp:"2026-10-29",ohp:"2026-10-27",bm:"Marco Willi",licht:"Filshtinsky/ Vera Ostfalk",ton:"Surgutschow",insp:"Felix Bierich",graben:"gross",reasist:"Ulrich Senn",projleit:"Moritz Noll",regie:"Tcherniakov",dirig:"Gianandrea Noseda",dauer:"ca. 3 Std. 25 Min.",komp:"Sergej Rachmaninow (1904/05/06)",dram:"Jana Beckmann",pteam:["Zaytseva"],team:["Elena Stikhina","Vladislav Sulimsky","Bekhzod Davronov","Ain Anger","Dmytro Popov"]},
   {saison:"26/27",vorstellungen:["2026-11-08","2026-11-15","2026-11-19","2026-11-21","2026-11-26","2026-11-28","2026-12-06","2027-01-02","2027-01-07","2027-01-08","2027-01-10","2027-01-17"],vzeit:["13.00","13.00","11.00","11.00","11.00","11.00","14.00","14.00","11.00","18.00","14.00","14.00"],url:"https://www.opernhaus.ch/spielplan/kalendarium/alice-im-wunderland/2026-2027",probenz:["Tonprobe 12:00-13:00 , TeP 17:00-18:00 , P 18:00-21:00","Tonprobe 11:00-11:30 , P 11:30-14:30","BO1 10:30-13:30"],proben:["2026-10-26","2026-10-30","2026-10-31"],ohpz:"18:00-22:00",titel:"Alice im Wunderland",typ:"WA",kat:"Oper",prem:"2026-11-08",lv:"2027-01-17",prob:"2026-10-06",ete:"2026-10-26",khp:"",gp:"",ohp:"2026-11-06",bm:"Reto Landolt",licht:"Elfried Roller/ Stephan Grosse",ton:"Schilling",insp:"Katharina Tschannen",graben:"gross",reasist:"Arturo Gama",projleit:"",regie:"",dirig:"Michael Richter",dauer:"ca. 2 Std.",komp:"Pierangelo Valtinoni (2007)",dram:"Beate Breidenbach",team:["Marie Maidowski (Alice)","Ruben Drole","Christian Tintori","Thalia Cook-Hansen","Gary Martin","Salvador Villanueva"],pause:["2026-12-06","2027-01-02"]},
   {saison:"26/27",vorstellungen:["2026-11-20","2026-11-27","2026-11-29","2026-12-06","2026-12-13","2026-12-19","2026-12-26","2026-12-27"],proben:["2026-11-16","2026-11-17"],probenz:["Tonprobe 12:00-13:00 , P 15:00-18:00 , P 19:00-22:00","BO1 10:00-13:00"],ohpz:"18:00-22:00",vzeit:["19.00","19.30","13.00","20.00","14.00","19.00","19.30","20.00"],titel:"Ballett - Romeo und Julia",typ:"WA",kat:"Ballett",prem:"2026-11-20",lv:"2026-12-27",prob:"2026-11-16",ete:"2026-11-16",khp:"",gp:"",ohp:"2026-11-19",bm:"Marco Willi",licht:"Martin Gebhardt/ Stephan Grosse",ton:"Granda",insp:"Peter Warthmann",graben:"gross",reasist:"",projleit:"",regie:"",dirig:"",dauer:"",komp:"Prokofjew (1938)",dram:"Edward Kemp",team:[]},
-  {saison:"26/27",vorstellungen:["2026-11-22","2026-11-26","2026-12-02","2026-12-05","2026-12-10","2026-12-13","2026-12-16"],vzeit:["18.00","19.00","19.00","19.00","20.00","20.30","19.30"],url:"https://www.opernhaus.ch/spielplan/kalendarium/elektra-1/2026-2027",proben:["2026-11-03","2026-11-05","2026-11-06","2026-11-10","2026-11-11","2026-11-12","2026-11-13","2026-11-14","2026-11-17"],probenz:["TeP 10:00-12:00","P 11:00-14:00 , P 18:00-21:00","P 10:00-13:00","P 11:00-14:00","Tonprobe 12:00-13:00","BO1 10:30-13:30","BO2 10:00-13:00 , Tonprobe 13:00-14:00","BO3 10:00-13:00","BO4 19:00-22:00"],khpz:"17:30-22:00",ohpz:"11:00-14:15",gpz:"11:00",titel:"Elektra",typ:"Premiere",kat:"Oper",prem:"2026-11-22",lv:"2026-12-16",prob:"2026-10-12",ete:"2026-11-02",khp:"2026-11-11",gp:"2026-11-20",ohp:"2026-11-18",bm:"René Hürlimann/ Reto Landolt",licht:"Siberski/ Dino Strucken",ton:"Winter",insp:"Katharina Kühnel",graben:"gross",reasist:"Steven Whiting",projleit:"Friederike Bujnoch",regie:"Steier",dirig:"Lorenzo Viotti",dauer:"ca. 1 Std. 45 Min.",komp:"Richard Strauss (1909)",dram:"Kathrin Brunner",pteam:["Zoller","Falaschi","Eldagsen"],team:["Tanja Ariane Baumgartner (Elektra)","Miina-Liisa Värelä (Chrysothemis)","Gabor Bretz (Orest)","Sara Jakubiak (Klytämnestra)","John Daszak (Ägisth)"]},
+  {saison:"26/27",vorstellungen:["2026-11-22","2026-11-26","2026-12-02","2026-12-05","2026-12-10","2026-12-13","2026-12-16"],vzeit:["18.00","19.00","19.00","19.00","20.00","20.30","19.30"],url:"https://www.opernhaus.ch/spielplan/kalendarium/elektra-1/2026-2027",proben:["2026-11-03","2026-11-05","2026-11-06","2026-11-10","2026-11-11","2026-11-12","2026-11-13","2026-11-14","2026-11-17"],probenz:["TeP 10:00-12:00","P 11:00-14:00 , P 18:00-21:00","P 10:00-13:00","P 11:00-14:00","Tonprobe 12:00-13:00","BO1 10:30-13:30","BO2 10:00-13:00 , Tonprobe 13:00-14:00","BO3 10:00-13:00 (Probenbesuch Preview)","BO4 19:00-22:00"],khpz:"17:30-22:00 (Tonprobe in der Pause)",ohpz:"11:00-14:15",gpz:"11:00",titel:"Elektra",typ:"Premiere",kat:"Oper",prem:"2026-11-22",lv:"2026-12-16",prob:"2026-10-12",ete:"2026-11-02",khp:"2026-11-11",gp:"2026-11-20",ohp:"2026-11-18",bm:"René Hürlimann/ Reto Landolt",licht:"Siberski/ Dino Strucken",ton:"Winter",insp:"Katharina Kühnel",graben:"gross",reasist:"Steven Whiting",projleit:"Friederike Bujnoch",regie:"Steier",dirig:"Lorenzo Viotti",dauer:"ca. 1 Std. 45 Min.",komp:"Richard Strauss (1909)",dram:"Kathrin Brunner",pteam:["Zoller","Falaschi","Eldagsen"],team:["Tanja Ariane Baumgartner (Elektra)","Miina-Liisa Värelä (Chrysothemis)","Gabor Bretz (Orest)","Sara Jakubiak (Klytämnestra)","John Daszak (Ägisth)"]},
   {saison:"26/27",vorstellungen:["2026-11-29","2026-12-04","2026-12-12","2026-12-17"],vzeit:["20.00","19.00","19.00","19.00"],url:"https://www.opernhaus.ch/spielplan/kalendarium/das-rheingold/2026-2027",proben:["2026-11-24","2026-11-25"],probenz:["Tonprobe 12:00-13:00 , TeP 19:00-22:00","P 10:00-14:00 , Tonprobe 14:00-15:00 , BO1 19:00-22:00"],ohpz:"10:30-14:30",titel:"Rheingold",typ:"WA",kat:"Oper",prem:"2026-11-29",lv:"2026-12-17",prob:"2026-11-09",ete:"2026-11-23",khp:"",gp:"",ohp:"2026-11-27",bm:"Roger Studer",licht:"Vera Ostfalk",ton:"Surgutschow",insp:"Felix Bierich",graben:"gross",reasist:"Sylvia Döring",projleit:"",regie:"",dirig:"Gianandrea Noseda",dauer:"2 Std. 30 Min.",komp:"Richard Wagner (1869)",dram:"Beate Breidenbach / Werner Hintze",team:["Michael Volle (Wotan)","Christopher Purves (Alberich)","Johan Krogius (Loge)","Claudia Mahnke (Fricka)"]},
   {saison:"26/27",vorstellungen:["2026-12-11","2026-12-15","2026-12-18","2026-12-22","2026-12-26"],vzeit:["19.00","19.00","19.00","19.00","13.00"],url:"https://www.opernhaus.ch/spielplan/kalendarium/manon-lescaut/",proben:["2026-11-23","2026-12-04","2026-12-05"],probenz:["TeP 15:00-17:00","P 11:00-14:00","BO1 10:00-13:00"],ohpz:"18:00-22:00",titel:"Manon Lescaut",typ:"WA",kat:"Oper",prem:"2026-12-11",lv:"2026-12-26",prob:"2026-11-18",ete:"2026-11-23",khp:"",gp:"",ohp:"2026-12-08",bm:"Roger Studer",licht:"Elfried Roller/ Stephan Grosse",ton:"Schilling",insp:"Katharina Tschannen",graben:"gross",reasist:"Jodok Schweizer",projleit:"",regie:"Hermanis",dirig:"Francesco Ivan Ciampa",dauer:"2 Std. 30 Min.",komp:"Giacomo Puccini (1893)",dram:"Fabio Dietsche",team:[]},
   {saison:"26/27",vorstellungen:["2026-12-20","2026-12-23","2026-12-29","2027-01-01","2027-01-03","2027-01-06","2027-01-09","2027-01-12","2027-01-15","2027-01-19","2027-01-23"],vzeit:["18.00","20.00","19.00","19.00","13.00","19.00","19.30","20.00","19.30","19.00","19.00"],url:"https://www.opernhaus.ch/spielplan/kalendarium/la-traviata-1/2026-2027/",proben:["2026-12-01","2026-12-02","2026-12-03","2026-12-09","2026-12-11","2026-12-12","2026-12-15"],probenz:["P 10:00-13:00","P 10:00-13:00","P 10:00-13:00 , Tonprobe 13:00-14:00 , P 19:00-22:00","P 11:00-14:00 , Tonprobe 18:00-19:00 , BO1 19:00-22:00","BO2 10:00-13:00","BO3 10:00-13:00","BO4 10:00-13:00"],khpz:"11:00-16:00",ohpz:"11:00-15:00",gpz:"11:00-14:15",titel:"la Traviata",typ:"Premiere",kat:"Oper",prem:"2026-12-20",lv:"2027-01-23",prob:"2026-11-09",ete:"2026-11-30",khp:"2026-12-10",gp:"2026-12-17",ohp:"2026-12-16",bm:"René Hürlimann",licht:"Tiberi/ Dino Strucken",ton:"Granda",insp:"Pascal Pointet",graben:"gross",reasist:"Claudia Blersch",projleit:"Susan Klimmer",regie:"Loy",dirig:"Alexander Soddy",dauer:"ca. 2 Std. 30 Min.",komp:"Giuseppe Verdi (1853)",dram:"Fabio Dietsche",pteam:["La Casta","Drosihn","Perez"],team:["Marina Monzo (Violetta)","Bekhzod Davronov (Alfredo)","Roman Burdenko (Germont)"]},
@@ -1136,6 +1152,13 @@ function dauerKurz(d) {
   var m = mm ? ("0" + mm[1]).slice(-2) : "";
   return ca + h + (m ? "." + m : "") + " h";
 }
+// Seit 06.11.2026: Vermerk am Ende eines Zeiteintrags in Klammern, z. B. "P 15:00-18:00 (1. Akt)"
+function notizTeil(s) {
+  var t = String(s || "").trim();
+  var m = t.match(/^(.*?)\s*\(([^()]*)\)$/);
+  return m ? { s: m[1].trim(), n: m[2].trim() } : { s: t, n: "" };
+}
+function notizHtml(n, ml) { return n ? "<span class='prob-notiz' style='margin-left:" + (ml || 10) + "px;color:#8a8a8a'>(" + n + ")</span>" : ""; }
 function parseProbenz(pzRaw) {
   var out = [];
   if (!pzRaw) return out;
@@ -1144,12 +1167,13 @@ function parseProbenz(pzRaw) {
   for (var i = 0; i < teile.length; i++) {
     var st = teile[i].trim();
     if (!st) continue;
+    var nt = notizTeil(st); st = nt.s;
     var mm = st.match(/^(.*?)\s*(\d{1,2}[:.]\d{2}\s*-\s*\d{1,2}[:.]\d{2})$/);
     var typ = "", zeit = st;
     if (mm) { typ = mm[1].trim(); zeit = mm[2].trim(); }
     if (typ) letzterTyp = typ; else typ = letzterTyp;
     typ = typ.replace(/Tonprobe/gi, "TonP").replace(/\s*\/\s*/g, "/");
-    out.push({ z: zeit, t: typ });
+    out.push({ z: zeit, t: typ, n: nt.n });
   }
   return out;
 }
@@ -1190,9 +1214,9 @@ function terminAnzahl(person, liste) {
     });
     add(p.prob, null);
     add(p.ete, null);
-    add(p.khp, spanne(p.khpz));
-    add(p.ohp, spanne(p.ohpz));
-    add(p.gp,  spanne(p.gpz));
+    add(p.khp, spanne(notizTeil(p.khpz).s));
+    add(p.ohp, spanne(notizTeil(p.ohpz).s));
+    add(p.gp,  spanne(notizTeil(p.gpz).s));
   });
   var anzahl = 0;
   Object.keys(tage).forEach(function(d){
@@ -1622,10 +1646,10 @@ function render() {
         if (hpK > -1) {
           var hpBl = parseProbenz(hpP.probenz && hpP.probenz[hpK]);
           if (!hpBl.length) todayProben.push({ p: hpP, z: "", t: "P" });
-          for (var hpJ = 0; hpJ < hpBl.length; hpJ++) todayProben.push({ p: hpP, z: hpBl[hpJ].z, t: hpBl[hpJ].t || "P" });
+          for (var hpJ = 0; hpJ < hpBl.length; hpJ++) todayProben.push({ p: hpP, z: hpBl[hpJ].z, t: hpBl[hpJ].t || "P", n: hpBl[hpJ].n });
         }
         [["khp", "khpz", "KHP"], ["ohp", "ohpz", "OHP"], ["gp", "gpz", "GP"]].forEach(function(f) {
-          if (hpP[f[0]] === todayStr) todayProben.push({ p: hpP, z: hpP[f[1]] || "", t: f[2] });
+          if (hpP[f[0]] === todayStr) { var hpN = notizTeil(hpP[f[1]]); todayProben.push({ p: hpP, z: hpN.s, t: f[2], n: hpN.n }); }
         });
       }
     }
@@ -1660,12 +1684,14 @@ function render() {
         var hIdx = (tp.vorstellungen || []).indexOf(vonEl.value);
         var hZeit = (hIdx > -1 && tp.vzeit && tp.vzeit[hIdx]) ? tp.vzeit[hIdx] : "";
         if (hZeit) html += "<span class=\"row-date\" style=\"margin-left:12px\">" + hZeit + "</span>";
+        var hNotiz = (hIdx > -1 && tp.vnotiz && tp.vnotiz[hIdx]) ? tp.vnotiz[hIdx] : "";
         // Premiere bzw. Wiederaufnahme kennzeichnen
         if (tp.prem === vonEl.value && (tp.typ === "Premiere" || tp.typ === "WA"))
           html += "<span class=\"row-date\" style=\"margin-left:10px;color:#ffffff\">" + (tp.typ === "WA" ? "WA" : "PREM") + "</span>";
         // Dauer zuletzt in Klammern, kurz als "2.25 h"
         var hDau = dauerKurz(tp.dauer);
         if (hDau) html += "<span class=\"row-date\" style=\"margin-left:10px\">" + hDau + "</span>";
+        if (hNotiz) html += "<span class=\"row-date row-notiz\" style=\"margin-left:10px;color:#8a8a8a\">(" + hNotiz + ")</span>";
         html += "</div>";
       }
       // Proben des Tages: Titel, Uhrzeit, Kuerzel wie im Panel
@@ -1678,6 +1704,7 @@ function render() {
           html += "<span class=\"row-title\">" + hpR.p.titel + "</span>";
           if (hpR.z) html += "<span class=\"row-date\" style=\"margin-left:12px\">" + hpR.z + "</span>";
           html += "<span class=\"row-date prob-typ\" style=\"margin-left:10px;color:#bbb\">" + hpR.t + "</span>";
+          if (hpR.n) html += "<span class=\"row-date row-notiz\" style=\"margin-left:10px;color:#8a8a8a\">(" + hpR.n + ")</span>";
           html += "</div>";
         }
       }
@@ -2014,7 +2041,7 @@ function showDetail(p) {
             + "<span style='color:#888;margin-left:7px;font-weight:400'>(" + p.vorstellungen.length + ")</span></div>";
       for (var k = 0; k < p.vorstellungen.length; k++) {
         var uz = (p.vzeit && p.vzeit[k]) ? "<span style='margin-left:28px'>" + p.vzeit[k] + "</span>" : "";
-        html += "<div class='drow'><span class='dval'>" + fmt(p.vorstellungen[k]) + uz + "</span></div>";
+        html += "<div class='drow'><span class='dval'>" + fmt(p.vorstellungen[k]) + uz + notizHtml(p.vnotiz && p.vnotiz[k], 28) + "</span></div>";
       }
     }
   }
@@ -2030,7 +2057,7 @@ function showDetail(p) {
         ziel.push({ d: p.proben[pk], z: "", t: "" });
       } else {
         for (var bi = 0; bi < bloecke.length; bi++) {
-          ziel.push({ d: p.proben[pk], z: bloecke[bi].z, t: bloecke[bi].t });
+          ziel.push({ d: p.proben[pk], z: bloecke[bi].z, t: bloecke[bi].t, n: bloecke[bi].n });
         }
       }
     }
@@ -2038,8 +2065,9 @@ function showDetail(p) {
   [["khp", p.khp, p.khpz, "KHP"], ["ohp", p.ohp, p.ohpz, "OHP"], ["gp", p.gp, p.gpz, "GP"]]
     .forEach(function(f) {
       if (!f[1]) return;
-      if (pplanGedeckt(f[1])) probRows.push({ d: f[1], z: f[2] || "", t: f[3] });
-      else if (pplanProv(f[1])) provRows.push({ d: f[1], z: f[2] || "", t: f[3] });
+      var fN = notizTeil(f[2]);
+      if (pplanGedeckt(f[1])) probRows.push({ d: f[1], z: fN.s, t: f[3], n: fN.n });
+      else if (pplanProv(f[1])) provRows.push({ d: f[1], z: fN.s, t: f[3], n: fN.n });
     });
   var nachDatum = function(a, b) { return a.d < b.d ? -1 : (a.d > b.d ? 1 : 0); };
   probRows.sort(nachDatum);
@@ -2050,7 +2078,7 @@ function showDetail(p) {
     for (var pr = 0; pr < rows.length; pr++) {
       var rz = rows[pr].z ? "<span style='margin-left:28px'>" + rows[pr].z + "</span>" : "";
       var rt = rows[pr].t ? "<span class='prob-typ' style='margin-left:28px;color:#bbb'>" + rows[pr].t + "</span>" : "";
-      html += "<div class='drow'><span class='dval'>" + fmt(rows[pr].d) + rz + rt + "</span></div>";
+      html += "<div class='drow'><span class='dval'>" + fmt(rows[pr].d) + rz + rt + notizHtml(rows[pr].n, 28) + "</span></div>";
     }
   }
   probenBlock(probRows, "Proben lt. Monatsplan");
@@ -2934,7 +2962,7 @@ function openKalender() {
     var eteEff = p.ete || "", lvEff = p.lv || "";
     // Werckmeister-Labor: Balken vom Probenbeginn (01.04) bis letzte Vorstellung
     if (p.kat === "Labor" && p.titel === "Werckmeister - Oerlikon" && p.prob && p.lv) { eteEff = p.prob; lvEff = p.lv; }
-    return {titel:p.titel, kat:p.kat, typ:p.typ, ton:p.ton||"", prem:p.prem, ete:eteEff, lv:lvEff, range: !!(eteEff && lvEff), pause:p.pause||null, dauer:p.dauer||"", prob:p.prob||"", khp:p.khp||"", ohp:p.ohp||"", gp:p.gp||"", khpz:p.khpz||"", ohpz:p.ohpz||"", gpz:p.gpz||"", proben:p.proben||[], probenz:p.probenz||[], vzeit:p.vzeit||[], location:p.location||"", vorstellungen:p.vorstellungen||[], pidx:P.indexOf(p)};
+    return {titel:p.titel, kat:p.kat, typ:p.typ, ton:p.ton||"", prem:p.prem, ete:eteEff, lv:lvEff, range: !!(eteEff && lvEff), pause:p.pause||null, dauer:p.dauer||"", prob:p.prob||"", khp:p.khp||"", ohp:p.ohp||"", gp:p.gp||"", khpz:p.khpz||"", ohpz:p.ohpz||"", gpz:p.gpz||"", proben:p.proben||[], probenz:p.probenz||[], vzeit:p.vzeit||[], vnotiz:p.vnotiz||[], location:p.location||"", vorstellungen:p.vorstellungen||[], pidx:P.indexOf(p)};
   }).sort(function(a,b){
     var ka = kalSortKey(a), kb = kalSortKey(b);
     return ka < kb ? -1 : 1;
@@ -3163,7 +3191,8 @@ function openKalender() {
          [p.gp, "GP", true, p.gpz || ""]].forEach(function(m){
           if (!m[0] || !inWindow(m[0])) return;
           var e = tagEintrag(m[0]);
-          e.zeilen.push(m[3] ? m[3] + "  " + m[1] : m[1]);
+          var mN = notizTeil(m[3]);
+          e.zeilen.push(mN.s ? mN.s + "  " + m[1] + (mN.n ? "  (" + mN.n + ")" : "") : m[1]);
           if (m[2]) { e.hp = true; e.gelb = true; e.nurKurz = false; }
           else { e.grau = true; if (m[1] === "1. TE") e.nurKurz = false; }
         });
@@ -3172,7 +3201,7 @@ function openKalender() {
           var bl = parseProbenz(p.probenz && p.probenz[pi]);
           var e = tagEintrag(dt);
           e.gelb = true;
-          bl.forEach(function(b){ e.zeilen.push(b.z + (b.t ? "  " + b.t : "")); });
+          bl.forEach(function(b){ e.zeilen.push(b.z + (b.t ? "  " + b.t : "") + (b.n ? "  (" + b.n + ")" : "")); });
           // Nur wenn ausschliesslich Tonproben anliegen, bleibt der Strich kurz
           var nurTon = bl.length > 0 && bl.every(function(b){ return b.t === "TonP"; });
           if (!nurTon) { e.nurKurz = false; e.vollProbe = true; }
@@ -3209,6 +3238,7 @@ function openKalender() {
           var istPremDatum = (dt === p.prem) && (p.typ === "Premiere" || p.typ === "WA");
           var uz = (p.vzeit && p.vzeit[vi]) ? "  " + p.vzeit[vi] : "";
           var vDau = dauerKurz(p.dauer); if (vDau) uz += "  " + vDau;
+          if (p.vnotiz && p.vnotiz[vi]) uz += "  (" + p.vnotiz[vi] + ")";
           bar += "<div " + STRICH_KL + "style='" + STRICH_CSS
                + (istPremDatum ? "#ffffff" : col) + ";left:calc(" + (xpct(dt) + HALFDAY).toFixed(3) + "% - " + STRICH_OFF + "px)' title='"
                + p.titel + "\n" + fmt(dt) + uz + (istPremDatum ? premZeile(p) : "") + tonZeile(p) + "'></div>";
@@ -3287,7 +3317,7 @@ function openKalender() {
   } else {
     rows = buildRows(prods);
   }
-  var kztSfMapped = kztSf.map(function(p){ var eteEff = p.ete || "", lvEff = p.lv || ""; if (p.kat === "Labor" && p.titel === "Werckmeister - Oerlikon" && p.prob && p.lv) { eteEff = p.prob; lvEff = p.lv; } return {titel:p.titel, kat:p.kat, typ:p.typ, ton:p.ton||"", prem:p.prem, ete:eteEff, lv:lvEff, range: !!(eteEff && lvEff), pause:p.pause||null, dauer:p.dauer||"", prob:p.prob||"", khp:p.khp||"", ohp:p.ohp||"", gp:p.gp||"", khpz:p.khpz||"", ohpz:p.ohpz||"", gpz:p.gpz||"", proben:p.proben||[], probenz:p.probenz||[], vzeit:p.vzeit||[], location:p.location||"", vorstellungen:p.vorstellungen||[], pidx:P.indexOf(p)}; });
+  var kztSfMapped = kztSf.map(function(p){ var eteEff = p.ete || "", lvEff = p.lv || ""; if (p.kat === "Labor" && p.titel === "Werckmeister - Oerlikon" && p.prob && p.lv) { eteEff = p.prob; lvEff = p.lv; } return {titel:p.titel, kat:p.kat, typ:p.typ, ton:p.ton||"", prem:p.prem, ete:eteEff, lv:lvEff, range: !!(eteEff && lvEff), pause:p.pause||null, dauer:p.dauer||"", prob:p.prob||"", khp:p.khp||"", ohp:p.ohp||"", gp:p.gp||"", khpz:p.khpz||"", ohpz:p.ohpz||"", gpz:p.gpz||"", proben:p.proben||[], probenz:p.probenz||[], vzeit:p.vzeit||[], vnotiz:p.vnotiz||[], location:p.location||"", vorstellungen:p.vorstellungen||[], pidx:P.indexOf(p)}; });
   var kztSfRows = kztSfMapped.length ? buildRows(sortByStart(kztSfMapped)) : "";
 
   function kalChip(kat, label, col) {
@@ -4392,7 +4422,7 @@ filterAktuell();
       <p style="margin-top:12px"><strong style="color:#fff">Filter</strong> k&ouml;nnen frei kombiniert werden. Kein Filter: zeigt alle Produktionen ohne Events.</p>
       <p style="margin-top:12px"><strong style="color:#fff">Datumsfilter:</strong> Von/Bis filtert den gew&uuml;nschten Zeitraum.</p>
       <p style="margin-top:12px">Auswahl <strong><em>1.TE / 1.VST</em></strong> sortiert die Produktionsliste nach Datum der 1.&nbsp;TE bzw. der 1.&nbsp;Vorstellung (Prem/WA).</p>
-      <p style="margin-top:12px"><strong><em>Aktuell</em></strong> zeigt alle ab heute noch laufenden Produktionen (exkl. Events) und ggf. heutige Vorstellungen.</p>
+      <p style="margin-top:12px"><strong><em>Aktuell</em></strong> zeigt alle ab heute noch laufenden Produktionen (exkl. Events) und ggf. heutige Vorstellungen und Proben.</p>
       <p style="margin-top:12px">Als Produktionszeitraum gilt grunds&auml;tzlich die 1.&nbsp;TE bis zur letzten Vorstellung.</p>
       <p style="margin-top:12px"><strong style="color:#fff">Panel:</strong> Ein Klick auf eine Produktion in der Liste &ouml;ffnet das Detailpanel mit detaillierten Angaben. Namen und Funktionen im Panel sind anklickbar und aktivieren einen Filter.</p>
       <p style="margin-top:12px"><strong style="color:#fff">Obere Zeile:</strong></p>
@@ -4404,14 +4434,14 @@ filterAktuell();
       <p style="margin-top:20px">In <strong>Kontakte</strong> (Men&uuml;) befinden sich alle internen Mail und B&uuml;ro-Tel.Nummern des OHZ. Neben den in der Kontaktliste aufgef&uuml;hrten Eintr&auml;gen k&ouml;nnen alle anderen Kontakte auch &uuml;ber das Suchfeld gesucht werden.</p>
       <p style="margin-top:20px">Kalender, Notizen, Ablaufplan und Logbuch haben jeweils eine separate Kurzanleitung im Header.</p>
       <div style="height:1px;background:#4d4d4d;margin:22px 0 18px"></div>
-      <p style="margin-top:0">Die <strong>Spielplan-WebApp</strong> besteht aus einer einzigen HTML-Datei (ca. 390 KB inkl. JS und CSS) und wird &uuml;ber GitHub gehostet (https://...). Sie l&auml;uft auf allen g&auml;ngigen Browsern unter MacOS, Windows, Android und iOS (bei Bedarf auch offline als lokale Html-Datei). Die verlinkten eigenst&auml;ndigen WebApps Notizen, Ablaufplan und Logbuch (Html, JS, CSS) sind je ca. 100&ndash;200 KB gross.</p>
+      <p style="margin-top:0">Die <strong>Spielplan-WebApp</strong> besteht aus einer einzigen HTML-Datei (ca. 400 KB inkl. JS und CSS) und wird &uuml;ber GitHub gehostet (https://...). Sie l&auml;uft auf allen g&auml;ngigen Browsern unter MacOS, Windows, Android und iOS (bei Bedarf auch offline als lokale Html-Datei). Die verlinkten eigenst&auml;ndigen WebApps Notizen, Ablaufplan und Logbuch (Html, JS, CSS) sind je ca. 100&ndash;200 KB gross.</p>
       <p style="margin-top:12px"><strong style="color:#fff">Datenschutz:</strong></p>
-      <p style="margin-top:4px">Um den Austausch von Eintr&auml;gen und Dateien zwischen mehreren Usern in Echtzeit zu erm&ouml;glichen, liegen Notizen-, Logbuch- und Ablaufplan-Eintr&auml;ge samt Anh&auml;ngen und Unlock-Passw&ouml;rtern verschl&uuml;sselt bei Firebase/Google (Server Belgien). Sie sind dort nur tempor&auml;r gespeichert, jederzeit l&ouml;schbar und nicht &uuml;ber den Code (auf GitHub) zug&auml;nglich. Die interne Telefon-Datenbank samt Passwort-Abfrage-Skript liegt auf Google-Drive (kontogebunden). Nach Eingabe des Passworts wird die Datenbank beim erstmaligen Zugang auf das jeweilige Ger&auml;t automatisch geladen und lokal gespeichert (ca. 20 KB). Bei &Auml;nderung des Passworts oder bei Ger&auml;te- oder Browserwechsel kann auf die Datenbank nicht mehr ohne erneute Zugangsanfrage zugegriffen werden. &Uuml;bertragung von Firebase, Google-Drive, GitHub erfolgt TLS-verschl&uuml;sselt.</p>
+      <p style="margin-top:4px">Um den Austausch von Eintr&auml;gen und Dateien zwischen mehreren Usern in Echtzeit zu erm&ouml;glichen, liegen Notizen-, Logbuch- und Ablaufplan-Eintr&auml;ge samt Anh&auml;ngen und Unlock-Passw&ouml;rtern verschl&uuml;sselt bei Firebase/Google (Server Belgien). Sie sind dort nur tempor&auml;r gespeichert, jederzeit l&ouml;schbar und nicht &uuml;ber den Code (auf GitHub) zug&auml;nglich. Die interne Telefon-Datenbank samt Passwort-Abfrage-Skript liegt auf Google-Drive. Nach Eingabe des Passworts wird die Datenbank beim erstmaligen Zugang auf das jeweilige Ger&auml;t automatisch geladen und lokal gespeichert (ca. 20 KB). Bei &Auml;nderung des Passworts oder bei Ger&auml;te- oder Browserwechsel kann auf die Datenbank nicht mehr ohne erneute Zugangsanfrage zugegriffen werden. &Uuml;bertragung von Firebase, Google-Drive, GitHub erfolgt TLS-verschl&uuml;sselt.</p>
       <div style="height:1px;background:#4d4d4d;margin:22px 0 18px"></div>
       <p style="margin-top:0">Die Daten des Spielplans basieren auf den Spielplanunterlagen der technischen Direktion, des KBB sowie der Website des Opernhauses Z&uuml;rich. &Auml;nderungen w&auml;hrend laufender Spielzeit sind m&ouml;glicherweise nicht ber&uuml;cksichtigt, werden aber kontinuierlich aktualisiert.</p>
       <p>Diese WebApp ist als Hilfsmittel f&uuml;r den Produktionsalltag gedacht. F&uuml;r die Richtigkeit, Vollst&auml;ndigkeit und Aktualit&auml;t der Inhalte wird keine Gew&auml;hr &uuml;bernommen.</p>
-      <p style="margin-top:20px">R&uuml;ckmeldungen zu Funktionsfehlern, unvollst&auml;ndigen Angaben sowie Verbesserungsvorschl&auml;ge an: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_051126_0744" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
-      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_051126_0744</p>
+      <p style="margin-top:20px">Feedback &amp; support: <a href="mailto:Raphael.Paciorek@opernhaus.ch?subject=SPiELPLAN_iNFO_OHZ v_ton_sp_gh_a_081126_0824" style="color:inherit;text-decoration:underline">Raphael.Paciorek@opernhaus.ch</a></p>
+      <p style="color:#888;margin-top:8px">v_ton_sp_gh_a_081126_0824</p>
       <p class="pb-stand-rm" style="color:#888;margin-top:2px">PB aktual. 05.11.2026 (KW46-47)</p>
       </div>
   </div>
@@ -4599,4 +4629,4 @@ filterAktuell();
 })();
 </script>
 </body>
-</html>&laquo;<strong style="color:#fff">Kalender</strong>&raquo; oben rechts &ouml;ffnet den tabellarischen Produktionskalender. Eine Kurzanleitung zur mobilen bzw. Desktop-Version findet sich in der Kalenderansicht <span style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;box-sizing:border-box;background:#1e1e1e;color:#bbb;font-size:11px;font-weight:bold;border-top:1px solid #585858;border-left:1px solid #484848;border-bottom:1px solid #0d0d0d;border-right:1px solid #0d0d0d;border-radius:3px;vertical-align:middle;position:relative;top:-1px">?</span>.
+</html>
