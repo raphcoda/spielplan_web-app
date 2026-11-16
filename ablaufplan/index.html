@@ -2208,7 +2208,7 @@
     <li>Lädt die Produktion als ZIP herunter: DOKU (Bühne, Tonregie, Technik) als PDF, Bühnenpläne, Fotos und im Ordner „Dokumente“ alle Dateien aus DOC bei Tonregie und Technik – entpackt ein Ordner „Dokumentation_Produktion_Datum“.</li>
     <li><b>Desktop:</b> Download-Knopf oben rechts. <b>Handy:</b> Menü ☰ → „Download Doku“.</li>
   </ul>
-  <p class="info-ver"><span id="infoVer">v_ton_ap_gh_a_291026_1351</span><span class="info-brand">TON UND BILD · OPERNHAUS ZÜRICH</span></p>
+  <p class="info-ver"><span id="infoVer">v_ton_ap_gh_a_161126_1009</span><span class="info-brand">TON UND BILD · OPERNHAUS ZÜRICH</span></p>
 </div></div>
 <div id="printAsk" hidden><div class="info-panel print-ask" role="dialog" aria-modal="true" aria-labelledby="printAskTitle">
   <h3 id="printAskTitle">Drucken</h3>
@@ -2284,7 +2284,7 @@
       { id: "audiofields", label: "Audiofields" },
       { id: "playback", label: "Playback", opts: ["QLab", "Ableton"] } ],
     [ { id: "mics", label: "Mics" },
-      { id: "mipo", label: "Mipo", inline: true, fields: [ { k: "nr", label: "Nr. / Freq. / Mic", list: true, itemsOnly: true }, { k: "att", label: "Attenuation", list: true, itemsOnly: true } ] },
+      { id: "mipo", label: "RF", inline: true, fields: [ { k: "nr", label: "Mipo / Freq. / Mic", list: true, itemsOnly: true }, { k: "att", label: "Attenuation", list: true, itemsOnly: true } ] },
       { id: "extra", label: "Extra", fields: [ { k: "v", label: "", list: true, itemsOnly: true, listKey: "items" } ] } ]
   ];
   var TECH_CATS = TECH_GROUPS[0].concat(TECH_GROUPS[1]);
@@ -6935,6 +6935,12 @@
     var ch = amps.ch || (amps.ch = {});
     var c = ch[cb.dataset.ch] || (ch[cb.dataset.ch] = {});
     c.on = !c.on;
+    // seit v261: sind PrO, PrM, PrU und PrSub alle an, springt es automatisch auf „Portal alle“ (gleiche Bedeutung);
+    // die vier Einzelknöpfe werden dabei zurückgesetzt, damit „Portal alle“ aus = kein Portal
+    if(c.on && AMP_ROWS[0].indexOf(cb.dataset.ch) >= 0 && AMP_ROWS[0].every(function(k){ return ch[k] && ch[k].on; })){
+      AMP_ROWS[0].forEach(function(k){ ch[k].on = false; });
+      amps.portalAll = true;
+    }
     save();
     renderList();
   });
